@@ -10,10 +10,59 @@ ingestaj zasebno i NIKAD ne miješaj u istom izračunu.
 ## Status sesije (TIJEK PRVE SESIJE)
 
 - [x] **1. Shema na lokalnom Postgresu** — `db/zse_schema.sql` + `db/setup_db.sh`
-- [ ] 2. Loader (tekst → API → JSON → normalizacija → insert u `financials`)
-- [ ] 3. Validator (7 determinističkih pravila)
-- [ ] 4. Ingest 3 Končarova konsolidirana godišnja izvješća (2023–2025)
-- [ ] 5. Usporedna tablica za 3 godine (ručna provjera)
+- [x] **2. Loader** — `src/extract.py` (API) + `src/normalize.py` + `src/loader.py`
+- [x] **3. Validator** — `src/validator.py` (7 determinističkih pravila)
+- [ ] **4. Ingest 3 Končarova konsolidirana godišnja izvješća (2023–2025)** —
+      ČEKA stvarne dokumente (vidi niže)
+- [x] **5. Usporedna tablica** — `src/report.py` + `python -m src.ingest report`
+      (testirano na sintetičkim podacima; čeka stvarne brojke iz točke 4)
+
+### Što treba za točku 4
+Loader/validator rade, ali trebaju **stvarni tekst** 3 konsolidirana godišnja
+izvješća (2023, 2024, 2025). Stavi ih u `data/reports/` (npr.
+`koei_2024_consolidated.txt`) i postavi `ANTHROPIC_API_KEY`, pa pokreni:
+
+```bash
+python -m src.ingest extract --text data/reports/koei_2024_consolidated.txt \
+    --source-url <zse.hr URL> --published 2025-04-15
+```
+
+Bez API ključa može se učitati i ručno spremljeni extraction JSON:
+```bash
+python -m src.ingest load --json data/reports/koei_2024.json --source-url <URL>
+```
+
+Na kraju:
+```bash
+python -m src.ingest report --years 2023 2024 2025
+```
+
+## Razvoj i testovi
+
+```bash
+python -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+python tests/test_normalize.py    # čisti unit testovi
+python tests/test_pipeline.py     # integracija (loader+validator vs lokalna baza)
+```
+
+## Pipeline (točke 2–3)
+
+```
+tekst izvješća
+  └─ src/extract.py     Anthropic API (Opus 4.8), system prompt iz specifikacije → JSON
+       └─ src/normalize.py   value_eur = value_raw * scale; HRK→EUR; dionice bez skale
+            └─ src/loader.py      upsert filing + insert financials + derivacije (is_reported=FALSE)
+                 └─ src/validator.py  7 pravila → status 'validated' | 'needs_review'
+                      └─ src/report.py     usporedna tablica
+```
+
+Derivacije (kod, `is_reported=FALSE`): `ebitda` (ako nije objavljen = ebit+d&a),
+`total_debt`, `net_debt`, `free_cash_flow`.
+
+Validacijska pravila: 1 bilanca se zatvara · 2 kapital konzistentan · 3 dobit
+konzistentna · 4 EBITDA sanity · 5 scale sanity (WARN) · 6 YoY ±60% (WARN) ·
+7 confidence ≥ 0.85. FAIL/WARN ⇒ `needs_review`.
 
 ## Točka 1 — postavljanje baze
 
