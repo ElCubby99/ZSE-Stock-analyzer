@@ -77,7 +77,7 @@ python tests/test_pipeline.py     # integracija (loader+validator vs lokalna baz
 
 ```
 tekst izvješća
-  └─ src/extract.py     Anthropic API (Opus 4.8), system prompt iz specifikacije → JSON
+  └─ src/extract.py     Anthropic API (Opus 4.8): structured outputs + adaptive thinking + streaming → JSON
        └─ src/normalize.py   value_eur = value_raw * scale; HRK→EUR; dionice bez skale
             └─ src/loader.py      upsert filing + insert financials + derivacije (is_reported=FALSE)
                  └─ src/validator.py  7 pravila → status 'validated' | 'needs_review'

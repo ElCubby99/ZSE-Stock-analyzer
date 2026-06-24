@@ -63,6 +63,49 @@ IZLAZNA SHEMA:
 """
 
 
+# JSON schema za structured outputs (output_config.format). Jamči da model vrati
+# točno ovu strukturu — nema parsiranja slobodnog teksta ni code-fence ograda.
+# Ograničenja structured outputs: bez min/max, additionalProperties mora biti false.
+_ITEM_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "statement": {"type": "string", "enum": ["income", "balance", "cashflow", "shares"]},
+        "item": {"type": "string"},
+        "value_raw": {"anyOf": [{"type": "number"}, {"type": "null"}]},
+        "source_page": {"type": "string"},
+        "confidence": {"type": "number"},
+    },
+    "required": ["statement", "item", "value_raw", "source_page", "confidence"],
+    "additionalProperties": False,
+}
+
+EXTRACTION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "meta": {
+            "type": "object",
+            "properties": {
+                "company_ticker": {"type": "string"},
+                "fiscal_year": {"type": "integer"},
+                "period_type": {"type": "string", "enum": ["annual", "Q1", "H1", "9M"]},
+                "basis": {"type": "string", "enum": ["consolidated", "standalone"]},
+                "cumulative": {"type": "boolean"},
+                "audited": {"type": "boolean"},
+                "currency": {"type": "string", "enum": ["EUR", "HRK"]},
+                "reporting_scale": {"type": "integer", "enum": [1, 1000, 1000000]},
+            },
+            "required": ["company_ticker", "fiscal_year", "period_type", "basis",
+                         "cumulative", "audited", "currency", "reporting_scale"],
+            "additionalProperties": False,
+        },
+        "items": {"type": "array", "items": _ITEM_SCHEMA},
+        "flags": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["meta", "items", "flags"],
+    "additionalProperties": False,
+}
+
+
 def _strip_code_fences(text: str) -> str:
     t = text.strip()
     if t.startswith("```"):
@@ -82,8 +125,13 @@ def parse_extraction(text: str) -> dict[str, Any]:
 
 
 def extract_filing(report_text: str, *, model: str | None = None,
-                   max_tokens: int = 8000) -> dict[str, Any]:
-    """Pozovi Anthropic API i vrati parsiran extraction dict.
+                   max_tokens: int = 16000) -> dict[str, Any]:
+    """Pozovi Anthropic API (Opus 4.8) i vrati validiran extraction dict.
+
+    - Structured outputs (output_config.format): model je vezan na EXTRACTION_SCHEMA,
+      pa je prvi text blok zajamčeno validan JSON (nema parsiranja slobodnog teksta).
+    - Adaptive thinking: ekstrakcija/mapiranje brojki je netrivijalno.
+    - Streaming: izvješća su dug input → izbjegava HTTP timeout (get_final_message).
 
     Zahtijeva ANTHROPIC_API_KEY u okruženju. Za offline/testove koristi
     parse_extraction nad spremljenim JSON-om umjesto ovoga.
@@ -93,14 +141,27 @@ def extract_filing(report_text: str, *, model: str | None = None,
     if not config.ANTHROPIC_API_KEY:
         raise RuntimeError("ANTHROPIC_API_KEY nije postavljen.")
 
-    client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
-    resp = client.messages.create(
+    client = anthropic.Anthropic()  # razrješava ANTHROPIC_API_KEY iz okruženja
+    with client.messages.stream(
         model=model or config.ANTHROPIC_MODEL,
         max_tokens=max_tokens,
+        thinking={"type": "adaptive"},
         system=EXTRACTION_SYSTEM_PROMPT,
+        output_config={"format": {"type": "json_schema", "schema": EXTRACTION_SCHEMA}},
         messages=[{"role": "user", "content": report_text}],
-    )
-    text = "".join(
-        block.text for block in resp.content if getattr(block, "type", None) == "text"
-    )
-    return parse_extraction(text)
+    ) as stream:
+        resp = stream.get_final_message()
+
+    if resp.stop_reason == "refusal":
+        raise RuntimeError(f"Model je odbio zahtjev (refusal): {resp.stop_details}")
+    if resp.stop_reason == "max_tokens":
+        raise RuntimeError(
+            "Izlaz odrezan na max_tokens — JSON je nepotpun. Povećaj max_tokens "
+            "ili suzi ulazni tekst na stranice s financijskim izvještajima."
+        )
+
+    # output_config.format jamči da je prvi text blok validan JSON po shemi.
+    text = next((b.text for b in resp.content if getattr(b, "type", None) == "text"), None)
+    if text is None:
+        raise RuntimeError("Odgovor ne sadrži text blok s JSON-om.")
+    return json.loads(text)
