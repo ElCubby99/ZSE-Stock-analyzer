@@ -17,22 +17,49 @@ ingestaj zasebno i NIKAD ne miješaj u istom izračunu.
 - [x] **5. Usporedna tablica** — `src/report.py` + `python -m src.ingest report`
       (testirano na sintetičkim podacima; čeka stvarne brojke iz točke 4)
 
-### Što treba za točku 4
-Loader/validator rade, ali trebaju **stvarni tekst** 3 konsolidirana godišnja
-izvješća (2023, 2024, 2025). Stavi ih u `data/reports/` (npr.
-`koei_2024_consolidated.txt`) i postavi `ANTHROPIC_API_KEY`, pa pokreni:
+### Runbook za točku 4 (čeka whitelist domena)
+
+Dohvat izvješća je blokiran dok se u **mrežnoj politici okruženja** (Claude Code
+on the web → Edit environment → **Network access: Custom**) ne dopuste domene:
+
+```
+koncar.hr
+*.koncar.hr
+*.zse.hr
+```
+
+Označi i "Also include default list of common package managers". Promjena
+allowlist-a rebuilda cache okruženja, pa **vrijedi tek u NOVOJ sesiji** (tekuća
+zadržava staru politiku). URL-ovi i cross-check sidra: `docs/koei_sources.md`.
+
+Kad su domene dopuštene (nova sesija):
+
+```bash
+. .venv/bin/activate                       # ili: pip install -r requirements.txt
+bash scripts/fetch_koncar_reports.sh       # PDF-ovi -> data/reports/
+for y in 2023 2024 2025; do
+  python -m src.pdf_extract data/reports/koei_${y}_consolidated.pdf \
+      data/reports/koei_${y}_consolidated.txt
+done
+```
+
+Zatim ekstrakcija → load → validate. S API ključem (`ANTHROPIC_API_KEY`):
 
 ```bash
 python -m src.ingest extract --text data/reports/koei_2024_consolidated.txt \
-    --source-url <zse.hr URL> --published 2025-04-15
+    --source-url <URL> --published 2025-04-15
 ```
 
-Bez API ključa može se učitati i ručno spremljeni extraction JSON:
+Bez ključa: pročitaj točne brojke iz `*.txt`, složi extraction JSON po shemi iz
+`docs/koei_extraction_prompt.md`, pa:
+
 ```bash
 python -m src.ingest load --json data/reports/koei_2024.json --source-url <URL>
 ```
 
-Na kraju:
+Na kraju usporedna tablica (Boris provjerava očima protiv sidara iz
+`docs/koei_sources.md`):
+
 ```bash
 python -m src.ingest report --years 2023 2024 2025
 ```
