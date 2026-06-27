@@ -5,9 +5,20 @@ mirror na ZSE EHO disclosure portalu (eho.zse.hr).
 
 | Godina | Primarni URL | Mirror (EHO ZSE) |
 |--------|--------------|------------------|
-| 2023 | (vidi koncar.hr/hr/godisnja-financijska-izvjesca) | https://eho.zse.hr/fileadmin/issuers/KOEI/FI-KOEI-26b6d17c58e5d24666dbc8255aca031b.pdf |
-| 2024 | https://www.koncar.hr/sites/default/files/dokumenti/financijski-izvjestaji/2025-04/Revidirano%20konsolidirano%202024.pdf | https://eho.zse.hr/fileadmin/issuers/KOEI/FI-KOEI-962b2a89874cfc24b05051381efef45a.pdf |
+| 2023 | https://eho.zse.hr/fileadmin/issuers/KOEI/FI-KOEI-26b6d17c58e5d24666dbc8255aca031b.pdf | (isti EHO/KOEI link) |
+| 2024 | https://eho.zse.hr/fileadmin/issuers/KOEI/FI-KOEI-962b2a89874cfc24b05051381efef45a.pdf | (isti EHO/KOEI link) |
 | 2025 | https://www.koncar.hr/sites/default/files/dokumenti/financijski-izvjestaji/2026-04/Izvjestaj%20GRUPA%202025_HRV.pdf | (provjeri na eho.zse.hr/KOEI) |
+
+> **ENTITET — ČITAJ:** Ekstraktor uzima brojke doslovno iz dokumenta, pa izvor
+> MORA biti Grupa KONČAR (KONČAR-Elektroindustrija d.d., ZSE ticker **KOEI**).
+> Za 2024. je raniji "primarni" link s koncar.hr
+> (`.../2025-04/Revidirano%20konsolidirano%202024.pdf`) zapravo izvješće
+> **Grupe KONČAR – D&ST** (Distributivni i specijalni transformatori, zasebno
+> kotirano društvo, ticker **KODT**) — prihodi ~467,5 mil EUR, NE ~1.055,6 mil.
+> Zato je za 2024. primaran EHO/KOEI mirror (prijava pod izdavateljem KOEI na
+> eho.zse.hr), koji je ispravna Grupa KONČAR (poslovni prihodi ~1.066,2 mil EUR).
+> NIKAD ne koristi KODT izvješće kao fallback za KOEI — tiho bi učitalo brojke
+> krivog entiteta.
 
 > Napomena: koncar.hr i eho.zse.hr NISU na default (Trusted) egress allowlisti.
 > Dohvat radi tek nakon što se u mrežnoj politici okruženja (Custom) dopuste
