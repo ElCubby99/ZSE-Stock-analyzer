@@ -34,8 +34,13 @@ vidimo je li ekstrakcija promašila red veličine / skalu.
 |--------|------|------|------|
 | Prihodi od prodaje | ~894,1 mil EUR | ~1.055,6 mil EUR | ~1.320 mil EUR |
 | Poslovni prihodi (ukupno) | ~908,0 mil EUR | — | — |
-| Neto dobit (izvještajna) | ~70,9 mil EUR | ~163,3 mil EUR | ~222,4 mil EUR |
+| Neto dobit (izvještajna) | ~70,9 mil EUR | ~164,4 mil EUR | ~222,4 mil EUR |
 | EBITDA | ~91,4 mil EUR | — | — |
+
+> 2024 neto dobit: revidirano izvješće navodi **164,4 mil EUR** ("izvještajna
+> neto dobit", str. izvještaja poslovodstva). Ranije priopćenje je spominjalo
+> ~163,3 mil EUR (preliminarno) — koristi 164,4 kao sidro jer je to revidirana
+> brojka koju i ekstrakcija vraća (164.353 tis. EUR).
 
 Izvori priopćenja:
 - 2024: koncar.hr/en/news/2024-delivers-consolidated-revenue-over-eur-1-billion-and-eur-1633-million-net-profit

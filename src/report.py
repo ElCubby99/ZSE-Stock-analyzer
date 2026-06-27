@@ -1,7 +1,9 @@
 """Točka 5: usporedna tablica za N godina iz v_financials_current.
 
-Redovi: revenue, ebit, ebitda, net_income_parent, equity_parent, net_debt, shares.
-Boris ovo provjerava očima protiv stvarnosti.
+Redovi: revenue, ebit, ebitda, neto dobit (ukupna + matica), kapital (ukupni +
+matica), net_debt, shares. Ukupna neto dobit/kapital su grupne brojke koje se
+poklapaju sa sidrima iz priopćenja; "matica" je dio pripisan vlasnicima matice
+(za valuaciju dioničara). Boris ovo provjerava očima protiv stvarnosti.
 """
 from __future__ import annotations
 
@@ -9,7 +11,9 @@ ROWS = [
     ("revenue", "Prihodi (revenue)"),
     ("ebit", "EBIT"),
     ("ebitda", "EBITDA"),
+    ("net_income", "Neto dobit (ukupna)"),
     ("net_income_parent", "Neto dobit (matica)"),
+    ("total_equity", "Kapital (ukupni)"),
     ("equity_parent", "Kapital (matica)"),
     ("net_debt", "Neto dug"),
     ("shares_outstanding", "Broj dionica"),
