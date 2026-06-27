@@ -2,6 +2,11 @@
 
 Sve se radi unutar jedne transakcije koja se na kraju ROLLBACK-a, pa baza
 ostaje čista. Zahtijeva postavljenu shemu (db/setup_db.sh) i KOEI seed.
+
+Neovisan o stvarnim podacima: svaka sekcija kreće s `_reset_koei` koji unutar
+transakcije makne SVE KOEI retke (i stvarne, npr. nakon ingesta iz točke 4, i
+testne). Tako YoY/scale pravila ne vide zaostalu prošlu godinu, a završni
+ROLLBACK ionako vraća sve stvarne retke — baza ostaje netaknuta.
 """
 import sys
 from pathlib import Path
@@ -53,6 +58,21 @@ def _run(conn, extraction):
     return fid, validate_filing(conn, fid)
 
 
+def _reset_koei(conn):
+    """Čista pozornica za KOEI unutar transakcije (sve se na kraju ROLLBACK-a).
+
+    Makne i stvarne (ingestirane) i testne KOEI retke da sekcija ne ovisi o
+    zatečenom stanju baze. financials se brišu prije filings (nema ON DELETE
+    CASCADE). Koristi se umjesto međusekcijskog rollbacka — rollback bi vratio
+    i stvarne retke pa bi YoY/scale pravila ponovno vidjela stvarnu prošlu godinu.
+    """
+    with conn.cursor() as cur:
+        cur.execute("SELECT id FROM companies WHERE ticker='KOEI'")
+        cid = cur.fetchone()[0]
+        cur.execute("DELETE FROM financials WHERE company_id=%s", (cid,))
+        cur.execute("DELETE FROM filings WHERE company_id=%s", (cid,))
+
+
 def main():
     conn = psycopg2.connect(config.dsn())
     failures = []
@@ -64,6 +84,7 @@ def main():
 
     try:
         # --- 1. Čista, konzistentna ekstrakcija => validated ---
+        _reset_koei(conn)
         fid, res = _run(conn, _consistent_extraction(2024))
         check("clean_filing_validated", res["status"] == "validated", res["status"])
         rmap = {r["rule"]: r["status"] for r in res["results"]}
@@ -92,7 +113,7 @@ def main():
         check("shares_not_scaled", shares == 2_570_000, shares)
 
         # --- 2. Niska confidence => FAIL pravilo 7 => needs_review ---
-        conn.rollback()
+        _reset_koei(conn)
         bad = _consistent_extraction(2024, conf=0.50)
         fid2, res2 = _run(conn, bad)
         check("low_conf_needs_review", res2["status"] == "needs_review", res2["status"])
@@ -100,7 +121,7 @@ def main():
         check("rule7_fail", r7["status"] == "FAIL")
 
         # --- 3. Nekonzistentan kapital => FAIL pravilo 2 ---
-        conn.rollback()
+        _reset_koei(conn)
         broken = _consistent_extraction(2024)
         for it in broken["items"]:
             if it["item"] == "minority_interests":
@@ -111,7 +132,7 @@ def main():
         check("broken_needs_review", res3["status"] == "needs_review")
 
         # --- 4. YoY: dvije godine, druga skoči >60% => WARN ---
-        conn.rollback()
+        _reset_koei(conn)
         load_extraction(conn, _consistent_extraction(2023), source_url="test://2023")
         big = _consistent_extraction(2024)
         for it in big["items"]:
