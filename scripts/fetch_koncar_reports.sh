@@ -14,15 +14,31 @@ CA="/root/.ccr/ca-bundle.crt"
 UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
 # year|primary_url|mirror_url
+# VAŽNO: izvor MORA biti Grupa KONČAR (ticker KOEI). Za 2024. NE koristimo
+# koncar.hr "Revidirano konsolidirano 2024.pdf" — to je izvješće Grupe KONČAR –
+# D&ST (ticker KODT, prihodi ~467,5 mil EUR), krivi entitet. Umjesto toga
+# uzimamo EHO/KOEI prijavu (ispravna Grupa KONČAR). Vidi docs/koei_sources.md.
 ROWS=(
 "2023|https://eho.zse.hr/fileadmin/issuers/KOEI/FI-KOEI-26b6d17c58e5d24666dbc8255aca031b.pdf|"
-"2024|https://www.koncar.hr/sites/default/files/dokumenti/financijski-izvjestaji/2025-04/Revidirano%20konsolidirano%202024.pdf|https://eho.zse.hr/fileadmin/issuers/KOEI/FI-KOEI-962b2a89874cfc24b05051381efef45a.pdf"
+"2024|https://eho.zse.hr/fileadmin/issuers/KOEI/FI-KOEI-962b2a89874cfc24b05051381efef45a.pdf|"
 "2025|https://www.koncar.hr/sites/default/files/dokumenti/financijski-izvjestaji/2026-04/Izvjestaj%20GRUPA%202025_HRV.pdf|"
 )
 
 fetch() {  # url -> out ; vrati 0 ako je rezultat validan PDF
   local url="$1" out="$2"
-  curl -sS -L --fail --cacert "$CA" -A "$UA" --max-time 120 -o "$out" "$url" || return 1
+  # -C - nastavlja prekinuti download (2025. izvješće je ~47 MB, veza zna biti
+  # spora); par pokušaja s velikim --max-time da resume dovrši ostatak.
+  local try
+  for try in 1 2 3 4; do
+    if curl -sS -L --fail -C - --cacert "$CA" -A "$UA" --max-time 550 -o "$out" "$url"; then
+      break
+    fi
+    # 403 = egress policy (domena nije na allowlisti) -> nema smisla resume-ati
+    if curl -sS -o /dev/null -I -w '%{http_code}' --cacert "$CA" -A "$UA" \
+         --max-time 30 "$url" 2>/dev/null | grep -q '^403$'; then
+      return 1
+    fi
+  done
   if head -c 5 "$out" | grep -q '%PDF'; then return 0; fi
   rm -f "$out"; return 1
 }

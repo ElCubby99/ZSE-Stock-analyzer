@@ -12,8 +12,9 @@ ingestaj zasebno i NIKAD ne miješaj u istom izračunu.
 - [x] **1. Shema na lokalnom Postgresu** — `db/zse_schema.sql` + `db/setup_db.sh`
 - [x] **2. Loader** — `src/extract.py` (API) + `src/normalize.py` + `src/loader.py`
 - [x] **3. Validator** — `src/validator.py` (7 determinističkih pravila)
-- [ ] **4. Ingest 3 Končarova konsolidirana godišnja izvješća (2023–2025)** —
-      ČEKA stvarne dokumente (vidi niže)
+- [x] **4. Ingest 3 Končarova konsolidirana godišnja izvješća (2023–2025)** —
+      učitana stvarna Grupa KONČAR (KOEI) izvješća; brojke provjerene protiv
+      sidara iz `docs/koei_sources.md`. Napomena o entitetu niže.
 - [x] **5. Usporedna tablica** — `src/report.py` + `python -m src.ingest report`
       (testirano na sintetičkim podacima; čeka stvarne brojke iz točke 4)
 
@@ -31,6 +32,12 @@ koncar.hr
 Označi i "Also include default list of common package managers". Promjena
 allowlist-a rebuilda cache okruženja, pa **vrijedi tek u NOVOJ sesiji** (tekuća
 zadržava staru politiku). URL-ovi i cross-check sidra: `docs/koei_sources.md`.
+
+> **Napomena o entitetu (2024.):** koncar.hr datoteka
+> `2025-04/Revidirano konsolidirano 2024.pdf` je izvješće **Grupe KONČAR – D&ST**
+> (ticker KODT, prihodi ~467,5 mil EUR) — KRIVI entitet za KOEI. Za 2024. koristi
+> EHO/KOEI prijavu (ispravna Grupa KONČAR, ~1.066 mil EUR poslovnih prihoda).
+> Izvori i točni URL-ovi su ažurirani u `docs/koei_sources.md` i u fetch skripti.
 
 Kad su domene dopuštene (nova sesija):
 
