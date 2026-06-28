@@ -32,6 +32,21 @@ default list of common package managers"). Vrijedi tek u NOVOJ sesiji (rebuild c
 > Alternativa cijenama/ISIN-u: ZSE REST API ključ kao env var `ZSE_API_KEY`
 > (rest.zse.hr je dosegljiv, samo traži auth) — tada se preskače scraping ZSE stranica.
 
+## STANJE KORAKA 2 (sesija 2026-06-28) — vidi `docs/adrs_cros_sources.md`
+- **Dosegljiv izvor nađen:** `eho.zse.hr` JSON feed (NE zse.hr/adris.hr). Dohvat:
+  `scripts/fetch_eho_reports.sh ADRS CROS` (curl `--cacert /root/.ccr/ca-bundle.crt`).
+- **Preuzeto + izrezano:** konsolidirana godišnja izvješća ADRS/CROS 2025 (PDF),
+  točne stranice konsolidiranih izvještaja locirane (ADRS P&L str 24–25 / bilanca 26–27 /
+  segmenti 89–91; CROS IFRS set str 125–127 / segmenti 199–200). Sliceovi spremni.
+- **v2 shema PRIMIJENJENA** na bazu (SessionStart hook učita samo v1 → ručno
+  `psql -f db/zse_schema_v2.sql`). Seed ADRS/CROS/MAIS + share_classes + holdings OK.
+- **BLOKERI (oba zaustavljaju brojeve):**
+  1. `ANTHROPIC_API_KEY` na usage limitu → pristup **2026-07-01 00:00 UTC**.
+     `ingest extract` (API) ne radi do tada — sve ostalo (download/slice/shema) je gotovo.
+  2. `zse.hr`/`www.adris.hr` = 403, `adris.hr` TLS neverificiran, `rest.zse.hr` traži
+     `ZSE_API_KEY` (nije postavljen) → KORAK 2B (cijene/dividende/ISIN) bez izvora.
+  3. KORAK 2C peer tickeri — čeka korisnika.
+
 ## KORAK 2 — što napraviti u novoj sesiji (redom: "oboje redom")
 A. **Financije ADRS i CROS** (kao točka 4, dvije firme): naći konsolidirana godišnja
    izvješća (Adris grupa, Croatia osiguranje) — preko adris.hr/zse.hr ili eho.zse.hr —
