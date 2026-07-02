@@ -294,14 +294,24 @@ def compute_sotp(c: Ctx) -> ValueRange:
     Σ vrijednost udjela + neto novac − holding diskont, sve / shares_ex_treasury.
       - listed (basis='market'): trž.kap.(held) × pct  [trž.kap = cijena × shares_ex_treasury TE firme]
       - unlisted (basis='ebitda_multiple'): segment_ebitda × default_multiple × pct
-    DVA FLAGA koja MORAju biti eksplicitni u assumptions (deckov sofisticirani dio):
+    Neto novac = −net_debt (derivat iz ekstrakcije: dug − novac); fallback na
+    cash_and_equivalents ako net_debt ne postoji (tada je to BRUTO novac — flag).
+    FLAGOVI koji MORAju biti eksplicitni u assumptions (deckov sofisticirani dio):
       - net_cash_excludes_insurance_portfolio: portfelj u CO-u pokriva osig. obveze, NIJE slobodan novac
-      - holding_discount: raspon 0.15–0.25 (low/high scenariji), zašto baš toliko
+      - holding_discount: raspon 0.15–0.25 (low/high scenariji) + zašto (holding_discount_reason)
       - listed_stake_repricing: scenarij 'CROS po fer P/E 12' kao konzervativno sidro (deck: NAV ~95€)
+    Breakdown po komponenti ide u assumptions["parts"]:
+      {name, value_eur, basis, pct, placeholder} — placeholder=True za multiple
+      komponente (default_multiple je pretpostavka), False za tržišne.
     """
     p = c.params
     assum = {
         "holding_discount_range": [p.holding_discount_low, p.holding_discount_high],
+        "holding_discount_reason": (
+            "empirijski raspon konglomeratskog/holding diskonta za europske "
+            "holdinge (nelikvidnost, dvostruko oporezivanje dividendi, trošak "
+            "centra); PLACEHOLDER dok se ne kalibrira na ZSE povijest"
+        ),
         "net_cash_excludes_insurance_portfolio": True,
         "listed_repricing_scenario": "CROS @ P/E 12 = konzervativno sidro",
         "placeholder": p.placeholder,
@@ -314,21 +324,39 @@ def compute_sotp(c: Ctx) -> ValueRange:
             if mc is None:
                 missing.append(f"trž.kap({h['held_name']})"); continue
             stake = mc * pct
+            basis = f"market: trž.kap {mc:,.0f} × {pct:.4f}"
+            is_placeholder = False
         elif h["valuation_basis"] == "ebitda_multiple":
             seg = c.segment_ebitda_of(h["segment_key"]) if (c.segment_ebitda_of and h.get("segment_key")) else None
             if seg is None:
                 missing.append(f"segment_ebitda({h['segment_key']})"); continue
             stake = seg * (h["default_multiple"] or 0) * pct
+            basis = (f"ebitda_multiple: {seg:,.0f} [{h['segment_key']}] "
+                     f"× {h['default_multiple']} × {pct:.2f}")
+            is_placeholder = True  # default_multiple je pretpostavka
         else:
             missing.append(f"{h['valuation_basis']}({h['held_name']})"); continue
         gross += stake
-        parts.append({h["held_name"]: round(stake, 0)})
+        parts.append({"name": h["held_name"], "value_eur": round(stake, 0),
+                      "basis": basis, "pct": pct, "placeholder": is_placeholder})
     assum["parts"] = parts
     if missing:
         assum["missing"] = missing
         # Nedostaju ulazi (cijene/segmenti) => ne proizvodi vrijednost, radije prazno nego izmišljeno.
         return ValueRange(0, 0, 0, assum, 0.0)
-    net_cash = c.val("cash_and_equivalents") or 0.0   # uz flag da osig. portfelj nije slobodan
+    nd = c.val("net_debt")
+    if nd is not None:
+        net_cash = -nd
+        assum["net_cash"] = {"value_eur": round(net_cash, 0),
+                             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"}
+    else:
+        net_cash = c.val("cash_and_equivalents") or 0.0
+        assum["net_cash"] = {"value_eur": round(net_cash, 0),
+                             "basis": "BRUTO novac (net_debt nedostupan!) — precijenjeno"}
+    assum["net_cash_note"] = (
+        "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su "
+        "već vrednovana tržišno/multiplom — gruba NAV aproksimacija"
+    )
     nav = gross + net_cash
     lo = _per_share(nav * (1 - p.holding_discount_high), c)
     base = _per_share(nav * (1 - (p.holding_discount_low + p.holding_discount_high) / 2), c)
@@ -336,6 +364,8 @@ def compute_sotp(c: Ctx) -> ValueRange:
     if base is None:
         assum["missing"] = ["shares_ex_treasury"]
         return ValueRange(0, 0, 0, assum, 0.0)
+    assum["nav_gross_eur"] = round(gross, 0)
+    assum["nav_total_eur"] = round(nav, 0)
     return ValueRange(lo, base, hi, assum, 0.5 if p.placeholder else 0.7)
 
 
@@ -445,15 +475,36 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None) -> Ctx:
         return float(r[0]) if r and r[0] is not None else None
 
     def latest_price(cid: int):
+        # kod više klasa isti dan preferiraj primarnu liniju (ADRS vs ADRS2)
         cur.execute(
-            "SELECT close_eur FROM prices_eod WHERE company_id=%s AND close_eur IS NOT NULL "
-            "ORDER BY trade_date DESC LIMIT 1", (cid,))
+            """SELECT p.close_eur FROM prices_eod p
+               LEFT JOIN share_classes sc ON sc.id = p.share_class_id
+               WHERE p.company_id=%s AND p.close_eur IS NOT NULL
+               ORDER BY p.trade_date DESC, COALESCE(sc.is_primary_line, TRUE) DESC
+               LIMIT 1""", (cid,))
         r = cur.fetchone()
         return float(r[0]) if r and r[0] is not None else None
 
     def market_cap_of(held_company_id):
         if not held_company_id:
             return None
+        # precizno po KLASI: Σ zadnji close klase × dionice klase (bez trezorskih);
+        # klase bez ijedne cijene obaraju rezultat u None (radije prazno nego krivo)
+        cur.execute(
+            """SELECT COUNT(*) FILTER (WHERE px.close_eur IS NULL) AS bez_cijene,
+                      SUM(px.close_eur * (sc.shares_issued - COALESCE(sc.treasury_shares, 0)))
+               FROM share_classes sc
+               LEFT JOIN LATERAL (
+                   SELECT close_eur FROM prices_eod p
+                   WHERE p.share_class_id = sc.id AND p.close_eur IS NOT NULL
+                   ORDER BY p.trade_date DESC LIMIT 1
+               ) px ON TRUE
+               WHERE sc.company_id = %s AND sc.shares_issued IS NOT NULL""",
+            (held_company_id,))
+        r = cur.fetchone()
+        if r and r[1] is not None and not r[0]:
+            return float(r[1])
+        # fallback (firme bez share_classes): zadnja cijena × kanonske dionice
         px, n = latest_price(held_company_id), shares_of(held_company_id)
         return px * n if (px is not None and n) else None
 
@@ -495,6 +546,22 @@ def _print_company(ticker: str, out: dict) -> None:
                  "holding_discount_range")}
         if keys:
             print(f"      pretpostavke: {keys}")
+        if key == "sotp_nav" and vr.assumptions.get("parts"):
+            a = vr.assumptions
+            print("      SOTP BREAKDOWN (EUR):")
+            for part in a["parts"]:
+                ph = "PLACEHOLDER multipla" if part["placeholder"] else "tržišno"
+                print(f"        {part['name']:20} {part['value_eur']:>15,.0f}   "
+                      f"[{ph}]  {part['basis']}")
+            nc = a.get("net_cash")
+            if nc:
+                print(f"        {'Neto novac':20} {nc['value_eur']:>15,.0f}   "
+                      f"[{nc['basis']}]")
+                print(f"          ({a.get('net_cash_note', '')})")
+            if a.get("nav_total_eur") is not None:
+                print(f"        {'NAV (prije diskonta)':20} {a['nav_total_eur']:>15,.0f}")
+                print(f"        holding diskont {a['holding_discount_range']} — "
+                      f"{a.get('holding_discount_reason', '')}")
 
     print("\nPRESKOČENE METODE (zašto):")
     for key, reason in out["skipped"].items():

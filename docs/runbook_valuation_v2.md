@@ -58,23 +58,50 @@ Grana: `claude/valuation-v2-setup-ymjeg7`.
   ADRS={ATGR, PODR, RIVP, PLAG, ARNT}, CROS=regionalni osiguratelji (nedohvatljivi
   zasad → placeholder ostaje). Mehanika: `src/peer_multiples.py` (medijani iz baze).
 
-## KORAK 2 — stanje (A/B/D provedeni 2026-07-02)
+## KORAK 2 — stanje (A/B/D provedeni 2026-07-02; SOTP dovršen isti dan navečer)
 A. **GOTOVO (FY2025):** ekstrakcija konsolidiranih izvješća ADRS+CROS u bazu
-   (filinzi validirani uz NEEDS_REVIEW na sporednim stavkama). OSTALO: **ADRS
-   segmenti** (IFRS 8, PDF str 89–91) u `segment_financials` — treba proširenje
-   ekstraktora (canonical shema nema segmente); bez toga SOTP nema segment EBITDA.
+   (filinzi uz NEEDS_REVIEW na sporednim stavkama). **Segmenti GOTOVI:**
+   `src/segments.py` + `extract_segments` (extract.py) — IFRS 8 iz bilj. 5
+   (slice str 5–7 + 88–91; uprava dopuštena SAMO za metrike koje bilješka ne
+   objavljuje). U bazi: tourism 111M EBITDA (bilj. 5), aquaculture 11,3M (uprava
+   str 7 — bilješka daje samo EBIT), energy 12M, insurance NULL (nije smisleno).
+   Σ segment EBITDA 134,3M vs grupna 217,9M → plug 38,4% > 15% → needs_review
+   (očekivano: osiguranje bez EBITDA + eliminacije).
 B. **GOTOVO:** cijene po klasi u `prices_eod` (zse-json) + dividende/ISIN-ovi (EHO).
 C. **OTVORENO — peer multiplikatori:** skupovi odlučeni (`docs/peers.md`), ali
    peeri (ATGR, PODR, RIVP, PLAG, ARNT) nemaju financije u bazi → treba ih
    dodati u `companies` + ekstrahirati njihova izvješća (ista EHO+ingest ruta),
    cijene već idu kroz zse-json. Tek tada `src/peer_multiples.py` daje medijane
    za `Params` (zamjena placeholdera).
-D. **PROVEDENO** s pravim financijama/dividendama/cijenama, ali pretpostavke
-   (r, g, peer multipli) su i dalje PLACEHOLDER → brojke su mehanika, ne
-   valuacija. ADRS: 4 metode (SOTP bez vrijednosti — fali trž.kap MAIS-a jer
-   nema broja dionica, i segment EBITDA); CROS: 3 metode; preskoci po dizajnu
-   (EV/EBITDA i DCF gateovi). Reconciliation: ADRS divergencija 54 %
-   (multiples 99,33 € vs DDM 45,46 € vs opravdani P/B 45,76 €), CROS 34 %.
+D. **PROVEDENO — sve 4 ADRS metode sada daju vrijednost.** SOTP end-to-end:
+   86,43 / 92,19 / 97,96 €/dionici (NAV 1.829,9M − diskont 15–25%). Breakdown:
+   CROS 1.002,5M (tržišno, po klasi), Maistra 696,1M (tržišno; MAIS dionice
+   verificirane), HUP 169,5M (rezidual 22,6M × 7,5), Cromaris 90,4M (11,3M × 8),
+   Energetika 42,0M (12M × 7 × **0,50** — udjel ispravljen po AR str 33),
+   neto novac −170,7M (−net_debt). Reconciliation ADRS: zona 45,46–99,33 €,
+   disperzija 54% (P/B leća ~46 vs SOTP ~92 = holding diskont priča iz decka).
+   Pretpostavke (multiple 7,5/8/7, diskont, r/g, peer multipli) su PLACEHOLDER.
+
+## SOTP — odluke i izvedene brojke (2026-07-02)
+- **HUP-Zagreb:** izravno 100% Adrisov (AR2025 str 4/33/113), NIJE pod Maistrom,
+  ali turistički segment (111M EBITDA) = "Maistra grupa + HUP" (str 184) →
+  tržišna Maistra + 111M×7,5 za HUP bi DVOSTRUKO brojala. Rješenje: holding
+  pokazuje na izvedeni ključ `tourism_hup` = 111,0M − 88,4M (MAIS AR2025 str 9,
+  kons. EBITDA) = **22,6M** (conf 0,70; jedina izvedena brojka, aritmetika
+  citirana u `db/seed_verified_2025.sql`). Ograda: segmentne brojke uključuju
+  unutargrupne odnose → rezidual nosi tu nepreciznost.
+- **Energetika:** sva energetska društva (ZELOVO/VRTAČA/ENCRO VOŠTANE/BABINDUB)
+  su **50%** (AR str 33) → ownership_pct ispravljen 1,00 → 0,50.
+- **MAIS:** 10.944.339 redovnih dionica, bez vlastitih (MAIS AR2025 str 149 i
+  224); Adris 10.236.872 = 93,54% ✓ poklapa se s grafom.
+- **Neto novac:** compute_sotp koristi −net_debt (= dug − novac, izvedeno iz
+  ekstrakcije; za ADRS −170,7M) umjesto bruto novca; flagovi
+  `net_cash_excludes_insurance_portfolio` i grupno-agregatna ograda u assumptions.
+- **Trž. kapitalizacija po klasi:** market_cap_of zbraja zadnji close × dionice
+  PO KLASI (CROS 3.460 × 420.947 + CROS2 3.360 × 8.750); latest_price preferira
+  primarnu liniju kod izjednačenog datuma. Redoslijed obnove u svježem
+  containeru: ingest extract → segments extract → **ponovno** seed_verified
+  (tourism_hup red ovisi o postojanju filinga).
 
 ## OTVORENO PITANJE za korisnika (potrebno za korak 2C)
 Navedi **peer tickere** za ADRS (holding) i za CROS (osiguratelj). Bez popisa se peer

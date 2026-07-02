@@ -106,6 +106,105 @@ EXTRACTION_SCHEMA = {
 }
 
 
+# ============================================================
+#  IFRS 8 SEGMENTI (bilješka o poslovnim segmentima -> segment_financials)
+# ============================================================
+
+SEGMENT_SYSTEM_PROMPT = """\
+Ti si ekstraktor SEGMENTNIH financijskih podataka (IFRS 8). Dobivaš isječak
+godišnjeg izvješća hrvatskog izdavatelja: bilješku o poslovnim segmentima i
+(opcionalno) stranice izvješća uprave. Vrati ISKLJUČIVO validan JSON po shemi.
+
+ŽELJEZNA PRAVILA:
+1. Izvlači SAMO brojke koje su doslovno u tekstu. Ako segment nema objavljenu
+   metriku, vrati value_raw=null i confidence 0. NIKAD ne izvodi (ni EBIT+D&A),
+   ne procjenjuj i ne popunjavaj.
+2. PRIORITET IZVORA: brojka iz bilješke o segmentima (IFRS 8) ima prednost.
+   Brojku iz izvješća uprave smiješ uzeti SAMO ako bilješka tu metriku za taj
+   segment uopće ne objavljuje — tada u note zapiši 'iz izvješća uprave' i
+   citiraj njegovu stranicu. Pazi na razliku 'iz redovnog poslovanja' vs
+   izvještajna — u note zapiši koju si varijantu uzeo.
+3. reporting_scale: pazi na oznake 'u milijunima eura' (1000000) / 'u tisućama
+   eura' (1000). Ako različiti dijelovi teksta koriste različite skale, sve
+   value_raw svedi na JEDNU skalu iz meta.reporting_scale i zabilježi to u note.
+4. segment_key mapiranje: turizam->tourism, osiguranje->insurance,
+   zdrava hrana/marikultura->aquaculture, energetika->energy. Za osiguranje je
+   'prihod od ugovora o osiguranju' revenue-ekvivalent (zabilježi u note);
+   EBITDA za osiguranje NE postoji — null.
+5. Za SVAKI redak: source_page (npr. 'str. 89') i confidence 0..1.
+6. U flags opiši sve sumnjivo (npr. koji segment obuhvaća koja društva,
+   eliminacije, unutargrupni odnosi).
+"""
+
+_SEGMENT_ITEM_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "segment_key": {"type": "string",
+                        "enum": ["tourism", "insurance", "aquaculture", "energy"]},
+        "metric": {"type": "string", "enum": ["revenue", "ebitda", "net_result"]},
+        "value_raw": {"anyOf": [{"type": "number"}, {"type": "null"}]},
+        "source_page": {"type": "string"},
+        "confidence": {"type": "number"},
+        "note": {"type": "string"},
+    },
+    "required": ["segment_key", "metric", "value_raw", "source_page", "confidence", "note"],
+    "additionalProperties": False,
+}
+
+SEGMENT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "meta": {
+            "type": "object",
+            "properties": {
+                "company_ticker": {"type": "string"},
+                "fiscal_year": {"type": "integer"},
+                "period_type": {"type": "string", "enum": ["annual", "Q1", "H1", "9M"]},
+                "basis": {"type": "string", "enum": ["consolidated", "standalone"]},
+                "currency": {"type": "string", "enum": ["EUR", "HRK"]},
+                "reporting_scale": {"type": "integer", "enum": [1, 1000, 1000000]},
+            },
+            "required": ["company_ticker", "fiscal_year", "period_type", "basis",
+                         "currency", "reporting_scale"],
+            "additionalProperties": False,
+        },
+        "items": {"type": "array", "items": _SEGMENT_ITEM_SCHEMA},
+        "flags": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["meta", "items", "flags"],
+    "additionalProperties": False,
+}
+
+
+def extract_segments(report_text: str, *, model: str | None = None,
+                     max_tokens: int = 8000) -> dict[str, Any]:
+    """IFRS 8 segmenti preko API-ja (isti mehanizam kao extract_filing)."""
+    import anthropic  # lazy import da testovi rade bez paketa
+
+    if not config.ANTHROPIC_API_KEY:
+        raise RuntimeError("ANTHROPIC_API_KEY nije postavljen.")
+
+    client = anthropic.Anthropic()
+    with client.messages.stream(
+        model=model or config.ANTHROPIC_MODEL,
+        max_tokens=max_tokens,
+        thinking={"type": "adaptive"},
+        system=SEGMENT_SYSTEM_PROMPT,
+        output_config={"format": {"type": "json_schema", "schema": SEGMENT_SCHEMA}},
+        messages=[{"role": "user", "content": report_text}],
+    ) as stream:
+        resp = stream.get_final_message()
+
+    if resp.stop_reason == "refusal":
+        raise RuntimeError(f"Model je odbio zahtjev (refusal): {resp.stop_details}")
+    if resp.stop_reason == "max_tokens":
+        raise RuntimeError("Izlaz odrezan na max_tokens — suzi ulaz ili povećaj limit.")
+    text = next((b.text for b in resp.content if getattr(b, "type", None) == "text"), None)
+    if text is None:
+        raise RuntimeError("Odgovor ne sadrži text blok s JSON-om.")
+    return json.loads(text)
+
+
 def _strip_code_fences(text: str) -> str:
     t = text.strip()
     if t.startswith("```"):
