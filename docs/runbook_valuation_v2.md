@@ -32,20 +32,35 @@ default list of common package managers"). Vrijedi tek u NOVOJ sesiji (rebuild c
 > Alternativa cijenama/ISIN-u: ZSE REST API ključ kao env var `ZSE_API_KEY`
 > (rest.zse.hr je dosegljiv, samo traži auth) — tada se preskače scraping ZSE stranica.
 
-## STANJE KORAKA 2 (sesija 2026-06-28) — vidi `docs/adrs_cros_sources.md`
-- **Dosegljiv izvor nađen:** `eho.zse.hr` JSON feed (NE zse.hr/adris.hr). Dohvat:
-  `scripts/fetch_eho_reports.sh ADRS CROS` (curl `--cacert /root/.ccr/ca-bundle.crt`).
-- **Preuzeto + izrezano:** konsolidirana godišnja izvješća ADRS/CROS 2025 (PDF),
-  točne stranice konsolidiranih izvještaja locirane (ADRS P&L str 24–25 / bilanca 26–27 /
-  segmenti 89–91; CROS IFRS set str 125–127 / segmenti 199–200). Sliceovi spremni.
-- **v2 shema PRIMIJENJENA** na bazu (SessionStart hook učita samo v1 → ručno
-  `psql -f db/zse_schema_v2.sql`). Seed ADRS/CROS/MAIS + share_classes + holdings OK.
-- **BLOKERI (oba zaustavljaju brojeve):**
-  1. `ANTHROPIC_API_KEY` na usage limitu → pristup **2026-07-01 00:00 UTC**.
-     `ingest extract` (API) ne radi do tada — sve ostalo (download/slice/shema) je gotovo.
-  2. `zse.hr`/`www.adris.hr` = 403, `adris.hr` TLS neverificiran, `rest.zse.hr` traži
-     `ZSE_API_KEY` (nije postavljen) → KORAK 2B (cijene/dividende/ISIN) bez izvora.
-  3. KORAK 2C peer tickeri — čeka korisnika.
+## STANJE KORAKA 2 (ažurirano 2026-07-02) — vidi `docs/adrs_cros_sources.md`
+- **Dosegljiv izvor:** `eho.zse.hr` JSON feed (NE zse.hr/adris.hr). Dohvat izvješća:
+  `scripts/fetch_eho_reports.sh ADRS CROS`. Dnevno osvježavanje: `scripts/daily_update.sh`.
+- **2A (financije):** izvješća 2025 preuzeta + sliceovi spremni (stranice locirane);
+  čeka SAMO API ekstrakciju (vidi blokere). v2 shema + seed primijenjeni.
+- **2B GOTOVO — dividende i ISIN-ovi (bez zse.hr!):**
+  - `src/eho.py` + `src/dividends.py`: strukturirani blokovi "Informacije o dividendi"
+    s EHO objava skupština → tablica `dividends` (po klasi) + godišnji `dps` u
+    financials. Stvarno u bazi: ADRS FY23/24/25 = 2,57/3,00/3,12 €;
+    CROS FY23/24/25 = 267,64 (dvije isplate!)/106,52/114,14 €.
+  - ISIN-ovi (iz GS PDF-ova i AR-a, vidi `db/seed_verified_2025.sql`):
+    ADRS=HRADRSRA0007, ADRS2=HRADRSPA0009, CROS=HRCROSRA0002, CROS2=HRCROSPA0004,
+    MAIS=HRMAISRA0007. Broj dionica po klasi također verificiran i upisan
+    (ADRS 9.615.900/tr.130.779; ADRS2 6.784.100/tr.390.916; CROS 420.947; CROS2 8.750
+    — povlaštene CROS2 su računovodstveno OBVEZA, vidi AR2025 bilj. 22.1/24).
+  - `prices_eod` PK popravljen na (company, date, klasa) — ADRS i ADRS2 isti dan.
+  - DDM sada radi sa stvarnim dps (r/g još placeholder).
+- **2B cijene — BLOKIRANO:** ZSE-ov vlastiti EOD nedosegljiv: `zse.hr`/`www.zse.hr` 403
+  (i kroz WebFetch), `mojedionice.com` 403 (nije u allowlistu), `rest.zse.hr` 401 bez
+  `ZSE_API_KEY`, EHO nema cijene. `src/prices.py` ima CSV uvoz + zse-rest skeleton.
+- **2C peer skupovi ODLUČENI** (korisnik delegirao modelu) — `docs/peers.md`:
+  ADRS={ATGR, PODR, RIVP, PLAG, ARNT}, CROS=regionalni osiguratelji (nedohvatljivi
+  zasad → placeholder ostaje). Mehanika: `src/peer_multiples.py` (medijani iz baze).
+- **BLOKERI:**
+  1. `ANTHROPIC_API_KEY` **nije u okruženju** (nakon resuma 2026-07-02 env var više ne
+     postoji; usage limit se resetirao 01.07., ali bez ključa `ingest extract` ne radi).
+  2. Cijene: vidi gore — treba ili `zse.hr` u allowlistu (novi session/rebuild) ili
+     `ZSE_API_KEY` ili `mojedionice.com` u allowlistu.
+  3. Peer multipli se IZVODE iz cijena+financija peera → čekaju 1 i 2.
 
 ## KORAK 2 — što napraviti u novoj sesiji (redom: "oboje redom")
 A. **Financije ADRS i CROS** (kao točka 4, dvije firme): naći konsolidirana godišnja

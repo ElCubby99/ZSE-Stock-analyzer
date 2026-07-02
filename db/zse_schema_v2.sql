@@ -25,6 +25,12 @@ CREATE TABLE IF NOT EXISTS share_classes (
 ALTER TABLE prices_eod  ADD COLUMN IF NOT EXISTS share_class_id INTEGER REFERENCES share_classes(id);
 ALTER TABLE ratios      ADD COLUMN IF NOT EXISTS share_class_id INTEGER REFERENCES share_classes(id);
 
+-- v1 PK (company_id, trade_date) ne dopušta ADRS i ADRS2 isti dan -> po klasi.
+-- (COALESCE jer je share_class_id NULL za firme bez klasa, npr. KOEI.)
+ALTER TABLE prices_eod DROP CONSTRAINT IF EXISTS prices_eod_pkey;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_prices_eod
+    ON prices_eod (company_id, trade_date, COALESCE(share_class_id, 0));
+
 -- KANONSKI broj dionica (rješava nesklad 92,1€ vs 89€ BVPS).
 -- Pravilo: per-share valuacija koristi dionice BEZ trezorskih. Jedan izvor istine.
 CREATE OR REPLACE VIEW v_shares_canonical AS
@@ -74,6 +80,28 @@ CREATE INDEX IF NOT EXISTS idx_seg_lookup ON segment_financials (company_id, fis
 
 -- ZAMKA/validacija: Σ segment EBITDA ≠ Grupa EBITDA (eliminacije, trošak centra, NCI).
 -- Ako |plug| > 15% grupne EBITDA => needs_review (vjerojatno krivi segment).
+
+-- ---------- 11. DIVIDENDS (događaji po KLASI, iz EHO objava) ----------
+-- Izvor: eho.zse.hr strukturirani blokovi "Informacije o dividendi" na objavama
+-- odluka skupština (vidi src/dividends.py). Godišnji dps za valuaciju se IZVODI
+-- iz ovih događaja i upisuje u filings(doc_type='dividend')+financials(item='dps').
+CREATE TABLE IF NOT EXISTS dividends (
+    id              SERIAL PRIMARY KEY,
+    company_id      INTEGER NOT NULL REFERENCES companies(id),
+    share_class_id  INTEGER REFERENCES share_classes(id),
+    class_ticker    TEXT NOT NULL,               -- 'ADRS'|'ADRS2'|'CROS'|'CROS2'...
+    fiscal_year     INTEGER,                     -- godina dobiti (konvencija: ex_date.year-1)
+    amount_eur      NUMERIC NOT NULL,            -- po dionici
+    div_type        TEXT,                        -- 'Izglasana dividenda'|'Predujam dividende'|...
+    ex_date         DATE,
+    record_date     DATE,
+    payment_date    DATE,
+    source_url      TEXT NOT NULL,
+    published_at    DATE,
+    created_at      TIMESTAMPTZ DEFAULT now(),
+    UNIQUE (class_ticker, ex_date, amount_eur)   -- idempotentan re-scrape
+);
+CREATE INDEX IF NOT EXISTS idx_div_lookup ON dividends (company_id, fiscal_year);
 
 -- ---------- SOTP komponente (helper view) ----------
 CREATE OR REPLACE VIEW v_sotp_inputs AS

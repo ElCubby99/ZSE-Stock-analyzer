@@ -81,12 +81,29 @@ Služe da na usporednoj tablici odmah vidimo je li ekstrakcija promašila skalu/
 > (`python -m src.ingest extract`) s page-referencama i confidenceom. CROS atribucija
 > matici/NCI iz regulatornih formi je nesigurna pri ručnom čitanju — ostaviti ekstraktoru.
 
-## BLOKERI (stanje 2026-06-28) — vidi runbook
-1. **ANTHROPIC_API_KEY je na usage limitu — pristup se vraća 2026-07-01 00:00 UTC.**
-   Dok traje, `src.extract`/`ingest extract` (API ekstrakcija) ne rade. PDF-ovi su
-   preuzeti i izrezani; ekstrakcija se pokreće čim limit padne.
-2. `zse.hr`/`www.adris.hr` → 403; `adris.hr` → TLS lanac neverificiran;
-   `rest.zse.hr` → traži `ZSE_API_KEY` (nije postavljen). ⇒ **cijene, dividende (dps),
-   ISIN-ovi (KORAK 2B)** nemaju dosegljiv izvor osim ako se postavi `ZSE_API_KEY`.
-   (Napomena: dps i ISIN možda se mogu pročitati iz samih izvješća kao alternativa.)
-3. **Peer tickeri (KORAK 2C)** za ADRS i CROS — čeka se korisnikov popis.
+## Dividende i ISIN-ovi preko EHO-a (riješeno 2026-07-02, bez zse.hr)
+
+**Dividende:** objave odluka glavnih skupština na eho.zse.hr nose strukturirani blok
+"Informacije o dividendi" po VRIJEDNOSNICI (klasi): tip (izglasana/prijedlog/predujam),
+iznos EUR, ex-datum, datum prava, datum isplate. Parser: `src/eho.py::parse_dividend_blocks`;
+pipeline: `python -m src.dividends ADRS CROS --from 2024-01-01` → tablica `dividends`
++ godišnji `dps` u `financials` (konvencija fiscal_year=ex_date.year−1, zabilježena u
+source_page; za CROS 2025 potvrđena i tekstom objave view/65796).
+
+**ISIN-ovi:** iz PDF-ova odluka skupština (GS-ADRS-b699398c…, GS-CROS-a17063a9…) i
+godišnjih izvješća — upisani kroz `db/seed_verified_2025.sql` zajedno s brojem dionica
+po klasi (izvorne stranice citirane u tom fileu). CROS2 povlaštene su računovodstveno
+financijska OBVEZA (zajamčena 8% dividenda; AR2025 bilj. 22.1/24), ne kapital.
+
+## BLOKERI (stanje 2026-07-02) — vidi runbook
+1. **ANTHROPIC_API_KEY više nije u okruženju** (nakon resuma sesije 2026-07-02;
+   usage limit istekao 01.07., ali env var je nestala). `ingest extract` ne radi
+   dok se ključ ne vrati u environment konfiguraciju.
+2. **EOD cijene:** `zse.hr`/`www.zse.hr` → 403 i kroz curl i kroz WebFetch
+   (napomena: 27.06. je `www.zse.hr` kratko vraćao 301, od resuma 403 — allowlist se
+   očito nije primijenio na ovu sesiju); `mojedionice.com` → 403 (nije u allowlistu);
+   `rest.zse.hr` → 401 bez `ZSE_API_KEY`; EHO nema cijene. Rješenja: zse.hr (i
+   www.zse.hr) u Custom allowlist pa NOVA sesija, ili `ZSE_API_KEY`, ili
+   mojedionice.com u allowlist. Do tada: `python -m src.prices import-csv`.
+3. **Peer multipli** (skupovi odlučeni u `docs/peers.md`) čekaju cijene (2) i
+   financije peera (1) — izvode se iz baze, `src/peer_multiples.py`.
