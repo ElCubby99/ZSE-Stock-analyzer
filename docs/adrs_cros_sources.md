@@ -95,15 +95,41 @@ godišnjih izvješća — upisani kroz `db/seed_verified_2025.sql` zajedno s bro
 po klasi (izvorne stranice citirane u tom fileu). CROS2 povlaštene su računovodstveno
 financijska OBVEZA (zajamčena 8% dividenda; AR2025 bilj. 22.1/24), ne kapital.
 
-## BLOKERI (stanje 2026-07-02) — vidi runbook
-1. **ANTHROPIC_API_KEY više nije u okruženju** (nakon resuma sesije 2026-07-02;
-   usage limit istekao 01.07., ali env var je nestala). `ingest extract` ne radi
-   dok se ključ ne vrati u environment konfiguraciju.
-2. **EOD cijene:** `zse.hr`/`www.zse.hr` → 403 i kroz curl i kroz WebFetch
-   (napomena: 27.06. je `www.zse.hr` kratko vraćao 301, od resuma 403 — allowlist se
-   očito nije primijenio na ovu sesiju); `mojedionice.com` → 403 (nije u allowlistu);
-   `rest.zse.hr` → 401 bez `ZSE_API_KEY`; EHO nema cijene. Rješenja: zse.hr (i
-   www.zse.hr) u Custom allowlist pa NOVA sesija, ili `ZSE_API_KEY`, ili
-   mojedionice.com u allowlist. Do tada: `python -m src.prices import-csv`.
-3. **Peer multipli** (skupovi odlučeni u `docs/peers.md`) čekaju cijene (2) i
-   financije peera (1) — izvode se iz baze, `src/peer_multiples.py`.
+## EOD cijene sa zse.hr — RIJEŠENO 2026-07-02 (allowlist primijenjen)
+
+`zse.hr` sada vraća 200. Dva JSON endpointa (otkriveno iz stranice
+`/hr/cijene-vrijednosnih-papira/36`):
+
+1. **Intraday/tekući prikaz** (puni stranicu): `https://zse.hr/json/TradingPriceList`
+   s parametrima `lng, market_segment_ids, type, model, date, only_traded` i headerom
+   `X-Requested-With: XMLHttpRequest` (bez njega vraća prazno). Odgovor nosi i polje
+   **`RestApi`** = javna REST baza za downloade.
+2. **Službena EOD tečajnica** (gumb "Preuzmi JSON"):
+   `<RestApi>price-list/XZAG/<YYYY-MM-DD>/json` (RestApi je oblika
+   `https://rest.zse.hr/web/<javni-token>/` — token je ugrađen u zse.hr za sve
+   posjetitelje, NIJE korisnički `ZSE_API_KEY`). Polja: `symbol, isin, close_price,
+   volume, model, segment, date...` — čisti decimalni stringovi.
+
+**Pravila u `src/prices.py::fetch_zse_json`:** uzimaju se samo reci knjige naloga
+(model `CT`/`CTLL`; `BLOCK`/`OTC` se preskaču — isti simbol zna imati više redaka),
+valuta mora biti EUR, a ISIN iz tečajnice se provjerava protiv `share_classes.isin`
+(nesklad → redak se ne upisuje). CLI:
+`python -m src.prices zse-json ADRS ADRS2 CROS CROS2 MAIS KOEI --date 2026-07-02`.
+`mojedionice.com` ostaje fallback (301→dosegljiv) ako ZSE opet postane nedostupan.
+
+## STANJE 2026-07-02 (poslije ekstrakcije)
+1. **ANTHROPIC_API_KEY vraćen** u environment konfiguraciju. Napomena za nove
+   sesije: ključ zna biti u env-u glavnog `claude` procesa, ali NE i u tool shellu —
+   tada ga prepiši u gitignorani `.env` (config.py ga učitava kroz dotenv).
+2. **2A GOTOVO za FY2025:** `ingest extract` proveden nad sliceovima
+   (`--pages` opcija u `src.pdf_extract`): ADRS filing FY2025 (NEEDS_REVIEW samo
+   zbog conf 0.60 na `other_operating_income`), CROS filing FY2025 (NEEDS_REVIEW
+   zbog niskog conf na stavkama koje se kod osiguratelja ne mapiraju čisto:
+   operating_expenses/net_financial_result/debt_long/capex). Sva cross-check sidra
+   iz tablice gore POGOĐENA (ADRS: aktiva 3.397.248k, kapital 1.769.392k, dobit
+   matice 80.106k; CROS: aktiva 1.961.180k, kapital 870.770k, dobit matice 65.389k).
+3. **Cijene u `prices_eod`** po klasi (01.–02.07.2026): ADRS 150,00; ADRS2 103,00;
+   CROS 3.460,00; CROS2 3.360,00; MAIS 68,00; KOEI 1.010,00 EUR.
+4. **Otvoreno:** peer financije za 2C (peer_multiples iz baze); `segment_financials`
+   (IFRS 8, ADRS str 89–91) za SOTP; broj dionica MAIS-a (za trž.kap. u SOTP-u);
+   starije godine (2021–2024) po potrebi za trendove.

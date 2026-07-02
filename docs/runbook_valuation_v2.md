@@ -1,7 +1,7 @@
 # Runbook — Valuacijski motor v2 (nastavak)
 
 Stanje i točni koraci za nastavak u **novoj sesiji** (nova sesija ne pamti chat).
-Grana: `claude/valuation-v2`.
+Grana: `claude/valuation-v2-setup-ymjeg7`.
 
 ## Što je VEĆ gotovo (na ovoj grani)
 - `db/zse_schema_v2.sql` — share_classes (+isin), holdings (vlasnički graf),
@@ -11,32 +11,37 @@ Grana: `claude/valuation-v2`.
   implementirani svi `compute_*` (multiples, EV/EBITDA, DCF, DDM, opravdani P/B, SOTP)
   s parametriziranim **PLACEHOLDER** pretpostavkama (`Params`) i graceful degradacijom
   (`assumptions["missing"]`). `build_ctx` iz baze + CLI.
-- Provjera (radi odmah): `python -m src.valuation_methods ADRS CROS KOEI`
-  → KOEI daje 4 metode + reconciliation; ADRS/CROS pokazuju gating (skip+razlog).
+- Provjera: `python -m src.valuation_methods ADRS CROS` → obje firme daju metode
+  s pravim ulazima (nakon obnove baze — vidi KORAK 1). PAŽNJA: KOEI-jeve financije
+  živjele su samo u bazi starog containera (PDF/DB se ne commitaju) — u svježem
+  containeru KOEI nema filinga dok se ne ponovi njegov ingest.
 
-## ŠTO BLOKIRA prave brojeve (zato treba nova sesija s domenama)
-Cijene, ISIN-ovi, dividende nemaju dosegljiv izvor u trenutnoj politici:
-- `www.zse.hr` / `zse.hr` / `adris.hr` → **403** (blokirano)
-- `rest.zse.hr` → 200 ali **401** (ZSE REST API traži ključ)
-- `eho.zse.hr` → 200 (PDF objave, ali URL iza JS tražilice)
+## KORAK 1 — RIJEŠENO 2026-07-02: allowlist primijenjen, ključ vraćen
+- `zse.hr` → 200 (cijene rade, vidi dolje); `www.zse.hr` → 301 na zse.hr;
+  `eho.zse.hr` → 200; `mojedionice.com` → 301 (dosegljiv fallback);
+  `adris.hr` → TLS greška NJIHOVOG lanca (nepotreban — izvješća idu preko EHO-a).
+- `ANTHROPIC_API_KEY` vraćen u environment konfiguraciju. **Zamka za svježu
+  sesiju:** zna postojati u env-u glavnog `claude` procesa, ali ne i u tool
+  shellu — tada ga prepiši u gitignorani `.env` (dotenv ga učitava).
+- **Svježi container NEMA v2 stanje baze!** SessionStart hook primjenjuje samo
+  v1 shemu. Obnova (idempotentno, redom):
+  1. `psql ... -f db/zse_schema_v2.sql` pa `-f db/seed_verified_2025.sql`
+  2. `scripts/fetch_eho_reports.sh ADRS CROS` (PDF-ovi su gitignorani)
+  3. `python -m src.dividends ADRS CROS --from 2024-01-01`
+  4. sliceovi + `ingest extract` (vidi 2A) i `python -m src.prices zse-json ...`
 
-## KORAK 1 — dodaj domene u allowlist (Edit environment → Network access: Custom)
-```
-www.zse.hr
-zse.hr
-adris.hr
-```
-(zadrži postojeće: *.anthropic.com, koncar.hr, *.koncar.hr, *.zse.hr; "Also include
-default list of common package managers"). Vrijedi tek u NOVOJ sesiji (rebuild cachea).
-
-> Alternativa cijenama/ISIN-u: ZSE REST API ključ kao env var `ZSE_API_KEY`
-> (rest.zse.hr je dosegljiv, samo traži auth) — tada se preskače scraping ZSE stranica.
-
-## STANJE KORAKA 2 (ažurirano 2026-07-02) — vidi `docs/adrs_cros_sources.md`
-- **Dosegljiv izvor:** `eho.zse.hr` JSON feed (NE zse.hr/adris.hr). Dohvat izvješća:
-  `scripts/fetch_eho_reports.sh ADRS CROS`. Dnevno osvježavanje: `scripts/daily_update.sh`.
-- **2A (financije):** izvješća 2025 preuzeta + sliceovi spremni (stranice locirane);
-  čeka SAMO API ekstrakciju (vidi blokere). v2 shema + seed primijenjeni.
+## STANJE KORAKA 2 (ažurirano 2026-07-02 navečer) — vidi `docs/adrs_cros_sources.md`
+- **Izvori:** izvješća+dividende `eho.zse.hr` feed; cijene `zse.hr` službena
+  tečajnica (JSON). Dnevno osvježavanje: `scripts/daily_update.sh`.
+- **2A GOTOVO za FY2025 (obje firme):** sliceovi
+  (`python -m src.pdf_extract <pdf> <txt> --pages 23-33,134-136` za ADRS;
+  `--pages 125-133` za CROS) → `python -m src.ingest extract` → filinzi u bazi,
+  sva cross-check sidra pogođena (dobit matice ADRS 80.106k / CROS 65.389k itd.).
+  Status NEEDS_REVIEW samo zbog niskog confidencea na sporednim stavkama.
+  Otvoreno iz 2A: `segment_financials` (IFRS 8, ADRS PDF str 89–91) za SOTP.
+- **2B cijene GOTOVO:** `python -m src.prices zse-json ADRS ADRS2 CROS CROS2 MAIS KOEI`
+  → `prices_eod` po KLASI (službeni close, CT/CTLL; ISIN provjera). Detalji
+  endpointa u `docs/adrs_cros_sources.md`.
 - **2B GOTOVO — dividende i ISIN-ovi (bez zse.hr!):**
   - `src/eho.py` + `src/dividends.py`: strukturirani blokovi "Informacije o dividendi"
     s EHO objava skupština → tablica `dividends` (po klasi) + godišnji `dps` u
@@ -49,31 +54,27 @@ default list of common package managers"). Vrijedi tek u NOVOJ sesiji (rebuild c
     — povlaštene CROS2 su računovodstveno OBVEZA, vidi AR2025 bilj. 22.1/24).
   - `prices_eod` PK popravljen na (company, date, klasa) — ADRS i ADRS2 isti dan.
   - DDM sada radi sa stvarnim dps (r/g još placeholder).
-- **2B cijene — BLOKIRANO:** ZSE-ov vlastiti EOD nedosegljiv: `zse.hr`/`www.zse.hr` 403
-  (i kroz WebFetch), `mojedionice.com` 403 (nije u allowlistu), `rest.zse.hr` 401 bez
-  `ZSE_API_KEY`, EHO nema cijene. `src/prices.py` ima CSV uvoz + zse-rest skeleton.
 - **2C peer skupovi ODLUČENI** (korisnik delegirao modelu) — `docs/peers.md`:
   ADRS={ATGR, PODR, RIVP, PLAG, ARNT}, CROS=regionalni osiguratelji (nedohvatljivi
   zasad → placeholder ostaje). Mehanika: `src/peer_multiples.py` (medijani iz baze).
-- **BLOKERI:**
-  1. `ANTHROPIC_API_KEY` **nije u okruženju** (nakon resuma 2026-07-02 env var više ne
-     postoji; usage limit se resetirao 01.07., ali bez ključa `ingest extract` ne radi).
-  2. Cijene: vidi gore — treba ili `zse.hr` u allowlistu (novi session/rebuild) ili
-     `ZSE_API_KEY` ili `mojedionice.com` u allowlistu.
-  3. Peer multipli se IZVODE iz cijena+financija peera → čekaju 1 i 2.
 
-## KORAK 2 — što napraviti u novoj sesiji (redom: "oboje redom")
-A. **Financije ADRS i CROS** (kao točka 4, dvije firme): naći konsolidirana godišnja
-   izvješća (Adris grupa, Croatia osiguranje) — preko adris.hr/zse.hr ili eho.zse.hr —
-   `pdf_extract` → `ingest extract` (API → load → validate). + **ADRS segmenti** iz
-   bilješki (IFRS 8) u `segment_financials`.
-B. **Cijene** → `prices_eod` (po share_class gdje treba: ADRS vs ADRS2) i **dividende**
-   (dps) — sa ZSE stranica ili REST API-ja. ISIN-ovi → `companies.isin` / `share_classes.isin`.
-C. **Peer multiplikatori "izvedi iz tickera"** — KORISNIK MORA NAVESTI peer skup
-   (tickere usporedivih firmi za ADRS i za CROS). Iz njihovih cijena+financija izvesti
-   P/E, P/B, EV/EBITDA i unijeti u `Params` (zamijeniti placeholdere).
-D. Pokrenuti `python -m src.valuation_methods ADRS CROS` i ispisati pokrenute/
-   preskočene+zašto/reconciliation — sad s pravim brojevima.
+## KORAK 2 — stanje (A/B/D provedeni 2026-07-02)
+A. **GOTOVO (FY2025):** ekstrakcija konsolidiranih izvješća ADRS+CROS u bazu
+   (filinzi validirani uz NEEDS_REVIEW na sporednim stavkama). OSTALO: **ADRS
+   segmenti** (IFRS 8, PDF str 89–91) u `segment_financials` — treba proširenje
+   ekstraktora (canonical shema nema segmente); bez toga SOTP nema segment EBITDA.
+B. **GOTOVO:** cijene po klasi u `prices_eod` (zse-json) + dividende/ISIN-ovi (EHO).
+C. **OTVORENO — peer multiplikatori:** skupovi odlučeni (`docs/peers.md`), ali
+   peeri (ATGR, PODR, RIVP, PLAG, ARNT) nemaju financije u bazi → treba ih
+   dodati u `companies` + ekstrahirati njihova izvješća (ista EHO+ingest ruta),
+   cijene već idu kroz zse-json. Tek tada `src/peer_multiples.py` daje medijane
+   za `Params` (zamjena placeholdera).
+D. **PROVEDENO** s pravim financijama/dividendama/cijenama, ali pretpostavke
+   (r, g, peer multipli) su i dalje PLACEHOLDER → brojke su mehanika, ne
+   valuacija. ADRS: 4 metode (SOTP bez vrijednosti — fali trž.kap MAIS-a jer
+   nema broja dionica, i segment EBITDA); CROS: 3 metode; preskoci po dizajnu
+   (EV/EBITDA i DCF gateovi). Reconciliation: ADRS divergencija 54 %
+   (multiples 99,33 € vs DDM 45,46 € vs opravdani P/B 45,76 €), CROS 34 %.
 
 ## OTVORENO PITANJE za korisnika (potrebno za korak 2C)
 Navedi **peer tickere** za ADRS (holding) i za CROS (osiguratelj). Bez popisa se peer

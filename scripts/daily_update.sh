@@ -8,8 +8,8 @@
 #   1. NOVA FINANCIJSKA IZVJEŠĆA — eho.zse.hr feed; nove objave se samo ISPIŠU
 #      (ekstrakcija u bazu je svjesna odluka: python -m src.ingest extract).
 #   2. DIVIDENDE — eho.zse.hr objave skupština -> dividends + dps (idempotentno).
-#   3. EOD CIJENE — blokirano: zse.hr 403 / rest.zse.hr traži ZSE_API_KEY /
-#      mojedionice.com 403 (stanje 2026-07-02; vidi docs/adrs_cros_sources.md).
+#   3. EOD CIJENE — službena ZSE tečajnica (JSON, javni web REST): src.prices zse-json.
+#      CLASSES env var = tickere KLASA (default: ADRS ADRS2 CROS CROS2 MAIS KOEI).
 #   4. VALUACIJA — ispis pokrenutih/preskočenih metoda + reconciliation.
 set -uo pipefail
 
@@ -42,11 +42,9 @@ echo "== 2/4 Dividende (EHO, od $FROM) =="
 (cd "$ROOT" && "$PY" -m src.dividends $TICKERS --from "$FROM") || echo "  dividende: greška (vidi iznad)"
 
 echo "== 3/4 EOD cijene =="
-if [ -n "${ZSE_API_KEY:-}" ]; then
-  (cd "$ROOT" && "$PY" -m src.prices zse-rest $TICKERS) || true
-else
-  echo "  PRESKOČENO: nema dosegljivog izvora (zse.hr 403; ZSE_API_KEY nije postavljen)."
-fi
+CLASSES="${CLASSES:-ADRS ADRS2 CROS CROS2 MAIS KOEI}"
+(cd "$ROOT" && "$PY" -m src.prices zse-json $CLASSES) \
+  || echo "  zse-json nije uspio (mreža/allowlist?) — fallback: src.prices import-csv"
 
 echo "== 4/4 Valuacija =="
 (cd "$ROOT" && "$PY" -m src.valuation_methods $TICKERS)
