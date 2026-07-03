@@ -120,3 +120,19 @@ multiplikatori ne mogu izvesti ni s otključanim cijenama.
 - Eligibility logiku NE mijenjati.
 - Stara branch-higijena (preimenovanje defaulta u `main`, brisanje suvišnih grana)
   ostaje otvorena — vidi raniji dogovor.
+
+## M4 — frontend (grana `claude/frontend-m4`, 2026-07-03)
+- **Backend:** `src/stock_json.py` (JSON za stranicu: fundamenti s izvorima,
+  cijene po klasi, metode low/base/high/confidence + assumptions/sources,
+  preskočene metode s razlogom, reconciliation, SOTP breakdown s placeholder
+  zastavama) + `src/webapi.py` (stdlib server: `/api/dionica/<TICKER>` +
+  servira `frontend/dist`, SPA fallback). Frontend samo ČITA — eligibility i
+  valuation logika netaknuti.
+- **Frontend:** `frontend/` Vite+React, ruta `/dionica/:ticker` (ADRS, CROS).
+  Raspored po mockupu; pretpostavke su READ-ONLY vrijednosti s izvorom (bez
+  slidera na javnom prikazu); oznake `pretpostavka` na β, holding diskontu,
+  SOTP multiplama, CROS peerima; CROS bez SOTP reda (metoda gate-ana);
+  podatak kojeg nema u bazi -> prazno + oznaka. MAR: bez preporuka.
+- **Pokretanje:** `python -m src.webapi` (port 8001) pa ili
+  `cd frontend && npm install && npm run dev` (proxy /api) ili
+  `npm run build` pa sve na 8001.
