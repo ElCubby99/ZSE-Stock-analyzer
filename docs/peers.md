@@ -44,10 +44,21 @@ dostupan — nisu na ZSE/EHO pa ih trenutna mrežna politika ne pokriva):
   trebaju: opravdani P/B iz vlastitog ROE-a i DDM iz stvarnog dps-a.
 - EV/EBITDA za CROS ionako je zabranjen gate-om (financijski sektor).
 
-## Status podataka (2026-07-02)
-Peer multipli se IZVODE, ne prepisuju: za {ATGR, PODR, RIVP, PLAG, ARNT} treba
-(a) EOD cijena — blokirano (zse.hr 403, rest.zse.hr traži ZSE_API_KEY) i
-(b) zadnje godišnje financije — izvješća su dostupna na EHO-u (isti tok kao ADRS/CROS),
-    ali API ekstrakcija čeka ANTHROPIC_API_KEY.
-`python -m src.peer_multiples ATGR PODR RIVP PLAG ARNT` ispisuje pokrivenost i
-medijane čim podaci sjednu; do tada svaki peer izlazi kao SKIP s razlogom.
+## Status podataka (2026-07-03) — IZVEDENO
+FY2025 konsolidirane financije svih 5 peera ingestane (filinzi 9–13; 4×VALIDATED,
+ATGR needs_review na jednoj sporednoj stavci), cijene 02.07.2026 u prices_eod:
+
+| Ticker | P/E | P/B | EV/EBITDA | Napomena |
+|--------|-----|-----|-----------|----------|
+| ATGR | 20,93 | 1,43 | 7,74 | 13.337.203 dionice (AR2025 bilj. 22, str 189) |
+| PODR | 8,20 | 1,53 | 6,24 | 7.120.003 dionice (AR str 347) |
+| RIVP | 23,64 | 3,26 | — | 126.027.542 (AR str 216); P/B na equity_parent |
+| PLAG | 13,09 | 2,09 | 9,16 | 2.197.772 redovnih − 2.346 trez.; povlaštene (420.000) isključene — nema cijene, fiksna div 0,03 € (AR str 148/203/216) |
+| ARNT | 13,69 | 0,96 | 9,59 | 5.128.721 (AR str 93) |
+
+**MEDIJAN: P/E=13,69 (n=5), P/B=1,53 (n=5), EV/EBITDA=8,45 (n=4)** → u
+`Params` za ADRS kroz `src/params_calibrated.py` (peers_calibrated=True).
+Nijedan peer nije isključen: svi profitabilni; ATGR/PODR diverzificirane
+konzumerske grupe (konglomeratski profil), RIVP/PLAG/ARNT turizam (najveći
+ADRS-ov krak). CROS peer multipli i dalje placeholder (vidi gore — nema
+usporedivog osiguratelja na ZSE; regionalni nedostupni mrežnom politikom).

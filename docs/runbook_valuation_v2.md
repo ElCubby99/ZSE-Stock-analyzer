@@ -68,11 +68,19 @@ A. **GOTOVO (FY2025):** ekstrakcija konsolidiranih izvješća ADRS+CROS u bazu
    Σ segment EBITDA 134,3M vs grupna 217,9M → plug 38,4% > 15% → needs_review
    (očekivano: osiguranje bez EBITDA + eliminacije).
 B. **GOTOVO:** cijene po klasi u `prices_eod` (zse-json) + dividende/ISIN-ovi (EHO).
-C. **OTVORENO — peer multiplikatori:** skupovi odlučeni (`docs/peers.md`), ali
-   peeri (ATGR, PODR, RIVP, PLAG, ARNT) nemaju financije u bazi → treba ih
-   dodati u `companies` + ekstrahirati njihova izvješća (ista EHO+ingest ruta),
-   cijene već idu kroz zse-json. Tek tada `src/peer_multiples.py` daje medijane
-   za `Params` (zamjena placeholdera).
+C. **GOTOVO za ADRS (M3, 2026-07-03):** svih 5 peera ingestano (FY2025) +
+   cijene → medijani IZ BAZE: P/E 13,69, P/B 1,53, EV/EBITDA 8,45 (n=5/5/4;
+   tablica po peeru u `docs/peers.md`). `src/params_calibrated.py` gradi
+   Params po firmi: r=9,31% (CAPM: rf 3,61% TradingEconomics HR 10g +
+   beta 1,0 [PRETPOSTAVKA] × ERP 5,7% [Damodaran A3, točan HR redak
+   neprovjeren — egress 403]), g=2,0% (ECB cilj, konzervativno), peer
+   multipli za ADRS iz baze, CROS peeri OSTAJU placeholder (nema usporedivog
+   osiguratelja na ZSE). Confidence po metodi sada ovisi o kalibraciji
+   NJEZINIH ulaza (rates_calibrated / peers_calibrated); izvori se ispisuju
+   uz svaku metodu (assumptions["sources"]). SOTP: conf 0,6 (85% NAV-a
+   tržišno) + market_check (trž.kap vs NAV; 02.07.: cijena +13,7% IZNAD
+   konzervativnog NAV-a — povijesni diskont neizvediv iz 2 dana cijena).
+   CLI: `python -m src.valuation_methods ADRS CROS --sensitivity` (r ±1%).
 D. **PROVEDENO — sve 4 ADRS metode sada daju vrijednost.** SOTP end-to-end:
    86,43 / 92,19 / 97,96 €/dionici (NAV 1.829,9M − diskont 15–25%). Breakdown:
    CROS 1.002,5M (tržišno, po klasi), Maistra 696,1M (tržišno; MAIS dionice

@@ -135,3 +135,21 @@ FROM filings f
 WHERE f.company_id = (SELECT id FROM companies WHERE ticker='ADRS')
   AND f.fiscal_year = 2025 AND f.period_type = 'annual'
   AND f.basis = 'consolidated' AND f.doc_type = 'financial_report';
+
+-- PLAG dionice (sesija 2026-07-03) — PLAG AR2025: str 148 ("2.197.772 redovne
+-- dionice ... 420.000 povlaštenih nominalne 33,00 EUR"; "drži 2.346 vlastitih"),
+-- str 203 (EPS bilješka: ponderirani broj redovnih bez vlastitih 2.195.426),
+-- str 216 (povlaštene 100% Adriatic Investment Group).
+-- U share_classes ide SAMO redovna klasa: povlaštene (PLAG2, HRPLAGPA0005)
+-- nemaju NIJEDNU tržišnu cijenu (CTLL bez closea) i nose fiksnu dividendu
+-- 0,03 EUR/dionici — uključivanje po cijeni redovne napuhalo bi trž.kap ~19%.
+INSERT INTO share_classes (company_id, ticker, isin, class_type, shares_issued,
+                           treasury_shares, has_voting, dividend_note, is_primary_line)
+VALUES ((SELECT id FROM companies WHERE ticker='PLAG'), 'PLAG', 'HRPLAGRA0003',
+        'ordinary', 2197772, 2346, TRUE,
+        'redovne; povlaštene (420.000, PLAG2) namjerno ISKLJUČENE iz trž.kap — nema cijene, fiksna div 0,03 EUR (AR2025 str 148/203/216)', TRUE)
+ON CONFLICT (ticker) DO UPDATE SET
+    isin = EXCLUDED.isin,
+    shares_issued = EXCLUDED.shares_issued,
+    treasury_shares = EXCLUDED.treasury_shares,
+    dividend_note = EXCLUDED.dividend_note;

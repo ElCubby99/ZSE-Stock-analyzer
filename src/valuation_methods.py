@@ -54,6 +54,11 @@ class Params:
     holding_discount_low: float = 0.15
     holding_discount_high: float = 0.25
     placeholder: bool = True          # zastava: pretpostavke nisu potvrđene
+    # granularna kalibracija (M3): confidence po metodi ovisi o TOME jesu li
+    # baš NJEZINI ulazi kalibrirani, ne o globalnoj zastavi
+    rates_calibrated: bool = False    # r i g imaju izvor (CAPM komponente)
+    peers_calibrated: bool = False    # peer multipli izvedeni iz baze (n>=3)
+    sources: dict = field(default_factory=dict)  # komponenta -> izvor/obrazloženje
 
 
 # ---------- Kontekst koji motor sastavi po firmi PRIJE eligibility provjere ----------
@@ -69,6 +74,7 @@ class Ctx:
     # --- polja koja koristi SAMO compute (ne diraju eligibility) ---
     shares_ex_treasury: Optional[float] = None
     price: Optional[float] = None                       # zadnja cijena primarne klase
+    own_market_cap: Optional[float] = None              # vlastita trž.kap (po klasi)
     market_cap_of: Optional[Callable[[str], Optional[float]]] = None  # ticker -> trž.kap ili None
     segment_ebitda_of: Optional[Callable[[str], Optional[float]]] = None  # segment_key -> EBITDA ili None
     params: Params = field(default_factory=Params)
@@ -195,8 +201,11 @@ def compute_multiples(c: Ctx) -> ValueRange:
             lenses.append(pb_ps); assum["peer_pb"] = p.peer_pb
     if not lenses:
         return _missing(c, "net_income_parent|equity_parent", "shares_ex_treasury")
+    if p.sources.get("peers"):
+        assum["sources"] = {"peers": p.sources["peers"]}
     base = sum(lenses) / len(lenses)
-    return ValueRange(base * (1 - p.band), base, base * (1 + p.band), assum, 0.5 if p.placeholder else 0.7)
+    return ValueRange(base * (1 - p.band), base, base * (1 + p.band), assum,
+                      0.7 if p.peers_calibrated else 0.5)
 
 
 def compute_ev_ebitda(c: Ctx) -> ValueRange:
@@ -218,9 +227,10 @@ def compute_ev_ebitda(c: Ctx) -> ValueRange:
     if base is None:
         return _missing(c, "shares_ex_treasury")
     lo, hi = ps(p.peer_ev_ebitda * (1 - p.band)), ps(p.peer_ev_ebitda * (1 + p.band))
-    return ValueRange(lo, base, hi,
-                      {"peer_ev_ebitda": p.peer_ev_ebitda, "net_debt": net_debt, "placeholder": p.placeholder},
-                      0.5 if p.placeholder else 0.7)
+    assum = {"peer_ev_ebitda": p.peer_ev_ebitda, "net_debt": net_debt, "placeholder": p.placeholder}
+    if p.sources.get("peers"):
+        assum["sources"] = {"peers": p.sources["peers"]}
+    return ValueRange(lo, base, hi, assum, 0.7 if p.peers_calibrated else 0.5)
 
 
 def compute_dcf(c: Ctx) -> ValueRange:
@@ -242,9 +252,13 @@ def compute_dcf(c: Ctx) -> ValueRange:
     if base is None:
         return _missing(c, "shares_ex_treasury|wacc>g")
     lo, hi = ps(p.wacc + 0.01), ps(p.wacc - 0.01)   # viši diskont => niža vrijednost
-    return ValueRange(lo or base, base, hi or base,
-                      {"wacc": p.wacc, "g": p.perpetual_growth, "model": "jednofazni Gordon (pojednostavljeno)",
-                       "placeholder": p.placeholder}, 0.4 if p.placeholder else 0.6)
+    assum = {"wacc": p.wacc, "g": p.perpetual_growth, "model": "jednofazni Gordon (pojednostavljeno)",
+             "placeholder": p.placeholder}
+    src = {k: p.sources[k] for k in ("wacc", "g") if p.sources.get(k)}
+    if src:
+        assum["sources"] = src
+    return ValueRange(lo or base, base, hi or base, assum,
+                      0.6 if p.rates_calibrated else 0.4)
 
 
 def compute_ddm(c: Ctx) -> ValueRange:
@@ -259,9 +273,12 @@ def compute_ddm(c: Ctx) -> ValueRange:
     if base is None:
         return _missing(c, "r>g")
     lo, hi = v(p.cost_of_equity + 0.01), v(p.cost_of_equity - 0.01)
-    return ValueRange(lo or base, base, hi or base,
-                      {"dps": dps, "r": p.cost_of_equity, "g": p.perpetual_growth, "placeholder": p.placeholder},
-                      0.5 if p.placeholder else 0.7)
+    assum = {"dps": dps, "r": p.cost_of_equity, "g": p.perpetual_growth, "placeholder": p.placeholder}
+    src = {k: p.sources[k] for k in ("r", "g") if p.sources.get(k)}
+    if src:
+        assum["sources"] = src
+    return ValueRange(lo or base, base, hi or base, assum,
+                      0.7 if p.rates_calibrated else 0.5)
 
 
 def compute_justified_pb_roe(c: Ctx) -> ValueRange:
@@ -284,9 +301,13 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
     if base is None:
         return _missing(c, "r>g")
     lo, hi = v(p.cost_of_equity + 0.01), v(p.cost_of_equity - 0.01)
-    return ValueRange(lo or base, base, hi or base,
-                      {"roe": round(roe, 4), "r": p.cost_of_equity, "g": p.perpetual_growth,
-                       "bvps": round(bvps, 2), "placeholder": p.placeholder}, 0.5 if p.placeholder else 0.7)
+    assum = {"roe": round(roe, 4), "r": p.cost_of_equity, "g": p.perpetual_growth,
+             "bvps": round(bvps, 2), "placeholder": p.placeholder}
+    src = {k: p.sources[k] for k in ("r", "g") if p.sources.get(k)}
+    if src:
+        assum["sources"] = src
+    return ValueRange(lo or base, base, hi or base, assum,
+                      0.7 if p.rates_calibrated else 0.5)
 
 
 def compute_sotp(c: Ctx) -> ValueRange:
@@ -366,7 +387,22 @@ def compute_sotp(c: Ctx) -> ValueRange:
         return ValueRange(0, 0, 0, assum, 0.0)
     assum["nav_gross_eur"] = round(gross, 0)
     assum["nav_total_eur"] = round(nav, 0)
-    return ValueRange(lo, base, hi, assum, 0.5 if p.placeholder else 0.7)
+    if p.sources.get("holding_discount"):
+        assum["sources"] = {"holding_discount": p.sources["holding_discount"]}
+    # TRŽIŠNA USPOREDBA (dokaz uz diskont): vlastita trž.kap vs NAV prije diskonta
+    if c.own_market_cap and nav:
+        prem = c.own_market_cap / nav - 1
+        assum["market_check"] = {
+            "own_market_cap_eur": round(c.own_market_cap, 0),
+            "nav_pre_discount_eur": round(nav, 0),
+            "price_vs_nav_pct": round(prem * 100, 1),
+            "note": ("tekuća cijena vs OVAJ (konzervativni) NAV; povijesni "
+                     "diskont neizvediv iz baze — premalo dana cijena"),
+        }
+    # confidence: većina NAV-a iz tržišnih cijena -> 0.6; inače 0.5.
+    market_share = (sum(x["value_eur"] for x in parts if not x["placeholder"]) / gross) if gross else 0
+    assum["market_based_share_of_gross"] = round(market_share, 2)
+    return ValueRange(lo, base, hi, assum, 0.6 if market_share >= 0.7 else 0.5)
 
 
 REGISTRY = [
@@ -521,6 +557,7 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None) -> Ctx:
         ticker=ticker, sector=sector, is_group=is_group,
         holdings=holdings, has_segments=has_segments, data=data,
         shares_ex_treasury=shares_of(company_id), price=latest_price(company_id),
+        own_market_cap=market_cap_of(company_id),
         market_cap_of=market_cap_of, segment_ebitda_of=segment_ebitda_of, params=params,
     )
 
@@ -562,6 +599,15 @@ def _print_company(ticker: str, out: dict) -> None:
                 print(f"        {'NAV (prije diskonta)':20} {a['nav_total_eur']:>15,.0f}")
                 print(f"        holding diskont {a['holding_discount_range']} — "
                       f"{a.get('holding_discount_reason', '')}")
+            mc = a.get("market_check")
+            if mc:
+                print(f"        MARKET CHECK: vlastita trž.kap {mc['own_market_cap_eur']:,.0f} "
+                      f"vs NAV {mc['nav_pre_discount_eur']:,.0f} -> cijena je "
+                      f"{mc['price_vs_nav_pct']:+.1f}% vs NAV ({mc['note']})")
+        src = vr.assumptions.get("sources")
+        if src:
+            for sk, sv in src.items():
+                print(f"      IZVOR[{sk}]: {sv}")
 
     print("\nPRESKOČENE METODE (zašto):")
     for key, reason in out["skipped"].items():
@@ -577,20 +623,53 @@ def _print_company(ticker: str, out: dict) -> None:
         print(f"  baze po metodi: { {k: round(v,2) for k,v in rec['method_bases'].items()} }")
 
 
+def _print_sensitivity(ticker: str, conn, base_params: Params) -> None:
+    """Osjetljivost na r ±1%: ponovno izračunaj r-ovisne metode; SOTP r ne koristi."""
+    import copy
+    print(f"\n--- OSJETLJIVOST {ticker} na r ±1% (r_base={base_params.cost_of_equity:.4f}) ---")
+    rows = {}
+    for dr in (-0.01, 0.0, +0.01):
+        p = copy.deepcopy(base_params)
+        p.cost_of_equity = base_params.cost_of_equity + dr
+        ctx = build_ctx(conn, ticker, params=p)
+        out = value_company(ctx)
+        for k in ("justified_pb_roe", "ddm_gordon", "sotp_nav"):
+            if k in out["ran"]:
+                rows.setdefault(k, {})[dr] = out["ran"][k]["range"].base
+    for k, v in rows.items():
+        if len(set(round(x, 4) for x in v.values())) == 1:
+            print(f"  {k:18}: {_fmt(v.get(0.0))} — NEOSJETLJIV na r "
+                  f"(metoda ne koristi r; SOTP = tržišne cijene + multiple, "
+                  f"osjetljivost mu je na holding diskont: vidi low/high raspon)")
+        else:
+            print(f"  {k:18}: r-1%: {_fmt(v.get(-0.01))}  |  r: {_fmt(v.get(0.0))}  "
+                  f"|  r+1%: {_fmt(v.get(0.01))}")
+
+
 def main(argv=None) -> int:
     import sys
+    args = list(argv if argv is not None else sys.argv[1:])
+    sensitivity = "--sensitivity" in args
+    if sensitivity:
+        args.remove("--sensitivity")
+    tickers = args or ["ADRS", "CROS"]
+
     from .db import get_conn
-    tickers = (argv if argv is not None else sys.argv[1:]) or ["ADRS", "CROS"]
+    from .params_calibrated import build_params
     with get_conn() as conn:
         for t in tickers:
             try:
-                ctx = build_ctx(conn, t)
+                params = build_params(t)
+                ctx = build_ctx(conn, t, params=params)
             except ValueError as e:
                 print(f"\n================  {t}  ================\n  GREŠKA: {e}")
                 continue
             _print_company(t, value_company(ctx))
-    print("\nNAPOMENA: pretpostavke (r, g, peer multiplikatori) su PLACEHOLDER — nisu tržišno "
-          "utvrđene. Brojke su ilustracija mehanike dok se ne unesu stvarne.")
+            if sensitivity:
+                _print_sensitivity(t, conn, params)
+    print("\nNAPOMENA: r i g su kalibrirani (CAPM; izvori uz svaku metodu). Peer multipli: "
+          "ADRS iz baze (medijan), CROS placeholder (nema usporedivog osiguratelja na ZSE). "
+          "Beta=1,0, holding diskont i multiple neuvrštenih ostaju OZNAČENE pretpostavke.")
     return 0
 
 
