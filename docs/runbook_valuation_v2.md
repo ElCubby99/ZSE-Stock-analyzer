@@ -169,3 +169,23 @@ multiplikatori ne mogu izvesti ni s otključanim cijenama.
   Liquidity: ZABA po stvarnim podacima NE pali flag (promet ~120k€/dan) —
   spec je očekivao suprotno, podaci kažu drukčije.
 - Dividende ZABA s EHO-a: dps FY23/24/25 = 1,40/1,40/1,27 €.
+
+## M6 — orchestrator (grana `claude/m6-orchestrator`, 2026-07-05)
+- Spec: `docs/zse_orchestrator_spec.md` (+ IZMJENA: korak `sector_assigned` s
+  confidenceom između entity_resolved i extracting — bira template i metode).
+- v3 shema: tier/onboarding_status/is_live/data_limited/sector_confidence na
+  companies (sector više nije NOT NULL — postoji faza "nepoznat"),
+  watcher_state, pipeline_runs, announcements.external_id (dedup).
+- Moduli: `src/index_universe.py` (CROBEX10 ŽIVO: /json/IndexComposition,
+  ISIN indeksa parsiran sa stranice), `src/classify.py` (Haiku: sektor +
+  kategorija objave; <0.85 -> needs_review), `src/auto_slice.py`
+  (deterministično lociranje izvještaja u PDF-u), `src/onboard.py`
+  (state machine + gateovi + --promote), `src/watcher.py` (Dio B),
+  `src/daily.py` (Dio C redoslijed + Dio D digest u data/digests/).
+- Tier 1 run (bez promocije): PODR i RIVP `valued`; 8× `needs_review` s
+  razlozima (vidi pipeline_runs run_id onboard-t1-2026-07-05). Poznate rupe:
+  broj dionica se ne locira uvijek automatski (KOEI/KODT/HPB — treba
+  verificirani seed ili bolji slice), ESEF-only izdavatelji (HT) traže
+  xhtml rutu (ručno za sada), ZITO sektor dvojben (0.75).
+- Promocija: `python -m src.onboard --promote TICKER` (Tier 1 SAMO ručno).
+  Tier 2 NE počinje dok Tier 1 nije potvrđen.
