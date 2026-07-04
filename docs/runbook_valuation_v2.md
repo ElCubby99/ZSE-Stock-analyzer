@@ -144,3 +144,28 @@ multiplikatori ne mogu izvesti ni s otključanim cijenama.
   ponovni export + commit. `src/webapi.py` ostaje za lokalni razvoj uz živu
   bazu. Provjereno: build + preview bez Postgresa, refresh na /dionica/ADRS
   vraća 200, nepoznat ticker daje poruku (ne izmišljene podatke).
+
+## M5 — bankovni predložak (grana `claude/m5-banka`, 2026-07-05)
+- **Taksonomija:** canonical.py dobio `bank` skupine (NII/naknade/TOI/rezervacije;
+  krediti/depoziti; `regulatory` omjeri kao decimalni razlomci koje loader NE
+  skalira). Bankovni FI se NE mapira na industrijski.
+- **Ekstrakcija:** `extract_bank_filing` + `python -m src.ingest extract
+  --template bank`. ZABA FY2023–25 (filinzi 18–20): FY25 iz punog ESEF AR-a
+  (ZIP→xhtml→tekst, slice po char pozicijama), FY23/24 iz GFI-IZD-KI PDF-ova.
+  RUPA (očekivana): CET1 STOPA Grupe nije eksplicitno objavljena (samo iznos
+  1.898M + RWA; ukupna stopa 21,13% JE objavljena i izvučena); NPL omjer/
+  pokrivenost nisu objavljeni kao omjeri → null + needs_review, ne izvodimo.
+- **Metoda:** `residual_income` DODANA u registar (postojeći predikati
+  netaknuti): V = BV + Σ RI/(1+COE)^t uz ROE fade→COE kroz 5g, terminal 0;
+  assumptions nose equivalence_note (jednostupanjski RI ≡ opravdani P/B).
+- **Routing ZABA potvrđen:** pokreću se multiples/DDM/justified P/B/RI;
+  preskaču ev_ebitda + dcf (financije) i sotp (nema udjela/segmenata).
+  ZABA: RI 10,82 vs justified P/B 21,86 (fade vs perpetuitet ROE 19,3%),
+  DDM 17,72 (dps 1,27), zona 10,82–21,86 vs cijena 22,40.
+- **bank_kpi** sekcija u exportu (contract ažuriran): ROE/ROA/NIM/CIR/CoR/
+  NPL/CET1/LDR/rast kredita i depozita; 'izvučeno' vs 'izračun' osnova po
+  KPI-ju; YoY ograda (GFI obrazac vs revidirani AR definicije).
+- **Vlasništvo:** UniCredit S.p.A. 96,19% (AR2025), free float 3,81%.
+  Liquidity: ZABA po stvarnim podacima NE pali flag (promet ~120k€/dan) —
+  spec je očekivao suprotno, podaci kažu drukčije.
+- Dividende ZABA s EHO-a: dps FY23/24/25 = 1,40/1,40/1,27 €.

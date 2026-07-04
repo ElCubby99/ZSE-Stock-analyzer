@@ -63,6 +63,108 @@ SEGMENT_LABELS = {
     "aquaculture": "Zdrava hrana (marikultura)", "energy": "Energetika",
 }
 
+# --- M5: bankovni prikazi (banka nema revenue/EBITDA u industrijskom smislu) ---
+BANK_THREE_Y_ROWS = [
+    ("total_operating_income", "Ukupni operativni prihod"),
+    ("net_interest_income", "Neto kamatni prihod"),
+    ("net_fee_income", "Neto prihod od naknada"),
+    ("operating_expenses", "Operativni troškovi"),
+    ("loan_loss_provisions", "Rezervacije (trošak rizika)"),
+    ("net_income_parent", "Neto dobit matici"),
+    ("eps", "EPS (dobit matici / dionica)"),
+]
+
+BANK_FUNDAMENTAL_ITEMS = [
+    ("total_operating_income", "Ukupni operativni prihod"),
+    ("net_interest_income", "Neto kamatni prihod"),
+    ("net_fee_income", "Neto prihod od naknada i provizija"),
+    ("operating_expenses", "Operativni troškovi"),
+    ("loan_loss_provisions", "Rezervacije (trošak rizika)"),
+    ("net_income", "Neto dobit (ukupno)"),
+    ("net_income_parent", "Neto dobit matici"),
+    ("total_assets", "Ukupna imovina"),
+    ("equity_parent", "Kapital matici"),
+    ("loans_to_customers", "Krediti klijentima"),
+    ("deposits_from_customers", "Depoziti klijenata"),
+    ("cet1_ratio", "CET1 stopa (Grupa)"),
+    ("total_capital_ratio", "Ukupna stopa kapitala (Grupa)"),
+    ("npl_ratio", "NPL omjer"),
+    ("npl_coverage", "NPL pokrivenost"),
+    ("dps", "Dividenda po dionici"),
+]
+
+BANK_RATIO_ITEMS = {"cet1_ratio", "total_capital_ratio", "npl_ratio",
+                    "npl_coverage", "cost_of_risk"}
+
+
+def _bank_kpi(cur, company_id: int, fiscal_year: int | None) -> dict | None:
+    """M5 DIO D: bankovni KPI blok — izvučeno gdje je objavljeno, ostalo IZRAČUN
+    iz izvučenih stavki (formula u basis). Bez podatka -> value null + missing."""
+    if not fiscal_year:
+        return None
+    g = lambda item, fy=fiscal_year: _vfc(cur, company_id, fy, item)
+    prev = fiscal_year - 1
+
+    ni = g("net_income_parent")
+    eq = g("equity_parent") or g("total_equity")
+    ta, ta_prev = g("total_assets"), g("total_assets", prev)
+    nii, toi = g("net_interest_income"), g("total_operating_income")
+    opex, llp = g("operating_expenses"), g("loan_loss_provisions")
+    loans, deps = g("loans_to_customers"), g("deposits_from_customers")
+    loans_p, deps_p = g("loans_to_customers", prev), g("deposits_from_customers", prev)
+
+    avg_ta = ((ta + ta_prev) / 2) if (ta and ta_prev) else ta
+    kpis = [
+        {"key": "roe", "label": "ROE", "unit": "pct",
+         "value": (ni / eq) if (ni is not None and eq) else None,
+         "basis": "izračun: neto dobit matici / kapital matici (kraj godine)"},
+        {"key": "roa", "label": "ROA", "unit": "pct",
+         "value": (ni / ta) if (ni is not None and ta) else None,
+         "basis": "izračun: neto dobit matici / ukupna imovina"},
+        {"key": "nim", "label": "NIM", "unit": "pct",
+         "value": (nii / avg_ta) if (nii is not None and avg_ta) else None,
+         "basis": ("izračun: NII / prosječna imovina (FY0, FY-1)" if ta_prev
+                   else "izračun: NII / imovina na kraj godine (nema FY-1)")},
+        {"key": "cir", "label": "Cost-to-income", "unit": "pct",
+         "value": (abs(opex) / toi) if (opex is not None and toi) else None,
+         "basis": "izračun: |operativni troškovi| / ukupni operativni prihod"},
+        {"key": "cost_of_risk", "label": "Trošak rizika", "unit": "pct",
+         "value": (g("cost_of_risk") if g("cost_of_risk") is not None else
+                   ((-llp / loans) if (llp is not None and loans) else None)),
+         "basis": ("izvučeno" if g("cost_of_risk") is not None else
+                   "izračun: −rezervacije / krediti (kraj godine); negativno = neto otpuštanje")},
+        {"key": "npl_ratio", "label": "NPL omjer", "unit": "pct",
+         "value": g("npl_ratio"), "basis": "izvučeno (regulatory)"},
+        {"key": "npl_coverage", "label": "NPL pokrivenost", "unit": "pct",
+         "value": g("npl_coverage"), "basis": "izvučeno (regulatory)"},
+        {"key": "cet1_ratio", "label": "CET1 stopa", "unit": "pct",
+         "value": g("cet1_ratio"),
+         "basis": "izvučeno (bilj. o regulatornom kapitalu)"},
+        {"key": "total_capital_ratio", "label": "Ukupna stopa kapitala", "unit": "pct",
+         "value": g("total_capital_ratio"),
+         "basis": "izvučeno (bilj. o regulatornom kapitalu)"},
+        {"key": "ldr", "label": "Krediti / depoziti (LDR)", "unit": "pct",
+         "value": (loans / deps) if (loans and deps) else None,
+         "basis": "izračun: krediti klijentima / depoziti klijenata"},
+        {"key": "loans_yoy", "label": "Rast kredita YoY", "unit": "pct",
+         "value": (loans / loans_p - 1) if (loans and loans_p) else None,
+         "basis": "izračun iz FY0 vs FY-1"},
+        {"key": "deposits_yoy", "label": "Rast depozita YoY", "unit": "pct",
+         "value": (deps / deps_p - 1) if (deps and deps_p) else None,
+         "basis": "izračun iz FY0 vs FY-1"},
+    ]
+    for k in kpis:
+        k["missing"] = k["value"] is None
+    return {
+        "fiscal_year": fiscal_year,
+        "kpis": kpis,
+        "note": ("bankovni KPI: 'izvučeno' = objavljena brojka s izvorom u "
+                 "fundamentima; 'izračun' = formula nad izvučenim stavkama; "
+                 "bez podatka -> 'nema u bazi', ne nula. OGRADA za YoY: FY-1 "
+                 "može dolaziti iz GFI obrasca a FY0 iz revidiranog godišnjeg "
+                 "izvješća — definicije bilančnih linija mogu odstupati"),
+    }
+
 
 def _vfc(cur, company_id: int, fiscal_year: int, item: str):
     """Jedna stavka iz v_financials_current (annual/consolidated)."""
@@ -76,7 +178,8 @@ def _vfc(cur, company_id: int, fiscal_year: int, item: str):
     return _f(r[0]) if r else None
 
 
-def _financials_3y(cur, company_id: int, shares: float | None) -> dict:
+def _financials_3y(cur, company_id: int, shares: float | None,
+                   rows_spec=None) -> dict:
     """DIO 1: zadnje 3 fiskalne godine + YoY (FY0 vs FY-1) + CAGR (FY-2 -> FY0)."""
     cur.execute(
         """SELECT DISTINCT fiscal_year FROM v_financials_current
@@ -85,7 +188,7 @@ def _financials_3y(cur, company_id: int, shares: float | None) -> dict:
            ORDER BY fiscal_year DESC LIMIT 3""", (company_id,))
     years = sorted(r[0] for r in cur.fetchall())
     rows = []
-    for item, label in THREE_Y_ROWS:
+    for item, label in (rows_spec or THREE_Y_ROWS):
         vals = {}
         for y in years:
             if item == "eps":
@@ -296,9 +399,9 @@ def _f(x):
     return x
 
 
-def _fundamentals(cur, company_id: int) -> list[dict]:
+def _fundamentals(cur, company_id: int, items_spec=None) -> list[dict]:
     rows = []
-    for item, label in FUNDAMENTAL_ITEMS:
+    for item, label in (items_spec or FUNDAMENTAL_ITEMS):
         cur.execute(
             """SELECT fin.value_eur, fin.confidence, fin.source_page,
                       fin.fiscal_year, f.source_url, f.audited, f.doc_type
@@ -309,8 +412,10 @@ def _fundamentals(cur, company_id: int) -> list[dict]:
             (company_id, item),
         )
         r = cur.fetchone()
+        unit = ("pct" if item in BANK_RATIO_ITEMS
+                else "eur_per_share" if item == "dps" else "eur")
         rows.append({
-            "item": item, "label": label,
+            "item": item, "label": label, "unit": unit,
             "value_eur": _f(r[0]) if r else None,
             "confidence": _f(r[1]) if r else None,
             "source_page": r[2] if r else None,
@@ -389,8 +494,10 @@ def build_stock_json(conn, ticker: str) -> dict:
     if not row:
         raise ValueError(f"nepoznat ticker: {ticker}")
     company_id, name, sector, is_group, comp_isin = row
+    is_bank = sector == "bank"
 
-    fund = _fundamentals(cur, company_id)
+    fund = _fundamentals(cur, company_id,
+                         BANK_FUNDAMENTAL_ITEMS if is_bank else FUNDAMENTAL_ITEMS)
     classes = _share_classes(cur, company_id)
 
     # valuacija: postojeći motor, kalibrirani Params (read-only za frontend)
@@ -471,11 +578,13 @@ def build_stock_json(conn, ticker: str) -> dict:
         "ticker": ticker, "name": name, "sector": sector, "is_group": is_group,
         "isin": comp_isin, "fiscal_year": latest_fy, "audited": audited,
         "generated_at": str(today),
-        "financials_3y": _financials_3y(cur, company_id, shares),
+        "financials_3y": _financials_3y(cur, company_id, shares,
+                                        BANK_THREE_Y_ROWS if is_bank else THREE_Y_ROWS),
         "balance": _balance(cur, company_id, sector, latest_fy, bvps),
         "liquidity": _liquidity(cur, classes, today),
         "segments": _segments(cur, company_id, latest_fy),
         "ownership": _ownership(cur, company_id, ticker),
+        "bank_kpi": _bank_kpi(cur, company_id, latest_fy) if is_bank else None,
         "share_classes": classes,
         "metrics": {
             "eps": eps, "bvps": bvps, "roe": roe, "dps": dps,

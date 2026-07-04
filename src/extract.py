@@ -107,6 +107,111 @@ EXTRACTION_SCHEMA = {
 
 
 # ============================================================
+#  BANKOVNA EKSTRAKCIJA (M5) — banka NEMA revenue/EBITDA/EBIT u
+#  industrijskom smislu; zaseban skup stavki i zaseban prompt.
+# ============================================================
+
+BANK_EXTRACTION_SYSTEM_PROMPT = """\
+Ti si ekstraktor financijskih podataka BANKE. Dobivaš tekst godišnjeg izvješća
+hrvatske banke. Vrati ISKLJUČIVO validan JSON po shemi.
+
+ŽELJEZNA PRAVILA (ista kao za industrijska izvješća):
+1. Izvlači SAMO brojke koje su doslovno u dokumentu. Stavke koje nema -> null
+   i confidence 0. NIKAD ne procjenjuj i ne izvodi. NE mapiraj bankovne stavke
+   na industrijske pojmove (revenue/EBITDA ne postoje za banku).
+2. Metapodaci: basis (consolidated/standalone), period_type, cumulative,
+   audited, currency, reporting_scale (pazi 'u tisućama'/'u milijunima' —
+   provjeri zaglavlja tablica).
+3. Predznak: prihodi/imovina/kapital/krediti/depoziti = pozitivna magnituda.
+   loan_loss_provisions (rezervacije/trošak rizika) zadrži s predznakom kako
+   tereti dobit (trošak = NEGATIVAN; neto otpuštanje rezervacija = pozitivan).
+   Rezultatne stavke (pretax_income, net_income*) s predznakom kako su iskazane.
+4. Za SVAKU stavku source_page + confidence 0..1.
+5. Samo tekući period ovog izvješća (usporedne prošlogodišnje kolone preskoči).
+
+KANONSKI item ključevi (SAMO ovi):
+  income:  net_interest_income (neto kamatni prihod),
+           net_fee_income (neto prihod od naknada i provizija),
+           total_operating_income (ukupni operativni prihod: NII + naknade +
+             ostali operativni prihodi — uzmi objavljeni redak ako postoji),
+           operating_expenses (opći i administrativni troškovi + amortizacija),
+           loan_loss_provisions (umanjenje vrijednosti/rezervacije za kreditne
+             gubitke, s predznakom), pretax_income, income_tax,
+           net_income, net_income_parent, net_income_minority
+  balance: total_assets, total_equity, equity_parent, minority_interests,
+           loans_to_customers (krediti i potraživanja od klijenata/komitenata),
+           deposits_from_customers (depoziti klijenata/komitenata)
+  regulatory (OMJERI kao DECIMALNI RAZLOMAK, npr. 23,5% -> 0.235; na njih se
+    reporting_scale NE primjenjuje — traži bilješke o adekvatnosti kapitala /
+    upravljanju rizicima / Pillar 3; ČESTO NISU u glavnim tablicama; ako ih u
+    dokumentu nema -> null i confidence 0, NE izmišljaj):
+           cet1_ratio (stopa redovnog osnovnog kapitala CET1),
+           total_capital_ratio (ukupna stopa kapitala),
+           npl_ratio (udio neprihodujućih/loših plasmana),
+           npl_coverage (pokrivenost NPL rezervacijama),
+           cost_of_risk (trošak rizika kao omjer, ako je objavljen)
+  shares:  shares_outstanding, treasury_shares
+NE izvlači: cost-to-income, NIM, ROE — te omjere računa kod iz stavki.
+U flags zapiši sve dvosmisleno (npr. gdje su tražene stavke, definicije
+rezervacija, jesu li CET1/NPL pronađeni ili ih u dokumentu nema).
+"""
+
+_BANK_ITEM_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "statement": {"type": "string",
+                      "enum": ["income", "balance", "regulatory", "shares"]},
+        "item": {"type": "string"},
+        "value_raw": {"anyOf": [{"type": "number"}, {"type": "null"}]},
+        "source_page": {"type": "string"},
+        "confidence": {"type": "number"},
+    },
+    "required": ["statement", "item", "value_raw", "source_page", "confidence"],
+    "additionalProperties": False,
+}
+
+BANK_EXTRACTION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "meta": EXTRACTION_SCHEMA["properties"]["meta"],
+        "items": {"type": "array", "items": _BANK_ITEM_SCHEMA},
+        "flags": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["meta", "items", "flags"],
+    "additionalProperties": False,
+}
+
+
+def extract_bank_filing(report_text: str, *, model: str | None = None,
+                        max_tokens: int = 16000) -> dict[str, Any]:
+    """Bankovna varijanta extract_filinga (isti mehanizam, bankovni prompt/shema)."""
+    import anthropic  # lazy import da testovi rade bez paketa
+
+    if not config.ANTHROPIC_API_KEY:
+        raise RuntimeError("ANTHROPIC_API_KEY nije postavljen.")
+
+    client = anthropic.Anthropic()
+    with client.messages.stream(
+        model=model or config.ANTHROPIC_MODEL,
+        max_tokens=max_tokens,
+        thinking={"type": "adaptive"},
+        system=BANK_EXTRACTION_SYSTEM_PROMPT,
+        output_config={"format": {"type": "json_schema", "schema": BANK_EXTRACTION_SCHEMA}},
+        messages=[{"role": "user", "content": report_text}],
+    ) as stream:
+        resp = stream.get_final_message()
+
+    if resp.stop_reason == "refusal":
+        raise RuntimeError(f"Model je odbio zahtjev (refusal): {resp.stop_details}")
+    if resp.stop_reason == "max_tokens":
+        raise RuntimeError("Izlaz odrezan na max_tokens — suzi ulaz ili povećaj limit.")
+    text = next((b.text for b in resp.content if getattr(b, "type", None) == "text"), None)
+    if text is None:
+        raise RuntimeError("Odgovor ne sadrži text blok s JSON-om.")
+    return json.loads(text)
+
+
+# ============================================================
 #  IFRS 8 SEGMENTI (bilješka o poslovnim segmentima -> segment_financials)
 # ============================================================
 

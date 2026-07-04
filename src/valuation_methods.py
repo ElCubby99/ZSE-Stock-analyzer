@@ -169,6 +169,15 @@ def elig_sotp(c: Ctx):
     return True, "holding s odvojivim dijelovima (uvršteni udjeli i/ili segmenti)"
 
 
+# --- M5: NOVI predikat (postojeći iznad su NEPROMIJENJENI) ---
+def elig_residual_income(c: Ctx):
+    if c.sector not in FINANCIAL_SECTORS:
+        return False, f"RI predložak je za financijske firme (banka/osiguranje), ne {c.sector}"
+    if not ((c.have("equity_parent") or c.have("total_equity")) and c.have("net_income_parent")):
+        return False, "nema kapital i/ili dobit matici za ROE"
+    return True, "financijska firma — RI kroz višak povrata na kapital"
+
+
 # ============================================================
 #  COMPUTE — implementirano. Svaki vraća raspon (low/base/high) + vidljive
 #  pretpostavke + confidence. Per-share (EUR po dionici), dionice = shares_ex_treasury.
@@ -405,12 +414,69 @@ def compute_sotp(c: Ctx) -> ValueRange:
     return ValueRange(lo, base, hi, assum, 0.6 if market_share >= 0.7 else 0.5)
 
 
+def compute_residual_income(c: Ctx) -> ValueRange:
+    """Rezidualni dohodak (M5, za financije): V = BV0 + Σ RI_t/(1+COE)^t.
+
+    RI_t = (ROE_t − COE) × BV_{t-1}; ROE linearno FEJDA od tekućeg ROE-a prema
+    COE kroz FADE_YEARS godina (u zadnjoj godini ROE=COE → RI=0 → terminal 0,
+    konzervativno). BV raste stopom g.
+
+    ISKRENA OGRADA (uvijek u assumptions): jednostupanjski RI (konstantan ROE,
+    rast g) je MATEMATIČKI identičan opravdanom P/B-u ((ROE−g)/(COE−g)×BVPS).
+    Bez eksplicitnih forecasta ROE-a razlika prema justified_pb_roe dolazi
+    isključivo iz fadea — sličnost tih dviju brojki je provjera konzistentnosti,
+    ne nova informacija.
+    """
+    p = c.params
+    FADE_YEARS = 5
+    ni = c.val("net_income_parent")
+    eq = c.val("equity_parent") or c.val("total_equity")
+    if ni is None or not eq:
+        return _missing(c, "net_income_parent", "equity_parent")
+    bvps = _per_share(eq, c)
+    if bvps is None:
+        return _missing(c, "shares_ex_treasury")
+    roe0 = ni / eq
+    g = p.perpetual_growth
+
+    def v(coe):
+        if coe <= g:
+            return None
+        val, bv = bvps, bvps
+        for t in range(1, FADE_YEARS + 1):
+            roe_t = roe0 + (coe - roe0) * t / FADE_YEARS   # fade: ROE_N == COE
+            val += (roe_t - coe) * bv / (1 + coe) ** t
+            bv *= (1 + g)
+        return val
+
+    base = v(p.cost_of_equity)
+    if base is None:
+        return _missing(c, "COE>g")
+    lo, hi = v(p.cost_of_equity + 0.01), v(p.cost_of_equity - 0.01)
+    assum = {
+        "roe0": round(roe0, 4), "r": p.cost_of_equity, "g": p.perpetual_growth,
+        "fade_years": FADE_YEARS, "bvps": round(bvps, 2),
+        "terminal": "0 (ROE se u zadnjoj godini stapa s COE — RI iščezava)",
+        "equivalence_note": ("jednostupanjski RI ≡ opravdani P/B ((ROE−g)/(COE−g)); "
+                             "razlika prema justified_pb_roe dolazi SAMO iz "
+                             f"{FADE_YEARS}g fadea ROE→COE — konzistencijska provjera, "
+                             "prava dodana vrijednost traži eksplicitne ROE forecaste"),
+        "placeholder": p.placeholder,
+    }
+    src = {k: p.sources[k] for k in ("r", "g") if p.sources.get(k)}
+    if src:
+        assum["sources"] = src
+    return ValueRange(lo or base, base, hi or base, assum,
+                      0.7 if p.rates_calibrated else 0.5)
+
+
 REGISTRY = [
     Method("multiples_relative", "Relativni multiplikatori", elig_multiples,      compute_multiples),
     Method("ev_ebitda",          "EV/EBITDA",                elig_ev_ebitda,      compute_ev_ebitda),
     Method("dcf_fcf",            "DCF (FCF)",                elig_dcf,            compute_dcf),
     Method("ddm_gordon",         "Dividendni diskont",       elig_ddm,            compute_ddm),
     Method("justified_pb_roe",   "Opravdani P/B (ROE)",      elig_justified_pb_roe, compute_justified_pb_roe),
+    Method("residual_income",    "Rezidualni dohodak (RI)",  elig_residual_income, compute_residual_income),
     Method("sotp_nav",           "Sum-of-the-parts / NAV",   elig_sotp,           compute_sotp),
 ]
 

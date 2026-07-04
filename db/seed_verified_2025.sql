@@ -153,3 +153,44 @@ ON CONFLICT (ticker) DO UPDATE SET
     shares_issued = EXCLUDED.shares_issued,
     treasury_shares = EXCLUDED.treasury_shares,
     dividend_note = EXCLUDED.dividend_note;
+
+-- ============================================================
+--  ZABA (sesija M5) — izvori:
+--  [7] ZSE službena tečajnica 02.07.2026: ZABA ISIN HRZABARA0009 (ORD-SHARE).
+--  [8] ZABA godišnje izvješće 2025 (ESEF, eho.zse.hr FI-ZABA-...zip),
+--      bilješka 31/dionička struktura (podnožje ~str 305-318): "Broj dionica
+--      na dan 31. prosinca 320.241.955"; "Trezorske dionice - -" (nema);
+--      "UniCredit S.p.A. je izravni vlasnik 308.046.625 dionica Banke ili
+--      96,19% u dioničkom kapitalu i glasačkim pravima"; "Banka nema
+--      preferencijalnih dionica".
+-- ============================================================
+INSERT INTO companies (ticker, name, sector, is_group, isin) VALUES
+  ('ZABA', 'Zagrebačka banka d.d.', 'bank', TRUE, 'HRZABARA0009')
+ON CONFLICT (ticker) DO UPDATE SET sector='bank', isin=EXCLUDED.isin;
+
+INSERT INTO share_classes (company_id, ticker, isin, class_type, shares_issued,
+                           treasury_shares, has_voting, dividend_note, is_primary_line)
+VALUES ((SELECT id FROM companies WHERE ticker='ZABA'), 'ZABA', 'HRZABARA0009',
+        'ordinary', 320241955, 0, TRUE,
+        'jedina klasa; bez trezorskih i bez preferencijalnih (AR2025 bilj. 31)', TRUE)
+ON CONFLICT (ticker) DO UPDATE SET
+    isin = EXCLUDED.isin, shares_issued = EXCLUDED.shares_issued,
+    treasury_shares = EXCLUDED.treasury_shares, dividend_note = EXCLUDED.dividend_note;
+
+-- UniCredit S.p.A. (Milano; NIJE na ZSE — u companies samo kao imatelj za
+-- vlasnički graf; bez ISIN-a jer se ne prati).
+INSERT INTO companies (ticker, name, sector, is_group) VALUES
+  ('UCG', 'UniCredit S.p.A. (Milano)', 'bank', TRUE)
+ON CONFLICT (ticker) DO NOTHING;
+
+INSERT INTO holdings (parent_company_id, held_company_id, held_name, ownership_pct,
+                      listed, valuation_basis, segment_key, default_multiple,
+                      is_insurance, as_of, source_page, confidence)
+VALUES ((SELECT id FROM companies WHERE ticker='UCG'),
+        (SELECT id FROM companies WHERE ticker='ZABA'),
+        'Zagrebačka banka', 0.9619, TRUE, 'market', NULL, NULL, FALSE,
+        '2025-12-31',
+        'ZABA AR2025: UniCredit S.p.A. izravni vlasnik 308.046.625 dionica = 96,19%',
+        0.95)
+ON CONFLICT (parent_company_id, held_name) DO UPDATE SET
+    ownership_pct = EXCLUDED.ownership_pct, source_page = EXCLUDED.source_page;

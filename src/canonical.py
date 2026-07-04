@@ -41,12 +41,38 @@ SHARES = {
     "treasury_shares",
 }
 
+# --- BANKA (M5): zaseban skup stavki — bankovni FI se NE mapira na
+# industrijsku taksonomiju (nema revenue/EBITDA/EBIT u tom smislu). ---
+BANK_INCOME = {
+    "net_interest_income",      # neto kamatni prihod
+    "net_fee_income",           # neto prihod od naknada i provizija
+    "total_operating_income",   # ukupni operativni prihod (NII + naknade + ostalo)
+    "loan_loss_provisions",     # rezervacije/trošak rizika (s predznakom)
+}
+BANK_BALANCE = {
+    "loans_to_customers",
+    "deposits_from_customers",
+}
+# Regulatorni OMJERI (decimalni razlomci, npr. 0.235 = 23,5%): često u
+# bilješkama o adekvatnosti kapitala / Pillar 3, NE u glavnim tablicama.
+# Loader ih NE skalira i NE konvertira (kao 'shares').
+REGULATORY = {
+    "cet1_ratio",
+    "total_capital_ratio",
+    "npl_ratio",
+    "npl_coverage",
+    "cost_of_risk",
+}
+
 # item -> statement (samo reported)
 STATEMENT_OF = {}
 for _stmt, _items in (
     ("income", INCOME),
+    ("income", BANK_INCOME),
     ("balance", BALANCE),
+    ("balance", BANK_BALANCE),
     ("cashflow", CASHFLOW),
+    ("regulatory", REGULATORY),
     ("shares", SHARES),
 ):
     for _it in _items:

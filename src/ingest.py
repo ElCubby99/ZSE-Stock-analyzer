@@ -43,10 +43,13 @@ def _ingest(extraction: dict, source_url: str, published: str | None,
 
 
 def cmd_extract(a) -> None:
-    from .extract import extract_filing
+    if getattr(a, "template", "industrial") == "bank":
+        from .extract import extract_bank_filing as _extract
+    else:
+        from .extract import extract_filing as _extract
     with open(a.text, encoding="utf-8") as f:
         text = f.read()
-    extraction = extract_filing(text)
+    extraction = _extract(text)
     _ingest(extraction, a.source_url, a.published, a.doc_type)
 
 
@@ -71,6 +74,8 @@ def main(argv=None) -> int:
     pe.add_argument("--source-url", required=True)
     pe.add_argument("--published", default=None)
     pe.add_argument("--doc-type", default="financial_report")
+    pe.add_argument("--template", choices=["industrial", "bank"], default="industrial",
+                    help="bank = bankovna taksonomija (NII/naknade/rezervacije/CET1...)")
     pe.set_defaults(fn=cmd_extract)
 
     pl = sub.add_parser("load", help="load iz extraction JSON-a -> validate")

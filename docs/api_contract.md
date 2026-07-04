@@ -32,6 +32,7 @@ Opća pravila:
 | liquidity | obj | **v2, DIO 3** |
 | segments | obj\|null | **v2, DIO 4** — null kad segmenata nema (npr. CROS) |
 | ownership | obj | **v2, DIO 5** |
+| bank_kpi | obj\|null | **M5** — samo za sector='bank', inače null; vidi dolje |
 | mar_note | str | disclaimer |
 
 ## share_classes[]
@@ -119,6 +120,27 @@ last_price {close_eur, trade_date, volume, source} | null`
 - `revenue_comparable=false` kad Σ segmenata uključuje premije osiguranja, a
   kanonski grupni `revenue` ne — tada je `revenue_residual` null i frontend
   prikazuje `revenue_note` (n/p), NE negativan "ostatak" kao eliminacije.
+
+## bank_kpi (M5) — null osim za banke
+```json
+{ "fiscal_year": 2025,
+  "kpis": [{ "key": "roe|roa|nim|cir|cost_of_risk|npl_ratio|npl_coverage|"
+                    "cet1_ratio|total_capital_ratio|ldr|loans_yoy|deposits_yoy",
+             "label": "...", "unit": "pct", "value": 0.1929 | null,
+             "basis": "izvučeno ... | izračun: <formula>", "missing": false }],
+  "note": "..." }
+```
+- 'izvučeno' = objavljena brojka (izvor u `fundamentals`); 'izračun' = formula
+  nad izvučenim stavkama (CIR, NIM, LDR, ROE, ROA, YoY — NE prepisuju se).
+- Regulatorne stavke bez izvora u dokumentu (npr. CET1 STOPA Grupe kad je
+  objavljen samo iznos i RWA) -> value null + missing — dokumentirana rupa,
+  nikad izračun "na svoju ruku" u extract sloju.
+- Napomena o YoY: FY-1 i FY0 mogu dolaziti iz različitih objava (GFI obrazac
+  vs revidirani AR) s različitim definicijama linija.
+- Bankovna `fundamentals`/`financials_3y` lista koristi bankovne stavke
+  (NII, naknade, rezervacije, krediti, depoziti; regulatorni omjeri s
+  unit='pct'); `valuation.ran` za banku uključuje `residual_income`
+  (assumptions.equivalence_note objašnjava odnos prema justified_pb_roe).
 
 ## ownership (DIO 5)
 ```json

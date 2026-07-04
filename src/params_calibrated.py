@@ -104,10 +104,11 @@ def build_params(ticker: str) -> Params:
             sources["peers"] = ("peer skup nedovoljno pokriven (n<3) -> "
                                 "multipli OSTAJU placeholder")
     else:
-        sources["peers"] = ("CROS: na ZSE nema usporedivog osiguratelja "
-                            "(docs/peers.md — regionalni ZVTG/POSR/PZU/VIG/UQA "
-                            "nedostupni ovom mrežnom politikom) -> peer multipli "
-                            "OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review")
+        sources["peers"] = (f"{ticker}: peer skup nije kalibriran — na ZSE nema "
+                            "dovoljno usporedivih firmi u sektoru (odluke i kandidati "
+                            "u docs/peers.md; regionalni peeri nedostupni mrežnom "
+                            "politikom) -> peer multipli OSTAJU placeholder "
+                            "(P/E 12, P/B 1,5) + needs_review")
 
     # master flag: placeholder samo ako su i stope i peeri placeholder
     p.placeholder = not (p.rates_calibrated and p.peers_calibrated)

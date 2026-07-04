@@ -206,6 +206,7 @@
     "note": "u bazi nema zabilježenih većinskih imatelja za ovu firmu — free float nepoznat (ne procjenjuje se)",
     "liquidity_link": null
   },
+  "bank_kpi": null,
   "share_classes": [
     {
       "ticker": "ADRS",
@@ -272,6 +273,7 @@
     {
       "item": "revenue",
       "label": "Poslovni prihodi",
+      "unit": "eur",
       "value_eur": 535986000.0,
       "confidence": 0.9,
       "source_page": "str. 24",
@@ -283,6 +285,7 @@
     {
       "item": "ebitda",
       "label": "EBITDA",
+      "unit": "eur",
       "value_eur": 217911000.0,
       "confidence": null,
       "source_page": "computed",
@@ -294,6 +297,7 @@
     {
       "item": "ebit",
       "label": "EBIT",
+      "unit": "eur",
       "value_eur": 137349000.0,
       "confidence": 0.97,
       "source_page": "str. 24",
@@ -305,6 +309,7 @@
     {
       "item": "net_income",
       "label": "Neto dobit (ukupno)",
+      "unit": "eur",
       "value_eur": 105163000.0,
       "confidence": 0.98,
       "source_page": "str. 24",
@@ -316,6 +321,7 @@
     {
       "item": "net_income_parent",
       "label": "Neto dobit matici",
+      "unit": "eur",
       "value_eur": 80106000.0,
       "confidence": 0.98,
       "source_page": "str. 25",
@@ -327,6 +333,7 @@
     {
       "item": "net_income_minority",
       "label": "Manjinski interesi (dobit)",
+      "unit": "eur",
       "value_eur": 25057000.0,
       "confidence": 0.98,
       "source_page": "str. 25",
@@ -338,6 +345,7 @@
     {
       "item": "total_assets",
       "label": "Ukupna imovina",
+      "unit": "eur",
       "value_eur": 3397248000.0,
       "confidence": 0.98,
       "source_page": "str. 26",
@@ -349,6 +357,7 @@
     {
       "item": "total_equity",
       "label": "Ukupni kapital",
+      "unit": "eur",
       "value_eur": 1769392000.0,
       "confidence": 0.98,
       "source_page": "str. 27",
@@ -360,6 +369,7 @@
     {
       "item": "equity_parent",
       "label": "Kapital matici",
+      "unit": "eur",
       "value_eur": 1462129000.0,
       "confidence": 0.97,
       "source_page": "str. 27",
@@ -371,6 +381,7 @@
     {
       "item": "net_debt",
       "label": "Neto dug",
+      "unit": "eur",
       "value_eur": 170690000.0,
       "confidence": null,
       "source_page": "computed",
@@ -382,6 +393,7 @@
     {
       "item": "cash_and_equivalents",
       "label": "Novac i ekvivalenti",
+      "unit": "eur",
       "value_eur": 211399000.0,
       "confidence": 0.98,
       "source_page": "str. 26",
@@ -393,6 +405,7 @@
     {
       "item": "operating_cf",
       "label": "Operativni novčani tok",
+      "unit": "eur",
       "value_eur": 210015000.0,
       "confidence": 0.97,
       "source_page": "str. 32",
@@ -404,6 +417,7 @@
     {
       "item": "capex",
       "label": "Capex",
+      "unit": "eur",
       "value_eur": -139013000.0,
       "confidence": 0.93,
       "source_page": "str. 32",
@@ -415,6 +429,7 @@
     {
       "item": "dps",
       "label": "Dividenda po dionici",
+      "unit": "eur_per_share",
       "value_eur": 3.12,
       "confidence": 0.9,
       "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
@@ -633,6 +648,11 @@
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
         "reason": "holding — FCF ne hvata vrijednost udjela"
+      },
+      {
+        "key": "residual_income",
+        "label": "Rezidualni dohodak (RI)",
+        "reason": "RI predložak je za financijske firme (banka/osiguranje), ne holding"
       }
     ],
     "reconciliation": {

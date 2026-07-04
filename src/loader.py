@@ -97,8 +97,9 @@ def load_extraction(conn, extraction: dict[str, Any], *, source_url: str,
             if value_raw is None:
                 continue  # ne postoji u dokumentu — ne spremamo null
             statement = canonical.STATEMENT_OF[item]
-            # Broj dionica je apsolutni count — NE primjenjuj monetarnu skalu ni FX.
-            if statement == "shares":
+            # Broj dionica je apsolutni count, a regulatorne stavke su OMJERI
+            # (decimalni razlomci) — NE primjenjuj monetarnu skalu ni FX.
+            if statement in ("shares", "regulatory"):
                 value_eur = float(value_raw)
             else:
                 value_eur = to_eur(value_raw, scale, currency)

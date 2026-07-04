@@ -3,11 +3,11 @@ import { NavLink, useParams } from 'react-router-dom'
 import VerdictSpread from './VerdictSpread.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
-const TICKERS = ['ADRS', 'CROS']
+const TICKERS = ['ADRS', 'CROS', 'ZABA']
 
 const SECTOR_HR = {
   holding: 'Holding', insurance: 'Osiguranje', tourism: 'Turizam',
-  consumer: 'Konzumeri', industrial: 'Industrija',
+  consumer: 'Konzumeri', industrial: 'Industrija', bank: 'Banka',
 }
 
 // leće metoda za naraciju raskoraka (opis mehanike, ne preporuka)
@@ -15,6 +15,7 @@ const LENS = {
   multiples_relative: 'peer multipli primijenjeni na zaradu i knjigu',
   ddm_gordon: 'kapitalizirana stvarna dividenda uz r i g',
   justified_pb_roe: 'knjigovodstvena vrijednost skalirana vlastitim ROE-om',
+  residual_income: 'knjiga + diskontirani višak povrata iznad troška kapitala (ROE fejda prema COE)',
   sotp_nav: 'tržišna vrijednost dijelova (udjeli + segmenti) umanjena za holding diskont',
   ev_ebitda: 'EV/EBITDA multipla',
   dcf_fcf: 'diskontirani slobodni novčani tok',
@@ -183,6 +184,27 @@ function Segments({ seg }) {
           {rec.note}.
         </div>
       )}
+    </section>
+  )
+}
+
+function BankKpi({ bk }) {
+  if (!bk) return null
+  return (
+    <section>
+      <div className="sec-label">Bankovni pokazatelji — FY{bk.fiscal_year}</div>
+      <div className="kv">
+        {bk.kpis.map((k) => (
+          <div className="cell" key={k.key}>
+            <div className="k">{k.label}</div>
+            <div className="v">
+              {k.missing ? <span className="flag">nema u bazi</span> : pct(k.value, 2)}
+            </div>
+            <div className="n">{k.basis}</div>
+          </div>
+        ))}
+      </div>
+      <div className="subnote">{bk.note}.</div>
     </section>
   )
 }
@@ -416,7 +438,8 @@ function Fundamentals({ data }) {
               <td>{f.label}</td>
               <td className="num">
                 {f.missing ? <span className="flag">nema u bazi</span>
-                  : f.item === 'dps' ? eur(f.value_eur) : meur(f.value_eur)}
+                  : f.unit === 'pct' ? pct(f.value_eur, 2)
+                    : f.unit === 'eur_per_share' ? eur(f.value_eur) : meur(f.value_eur)}
               </td>
               <td className={`num ${f.confidence !== null && f.confidence < 0.85 ? 'conf-low' : ''}`}>
                 {f.missing ? dash
@@ -523,6 +546,7 @@ export default function StockPage() {
 
           <Fin3Y f3={data.financials_3y} />
           <Balance b={data.balance} />
+          <BankKpi bk={data.bank_kpi} />
           <Segments seg={data.segments} />
           <Ownership own={data.ownership} liquidity={data.liquidity} />
 

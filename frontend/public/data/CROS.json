@@ -140,6 +140,7 @@
     "note": "free float ≈ 100% − poznati većinski udjeli iz vlasničkog grafa; manji imatelji nisu u bazi",
     "liquidity_link": "manjinski free float (~32.5%) znači plitku knjigu naloga — vidi oznaku likvidnosti uz cijenu"
   },
+  "bank_kpi": null,
   "share_classes": [
     {
       "ticker": "CROS",
@@ -206,6 +207,7 @@
     {
       "item": "revenue",
       "label": "Poslovni prihodi",
+      "unit": "eur",
       "value_eur": 606800000.0,
       "confidence": 0.9,
       "source_page": "str. 122",
@@ -217,6 +219,7 @@
     {
       "item": "ebitda",
       "label": "EBITDA",
+      "unit": "eur",
       "value_eur": null,
       "confidence": null,
       "source_page": null,
@@ -228,6 +231,7 @@
     {
       "item": "ebit",
       "label": "EBIT",
+      "unit": "eur",
       "value_eur": null,
       "confidence": null,
       "source_page": null,
@@ -239,6 +243,7 @@
     {
       "item": "net_income",
       "label": "Neto dobit (ukupno)",
+      "unit": "eur",
       "value_eur": 65456000.0,
       "confidence": 0.97,
       "source_page": "str. 122",
@@ -250,6 +255,7 @@
     {
       "item": "net_income_parent",
       "label": "Neto dobit matici",
+      "unit": "eur",
       "value_eur": 65389000.0,
       "confidence": 0.97,
       "source_page": "str. 123",
@@ -261,6 +267,7 @@
     {
       "item": "net_income_minority",
       "label": "Manjinski interesi (dobit)",
+      "unit": "eur",
       "value_eur": 67000.0,
       "confidence": 0.97,
       "source_page": "str. 123",
@@ -272,6 +279,7 @@
     {
       "item": "total_assets",
       "label": "Ukupna imovina",
+      "unit": "eur",
       "value_eur": 1961180000.0,
       "confidence": 0.98,
       "source_page": "str. 124",
@@ -283,6 +291,7 @@
     {
       "item": "total_equity",
       "label": "Ukupni kapital",
+      "unit": "eur",
       "value_eur": 870770000.0,
       "confidence": 0.98,
       "source_page": "str. 124",
@@ -294,6 +303,7 @@
     {
       "item": "equity_parent",
       "label": "Kapital matici",
+      "unit": "eur",
       "value_eur": 870261000.0,
       "confidence": 0.97,
       "source_page": "str. 124",
@@ -305,6 +315,7 @@
     {
       "item": "net_debt",
       "label": "Neto dug",
+      "unit": "eur",
       "value_eur": -104060000.0,
       "confidence": null,
       "source_page": "computed",
@@ -316,6 +327,7 @@
     {
       "item": "cash_and_equivalents",
       "label": "Novac i ekvivalenti",
+      "unit": "eur",
       "value_eur": 152955000.0,
       "confidence": 0.97,
       "source_page": "str. 124",
@@ -327,6 +339,7 @@
     {
       "item": "operating_cf",
       "label": "Operativni novčani tok",
+      "unit": "eur",
       "value_eur": 138303000.0,
       "confidence": 0.96,
       "source_page": "str. 129",
@@ -338,6 +351,7 @@
     {
       "item": "capex",
       "label": "Capex",
+      "unit": "eur",
       "value_eur": 13147000.0,
       "confidence": 0.6,
       "source_page": "str. 130",
@@ -349,6 +363,7 @@
     {
       "item": "dps",
       "label": "Dividenda po dionici",
+      "unit": "eur_per_share",
       "value_eur": 114.14,
       "confidence": 0.9,
       "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
@@ -403,7 +418,7 @@
         "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); PRETPOSTAVKA — povijesni ADRS diskont neizvediv iz baze (2 dana cijena); tekuća usporedba cijena↔NAV u assumptions.market_check SOTP-a",
-        "peers": "CROS: na ZSE nema usporedivog osiguratelja (docs/peers.md — regionalni ZVTG/POSR/PZU/VIG/UQA nedostupni ovom mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+        "peers": "CROS: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
       }
     },
     "assumption_flags": [
@@ -434,7 +449,7 @@
           "peer_pe": 12.0,
           "peer_pb": 1.5,
           "sources": {
-            "peers": "CROS: na ZSE nema usporedivog osiguratelja (docs/peers.md — regionalni ZVTG/POSR/PZU/VIG/UQA nedostupni ovom mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+            "peers": "CROS: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
           }
         }
       },
@@ -476,6 +491,29 @@
             "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
           }
         }
+      },
+      {
+        "key": "residual_income",
+        "label": "Rezidualni dohodak (RI)",
+        "low": 1930.0588855038254,
+        "base": 1963.0317236154472,
+        "high": 1997.1956737330952,
+        "confidence": 0.7,
+        "no_value": false,
+        "assumptions": {
+          "roe0": 0.0751,
+          "r": 0.0931,
+          "g": 0.02,
+          "fade_years": 5,
+          "bvps": 2025.29,
+          "terminal": "0 (ROE se u zadnjoj godini stapa s COE — RI iščezava)",
+          "equivalence_note": "jednostupanjski RI ≡ opravdani P/B ((ROE−g)/(COE−g)); razlika prema justified_pb_roe dolazi SAMO iz 5g fadea ROE→COE — konzistencijska provjera, prava dodana vrijednost traži eksplicitne ROE forecaste",
+          "placeholder": true,
+          "sources": {
+            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete traži povijesnu seriju; nije tržišno utvrđena",
+            "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
+          }
+        }
       }
     ],
     "skipped": [
@@ -503,7 +541,8 @@
       "method_bases": {
         "multiples_relative": 2432.0154667125908,
         "ddm_gordon": 1592.6511627906978,
-        "justified_pb_roe": 1527.6179705632744
+        "justified_pb_roe": 1527.6179705632744,
+        "residual_income": 1963.0317236154472
       }
     },
     "sotp": null
