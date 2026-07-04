@@ -42,6 +42,251 @@ FUNDAMENTAL_ITEMS = [
 
 METHOD_LABELS = {m.key: m.label for m in REGISTRY}
 
+# --- v2 sekcije: konfiguracija ---
+FINANCIAL_SECTORS = {"bank", "insurance"}   # leverage guard (kao u valuation_methods)
+LIQ_MIN_TURNOVER_EUR = 5000.0               # dnevni promet ispod -> low
+LIQ_STALE_DAYS = 5                          # dana bez trgovine -> low
+LIQ_VERY_LOW_SHARES = 3                     # komada -> very_low
+LIQ_VERY_STALE_DAYS = 20                    # dana -> very_low
+
+THREE_Y_ROWS = [
+    ("revenue", "Poslovni prihodi"),
+    ("ebitda", "EBITDA"),
+    ("ebit", "EBIT"),
+    ("net_income_parent", "Neto dobit matici"),
+    ("eps", "EPS (dobit matici / dionica)"),
+    ("operating_cf", "Operativni novčani tok"),
+]
+
+SEGMENT_LABELS = {
+    "tourism": "Turizam", "insurance": "Osiguranje",
+    "aquaculture": "Zdrava hrana (marikultura)", "energy": "Energetika",
+}
+
+
+def _vfc(cur, company_id: int, fiscal_year: int, item: str):
+    """Jedna stavka iz v_financials_current (annual/consolidated)."""
+    cur.execute(
+        """SELECT value_eur, confidence FROM v_financials_current
+           WHERE company_id=%s AND fiscal_year=%s AND item=%s
+             AND period_type='annual' AND basis='consolidated'""",
+        (company_id, fiscal_year, item),
+    )
+    r = cur.fetchone()
+    return _f(r[0]) if r else None
+
+
+def _financials_3y(cur, company_id: int, shares: float | None) -> dict:
+    """DIO 1: zadnje 3 fiskalne godine + YoY (FY0 vs FY-1) + CAGR (FY-2 -> FY0)."""
+    cur.execute(
+        """SELECT DISTINCT fiscal_year FROM v_financials_current
+           WHERE company_id=%s AND period_type='annual' AND basis='consolidated'
+             AND statement IN ('income','balance','cashflow') AND item <> 'dps'
+           ORDER BY fiscal_year DESC LIMIT 3""", (company_id,))
+    years = sorted(r[0] for r in cur.fetchall())
+    rows = []
+    for item, label in THREE_Y_ROWS:
+        vals = {}
+        for y in years:
+            if item == "eps":
+                ni = _vfc(cur, company_id, y, "net_income_parent")
+                # EPS uz KANONSKI (današnji) broj dionica — napomena u note sekcije
+                vals[str(y)] = (ni / shares) if (ni is not None and shares) else None
+            else:
+                vals[str(y)] = _vfc(cur, company_id, y, item)
+        v = [vals.get(str(y)) for y in years]
+        yoy = ((v[-1] / v[-2] - 1) if len(v) >= 2 and v[-1] is not None
+               and v[-2] not in (None, 0) else None)
+        cagr = None
+        if len(v) >= 3 and v[0] is not None and v[-1] is not None and v[0] > 0 and v[-1] > 0:
+            cagr = (v[-1] / v[0]) ** (1 / (len(v) - 1)) - 1
+        rows.append({"item": item, "label": label, "values": vals,
+                     "yoy_pct": yoy, "cagr_pct": cagr,
+                     "unit": "eur_per_share" if item == "eps" else "eur"})
+    return {
+        "years": years,
+        "rows": rows,
+        "note": ("konsolidirano, godišnje (v_financials_current); EPS uz kanonski "
+                 "današnji broj dionica bez trezorskih; prazno = nema u bazi, "
+                 "ne procjenjuje se"),
+    }
+
+
+def _balance(cur, company_id: int, sector: str, fiscal_year: int | None,
+             bvps: float | None) -> dict | None:
+    """DIO 2: bilanca + leverage guard po sektoru (financije: bez net_debt)."""
+    if not fiscal_year:
+        return None
+    is_fin = sector in FINANCIAL_SECTORS
+    out = {
+        "fiscal_year": fiscal_year,
+        "is_financial": is_fin,
+        "total_assets": _vfc(cur, company_id, fiscal_year, "total_assets"),
+        "total_equity": _vfc(cur, company_id, fiscal_year, "total_equity"),
+        "equity_parent": _vfc(cur, company_id, fiscal_year, "equity_parent"),
+        "bvps": bvps,
+    }
+    if is_fin:
+        out["leverage"] = None
+        out["leverage_note"] = ("n/p — kod osiguratelja/banaka depoziti, pričuve i "
+                                "obveze iz ugovora nisu financijski dug pa net_debt i "
+                                "net_debt/EBITDA nemaju smisla (sektorski KPI dolaze zasebno)")
+        return out
+    nd = _vfc(cur, company_id, fiscal_year, "net_debt")
+    ebitda = _vfc(cur, company_id, fiscal_year, "ebitda")
+    out["leverage"] = {
+        "net_debt": nd,
+        "net_debt_to_ebitda": (nd / ebitda) if (nd is not None and ebitda) else None,
+        "current_ratio": None,   # kratkoročna imovina/obveze nisu u kanonskim stavkama
+        "current_ratio_note": "tekući omjer: kratkoročne stavke nisu u bazi",
+        "components_note": "net_debt = debt_short + debt_long − novac (izračun iz ekstrakcije)",
+    }
+    if sector == "holding":
+        out["leverage_note"] = ("holding konsolidira osiguratelja — grupni "
+                                "net_debt/EBITDA uzeti s oprezom (miješa financijski "
+                                "i operativni dio)")
+    return out
+
+
+def _liquidity(cur, classes: list[dict], as_of) -> dict:
+    """DIO 3: flag likvidnosti po klasi iz prices_eod (zadnji dan s prometom)."""
+    from datetime import date, datetime
+
+    out_classes = []
+    for c in classes:
+        cur.execute("SELECT id FROM share_classes WHERE ticker=%s", (c["ticker"],))
+        r = cur.fetchone()
+        sc_id = r[0] if r else None
+        last_trade = None
+        if sc_id is not None:
+            cur.execute(
+                """SELECT trade_date, close_eur, volume FROM prices_eod
+                   WHERE share_class_id=%s AND volume IS NOT NULL AND volume > 0
+                   ORDER BY trade_date DESC LIMIT 1""", (sc_id,))
+            r = cur.fetchone()
+            if r:
+                last_trade = {"date": str(r[0]), "close_eur": _f(r[1]),
+                              "volume": _f(r[2]),
+                              "turnover_eur": (_f(r[1]) or 0) * (_f(r[2]) or 0)}
+        cur.execute(
+            """SELECT MIN(trade_date) FROM prices_eod p
+               JOIN share_classes sc ON sc.id=p.share_class_id
+               WHERE sc.ticker=%s""", (c["ticker"],))
+        r = cur.fetchone()
+        data_from = str(r[0]) if r and r[0] else None
+
+        if last_trade is None:
+            flag = "very_low"
+            days = None
+            note = (f"u dostupnim podacima (od {data_from or '—'}) nema zabilježene "
+                    f"trgovine — zadnji close je indikativan, ne transakcijski")
+        else:
+            days = (as_of - datetime.strptime(last_trade["date"], "%Y-%m-%d").date()).days
+            vol, tov = last_trade["volume"], last_trade["turnover_eur"]
+            if vol < LIQ_VERY_LOW_SHARES or days > LIQ_VERY_STALE_DAYS:
+                flag = "very_low"
+            elif tov < LIQ_MIN_TURNOVER_EUR or days > LIQ_STALE_DAYS:
+                flag = "low"
+            else:
+                flag = "ok"
+            note = (f"zadnja trgovina {last_trade['date']}: {vol:.0f} kom / "
+                    f"{tov:,.0f} € prometa ({days} d)")
+        out_classes.append({"class_ticker": c["ticker"], "last_trade": last_trade,
+                            "days_since_trade": days, "flag": flag, "note": note})
+    return {
+        "as_of": str(as_of),
+        "thresholds": {"min_turnover_eur": LIQ_MIN_TURNOVER_EUR,
+                       "stale_days": LIQ_STALE_DAYS,
+                       "very_low_shares": LIQ_VERY_LOW_SHARES,
+                       "very_stale_days": LIQ_VERY_STALE_DAYS},
+        "classes": out_classes,
+        "note": ("cijena bez prometa je indikativna; flag: low = dnevni promet < "
+                 f"{LIQ_MIN_TURNOVER_EUR:.0f} € ili > {LIQ_STALE_DAYS} d bez trgovine; "
+                 f"very_low = < {LIQ_VERY_LOW_SHARES} kom ili > {LIQ_VERY_STALE_DAYS} d"),
+    }
+
+
+def _segments(cur, company_id: int, fiscal_year: int | None) -> dict | None:
+    """DIO 4: IFRS 8 segmenti (samo objavljeni ključevi; izvedeni interni ključevi
+    poput 'tourism_hup' su SOTP ulaz, ne objavljeni segment — ne prikazuju se)."""
+    if not fiscal_year:
+        return None
+    cur.execute(
+        """SELECT segment_key, revenue, ebitda, net_result, confidence, source_page
+           FROM segment_financials
+           WHERE company_id=%s AND fiscal_year=%s AND period_type='annual'
+             AND basis='consolidated' AND segment_key = ANY(%s)
+           ORDER BY revenue DESC NULLS LAST""",
+        (company_id, fiscal_year, list(SEGMENT_LABELS)),
+    )
+    rows = []
+    for key, rev, ebitda, net, conf, src in cur.fetchall():
+        rev, ebitda, net = _f(rev), _f(ebitda), _f(net)
+        rows.append({"key": key, "label": SEGMENT_LABELS.get(key, key),
+                     "revenue": rev, "ebitda": ebitda, "net_result": net,
+                     "ebitda_margin": (ebitda / rev) if (ebitda is not None and rev) else None,
+                     "confidence": _f(conf), "source_page": src})
+    if not rows:
+        return None
+    rev_sum = sum(r["revenue"] for r in rows if r["revenue"] is not None)
+    ebitda_sum = sum(r["ebitda"] for r in rows if r["ebitda"] is not None)
+    ebitda_missing = [r["label"] for r in rows if r["ebitda"] is None]
+    group_rev = _vfc(cur, company_id, fiscal_year, "revenue")
+    group_ebitda = _vfc(cur, company_id, fiscal_year, "ebitda")
+    # Usporedivost prihoda: kanonski 'revenue' ne uključuje premije osiguranja,
+    # pa je za grupe s osiguranjem Σ segmenata > grupni 'revenue'. Tada je
+    # reconciliation prihoda N/P (usporedivi ukupni prihod nije u bazi) —
+    # nikako ne prikazivati negativan "ostatak" kao eliminacije.
+    rev_comparable = bool(group_rev and rev_sum and rev_sum <= group_rev * 1.02)
+    return {
+        "fiscal_year": fiscal_year,
+        "rows": rows,
+        "reconciliation": {
+            "revenue_sum": rev_sum or None,
+            "group_revenue": group_rev,
+            "revenue_comparable": rev_comparable,
+            "revenue_residual": (group_rev - rev_sum) if rev_comparable else None,
+            "revenue_note": (None if rev_comparable else
+                             "n/p — Σ segmenata uključuje premije osiguranja, a grupni "
+                             "'revenue' u bazi ne; usporedivi ukupni prihod (bilj. o "
+                             "segmentima) nije među kanonskim stavkama"),
+            "ebitda_sum": ebitda_sum or None,
+            "group_ebitda": group_ebitda,
+            "ebitda_missing_segments": ebitda_missing,
+            "note": ("ostatak = eliminacije/centar; segmentne brojke uključuju "
+                     "unutargrupne odnose (bilj. o segmentima)"
+                     + ("; Σ EBITDA nepotpun — bez EBITDA: " + ", ".join(ebitda_missing)
+                        if ebitda_missing else "")),
+        },
+    }
+
+
+def _ownership(cur, company_id: int, ticker: str) -> dict:
+    """DIO 5: obrnuti holdings graf — tko drži OVU firmu + približni free float."""
+    cur.execute(
+        """SELECT p.name, p.ticker, h.ownership_pct, h.source_page
+           FROM holdings h JOIN companies p ON p.id = h.parent_company_id
+           WHERE h.held_company_id = %s ORDER BY h.ownership_pct DESC""",
+        (company_id,),
+    )
+    holders = [{"name": n, "ticker": t, "pct": _f(pct), "source": src}
+               for n, t, pct, src in cur.fetchall()]
+    if holders:
+        known = sum(h["pct"] for h in holders)
+        ff = max(0.0, 1.0 - known)
+        note = ("free float ≈ 100% − poznati većinski udjeli iz vlasničkog grafa; "
+                "manji imatelji nisu u bazi")
+        liq_link = (f"manjinski free float (~{ff * 100:.1f}%) znači plitku knjigu "
+                    "naloga — vidi oznaku likvidnosti uz cijenu"
+                    if ff < 0.40 else None)
+    else:
+        known, ff = None, None
+        note = ("u bazi nema zabilježenih većinskih imatelja za ovu firmu — "
+                "free float nepoznat (ne procjenjuje se)")
+        liq_link = None
+    return {"holders": holders, "known_pct": known,
+            "free_float_pct_approx": ff, "note": note, "liquidity_link": liq_link}
+
 
 def _f(x):
     if x is None:
@@ -219,9 +464,18 @@ def build_stock_json(conn, ticker: str) -> dict:
     latest_fy = max((r["fiscal_year"] for r in fund if r["fiscal_year"]), default=None)
     audited = any(r["audited"] for r in fund if r["audited"] is not None)
 
+    from datetime import date
+    today = date.today()
+
     return {
         "ticker": ticker, "name": name, "sector": sector, "is_group": is_group,
         "isin": comp_isin, "fiscal_year": latest_fy, "audited": audited,
+        "generated_at": str(today),
+        "financials_3y": _financials_3y(cur, company_id, shares),
+        "balance": _balance(cur, company_id, sector, latest_fy, bvps),
+        "liquidity": _liquidity(cur, classes, today),
+        "segments": _segments(cur, company_id, latest_fy),
+        "ownership": _ownership(cur, company_id, ticker),
         "share_classes": classes,
         "metrics": {
             "eps": eps, "bvps": bvps, "roe": roe, "dps": dps,

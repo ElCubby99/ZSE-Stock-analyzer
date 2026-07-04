@@ -22,7 +22,18 @@ const LENS = {
 
 function classCss(i) { return i === 0 ? 'ord' : 'prf' }
 
+function LiqBadge({ flag }) {
+  if (!flag || flag === 'ok') return null
+  return (
+    <span className={`liq ${flag === 'very_low' ? 'vlow' : 'low'}`}>
+      {flag === 'very_low' ? 'vrlo niska likvidnost · indikativna cijena' : 'niska likvidnost · indikativna cijena'}
+    </span>
+  )
+}
+
 function Header({ data }) {
+  const liqBy = {}
+  ;(data.liquidity?.classes || []).forEach((l) => { liqBy[l.class_ticker] = l })
   return (
     <header className="head">
       <div>
@@ -37,18 +48,179 @@ function Header({ data }) {
         </div>
       </div>
       <div className="prices">
-        {data.share_classes.map((c, i) => (
-          <div className={`chip ${classCss(i)}`} key={c.ticker}>
-            <div className="tk">{c.ticker}</div>
-            <div className="val">{c.last_price ? eur(c.last_price.close_eur, 2) : dash}</div>
-            <div className="cls">
-              {c.class_type === 'ordinary' ? 'redovna' : 'povlaštena'}
-              {c.last_price ? ` · ${c.last_price.trade_date}` : ' · nema cijene u bazi'}
+        {data.share_classes.map((c, i) => {
+          const liq = liqBy[c.ticker]
+          return (
+            <div className={`chip ${classCss(i)}`} key={c.ticker}>
+              <div className="tk">{c.ticker}</div>
+              <div className="val">{c.last_price ? eur(c.last_price.close_eur, 2) : dash}</div>
+              <div className="cls">
+                {c.class_type === 'ordinary' ? 'redovna' : 'povlaštena'}
+                {c.last_price ? ` · ${c.last_price.trade_date}` : ' · nema cijene u bazi'}
+              </div>
+              {liq && liq.flag !== 'ok' && (
+                <>
+                  <LiqBadge flag={liq.flag} />
+                  <div className="liqnote">{liq.note}</div>
+                </>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </header>
+  )
+}
+
+/* ---------- v2 sekcije ---------- */
+
+function Fin3Y({ f3 }) {
+  if (!f3 || !f3.years.length) return null
+  const fmtVal = (r, y) => {
+    const v = r.values[String(y)]
+    if (v === null || v === undefined) return <span className="flag">nema u bazi</span>
+    return r.unit === 'eur_per_share' ? eur(v) : meur(v)
+  }
+  const pctCell = (v) => {
+    if (v === null || v === undefined) return <td className="num">{dash}</td>
+    return <td className={`num ${v >= 0 ? 'pos' : 'neg'}`}>{v >= 0 ? '+' : ''}{num(v * 100, 1)}%</td>
+  }
+  return (
+    <section>
+      <div className="sec-label">Financije — {f3.years.length} godine, konsolidirano</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Stavka</th>
+            {f3.years.map((y) => <th className="num" key={y}>FY{y}</th>)}
+            <th className="num">YoY</th><th className="num">CAGR</th>
+          </tr>
+        </thead>
+        <tbody>
+          {f3.rows.map((r) => (
+            <tr key={r.item}>
+              <td>{r.label}</td>
+              {f3.years.map((y) => <td className="num" key={y}>{fmtVal(r, y)}</td>)}
+              {pctCell(r.yoy_pct)}
+              {pctCell(r.cagr_pct)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="subnote">{f3.note}. YoY = zadnja godina prema prethodnoj; CAGR preko prikazanog razdoblja.</div>
+    </section>
+  )
+}
+
+function Balance({ b }) {
+  if (!b) return null
+  const lev = b.leverage
+  return (
+    <section>
+      <div className="sec-label">Bilanca i zaduženost — FY{b.fiscal_year}</div>
+      <div className="kv">
+        <div className="cell"><div className="k">Ukupna imovina</div><div className="v">{meur(b.total_assets, 0)}</div></div>
+        <div className="cell"><div className="k">Kapital matici</div><div className="v">{meur(b.equity_parent, 0)}</div></div>
+        <div className="cell"><div className="k">Knjiga / dionici</div><div className="v">{eur(b.bvps)}</div></div>
+        {b.is_financial ? (
+          <div className="cell">
+            <div className="k">Neto dug / EBITDA</div>
+            <div className="v np">n/p</div>
+          </div>
+        ) : (
+          <>
+            <div className="cell">
+              <div className="k">Neto dug</div>
+              <div className="v">{lev && lev.net_debt !== null ? meur(lev.net_debt, 0) : dash}</div>
+              <div className="n">{lev?.components_note}</div>
+            </div>
+            <div className="cell">
+              <div className="k">Neto dug / EBITDA</div>
+              <div className="v">{lev && lev.net_debt_to_ebitda !== null ? `${num(lev.net_debt_to_ebitda, 2)}×` : dash}</div>
+            </div>
+          </>
+        )}
+      </div>
+      {b.leverage_note && <div className="subnote">{b.leverage_note}</div>}
+      {!b.is_financial && lev?.current_ratio === null && (
+        <div className="subnote">{lev.current_ratio_note}.</div>
+      )}
+    </section>
+  )
+}
+
+function Segments({ seg }) {
+  if (!seg) return null
+  const rec = seg.reconciliation
+  return (
+    <section>
+      <div className="sec-label">Segmenti (IFRS 8) — FY{seg.fiscal_year}</div>
+      <table>
+        <thead>
+          <tr><th>Segment</th><th className="num">Prihod</th><th className="num">EBITDA</th>
+            <th className="num">EBITDA marža</th><th className="num">Neto dobit</th></tr>
+        </thead>
+        <tbody>
+          {seg.rows.map((r) => (
+            <tr key={r.key}>
+              <td>{r.label} <span className="fund-src">{r.source_page ? '' : ''}</span></td>
+              <td className="num">{meur(r.revenue, 0)}</td>
+              <td className="num">{r.ebitda === null ? <span className="np">n/p</span> : meur(r.ebitda, 1)}</td>
+              <td className="num">{r.ebitda_margin === null ? dash : pct(r.ebitda_margin)}</td>
+              <td className="num">{meur(r.net_result, 0)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {rec && (
+        <div className="subnote">
+          {rec.revenue_comparable ? (
+            <>Σ prihoda segmenata {meur(rec.revenue_sum, 0)} vs grupa {meur(rec.group_revenue, 0)}
+              {rec.revenue_residual !== null && <> → razlika {meur(rec.revenue_residual, 0)} = eliminacije/centar</>}. </>
+          ) : (
+            <>Reconciliation prihoda: <span className="np">{rec.revenue_note}</span>. </>
+          )}
+          {rec.note}.
+        </div>
+      )}
+    </section>
+  )
+}
+
+function Ownership({ own, liquidity }) {
+  if (!own) return null
+  const anyFlag = (liquidity?.classes || []).some((c) => c.flag !== 'ok')
+  return (
+    <section>
+      <div className="sec-label">Vlasništvo i free float</div>
+      {own.holders.length ? (
+        <>
+          <table>
+            <thead><tr><th>Imatelj</th><th className="num">Udjel</th><th>Izvor</th></tr></thead>
+            <tbody>
+              {own.holders.map((h) => (
+                <tr key={h.name}>
+                  <td>{h.name}{h.ticker ? ` (${h.ticker})` : ''}</td>
+                  <td className="num">{pct(h.pct, 2)}</td>
+                  <td className="fund-src">{h.source}</td>
+                </tr>
+              ))}
+              <tr className="sotp-total">
+                <td>Free float (približno)</td>
+                <td className="num">{pct(own.free_float_pct_approx, 1)}</td>
+                <td />
+              </tr>
+            </tbody>
+          </table>
+          <div className="subnote">
+            {own.note}.
+            {own.liquidity_link && anyFlag && <> <b>{own.liquidity_link}.</b></>}
+          </div>
+        </>
+      ) : (
+        <div className="subnote"><span className="flag">nema u bazi</span> {own.note}.</div>
+      )}
+    </section>
   )
 }
 
@@ -328,6 +500,7 @@ export default function StockPage() {
               methods={data.valuation.ran}
               classes={data.share_classes}
               reconciliation={data.valuation.reconciliation}
+              liquidity={data.liquidity}
             />
             <div className="srcnote">
               Pouzdanost po metodi:{' '}
@@ -347,6 +520,11 @@ export default function StockPage() {
             </section>
             <SotpTable sotp={data.valuation.sotp} />
           </div>
+
+          <Fin3Y f3={data.financials_3y} />
+          <Balance b={data.balance} />
+          <Segments seg={data.segments} />
+          <Ownership own={data.ownership} liquidity={data.liquidity} />
 
           <section>
             <div className="sec-label">Metode koje se ne primjenjuju</div>

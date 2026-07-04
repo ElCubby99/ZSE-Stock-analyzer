@@ -8,14 +8,17 @@ const CLASS_COLORS = ['#9E2B25', '#2F5D86', '#6B4E8E', '#8A6D1F']
  * okomite linije = zadnje cijene klasa, zelena traka = zona min–max baza.
  * Redovi dolaze ISKLJUČIVO iz podataka (CROS: bez SOTP reda jer nije pokrenut).
  */
-export default function VerdictSpread({ methods, classes, reconciliation }) {
+export default function VerdictSpread({ methods, classes, reconciliation, liquidity }) {
   const rows = methods.filter((m) => !m.no_value)
+  const liqBy = {}
+  ;(liquidity?.classes || []).forEach((l) => { liqBy[l.class_ticker] = l.flag })
   const prices = classes
     .filter((c) => c.last_price)
     .map((c, i) => ({
       ticker: c.ticker,
       price: c.last_price.close_eur,
       color: CLASS_COLORS[i % CLASS_COLORS.length],
+      illiquid: liqBy[c.ticker] === 'low' || liqBy[c.ticker] === 'very_low',
     }))
   if (!rows.length) {
     return <p className="spread-note">Nema metoda s izračunatom vrijednošću — nedovoljno ulaza u bazi.</p>
@@ -65,10 +68,11 @@ export default function VerdictSpread({ methods, classes, reconciliation }) {
           const ly = near && i % 2 === 1 ? topPad - 40 : topPad - 26
           return (
             <g key={p.ticker}>
-              <line x1={x(p.price)} y1={ly + 6} x2={x(p.price)} y2={axisY} stroke={p.color} strokeWidth="2" />
+              <line x1={x(p.price)} y1={ly + 6} x2={x(p.price)} y2={axisY} stroke={p.color}
+                strokeWidth="2" strokeDasharray={p.illiquid ? '4 4' : undefined} />
               <text x={x(p.price)} y={ly} textAnchor="middle" fontFamily="IBM Plex Mono"
                 fontSize="11" fontWeight="600" fill={p.color}>
-                {p.ticker} {num(p.price, 0)}
+                {p.ticker} {num(p.price, 0)}{p.illiquid ? ' ⚠' : ''}
               </text>
             </g>
           )
@@ -107,7 +111,10 @@ export default function VerdictSpread({ methods, classes, reconciliation }) {
         <span><i className="dot" style={{ background: '#2E3B49' }} /> središnja procjena</span>
         <span><i className="swatch" style={{ background: '#1F6E5A', opacity: 0.5 }} /> zona</span>
         {prices.map((p) => (
-          <span key={p.ticker}><i className="swatch" style={{ background: p.color }} /> {p.ticker} (cijena)</span>
+          <span key={p.ticker}>
+            <i className="swatch" style={{ background: p.color }} /> {p.ticker} (cijena)
+            {p.illiquid ? ' — ⚠ niska likvidnost, indikativna (isprekidano)' : ''}
+          </span>
         ))}
       </div>
     </>
