@@ -136,3 +136,11 @@ multiplikatori ne mogu izvesti ni s otključanim cijenama.
 - **Pokretanje:** `python -m src.webapi` (port 8001) pa ili
   `cd frontend && npm install && npm run dev` (proxy /api) ili
   `npm run build` pa sve na 8001.
+- **Vercel-ready statični build (2026-07-04):** `python -m src.stock_json ADRS
+  CROS --out frontend/public/data` → `/data/<TICKER>.json` (commitano);
+  frontend čita statične JSON-ove (bez /api i bez Postgresa u runtimeu),
+  `frontend/vercel.json` nosi SPA rewrite (rewrites idu NAKON filesystem
+  matcha, pa /data/*.json ostaje netaknut). Osvježavanje podataka na sajtu =
+  ponovni export + commit. `src/webapi.py` ostaje za lokalni razvoj uz živu
+  bazu. Provjereno: build + preview bez Postgresa, refresh na /dionica/ADRS
+  vraća 200, nepoznat ticker daje poruku (ne izmišljene podatke).

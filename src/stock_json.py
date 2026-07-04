@@ -264,7 +264,8 @@ def main(argv=None) -> int:
             if a.out:
                 import os
                 os.makedirs(a.out, exist_ok=True)
-                path = f"{a.out}/{t.lower()}.json"
+                # UPPERCASE ime: frontend statično čita /data/<TICKER>.json
+                path = f"{a.out}/{t.upper()}.json"
                 with open(path, "w", encoding="utf-8") as f:
                     json.dump(data, f, ensure_ascii=False, indent=2)
                 print(f"zapisano {path}")

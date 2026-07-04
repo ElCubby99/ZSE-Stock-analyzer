@@ -276,8 +276,14 @@ export default function StockPage() {
 
   useEffect(() => {
     setData(null); setErr(null)
-    fetch(`/api/dionica/${ticker}`)
-      .then((r) => (r.ok ? r.json() : r.json().then((e) => Promise.reject(new Error(e.error || r.status)))))
+    // statični export (frontend/public/data/<TICKER>.json) — bez API-ja i baze;
+    // SPA rewrite vraća index.html za nepostojeći ticker, pa čuvamo content-type
+    fetch(`/data/${String(ticker).toUpperCase()}.json`)
+      .then((r) => {
+        const isJson = (r.headers.get('content-type') || '').includes('json')
+        if (!r.ok || !isJson) throw new Error(`nema podataka za ${ticker}`)
+        return r.json()
+      })
       .then(setData)
       .catch((e) => setErr(String(e.message || e)))
   }, [ticker])
