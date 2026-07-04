@@ -54,6 +54,43 @@ def locate_statement_pages(pdf_text: str) -> tuple[list[int], str]:
     return sorted(wanted), f"pogoci: {hits[:12]}{'...' if len(hits) > 12 else ''}; dionice: {share_hits[:4]}"
 
 
+FLOW_STATEMENT_RX = re.compile(
+    r"(KONSOLIDIRANI\s+)?(IZVJEŠTAJ|RAČUN)\s+(O\s+)?(SVEOBUHVATNOJ\s+DOBITI"
+    r"|FINANCIJSKOM\s+POLOŽAJU|DOBITI\s+I\s+GUBITKA|NOVČAN\w+\s+TOK\w*"
+    r"|NOVČANIM\s+TOKOVIMA)", re.I)
+FLOW_SHARES_RX = re.compile(
+    r"podijeljen\w?\s+(je\s+)?(na\s+)?[\d.,]{5,}\s+.{0,25}dionic"
+    r"|[Bb]roj\s+dionica\s+na\s+dan|[Tt]emeljni\s+kapital", re.S)
+WINDOW = 14_000
+
+
+def build_slice_chars(text: str, extra_note: str = "") -> tuple[str, list[int], str]:
+    """Slice za tekst BEZ oznaka stranica (ESEF xhtml): prozori oko pogodaka
+    naslova izvještaja + bilješke o kapitalu/dionicama. -> (slice, pozicije, diag)."""
+    hits = [m.start() for m in FLOW_STATEMENT_RX.finditer(text)]
+    sh = [m.start() for m in FLOW_SHARES_RX.finditer(text)][:6]
+    if not hits:
+        return "", [], "nema pogodaka naslova izvještaja u tekstu"
+    # grupiraj bliske pogotke u prozore
+    spans: list[list[int]] = []
+    for p in sorted(hits + sh):
+        a, b = max(0, p - WINDOW // 4), min(len(text), p + WINDOW)
+        if spans and a <= spans[-1][1]:
+            spans[-1][1] = max(spans[-1][1], b)
+        else:
+            spans.append([a, b])
+    hdr = ("[NAPOMENA EKSTRAKTORU: isječci iz ESEF (xhtml) godišnjeg izvješća; "
+           "brojevi stranica su u podnožjima teksta — njih citiraj kao "
+           f"source_page. {extra_note}]\n\n")
+    out = hdr + "\n\n===== NOVI ISJEČAK =====\n".join(
+        text[a:b] for a, b in spans)
+    diag = f"{len(hits)} naslova, {len(sh)} kapital-pogodaka, {len(spans)} prozora"
+    if len(out) > MAX_CHARS:
+        out = out[:MAX_CHARS]
+        diag += f"; ODREZANO na {MAX_CHARS}"
+    return out, [a for a, _ in spans], diag
+
+
 def build_slice(pdf_text: str) -> tuple[str, list[int], str]:
     """-> (slice tekst, stranice, dijagnostika). Prazan tekst ako nije locirano."""
     pages_wanted, diag = locate_statement_pages(pdf_text)

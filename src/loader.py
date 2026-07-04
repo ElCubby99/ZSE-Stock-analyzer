@@ -103,6 +103,12 @@ def load_extraction(conn, extraction: dict[str, Any], *, source_url: str,
                 value_eur = float(value_raw)
             else:
                 value_eur = to_eur(value_raw, scale, currency)
+                # kanonska konvencija (extraction prompt, pravilo 3): troškovne
+                # magnitude su POZITIVNE — modeli ponekad zadrže knjigovodstveni
+                # minus pa YoY/FCF derivacije pucaju (ADRS capex slučaj).
+                if item in ("capex", "operating_expenses", "depreciation_amortization") \
+                        and value_eur is not None:
+                    value_eur = abs(value_eur)
             reported_eur[item] = value_eur
             cur.execute(
                 """

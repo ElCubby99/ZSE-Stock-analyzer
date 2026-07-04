@@ -145,3 +145,17 @@ Sektor se dodjeljuje S CONFIDENCEOM prije ekstrakcije jer bira extraction
 template (industrijski vs bankovni) i valuacijske metode. Nejasni/dvojni
 slučajevi -> `needs_review`, ne pretpostavka. Confidence se sprema u
 `companies.sector_confidence` (v3 dodatak).
+
+## IZMJENE 2 (dogovorene 2026-07-05, prije Tiera 2)
+1. **ESEF/xhtml ruta je prvorazredna**: kad EHO nudi samo ESEF ZIP, pipeline ga
+   raspakira (src/esef.py), parsira xhtml i vodi kroz ISTI validate gate
+   (char-window slice, src/auto_slice.build_slice_chars).
+2. **Rezolucija broja dionica = zaseban onboarding korak** (`onboard:shares`,
+   nakon validacije): share_classes -> ekstrakcija -> fallback službeni ZSE
+   listing ("Uvrštena količina" sa stranice papira; trezorske NEPOZNATE -> 0 uz
+   ogradu u dividend_note). Bez nazivnika per-share metode ostaju n/p, ne 0.
+3. **Promotion gate**: strukturna pravila validacije (1–6) blokiraju uvijek;
+   nizak confidence blokira SAMO na JEZGRENIM stavkama. Jezgreni skup
+   (eksplicitno, po templateu): nazivnik dionica + {equity_parent|total_equity},
+   {net_income_parent|net_income}, {revenue} (banka: {total_operating_income}).
+   Sporedne stavke ispod praga se logiraju kao napomena, ne blokiraju.

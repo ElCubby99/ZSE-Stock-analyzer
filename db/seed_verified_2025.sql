@@ -194,3 +194,8 @@ VALUES ((SELECT id FROM companies WHERE ticker='UCG'),
         0.95)
 ON CONFLICT (parent_company_id, held_name) DO UPDATE SET
     ownership_pct = EXCLUDED.ownership_pct, source_page = EXCLUDED.source_page;
+
+-- ZITO sektor (M6, ručna odluka korisnika 2026-07-05): operativna prehrambena
+-- grupa -> 'consumer' (ne holding; bez SOTP, sa segmentnim prikazom).
+UPDATE companies SET sector='consumer', sector_confidence=1.0
+WHERE ticker='ZITO';

@@ -3,7 +3,7 @@ import { NavLink, useParams } from 'react-router-dom'
 import VerdictSpread from './VerdictSpread.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
-const TICKERS = ['ADRS', 'CROS', 'ZABA']
+const TICKERS = ['ADRS', 'CROS', 'ZABA', 'PODR', 'RIVP']
 
 const SECTOR_HR = {
   holding: 'Holding', insurance: 'Osiguranje', tourism: 'Turizam',

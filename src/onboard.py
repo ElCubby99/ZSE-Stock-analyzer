@@ -163,15 +163,16 @@ def stage_sector(conn, run_id: str, cid: int, ticker: str, name: str) -> str | N
 
 
 def pick_report(manifest: dict) -> dict | None:
-    """Najnovije godišnje izvješće: konsolidirani PDF > nekonsolidirani PDF."""
+    """Najnovije godišnje izvješće: kons. PDF > kons. ZIP (ESEF) > nekons. PDF/ZIP."""
     items = [r for r in manifest["reports"] if r.get("period") == "1Y"]
     for cons in (True, False):
-        cand = [r for r in items if bool(r.get("consolidated")) == cons
-                and r.get("documentType") == "PDF"]
-        if cand:
-            cand.sort(key=lambda r: (r.get("year") or 0, bool(r.get("revised"))),
-                      reverse=True)
-            return cand[0]
+        for dtype in ("PDF", "ZIP"):
+            cand = [r for r in items if bool(r.get("consolidated")) == cons
+                    and r.get("documentType") == dtype]
+            if cand:
+                cand.sort(key=lambda r: (r.get("year") or 0, bool(r.get("revised"))),
+                          reverse=True)
+                return cand[0]
     return None
 
 
@@ -179,7 +180,7 @@ def stage_filings(conn, run_id: str, cid: int, ticker: str, manifest: dict) -> d
     rep = pick_report(manifest)
     if rep is None:
         log(conn, run_id, "onboard:filings", cid, "needs_review",
-            f"{ticker}: nema godišnjeg PDF-a u manifestu (možda samo ZIP/XLSX) — ručni korak")
+            f"{ticker}: nema godišnjeg PDF/ZIP izvješća u manifestu — ručni korak")
         set_state(conn, cid, "needs_review")
         return None
     with conn.cursor() as cur:
@@ -190,6 +191,129 @@ def stage_filings(conn, run_id: str, cid: int, ticker: str, manifest: dict) -> d
         f"PDF ({rep['publishDate'][:10]})")
     set_state(conn, cid, "filings_found")
     return rep
+
+
+# --- M6 popravak 3: promotion gate — JEZGRENI skup po templateu.
+# Nizak confidence na sporednoj stavci NE blokira ako su jezgreni ulazi
+# visoki (>=0.85) i metode prošle. Jezgreno = nazivnik (broj dionica,
+# rješava ga stage_shares) + ove grupe alternativa:
+CORE_ITEM_GROUPS = {
+    "bank":    [("equity_parent", "total_equity"),
+                ("net_income_parent", "net_income"),
+                ("total_operating_income",)],
+    "default": [("equity_parent", "total_equity"),
+                ("net_income_parent", "net_income"),
+                ("revenue",)],
+}
+CORE_CONF = 0.85
+
+
+def core_gate(conn, fid: int, sector: str) -> tuple[list[str], list[str]]:
+    """-> (blokirajući razlozi, ne-blokirajuće napomene) za filing."""
+    groups = CORE_ITEM_GROUPS["bank" if sector == "bank" else "default"]
+    core_flat = {i for g in groups for i in g}
+    with conn.cursor() as cur:
+        cur.execute(
+            "SELECT item, value_eur, confidence FROM financials "
+            "WHERE filing_id=%s AND is_reported", (fid,))
+        rows = {i: (v, float(c) if c is not None else None) for i, v, c in cur.fetchall()}
+    blocking, notes = [], []
+    for g in groups:
+        ok = any(i in rows and rows[i][0] is not None
+                 and (rows[i][1] or 0) >= CORE_CONF for i in g)
+        if not ok:
+            have = {i: rows[i][1] for i in g if i in rows}
+            blocking.append(f"jezgrena grupa {g} nedostaje ili conf<{CORE_CONF} ({have})")
+    lows = [f"{i}={c:.2f}" for i, (v, c) in rows.items()
+            if c is not None and c < CORE_CONF]
+    core_lows = [s for s in lows if s.split("=")[0] in core_flat
+                 or s.split("=")[0] == "shares_outstanding"]
+    side_lows = [s for s in lows if s not in core_lows]
+    if core_lows:
+        blocking.append(f"nizak confidence na JEZGRENIM stavkama: {', '.join(core_lows)}")
+    if side_lows:
+        notes.append(f"sporedne stavke ispod praga (ne blokira): {', '.join(side_lows[:8])}")
+    return blocking, notes
+
+
+# --- M6 popravak 2: rezolucija broja dionica kao ZASEBAN korak.
+def fetch_listed_quantity(isin: str) -> int | None:
+    """'Uvrštena količina' sa službene zse.hr stranice papira (listing podatak)."""
+    import re as _re
+    import requests
+
+    r = requests.get("https://zse.hr/hr/papir/310", params={"isin": isin},
+                     timeout=40, verify=(os.getenv("REQUESTS_CA_BUNDLE")
+                                         or os.getenv("SSL_CERT_FILE") or True))
+    r.raise_for_status()
+    txt = _re.sub(r"<[^>]+>", " ", r.text)
+    m = _re.search(r"Uvrštena\s+količina\s*([\d.]+)", txt)
+    if not m:
+        return None
+    return int(m.group(1).replace(".", ""))
+
+
+def stage_shares(conn, run_id: str, cid: int, ticker: str, member: dict) -> list[str]:
+    """Osiguraj nazivnik za per-share metode; bez njega n/p (NE nula)."""
+    with conn.cursor() as cur:
+        cur.execute("SELECT shares_ex_treasury FROM v_shares_canonical WHERE company_id=%s",
+                    (cid,))
+        r = cur.fetchone()
+        if r and r[0]:
+            log(conn, run_id, "onboard:shares", cid, "ok",
+                f"{ticker}: {float(r[0]):,.0f} dionica (share_classes)")
+            return []
+        cur.execute(
+            """SELECT fin.value_eur FROM financials fin JOIN filings f ON f.id=fin.filing_id
+               WHERE f.company_id=%s AND fin.item='shares_outstanding'
+               ORDER BY f.fiscal_year DESC LIMIT 1""", (cid,))
+        r = cur.fetchone()
+        if r and r[0]:
+            log(conn, run_id, "onboard:shares", cid, "ok",
+                f"{ticker}: {float(r[0]):,.0f} dionica (iz ekstrakcije)")
+            return []
+        # fallback: službeni ZSE listing (Uvrštena količina) po ISIN-u klase
+        cur.execute("SELECT id, ticker, isin FROM share_classes WHERE company_id=%s", (cid,))
+        classes = cur.fetchall()
+    if not classes and member.get("isin"):
+        with conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO share_classes (company_id, ticker, isin, class_type,
+                     shares_issued, is_primary_line, dividend_note)
+                   VALUES (%s,%s,%s,%s,NULL,TRUE,'kreirano u stage_shares (M6)')
+                   ON CONFLICT (ticker) DO NOTHING""",
+                (cid, member["symbol"], member["isin"],
+                 "preferred" if "PA0" in member["isin"] else "ordinary"))
+            cur.execute("SELECT id, ticker, isin FROM share_classes WHERE company_id=%s", (cid,))
+            classes = cur.fetchall()
+    filled = 0
+    for sc_id, sc_ticker, sc_isin in classes:
+        if not sc_isin:
+            continue
+        try:
+            qty = fetch_listed_quantity(sc_isin)
+        except Exception as e:  # noqa: BLE001
+            log(conn, run_id, "onboard:shares", cid, "failed",
+                f"{ticker}/{sc_ticker}: dohvat listinga pao ({e})")
+            continue
+        if qty:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """UPDATE share_classes SET shares_issued=%s,
+                         treasury_shares=COALESCE(treasury_shares, 0),
+                         dividend_note=COALESCE(dividend_note,'') ||
+                           ' | broj dionica = Uvrštena količina (zse.hr papir, listing); trezorske NEPOZNATE (0 uz ogradu)'
+                       WHERE id=%s AND shares_issued IS NULL""", (qty, sc_id))
+                filled += cur.rowcount
+            log(conn, run_id, "onboard:shares", cid, "ok",
+                f"{ticker}/{sc_ticker}: {qty:,.0f} dionica (zse.hr 'Uvrštena količina'; "
+                "trezorske nepoznate -> 0 uz ogradu)")
+    if filled:
+        return []
+    log(conn, run_id, "onboard:shares", cid, "needs_review",
+        f"{ticker}: broj dionica NEDOSTUPAN (ni ekstrakcija ni ZSE listing) — "
+        "per-share metode ostaju n/p")
+    return ["broj dionica nedostupan — per-share metode n/p"]
 
 
 def already_extracted(conn, cid: int, year: int, basis: str) -> bool:
@@ -211,17 +335,26 @@ def stage_extract_validate(conn, run_id: str, cid: int, ticker: str, sector: str
         log(conn, run_id, "onboard:extract", cid, "skipped",
             f"{ticker}: FY{year}/{basis} već u bazi (idempotentno)")
     else:
-        import requests
+        from .esef import download, zip_to_text
         os.makedirs(AUTO_REPORT_DIR, exist_ok=True)
         url = (rep.get("documentLink") or "").replace("\\/", "/")
-        path = f"{AUTO_REPORT_DIR}/{ticker.lower()}_{year}.pdf"
-        r = requests.get(url, timeout=180, verify=(os.getenv("REQUESTS_CA_BUNDLE")
-                                                   or os.getenv("SSL_CERT_FILE") or True))
-        r.raise_for_status()
-        with open(path, "wb") as f:
-            f.write(r.content)
-        text = pdf_to_text(path)
-        slice_text, pages, diag = build_slice(text)
+        dtype = rep.get("documentType")
+        if dtype == "ZIP":
+            # ESEF ruta (prvorazredna): ZIP -> xhtml (ili unutarnji PDF) -> slice
+            from .auto_slice import build_slice_chars
+            path = f"{AUTO_REPORT_DIR}/{ticker.lower()}_{year}.zip"
+            download(url, path)
+            text, kind = zip_to_text(path)
+            if kind == "pdf":
+                slice_text, pages, diag = build_slice(text)
+                diag = f"ZIP s unutarnjim PDF-om; {diag}"
+            else:
+                slice_text, pages, diag = build_slice_chars(text)
+        else:
+            path = f"{AUTO_REPORT_DIR}/{ticker.lower()}_{year}.pdf"
+            download(url, path)
+            text = pdf_to_text(path)
+            slice_text, pages, diag = build_slice(text)
         if not slice_text:
             log(conn, run_id, "onboard:extract", cid, "needs_review",
                 f"{ticker}: izvještaji nisu locirani u PDF-u ({diag})")
@@ -254,31 +387,31 @@ def stage_extract_validate(conn, run_id: str, cid: int, ticker: str, sector: str
             f"{ticker}: filing {fid} (FY{extraction['meta']['fiscal_year']} "
             f"{extraction['meta']['basis']}; template={'bank' if sector == 'bank' else 'industrial'}; "
             f"slice str {pages[:8]}{'...' if len(pages) > 8 else ''})")
-    # validate gate (i za već postojeće filinge — provjeri status)
+    # validate gate + PROMOTION GATE (M6 popravak 3): strukturna pravila (1–6)
+    # blokiraju uvijek; nizak confidence blokira SAMO na jezgrenim stavkama.
     set_state(conn, cid, "validating")
     with conn.cursor() as cur:
         cur.execute(
-            """SELECT id, status FROM filings WHERE company_id=%s AND fiscal_year=%s
+            """SELECT id FROM filings WHERE company_id=%s AND fiscal_year=%s
                AND period_type='annual' AND basis=%s AND doc_type='financial_report'""",
             (cid, year, basis))
         row = cur.fetchone()
     if row is None:
         return False, ["filing nije nastao"]
-    fid, status = row
-    if status == "extracted":
-        res = validate_filing(conn, fid)
-        status = res["status"]
-    if status != "validated":
-        with conn.cursor() as cur:
-            cur.execute(
-                "SELECT item, confidence FROM financials WHERE filing_id=%s "
-                "AND is_reported AND confidence < 0.85", (fid,))
-            lows = [f"{i}={float(c):.2f}" for i, c in cur.fetchall()]
-        reason = (f"validacija filinga {fid}: status {status}"
-                  + (f" (nizak confidence: {', '.join(lows[:6])})" if lows else ""))
-        log(conn, run_id, "onboard:validate", cid, "needs_review", f"{ticker}: {reason}")
-        return True, [reason]      # nastavljamo do valued, ali NE u live
-    log(conn, run_id, "onboard:validate", cid, "ok", f"{ticker}: filing {fid} VALIDATED")
+    fid = row[0]
+    res = validate_filing(conn, fid)
+    rule_fails = [f"{r['rule']}: {r['detail']}" for r in res["results"]
+                  if r["status"] in ("FAIL", "WARN") and r["rule"] != "7_confidence"]
+    blocking, notes = core_gate(conn, fid, sector)
+    blocking = rule_fails + blocking
+    if blocking:
+        log(conn, run_id, "onboard:validate", cid, "needs_review",
+            f"{ticker}: filing {fid} BLOKIRAN: " + "; ".join(blocking)[:300])
+        return True, blocking      # nastavljamo do valued, ali NE u live
+    msg = f"{ticker}: filing {fid} prolazi promotion gate (jezgra čista)"
+    if notes:
+        msg += " — " + "; ".join(notes)
+    log(conn, run_id, "onboard:validate", cid, "ok", msg)
     return True, []
 
 
@@ -388,6 +521,7 @@ def process_company(conn, run_id: str, member: dict, tier: int) -> dict:
             result["state"] = "needs_review"
             return result
 
+        result["reasons"].extend(stage_shares(conn, run_id, cid, ticker, member))
         stage_holdings(conn, run_id, cid, ticker)
         result["reasons"].extend(stage_valued(conn, run_id, cid, ticker))
 
