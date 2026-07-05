@@ -1,7 +1,7 @@
 {
-  "ticker": "PODR",
-  "name": "Podravka d.d.",
-  "sector": "consumer",
+  "ticker": "KODT",
+  "name": "KONCAR - DISTRIBUTIVNI I SPECIJALNI TRANSFORMATORI d.d.",
+  "sector": "industrial",
   "is_group": true,
   "isin": null,
   "fiscal_year": 2025,
@@ -16,7 +16,7 @@
         "item": "revenue",
         "label": "Poslovni prihodi",
         "values": {
-          "2025": 1013859000.0
+          "2025": 511708000.0
         },
         "yoy_pct": null,
         "cagr_pct": null,
@@ -26,7 +26,7 @@
         "item": "ebitda",
         "label": "EBITDA",
         "values": {
-          "2025": 227581000.0
+          "2025": 174970000.0
         },
         "yoy_pct": null,
         "cagr_pct": null,
@@ -36,7 +36,7 @@
         "item": "ebit",
         "label": "EBIT",
         "values": {
-          "2025": 169557000.0
+          "2025": 168329000.0
         },
         "yoy_pct": null,
         "cagr_pct": null,
@@ -46,7 +46,7 @@
         "item": "net_income_parent",
         "label": "Neto dobit matici",
         "values": {
-          "2025": 135384000.0
+          "2025": 141043000.0
         },
         "yoy_pct": null,
         "cagr_pct": null,
@@ -56,7 +56,7 @@
         "item": "eps",
         "label": "EPS (dobit matici / dionica)",
         "values": {
-          "2025": 19.014598729803907
+          "2025": 363.16095742270375
         },
         "yoy_pct": null,
         "cagr_pct": null,
@@ -66,7 +66,7 @@
         "item": "operating_cf",
         "label": "Operativni novčani tok",
         "values": {
-          "2025": 99266000.0
+          "2025": 170996000.0
         },
         "yoy_pct": null,
         "cagr_pct": null,
@@ -78,13 +78,13 @@
   "balance": {
     "fiscal_year": 2025,
     "is_financial": false,
-    "total_assets": 1349961000.0,
-    "total_equity": 739318000.0,
-    "equity_parent": 728075000.0,
-    "bvps": 102.25768163299931,
+    "total_assets": 670046000.0,
+    "total_equity": 350461000.0,
+    "equity_parent": 340935000.0,
+    "bvps": 877.8477557830556,
     "leverage": {
-      "net_debt": 309136000.0,
-      "net_debt_to_ebitda": 1.3583559260219438,
+      "net_debt": -98312000.0,
+      "net_debt_to_ebitda": -0.5618791792878779,
       "current_ratio": null,
       "current_ratio_note": "tekući omjer: kratkoročne stavke nisu u bazi",
       "components_note": "net_debt = debt_short + debt_long − novac (izračun iz ekstrakcije)"
@@ -98,7 +98,20 @@
       "very_low_shares": 3,
       "very_stale_days": 20
     },
-    "classes": [],
+    "classes": [
+      {
+        "class_ticker": "KODT",
+        "last_trade": {
+          "date": "2026-07-02",
+          "close_eur": 4570.0,
+          "volume": 14.0,
+          "turnover_eur": 63980.0
+        },
+        "days_since_trade": 3,
+        "flag": "ok",
+        "note": "zadnja trgovina 2026-07-02: 14 kom / 63,980 € prometa (3 d)"
+      }
+    ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
   },
   "segments": null,
@@ -110,16 +123,42 @@
     "liquidity_link": null
   },
   "bank_kpi": null,
-  "share_classes": [],
+  "share_classes": [
+    {
+      "ticker": "KODT",
+      "class_type": "ordinary",
+      "isin": "HRKODTRA0007",
+      "shares_issued": 388376.0,
+      "treasury_shares": 0.0,
+      "shares_ex_treasury": 388376.0,
+      "is_primary": true,
+      "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, listing); trezorske NEPOZNATE (0 uz ogradu)",
+      "last_price": {
+        "close_eur": 4570.0,
+        "trade_date": "2026-07-02",
+        "volume": 14.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+      }
+    }
+  ],
   "metrics": {
-    "eps": 19.014598729803907,
-    "bvps": 102.25768163299931,
-    "roe": 0.1859478762490128,
+    "eps": 363.16095742270375,
+    "bvps": 877.8477557830556,
+    "roe": 0.41369469253670055,
     "dps": null,
-    "shares_ex_treasury": 7120003.0,
-    "market_cap_eur": 1110720468.0,
-    "ebitda_eur": 227581000.0,
-    "per_class": [],
+    "shares_ex_treasury": 388376.0,
+    "market_cap_eur": 1774878320.0,
+    "ebitda_eur": 174970000.0,
+    "per_class": [
+      {
+        "class_ticker": "KODT",
+        "price": 4570.0,
+        "pe": 12.583951844472963,
+        "pb": 5.205914089195888,
+        "div_yield": null,
+        "basis": "izvedeno: zadnji close / per-share iz FY financija"
+      }
+    ],
     "basis_note": "per-share: FY konsolidirane financije / dionice bez trezorskih; trž.kap = Σ zadnji close klase × dionice klase"
   },
   "fundamentals": [
@@ -127,11 +166,11 @@
       "item": "revenue",
       "label": "Poslovni prihodi",
       "unit": "eur",
-      "value_eur": 1013859000.0,
-      "confidence": 0.98,
-      "source_page": "str. 282",
+      "value_eur": 511708000.0,
+      "confidence": 0.99,
+      "source_page": "str. 91",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -139,11 +178,11 @@
       "item": "ebitda",
       "label": "EBITDA",
       "unit": "eur",
-      "value_eur": 227581000.0,
+      "value_eur": 174970000.0,
       "confidence": null,
       "source_page": "computed",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -151,11 +190,11 @@
       "item": "ebit",
       "label": "EBIT",
       "unit": "eur",
-      "value_eur": 169557000.0,
+      "value_eur": 168329000.0,
       "confidence": 0.97,
-      "source_page": "str. 282",
+      "source_page": "str. 91",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -163,11 +202,11 @@
       "item": "net_income",
       "label": "Neto dobit (ukupno)",
       "unit": "eur",
-      "value_eur": 137015000.0,
-      "confidence": 0.98,
-      "source_page": "str. 282",
+      "value_eur": 142236000.0,
+      "confidence": 0.99,
+      "source_page": "str. 91",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -175,11 +214,11 @@
       "item": "net_income_parent",
       "label": "Neto dobit matici",
       "unit": "eur",
-      "value_eur": 135384000.0,
-      "confidence": 0.98,
-      "source_page": "str. 282",
+      "value_eur": 141043000.0,
+      "confidence": 0.99,
+      "source_page": "str. 91",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -187,11 +226,11 @@
       "item": "net_income_minority",
       "label": "Manjinski interesi (dobit)",
       "unit": "eur",
-      "value_eur": 1631000.0,
-      "confidence": 0.98,
-      "source_page": "str. 282",
+      "value_eur": 1193000.0,
+      "confidence": 0.99,
+      "source_page": "str. 91",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -199,11 +238,11 @@
       "item": "total_assets",
       "label": "Ukupna imovina",
       "unit": "eur",
-      "value_eur": 1349961000.0,
+      "value_eur": 670046000.0,
       "confidence": 0.99,
-      "source_page": "str. 283",
+      "source_page": "str. 92",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -211,11 +250,11 @@
       "item": "total_equity",
       "label": "Ukupni kapital",
       "unit": "eur",
-      "value_eur": 739318000.0,
+      "value_eur": 350461000.0,
       "confidence": 0.99,
-      "source_page": "str. 283",
+      "source_page": "str. 92",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -223,11 +262,11 @@
       "item": "equity_parent",
       "label": "Kapital matici",
       "unit": "eur",
-      "value_eur": 728075000.0,
+      "value_eur": 340935000.0,
       "confidence": 0.99,
-      "source_page": "str. 283",
+      "source_page": "str. 92",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -235,11 +274,11 @@
       "item": "net_debt",
       "label": "Neto dug",
       "unit": "eur",
-      "value_eur": 309136000.0,
+      "value_eur": -98312000.0,
       "confidence": null,
       "source_page": "computed",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -247,11 +286,11 @@
       "item": "cash_and_equivalents",
       "label": "Novac i ekvivalenti",
       "unit": "eur",
-      "value_eur": 40240000.0,
+      "value_eur": 119948000.0,
       "confidence": 0.99,
-      "source_page": "str. 283",
+      "source_page": "str. 92",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -259,11 +298,11 @@
       "item": "operating_cf",
       "label": "Operativni novčani tok",
       "unit": "eur",
-      "value_eur": 99266000.0,
-      "confidence": 0.97,
-      "source_page": "str. 285",
+      "value_eur": 170996000.0,
+      "confidence": 0.99,
+      "source_page": "str. 93",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -271,11 +310,11 @@
       "item": "capex",
       "label": "Capex",
       "unit": "eur",
-      "value_eur": 81406000.0,
-      "confidence": 0.92,
-      "source_page": "str. 285",
+      "value_eur": 26560000.0,
+      "confidence": 0.95,
+      "source_page": "str. 93",
       "fiscal_year": 2025,
-      "source_url": "https://eho.zse.hr//fileadmin/issuers/PODR/FI-PODR-b5691765c6a4d867bb1662a446038030.pdf",
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/KODT/FI-KODT-34a566e53f7997557c7df4679c15d03f.pdf",
       "audited": true,
       "missing": false
     },
@@ -294,10 +333,10 @@
   ],
   "prices": [
     {
-      "class_ticker": "PODR",
+      "class_ticker": "KODT",
       "trade_date": "2026-07-02",
-      "close_eur": 156.0,
-      "volume": 105.0,
+      "close_eur": 4570.0,
+      "volume": 14.0,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
@@ -316,7 +355,7 @@
         "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); PRETPOSTAVKA — povijesni ADRS diskont neizvediv iz baze (2 dana cijena); tekuća usporedba cijena↔NAV u assumptions.market_check SOTP-a",
-        "peers": "PODR: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+        "peers": "KODT: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
       }
     },
     "assumption_flags": [
@@ -337,9 +376,9 @@
       {
         "key": "multiples_relative",
         "label": "Relativni multiplikatori",
-        "low": 162.16372556303696,
-        "base": 190.7808536035729,
-        "high": 219.39798164410882,
+        "low": 2411.748827167487,
+        "base": 2837.3515613735144,
+        "high": 3262.9542955795414,
         "confidence": 0.5,
         "no_value": false,
         "assumptions": {
@@ -347,33 +386,33 @@
           "peer_pe": 12.0,
           "peer_pb": 1.5,
           "sources": {
-            "peers": "PODR: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+            "peers": "KODT: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
           }
         }
       },
       {
         "key": "ev_ebitda",
         "label": "EV/EBITDA",
-        "low": 146.7655210257636,
-        "base": 180.3273116598406,
-        "high": 213.88910229391755,
+        "low": 2933.7124333120482,
+        "base": 3406.7553092879066,
+        "high": 3879.7981852637645,
         "confidence": 0.5,
         "no_value": false,
         "assumptions": {
           "peer_ev_ebitda": 7.0,
-          "net_debt": 309136000.0,
+          "net_debt": -98312000.0,
           "placeholder": true,
           "sources": {
-            "peers": "PODR: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+            "peers": "KODT: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
           }
         }
       },
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -12.628615942086231,
-        "base": -8.41666747533935,
-        "high": -2.8697115706378353,
+        "low": 4817.9409897097,
+        "base": 5442.401297998918,
+        "high": 6264.788803844148,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -390,16 +429,16 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 204.20511548909653,
-        "base": 232.14015180771435,
-        "high": 268.92939932082277,
+        "low": 4158.8929278825835,
+        "base": 4727.824928960912,
+        "high": 5477.084030222546,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "roe": 0.1859,
+          "roe": 0.4137,
           "r": 0.0931,
           "g": 0.02,
-          "bvps": 102.26,
+          "bvps": 877.85,
           "placeholder": true,
           "sources": {
             "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete traži povijesnu seriju; nije tržišno utvrđena",
@@ -417,7 +456,7 @@
       {
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
-        "reason": "RI predložak je za financijske firme (banka/osiguranje), ne consumer"
+        "reason": "RI predložak je za financijske firme (banka/osiguranje), ne industrial"
       },
       {
         "key": "sotp_nav",
@@ -426,15 +465,15 @@
       }
     ],
     "reconciliation": {
-      "zone_low": -8.41666747533935,
-      "zone_high": 232.14015180771435,
-      "dispersion": 1.0362568362680793,
+      "zone_low": 2837.3515613735144,
+      "zone_high": 5442.401297998918,
+      "dispersion": 0.47865814995730616,
       "divergent": true,
       "method_bases": {
-        "multiples_relative": 190.7808536035729,
-        "ev_ebitda": 180.3273116598406,
-        "dcf_fcf": -8.41666747533935,
-        "justified_pb_roe": 232.14015180771435
+        "multiples_relative": 2837.3515613735144,
+        "ev_ebitda": 3406.7553092879066,
+        "dcf_fcf": 5442.401297998918,
+        "justified_pb_roe": 4727.824928960912
       }
     },
     "sotp": null

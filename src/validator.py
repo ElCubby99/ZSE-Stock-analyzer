@@ -137,9 +137,15 @@ def validate_filing(conn, filing_id: int) -> dict[str, Any]:
     else:
         results.append(_r("5_scale_sanity", "SKIP", "nema prošlogodišnjeg revenue za usporedbu"))
 
-    # 6. YoY sanity (WARN): bilo koja stavka >±60% YoY.
+    # 6. YoY sanity (WARN): SAMO jezgrene stavke >±60% YoY (M6.2 suženje —
+    # novčani tokovi i sporedne stavke legitimno jako variraju pa ne blokiraju;
+    # isti "jezgreni" duh kao promotion gate u onboardingu).
+    YOY_CORE_ITEMS = {"revenue", "net_income_parent", "equity_parent",
+                      "total_assets", "total_operating_income"}
     big_moves = []
     for item, cur_val in v.items():
+        if item not in YOY_CORE_ITEMS:
+            continue
         if item in prior and prior[item] != 0:
             change = (cur_val - prior[item]) / abs(prior[item])
             if abs(change) > YOY_LIMIT:
@@ -149,7 +155,7 @@ def validate_filing(conn, filing_id: int) -> dict[str, Any]:
     elif big_moves:
         results.append(_r("6_yoy_sanity", "WARN", "velike YoY promjene: " + ", ".join(big_moves)))
     else:
-        results.append(_r("6_yoy_sanity", "PASS", "sve stavke unutar ±60% YoY"))
+        results.append(_r("6_yoy_sanity", "PASS", "jezgrene stavke unutar ±60% YoY"))
 
     # 7. Confidence prag: bilo koja reported stavka < 0.85.
     low = {k: c for k, c in conf.items() if c < CONF_THRESHOLD}

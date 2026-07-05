@@ -3,7 +3,8 @@ import { NavLink, useParams } from 'react-router-dom'
 import VerdictSpread from './VerdictSpread.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
-const TICKERS = ['ADRS', 'CROS', 'ZABA', 'PODR', 'RIVP']
+// live firme (orchestrator --promote) + CROS/ZABA stranice iz M1–M5
+const TICKERS = ['ADRS', 'CROS', 'ZABA', 'ADPL', 'ATGR', 'KODT', 'KOEI', 'PODR', 'RIVP', 'ZITO']
 
 const SECTOR_HR = {
   holding: 'Holding', insurance: 'Osiguranje', tourism: 'Turizam',
