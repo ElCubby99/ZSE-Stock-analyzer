@@ -10,10 +10,17 @@ from __future__ import annotations
 import re
 
 STATEMENT_RX = re.compile(
-    r"^\s*(KONSOLIDIRANI\s+(I\s+NEKONSOLIDIRANI\s+)?)?(IZVJEŠTAJ|RAČUN)\s+"
+    r"^\s*((ODVOJENI|NEKONSOLIDIRANI)\s+I\s+)?(KONSOLIDIRANI\s+(I\s+NEKONSOLIDIRANI\s+)?)?"
+    r"(IZVJEŠTAJ|RAČUN)\s+"
     r"(O\s+)?(SVEOBUHVATNOJ\s+DOBITI|FINANCIJSKOM\s+POLOŽAJU|DOBITI\s+I\s+GUBITKA"
     r"|NOVČAN\w+\s+TOK\w*|NOVČANIM\s+TOKOVIMA|PROMJENAMA\s+(KAPITALA|GLAVNICE))",
     re.I | re.M)
+# fallback kad naslovi ne pogode (razni layouti): stranice sa >=2 potpisne
+# stavke primarnih tablica su gotovo sigurno stranice izvještaja
+CONTENT_SIGNS = ("Ukupna imovina", "Ukupno imovina", "UKUPNO IMOVINA",
+                 "Ukupna sveobuhvatna dobit", "Novac i novčani ekvivalenti",
+                 "Zadržana dobit", "Ukupne obveze", "Dobit prije oporezivanja",
+                 "Temeljni kapital")
 GFI_RX = re.compile(r"\bBILANCA\b|\bGFI-IZD|\bGFI-POD|RAČUN DOBITI I GUBITKA", re.M)
 SHARES_RX = re.compile(r"podijeljen\w?\s+(je\s+)?(na\s+)?[\d.,]{5,}\s+.{0,25}dionic"
                        r"|[Bb]roj\s+dionica\s+na\s+dan", re.S)
@@ -42,8 +49,15 @@ def locate_statement_pages(pdf_text: str) -> tuple[list[int], str]:
             hits.append(num)
         if SHARES_RX.search(body):
             share_hits.append(num)
+    used_fallback = False
     if not hits:
-        return [], f"nema pogodaka naslova izvještaja u {n} str"
+        # content-based fallback: broji potpisne stavke po stranici
+        for num, body in pages:
+            if sum(1 for s in CONTENT_SIGNS if s in body) >= 2:
+                hits.append(num)
+        used_fallback = True
+    if not hits:
+        return [], f"nema pogodaka naslova NI sadržaja izvještaja u {n} str"
 
     wanted = set()
     for h in hits:
@@ -51,7 +65,9 @@ def locate_statement_pages(pdf_text: str) -> tuple[list[int], str]:
             if 1 <= h + d <= n:
                 wanted.add(h + d)
     wanted.update(share_hits[:4])
-    return sorted(wanted), f"pogoci: {hits[:12]}{'...' if len(hits) > 12 else ''}; dionice: {share_hits[:4]}"
+    diag = (f"pogoci{' (content-fallback)' if used_fallback else ''}: "
+            f"{hits[:12]}{'...' if len(hits) > 12 else ''}; dionice: {share_hits[:4]}")
+    return sorted(wanted), diag
 
 
 FLOW_STATEMENT_RX = re.compile(

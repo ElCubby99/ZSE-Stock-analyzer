@@ -199,3 +199,10 @@ ON CONFLICT (parent_company_id, held_name) DO UPDATE SET
 -- grupa -> 'consumer' (ne holding; bez SOTP, sa segmentnim prikazom).
 UPDATE companies SET sector='consumer', sector_confidence=1.0
 WHERE ticker='ZITO';
+
+-- Sektori TOK i SPAN (M7, ručna odluka korisnika 2026-07-05):
+-- TOK = consumer (maloprodaja/distribucija autodijelova; klasifikator 0.72
+-- industrial uz eksplicitnu dvojbu prema trgovini); SPAN = technology
+-- (IT usluge/sistemska integracija; enum proširen s 'technology').
+UPDATE companies SET sector='consumer',   sector_confidence=1.0 WHERE ticker='TOK';
+UPDATE companies SET sector='technology', sector_confidence=1.0 WHERE ticker='SPAN';
