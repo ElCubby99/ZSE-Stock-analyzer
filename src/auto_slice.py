@@ -43,18 +43,17 @@ def locate_statement_pages(pdf_text: str) -> tuple[list[int], str]:
     if n <= SMALL_DOC_PAGES:
         return [p for p, _ in pages], f"mali dokument ({n} str) -> cijeli"
 
-    hits, share_hits = [], []
+    hits, share_hits, content_pages = [], [], []
     for num, body in pages:
         if STATEMENT_RX.search(body) or GFI_RX.search(body):
             hits.append(num)
         if SHARES_RX.search(body):
             share_hits.append(num)
+        if sum(1 for s in CONTENT_SIGNS if s in body) >= 2:
+            content_pages.append(num)
     used_fallback = False
     if not hits:
-        # content-based fallback: broji potpisne stavke po stranici
-        for num, body in pages:
-            if sum(1 for s in CONTENT_SIGNS if s in body) >= 2:
-                hits.append(num)
+        hits = list(content_pages)      # fallback kad naslovi ne pogode
         used_fallback = True
     if not hits:
         return [], f"nema pogodaka naslova NI sadržaja izvještaja u {n} str"
@@ -64,9 +63,13 @@ def locate_statement_pages(pdf_text: str) -> tuple[list[int], str]:
         for d in range(-NEIGHBOR, NEIGHBOR + 1):
             if 1 <= h + d <= n:
                 wanted.add(h + d)
+    # UNIJA s content stranicama (capano) — naslovi znaju promašiti dio tablica
+    # (npr. P&L bez naslovnog retka), potpisne stavke ih vraćaju u slice
+    wanted.update(content_pages[:15])
     wanted.update(share_hits[:4])
     diag = (f"pogoci{' (content-fallback)' if used_fallback else ''}: "
-            f"{hits[:12]}{'...' if len(hits) > 12 else ''}; dionice: {share_hits[:4]}")
+            f"{hits[:12]}{'...' if len(hits) > 12 else ''}; "
+            f"content: {content_pages[:8]}; dionice: {share_hits[:4]}")
     return sorted(wanted), diag
 
 
@@ -82,8 +85,11 @@ WINDOW = 14_000
 
 def build_slice_chars(text: str, extra_note: str = "") -> tuple[str, list[int], str]:
     """Slice za tekst BEZ oznaka stranica (ESEF xhtml): prozori oko pogodaka
-    naslova izvještaja + bilješke o kapitalu/dionicama. -> (slice, pozicije, diag)."""
+    naslova izvještaja + POTPISNIH stavki tablica + bilješke o dionicama."""
     hits = [m.start() for m in FLOW_STATEMENT_RX.finditer(text)]
+    for s in CONTENT_SIGNS:            # unija s potpisnim stavkama (kao PDF ruta)
+        hits.extend(m.start() for m in re.finditer(re.escape(s), text))
+    hits = sorted(hits)[:60]
     sh = [m.start() for m in FLOW_SHARES_RX.finditer(text)][:6]
     if not hits:
         return "", [], "nema pogodaka naslova izvještaja u tekstu"

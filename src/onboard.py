@@ -335,11 +335,12 @@ def already_extracted(conn, cid: int, year: int, basis: str) -> bool:
 
 
 def stage_extract_validate(conn, run_id: str, cid: int, ticker: str, sector: str,
-                           rep: dict) -> tuple[bool, list[str]]:
-    """Ekstrakcija (template po SEKTORU) + validate gate. -> (ok, razlozi_review)."""
+                           rep: dict, force: bool = False) -> tuple[bool, list[str]]:
+    """Ekstrakcija (template po SEKTORU) + validate gate. -> (ok, razlozi_review).
+    force=True: re-ekstrakcija i kad filing postoji (load zamjenjuje retke)."""
     basis = "consolidated" if rep.get("consolidated") else "standalone"
     year = rep.get("year")
-    if already_extracted(conn, cid, year, basis):
+    if not force and already_extracted(conn, cid, year, basis):
         log(conn, run_id, "onboard:extract", cid, "skipped",
             f"{ticker}: FY{year}/{basis} već u bazi (idempotentno)")
     else:
@@ -484,7 +485,8 @@ def stage_valued(conn, run_id: str, cid: int, ticker: str) -> list[str]:
     return []
 
 
-def process_company(conn, run_id: str, member: dict, tier: int) -> dict:
+def process_company(conn, run_id: str, member: dict, tier: int,
+                    force: bool = False) -> dict:
     """Cijeli state machine za jednu firmu; izolirana greška."""
     result = {"symbol": member["symbol"], "name": member["name"], "ticker": None,
               "state": None, "sector": None, "sector_conf": None, "reasons": []}
@@ -523,7 +525,8 @@ def process_company(conn, run_id: str, member: dict, tier: int) -> dict:
             result["reasons"].append("nema godišnjeg PDF izvješća (možda samo ZIP)")
             return result
 
-        cont, review_reasons = stage_extract_validate(conn, run_id, cid, ticker, sector, rep)
+        cont, review_reasons = stage_extract_validate(conn, run_id, cid, ticker,
+                                                      sector, rep, force=force)
         result["reasons"].extend(review_reasons)
         if not cont:
             result["state"] = "needs_review"
@@ -726,6 +729,8 @@ def main(argv=None) -> int:
     p.add_argument("--ticker", default=None, help="ograniči na jednu članicu (symbol)")
     p.add_argument("--batch-size", type=int, default=10,
                    help="Tier 2: veličina batcha (default 10)")
+    p.add_argument("--force", action="store_true",
+                   help="re-ekstrakcija i kad filing postoji (uz --ticker)")
     p.add_argument("--promote", default=None, help="ručna promocija firme u live")
     a = p.parse_args(argv)
 
@@ -743,7 +748,7 @@ def main(argv=None) -> int:
         with get_conn() as conn:
             for m in members:
                 print(f"\n== {m['symbol']} — {m['name']}")
-                results.append(process_company(conn, run_id, m, tier=1))
+                results.append(process_company(conn, run_id, m, tier=1, force=a.force))
                 conn.commit()
         report(results)
         print("\nSTOP: Tier 2 ne počinje dok Tier 1 nije ručno potvrđen "
@@ -761,7 +766,7 @@ def main(argv=None) -> int:
               f"{', '.join(m['symbol'] for m in batch)}\n")
         for m in batch:
             print(f"== {m['symbol']}")
-            results.append(process_company(conn, run_id, m, tier=2))
+            results.append(process_company(conn, run_id, m, tier=2, force=a.force))
             conn.commit()
     digest(results, batch_label=f"Tier 2, batch od {len(batch)}")
     print(f"\nSTOP nakon batcha — pregledaj digest prije idućeg "

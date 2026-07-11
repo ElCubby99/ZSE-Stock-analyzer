@@ -5,7 +5,7 @@ import { dash, eur, meur, num, pct } from './format.js'
 
 // live firme (orchestrator) + CROS/ZABA stranice iz M1–M5
 const TICKERS = ['ADRS', 'CROS', 'ZABA', 'ADPL', 'ARNT', 'ATGR', 'DLKV', 'IG',
-  'KODT', 'KOEI', 'PODR', 'RIVP', 'SPAN', 'ZITO']
+  'KODT', 'KOEI', 'PODR', 'RIVP', 'SPAN', 'TOK', 'ZITO']
 
 const SECTOR_HR = {
   holding: 'Holding', insurance: 'Osiguranje', tourism: 'Turizam',
