@@ -610,7 +610,9 @@ export default function StockPage() {
   return (
     <div className="wrap">
       <nav className="topnav">
-        <span className="brand">ZSE analiza</span>
+        <span className="brand">Burzovni list · ZSE</span>
+        <NavLink to="/blog">BLOG</NavLink>
+        <NavLink to="/alati">ALATI</NavLink>
         {TICKERS.map((t) => (
           <NavLink key={t} to={`/dionica/${t}`} className={({ isActive }) => (isActive ? 'active' : '')}>
             {t}

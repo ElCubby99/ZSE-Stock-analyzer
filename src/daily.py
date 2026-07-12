@@ -131,7 +131,16 @@ def stage_prices(conn, run_id, log) -> int:
         return 0
 
 
+def stage_blog(log) -> None:
+    """Nightly blog regen (DIO 2): content/blog/*.md -> statični JSON-ovi."""
+    import subprocess
+    r = subprocess.run(["python", "scripts/build_blog.py"], capture_output=True, text=True)
+    log("blog", None, "ok" if r.returncode == 0 else "failed",
+        (r.stdout or r.stderr).strip()[:150])
+
+
 def stage_regen(conn, run_id, log, changed: bool) -> None:
+stage_blog(log)
     if not changed:
         log("regen", None, "skipped", "ništa se nije promijenilo")
         return
