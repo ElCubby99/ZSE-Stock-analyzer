@@ -219,8 +219,9 @@ function RastImovine() {
 export default function Alati() {
   useEffect(() => { document.title = 'Alati · ZSE analiza' }, [])
   return (
-    <div className="wrap">
+    <div className="shellpg">
       <SiteHeader />
+      <main className="wrap">
       <h1 className="page-h1">Alati</h1>
       <p className="risk-sub">kalkulatori računaju isključivo iz vaših unosa — bez podataka o konkretnim dionicama i bez preporuka</p>
       <RastImovine />
@@ -235,6 +236,7 @@ export default function Alati() {
         Svi izračuni su informativni i temelje se na unosima korisnika. Ništa na
         ovoj stranici nije investicijski, porezni ni pravni savjet.
       </div>
+      </main>
       <SiteFooter />
     </div>
   )

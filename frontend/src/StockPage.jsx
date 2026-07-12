@@ -392,7 +392,6 @@ function Metrics({ data }) {
         <div className="v">{m.ebitda_eur ? `${num(m.ebitda_eur / 1e6, 0)} M€` : dash}</div>
         <div className="split">ROE {pct(m.roe)}</div>
       </div>
-      <SiteFooter />
     </div>
   )
 }
@@ -613,8 +612,9 @@ export default function StockPage() {
   }, [data])
 
   return (
-    <div className="wrap">
+    <div className="shellpg">
       <SiteHeader />
+      <main className="wrap">
 
       {err && <section className="error">Greška: {err}</section>}
       {!data && !err && <div className="loading">učitavam {ticker}…</div>}
@@ -731,6 +731,8 @@ export default function StockPage() {
         </>
         )
       })()}
+      </main>
+      <SiteFooter />
     </div>
   )
 }

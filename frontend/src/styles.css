@@ -377,3 +377,12 @@ td.pos{color:var(--zone)} td.neg{color:var(--ordinary)}
 .scr-row .r{text-align:right}
 .scr-row .dim{color:rgba(38,46,51,0.7); font-size:12px}
 .scr-table{min-width:1080px}
+
+/* header: meniji se NE prelamaju i ne pomiču između stranica */
+.hdr-in{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none}
+.hdr-in::-webkit-scrollbar{display:none}
+.hdr-nav{flex-wrap:nowrap; white-space:nowrap}
+.hdr-nav a{flex:none}
+.hdr-logo{flex:none}
+.hdr-search{flex:none; margin-left:auto}
+@media(max-width:900px){.hdr-search input{width:130px}}

@@ -16,8 +16,9 @@ export function BlogIndex() {
   }, [])
   const list = (posts || []).filter((p) => cat === 'Sve' || p.category === cat)
   return (
-    <div className="wrap">
+    <div className="shellpg">
       <SiteHeader />
+      <main className="wrap">
       <h1 className="page-h1">Blog</h1>
       <div className="prof-chips" style={{ margin: '14px 0 22px' }}>
         {CATS.map((c) => (
@@ -37,6 +38,7 @@ export function BlogIndex() {
       <div className="disc" style={{ marginTop: 32 }}>
         Edukativni i informativni sadržaj — nije investicijski savjet ni preporuka.
       </div>
+      </main>
       <SiteFooter />
     </div>
   )
@@ -57,8 +59,9 @@ export function BlogPost() {
       .catch((e) => setErr(String(e.message || e)))
   }, [slug])
   return (
-    <div className="wrap">
+    <div className="shellpg">
       <SiteHeader />
+      <main className="wrap">
       {err && <section className="error">Greška: {err}</section>}
       {!post && !err && <div className="loading">učitavam…</div>}
       {post && (
@@ -68,6 +71,8 @@ export function BlogPost() {
           <div className="blog-body" dangerouslySetInnerHTML={{ __html: post.html }} />
         </article>
       )}
+      </main>
+      <SiteFooter />
     </div>
   )
 }
