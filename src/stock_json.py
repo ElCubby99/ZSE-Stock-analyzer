@@ -305,6 +305,51 @@ def _trend(cur, company_id: int, sector: str) -> dict | None:
     }
 
 
+def _risks(sector, is_group, sotp, liquidity, ownership, assumption_flags,
+           bank_kpi, rec) -> dict:
+    """DIO 1: 'Rizici i kontekst' — ČINJENIČNE kartice izvedene isključivo iz
+    podataka u ovom exportu (brojke + činjenice, bez ocjena i preporuka)."""
+    cards = []
+    if sotp and sotp.get("market_vs_fair_pct") is not None:
+        mv = sotp["market_vs_fair_pct"]
+        cards.append({"l": "SOTP RASKORAK",
+                      "txt": (f"Tržište vrednuje uvrštene kćeri {mv:+.1f}% u odnosu "
+                              f"na našu fer-procjenu; fer-zona matice koristi našu "
+                              f"procjenu, pa razlika ostaje otvoreno pitanje tržišta.")})
+    if is_group and sotp and sotp.get("parts"):
+        deps = ", ".join(f"{p['name']} ({p['pct']:.0%})" for p in sotp["parts"][:4])
+        cards.append({"l": "OVISNOST O KĆERIMA",
+                      "txt": f"Vrijednost i dividende matice ovise o društvima: {deps}."})
+    ff = (ownership or {}).get("free_float_pct_approx")
+    liq_flags = [c for c in (liquidity or {}).get("classes", []) if c["flag"] != "ok"]
+    if ff is not None and ff < 0.40 or liq_flags:
+        t = []
+        if ff is not None and ff < 0.40:
+            t.append(f"free float približno {ff:.0%}")
+        for c in liq_flags[:2]:
+            t.append(f"{c['class_ticker']}: {c['note']}")
+        cards.append({"l": "KONCENTRACIJA I LIKVIDNOST", "txt": "; ".join(t) + "."})
+    if bank_kpi:
+        miss = [k["label"] for k in bank_kpi["kpis"] if k["missing"]]
+        if miss:
+            cards.append({"l": "REGULATORNI POKAZATELJI",
+                          "txt": ("U izvješću nisu objavljeni (nema u bazi): "
+                                  + ", ".join(miss[:4]) + ".")})
+    if assumption_flags:
+        cards.append({"l": "PRETPOSTAVKE PROCJENE",
+                      "txt": ("Procjena počiva na označenim pretpostavkama: "
+                              + "; ".join(f["label"] for f in assumption_flags) + ".")})
+    if rec and rec.get("dispersion_all") and rec["dispersion_all"] > 0.30:
+        cards.append({"l": "RASKORAK METODA",
+                      "txt": (f"Sve metode zajedno raspinju "
+                              f"{rec['all_methods_low']:,.0f}–{rec['all_methods_high']:,.0f} € "
+                              f"(raspon {rec['dispersion_all'] * 100:.0f}%) — svaka leća "
+                              f"mjeri drugo svojstvo; sidrena zona je uža.")})
+    return {"cards": cards[:4],
+            "note": ("činjenični kontekst izveden iz podataka ovog exporta — "
+                     "bez ocjena i preporuka; zaključak je čitateljev")}
+
+
 def _business_profile(cur, company_id: int) -> dict | None:
     """M9: profil poslovanja — činjenice iz izvješća s citatima; epiteti
     izdavatelja ODVOJENO u issuer_claims. Nema profila -> null (frontend
@@ -816,6 +861,10 @@ def build_stock_json(conn, ticker: str) -> dict:
             "holding_discount_range": a.get("holding_discount_range"),
             "holding_discount_reason": a.get("holding_discount_reason"),
             "market_check": a.get("market_check"),
+            "sotp_fair": a.get("sotp_fair"),
+            "sotp_market": a.get("sotp_market"),
+            "market_vs_fair_pct": a.get("market_vs_fair_pct"),
+            "market_vs_fair_note": a.get("market_vs_fair_note"),
             "missing": a.get("missing"),
         }
 
@@ -855,6 +904,12 @@ def build_stock_json(conn, ticker: str) -> dict:
                                         BANK_THREE_Y_ROWS if is_bank else THREE_Y_ROWS),
         "trend": _trend(cur, company_id, sector),
         "business_profile": _business_profile(cur, company_id),
+        "risks": _risks(sector, is_group, sotp_breakdown,
+                        _liquidity(cur, classes, today),
+                        _ownership(cur, company_id, ticker),
+                        assumption_flags,
+                        _bank_kpi(cur, company_id, latest_fy) if is_bank else None,
+                        reconciliation),
         "balance": _balance(cur, company_id, sector, latest_fy, bvps),
         "liquidity": _liquidity(cur, classes, today),
         "segments": _segments(cur, company_id, latest_fy),

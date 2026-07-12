@@ -5,6 +5,7 @@ import {
   AnalysisUnavailable, Dividends, IlliquidBanner, PriceChart, ProfileHeader,
   SectionRule, StatsStrip,
 } from './MarketProfile.jsx'
+import { AnchorPanel, FinChart, Risks, SecondaryList } from './AnalysisBlocks.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
 // live firme (orchestrator) + CROS/ZABA (M1–M5) + HPB/HT (samo tržišni profil)
@@ -630,18 +631,38 @@ export default function StockPage() {
           {/* ============ GORE · TRŽIŠNI PROFIL ============ */}
           <ProfileHeader data={{ ...data, sector_hr: SECTOR_HR[data.sector] || data.sector }}
             zone={zone} />
+          {data.business_profile?.activity && (
+            <div className="prof-activity">
+              <div className="prof-klabel">PROFIL POSLOVANJA</div>
+              <p>{data.business_profile.activity}
+                {data.business_profile.activity_source_page &&
+                  <span className="fund-src"> ({data.business_profile.activity_source_page})</span>}
+              </p>
+            </div>
+          )}
           <IlliquidBanner liquidity={data.liquidity} />
           <SectionRule n="01" title="Tržišni podaci" />
           <PriceChart data={data} zone={zone} />
           <StatsStrip data={data} />
           <Dividends data={data} />
 
-          {/* ============ DOLJE · POSTOJEĆA ANALIZA ============ */}
+          {/* ============ 02 · ANALIZA VRIJEDNOSTI (dizajn A) ============ */}
           <SectionRule n="02" title="Analiza vrijednosti" />
           {marketOnly ? (
             <AnalysisUnavailable note={data.data_note} />
           ) : (
           <>
+          <AnchorPanel data={data} />
+          <SecondaryList data={data} />
+          <Risks risks={data.risks} />
+          <div className="fin3-grid">
+            <FinChart trend={data.trend} />
+            <Fin3Y f3={data.financials_3y} />
+          </div>
+
+          <p className="risk-sub" style={{ margin: '18px 0 0' }}>
+            OSTALE SEKCIJE — DETALJI ANALIZE
+          </p>
           <Metrics data={data} />
           <BusinessProfile bp={data.business_profile} />
           <Assumptions valuation={data.valuation} />
@@ -683,8 +704,6 @@ export default function StockPage() {
             <SotpTable sotp={data.valuation.sotp} />
           </div>
 
-          <TrendBlock trend={data.trend} />
-          <Fin3Y f3={data.financials_3y} />
           <Balance b={data.balance} />
           <BankKpi bk={data.bank_kpi} />
           <Segments seg={data.segments} />
