@@ -48,7 +48,15 @@ last_price {close_eur, trade_date, volume, source} | null`
   kad nisu kalibrirani (CROS).
 - `ran[]`: {key, label, low, base, high, confidence, no_value, assumptions{...}}.
 - `skipped[]`: {key, label, reason}.
-- `reconciliation`: {zone_low, zone_high, dispersion, divergent, method_bases{}} | null.
+- `reconciliation`: {zone_low, zone_high, archetype, anchor_methods[],
+  method_roles{key → {role: 'anchor'|'anchor_excluded'|'secondary', note,
+  vs_zone_pct}}, zone_note, all_methods_low, all_methods_high, dispersion,
+  divergent, method_bases{}} | null. **M8**: fer-zona (zone_low–zone_high) je
+  raspon SIDRENIH metoda arhetipa (holding → SOTP; banka/osiguranje → RI +
+  opravdani P/B; operativne → DCF + multipli), NE min–max svih metoda;
+  sekundarne metode ostaju u `ran` s ulogom i razlogom odstupanja; sidro s
+  nepozitivnom bazom je isključeno iz zone ('anchor_excluded' + zone_note);
+  disperzija se i dalje mjeri preko svih metoda (raskorak = signal).
 - `sotp`: {parts[{name, value_eur, basis, pct, placeholder}], net_cash{value_eur,basis},
   net_cash_note, nav_gross_eur, nav_total_eur, holding_discount_range[2],
   holding_discount_reason, market_check{own_market_cap_eur, nav_pre_discount_eur,

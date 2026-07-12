@@ -482,10 +482,46 @@ REGISTRY = [
 
 
 # ============================================================
-#  ORKESTRACIJA + RECONCILIATION  (raskorak metoda = signal)
-#  >>> NEPROMIJENJENO <<<
+#  HIJERARHIJA METODA PO ARHETIPU (M8) — NE dira eligibility.
+#  Svaki arhetip deklarira SIDRO (headline fer-zona = low–high sidrenih
+#  metoda) + razlog zašto sekundarne odstupaju. Sekundarne se i dalje
+#  računaju i prikazuju, ali IZVAN headline zone, s razlogom odstupanja.
 # ============================================================
+ARCHETYPE_OF = {
+    "holding": "holding",
+    "bank": "capital", "insurance": "capital",
+    # sve ostalo (industrial, consumer, tourism, telecom, technology...)
+    # -> "operating"
+}
+
+HIERARCHY = {
+    "holding": {
+        "anchor": ("sotp_nav",),
+        "secondary_note": ("operativna leća — mjeri maticu kroz zaradu/knjigu/"
+                           "dividendu pa strukturno podcjenjuje holding čiji "
+                           "udjeli imaju tržišnu cijenu"),
+    },
+    "capital": {
+        "anchor": ("residual_income", "justified_pb_roe"),
+        "secondary_note": ("sekundarna leća uz kapitalno sidro (RI / opravdani "
+                           "P/B) — multipli i DDM ovise o peer skupu i politici "
+                           "isplate, ne o profitabilnosti kapitala"),
+    },
+    "operating": {
+        "anchor": ("dcf_fcf", "multiples_relative", "ev_ebitda"),
+        "secondary_note": ("sekundarna leća uz operativno sidro (DCF + multipli) "
+                           "— knjiga/dividenda ne mjere operativni zamah"),
+    },
+}
+
+
+def hierarchy_for(sector: Optional[str]) -> tuple[str, dict]:
+    arche = ARCHETYPE_OF.get(sector or "", "operating")
+    return arche, HIERARCHY[arche]
+
+
 def value_company(c: Ctx) -> dict:
+    # eligibility petlja NEPROMIJENJENA — hijerarhija je sloj IZNAD rezultata
     results, skipped = {}, {}
     for m in REGISTRY:
         ok, reason = m.eligible(c)
@@ -496,28 +532,146 @@ def value_company(c: Ctx) -> dict:
     return {
         "ran": results,
         "skipped": skipped,
-        "reconciliation": reconcile(results),
+        "reconciliation": reconcile(results, c.sector),
     }
 
-def reconcile(results: dict) -> dict:
+def reconcile(results: dict, sector: Optional[str] = None) -> dict:
     """
-    NE bira pobjednika. Grupira baze, mjeri disperziju, OZNAČAVA raskorak.
-    Naraciju raskoraka generira model (jedina prosudba) uz STROG prompt:
-    'Objasni ZAŠTO se metode razilaze koristeći SAMO brojke iz konteksta;
-     ne preporučuj kupnju/prodaju.' (MAR-safe: prikaz metoda + objašnjenje, bez rejtinga.)
+    NE bira pobjednika među SVIM metodama — ali fer-zona je sidrena arhetipom
+    (M8): holding -> SOTP low–high; banka/osiguranje -> RI / opravdani P/B;
+    operativna firma -> DCF + multipli. Naivni min–max svih baza bi npr. kod
+    holdinga razvukao zonu operativnim lećama koje ga strukturno podcjenjuju.
+    Sekundarne metode ostaju u izlazu s ulogom i razlogom odstupanja.
+    (MAR-safe: prikaz metoda + objašnjenje, bez rejtinga i preporuka.)
     """
-    bases = [r["range"].base for r in results.values() if r["range"].base]
+    bases = {k: r["range"].base for k, r in results.items() if r["range"].base}
     if not bases:
         return {"status": "no_value"}
-    lo, hi = min(bases), max(bases)
-    spread = (hi - lo) / hi if hi else 0
+    arche, h = hierarchy_for(sector)
+    anchors_all = [k for k in h["anchor"] if k in bases]
+    # sidro s nepozitivnom bazom (npr. DCF u godini negativnog FCF-a) ne smije
+    # definirati fer-zonu — ostaje prikazano, ali izvan zone, s napomenom
+    anchors = [k for k in anchors_all if bases[k] > 0]
+    dropped = [k for k in anchors_all if k not in anchors]
+    if anchors:
+        zone_low = min((results[k]["range"].low or bases[k]) for k in anchors)
+        zone_high = max((results[k]["range"].high or bases[k]) for k in anchors)
+        zone_note = (f"sidrene metode s nepozitivnom bazom isključene iz zone: "
+                     f"{', '.join(dropped)} (jednogodišnji ulaz ispod nule)"
+                     if dropped else None)
+    else:
+        # sidro nije dostupno (npr. holding bez SOTP ulaza) -> pošten fallback
+        zone_low, zone_high = min(bases.values()), max(bases.values())
+        zone_note = ("sidrena metoda nije dostupna — zona je min–max svih "
+                     "baza (fallback); vidi 'skipped' za razlog")
+    lo_all, hi_all = min(bases.values()), max(bases.values())
+    spread = (hi_all - lo_all) / hi_all if hi_all else 0
+
+    roles = {}
+    for k in results.keys():
+        if k in anchors:
+            roles[k] = {"role": "anchor", "note": None, "vs_zone_pct": None}
+            continue
+        if k in dropped:
+            roles[k] = {"role": "anchor_excluded",
+                        "note": ("sidrena metoda ISKLJUČENA iz zone — "
+                                 "nepozitivna baza (jednogodišnji ulaz)"),
+                        "vs_zone_pct": None}
+            continue
+        b = bases.get(k)
+        if b is None:
+            roles[k] = {"role": "secondary", "note": h["secondary_note"],
+                        "vs_zone_pct": None}
+        elif b < zone_low:
+            roles[k] = {"role": "secondary", "note": h["secondary_note"],
+                        "vs_zone_pct": b / zone_low - 1}
+        elif b > zone_high:
+            roles[k] = {"role": "secondary", "note": h["secondary_note"],
+                        "vs_zone_pct": b / zone_high - 1}
+        else:
+            roles[k] = {"role": "secondary", "note": h["secondary_note"],
+                        "vs_zone_pct": 0.0}
+
     return {
         "method_bases": {k: r["range"].base for k, r in results.items()},
-        "zone_low": lo, "zone_high": hi,
+        "archetype": arche,
+        "anchor_methods": anchors,
+        "method_roles": roles,
+        "zone_low": zone_low, "zone_high": zone_high,
+        "zone_note": zone_note,
+        "all_methods_low": lo_all, "all_methods_high": hi_all,
         "dispersion": spread,
         "divergent": spread > 0.30,          # >30% raspon -> traži naraciju raskoraka
-        # primjer ADRS: justified_pb_roe ~55–74 vs sotp ~95–120 -> divergent=True
-        #   -> model objasni: čisti P/B podcjenjuje jer ne hvata trž. vrijednost uvrštenih udjela
+        # disperzija se i dalje mjeri preko SVIH metoda: raskorak je signal
+    }
+
+
+def class_positions(conn, ticker: str, zone_low: Optional[float],
+                    zone_high: Optional[float]) -> dict:
+    """M8: pozicija SVAKE klase naspram sidrene fer-zone + faktografska
+    usporedba klasa (premija, dividenda, prinos). Činjenice, ne preporuke."""
+    cur = conn.cursor()
+    cur.execute(
+        """SELECT sc.id, sc.ticker, sc.class_type, sc.is_primary_line
+           FROM share_classes sc JOIN companies c ON c.id = sc.company_id
+           WHERE c.ticker = %s
+           ORDER BY sc.is_primary_line DESC NULLS LAST, sc.ticker""", (ticker,))
+    rows = cur.fetchall()
+    out = []
+    for scid, tk, ctype, prim in rows:
+        cur.execute(
+            """SELECT close_eur, trade_date FROM prices_eod
+               WHERE share_class_id=%s AND close_eur IS NOT NULL
+               ORDER BY trade_date DESC LIMIT 1""", (scid,))
+        r = cur.fetchone()
+        price = float(r[0]) if r else None
+        pdate = str(r[1]) if r else None
+        cur.execute(
+            """SELECT amount_eur FROM dividends
+               WHERE class_ticker=%s AND div_type='Izglasana dividenda'
+               ORDER BY ex_date DESC LIMIT 1""", (tk,))
+        d = cur.fetchone()
+        dps = float(d[0]) if d else None
+        position, gap = None, None
+        if price is not None and zone_low and zone_high:
+            if price > zone_high:
+                position, gap = "iznad", price / zone_high - 1
+            elif price < zone_low:
+                position, gap = "ispod", price / zone_low - 1
+            else:
+                position, gap = "unutar", 0.0
+        out.append({
+            "class_ticker": tk,
+            "class_type": ctype,
+            "is_primary": bool(prim),
+            "price": price, "price_date": pdate,
+            "dps_last_declared": dps,
+            "div_yield": (dps / price) if (dps and price) else None,
+            "position": position, "gap_pct": gap,
+        })
+    notes = []
+    priced = [c for c in out if c["price"] is not None]
+    if len(priced) >= 2:
+        a, b = priced[0], priced[1]     # primarna vs druga klasa
+        prem = a["price"] / b["price"] - 1
+        notes.append(f"{a['class_ticker']} ({a['class_type']}) trguje uz "
+                     f"{prem:+.1%} prema {b['class_ticker']} ({b['class_type']})")
+        if a["dps_last_declared"] is not None and b["dps_last_declared"] is not None:
+            if abs(a["dps_last_declared"] - b["dps_last_declared"]) < 1e-9:
+                notes.append(
+                    f"zadnja izglasana dividenda jednaka za obje klase "
+                    f"({a['dps_last_declared']:.2f} €) -> dividendni prinos "
+                    f"{a['class_ticker']} {a['div_yield']:.2%} vs "
+                    f"{b['class_ticker']} {b['div_yield']:.2%}")
+            else:
+                notes.append(
+                    f"zadnja izglasana dividenda: {a['class_ticker']} "
+                    f"{a['dps_last_declared']:.2f} € vs {b['class_ticker']} "
+                    f"{b['dps_last_declared']:.2f} €")
+    return {
+        "classes": out,
+        "comparison_notes": notes,
+        "mar_note": "pozicija naspram zone je činjenica iz podataka, ne preporuka",
     }
 
 
@@ -637,13 +791,28 @@ def _fmt(x):
 
 def _print_company(ticker: str, out: dict) -> None:
     print(f"\n================  {ticker}  ================")
+    rec = out["reconciliation"]
+    roles = rec.get("method_roles", {}) if rec.get("status") != "no_value" else {}
     print("POKRENUTE METODE (vrijednost €/dionica: low / base / high):")
     if not out["ran"]:
         print("  (nijedna)")
-    for key, r in out["ran"].items():
+    # sidrene metode prve, pa sekundarne
+    ordered = sorted(out["ran"].items(),
+                     key=lambda kv: 0 if roles.get(kv[0], {}).get("role") == "anchor" else 1)
+    for key, r in ordered:
         vr = r["range"]
         flag = "  [bez vrijednosti — vidi 'missing']" if not vr.base else ""
-        print(f"  • {r['label']:26} {_fmt(vr.low)} / {_fmt(vr.base)} / {_fmt(vr.high)}  (conf {vr.confidence}){flag}")
+        role = roles.get(key, {})
+        tag = {"anchor": "[SIDRO]     ",
+               "anchor_excluded": "[SIDRO-van] "}.get(role.get("role"), "[sekundarna]")
+        dev = role.get("vs_zone_pct")
+        devtxt = ""
+        if role.get("role") == "secondary" and dev is not None:
+            devtxt = (" — unutar sidrene zone" if dev == 0
+                      else f" — {dev:+.0%} vs sidrena zona")
+        print(f"  • {tag} {r['label']:26} {_fmt(vr.low)} / {_fmt(vr.base)} / {_fmt(vr.high)}  (conf {vr.confidence}){flag}{devtxt}")
+        if role.get("note") and vr.base:
+            print(f"      razlog odstupanja: {role['note']}")
         keys = {k: v for k, v in vr.assumptions.items() if k in
                 ("peer_pe", "peer_pb", "peer_ev_ebitda", "r", "g", "wacc", "roe", "dps", "missing",
                  "holding_discount_range")}
@@ -680,13 +849,40 @@ def _print_company(ticker: str, out: dict) -> None:
         print(f"  • {key:20} — {reason}")
 
     rec = out["reconciliation"]
-    print("\nRECONCILIATION:")
+    print("\nRECONCILIATION (M8 — fer-zona sidrena arhetipom):")
     if rec.get("status") == "no_value":
         print("  zona: nema brojčanih vrijednosti (metode pokrenute ali bez dovoljno ulaza)")
     else:
-        print(f"  zona €/dionica: {_fmt(rec['zone_low'])} – {_fmt(rec['zone_high'])}  "
+        anchors = ", ".join(rec.get("anchor_methods") or []) or "—"
+        print(f"  arhetip: {rec.get('archetype')} | sidro: {anchors}")
+        print(f"  FER-ZONA €/dionica: {_fmt(rec['zone_low'])} – {_fmt(rec['zone_high'])}"
+              f"  (raspon sidra, NE min–max svih metoda)")
+        if rec.get("zone_note"):
+            print(f"  NAPOMENA: {rec['zone_note']}")
+        print(f"  sve metode (info): {_fmt(rec.get('all_methods_low'))} – "
+              f"{_fmt(rec.get('all_methods_high'))}  "
               f"(disperzija {rec['dispersion']*100:.0f}%, divergent={rec['divergent']})")
-        print(f"  baze po metodi: { {k: round(v,2) for k,v in rec['method_bases'].items()} }")
+        print(f"  baze po metodi: { {k: round(v, 2) for k, v in rec['method_bases'].items() if v} }")
+
+
+def _print_class_positions(cp: dict) -> None:
+    print("\nKLASE NASPRAM FER-ZONE (činjenice, ne preporuke):")
+    for c in cp["classes"]:
+        if c["price"] is None:
+            print(f"  • {c['class_ticker']:6} ({c['class_type']}): nema cijene u bazi")
+            continue
+        pos = ("nema zone" if c["position"] is None else
+               "unutar zone" if c["position"] == "unutar" else
+               f"{abs(c['gap_pct']):.1%} {c['position']} zone")
+        dy = f", prinos {c['div_yield']:.2%}" if c["div_yield"] else ""
+        dps = (f", zadnja izglasana dividenda {c['dps_last_declared']:.2f} €"
+               if c["dps_last_declared"] is not None else "")
+        print(f"  • {c['class_ticker']:6} ({c['class_type']}, "
+              f"{'primarna' if c['is_primary'] else 'druga linija'}): "
+              f"{c['price']:,.2f} € ({c['price_date']}) -> {pos}{dps}{dy}")
+    for n in cp["comparison_notes"]:
+        print(f"  ↔ {n}")
+    print(f"  [{cp['mar_note']}]")
 
 
 def _print_sensitivity(ticker: str, conn, base_params: Params) -> None:
@@ -730,7 +926,12 @@ def main(argv=None) -> int:
             except ValueError as e:
                 print(f"\n================  {t}  ================\n  GREŠKA: {e}")
                 continue
-            _print_company(t, value_company(ctx))
+            out = value_company(ctx)
+            _print_company(t, out)
+            rec = out["reconciliation"]
+            if rec.get("status") != "no_value":
+                _print_class_positions(
+                    class_positions(conn, t, rec["zone_low"], rec["zone_high"]))
             if sensitivity:
                 _print_sensitivity(t, conn, params)
     print("\nNAPOMENA: r i g su kalibrirani (CAPM; izvori uz svaku metodu). Peer multipli: "
