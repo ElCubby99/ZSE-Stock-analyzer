@@ -48,8 +48,21 @@ ERP_SRC = ("ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): "
            "erp_exact_unverified=true")
 
 BETA = 1.0
-BETA_SRC = ("beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete "
-            "traži povijesnu seriju; nije tržišno utvrđena")
+BETA_SRC = ("beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete "
+            "(serija prekratka/nelikvidna ili kalibracija nije pokrenuta); "
+            "vidi src/calibrate.py")
+
+
+def _calibration(key: str):
+    """Učitaj kalibraciju iz baze (M10); bez baze/retka -> None (fallback)."""
+    try:
+        from .db import get_conn
+        with get_conn() as conn, conn.cursor() as cur:
+            cur.execute("SELECT value FROM calibrations WHERE key=%s", (key,))
+            r = cur.fetchone()
+            return r[0] if r else None
+    except Exception:  # noqa: BLE001 — kalibracija je opcionalna nadogradnja
+        return None
 
 G = 0.02
 G_SRC = ("g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan "
@@ -58,25 +71,50 @@ G_SRC = ("g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan "
 
 DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holdinge "
                 "(nelikvidnost, dvostruko oporezivanje, trošak centra); "
-                "PRETPOSTAVKA — povijesni ADRS diskont neizvediv iz baze "
-                "(2 dana cijena); tekuća usporedba cijena↔NAV u "
-                "assumptions.market_check SOTP-a")
+                "OSTAJE PRETPOSTAVKA — vidi docs/calibration.md")
 
 ADRS_PEERS = ["ATGR", "PODR", "RIVP", "PLAG", "ARNT"]
 
 
 def build_params(ticker: str) -> Params:
-    """Params s kalibriranim r/g za sve; peer multipli iz baze samo gdje skup postoji."""
-    r = RF + BETA * ERP
+    """Params s kalibriranim r/g za sve; beta IZ SERIJE gdje je kalibrirana
+    (M10, calibrations tablica); peer multipli iz baze samo gdje skup postoji."""
+    beta, beta_src, beta_cal = BETA, BETA_SRC, False
+    bc = _calibration(f"beta:{ticker}")
+    if bc and bc.get("calibrated"):
+        beta, beta_cal = float(bc["beta"]), True
+        beta_src = (
+            f"beta={bc['beta']}: IZMJERENA — OLS tjednih log-prinosa klase "
+            f"{bc['class_ticker']} vs CROBEX ({bc['period']}, n={bc['n_weeks']} "
+            f"tjedana, R²={bc['r2']}); izvor: zse.hr securityHistory + "
+            f"indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku "
+            f"pouzdanost nagiba — beta je procjena, ne konstanta")
+    r = RF + beta * ERP
+
+    disc_src = DISCOUNT_SRC
+    dc = _calibration("holding_discount:ADRS") if ticker == "ADRS" else None
+    if dc:
+        disc_src = (
+            f"holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija "
+            f"(M10, {dc['period']}, n={dc['n_days']} d) mjeri cijenu prema "
+            f"KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: "
+            f"medijan {dc['median']:+.1%}, p25 {dc['p25']:+.1%}, p75 "
+            f"{dc['p75']:+.1%}, zadnje {dc['latest']:+.1%} ({dc['latest_date']}) "
+            f"— negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove "
+            f"na placeholder multiplama i grupni neto dug konstantnim pa NE "
+            f"mjeri čisti holding diskont; raspon se zato NE zamjenjuje "
+            f"opaženim (docs/calibration.md)")
+
     sources = {
-        "r": f"r={r:.4f} (CAPM: rf+beta×ERP). {RF_SRC}. {ERP_SRC}. {BETA_SRC}",
+        "r": f"r={r:.4f} (CAPM: rf+beta×ERP). {RF_SRC}. {ERP_SRC}. {beta_src}",
         "g": G_SRC,
         "wacc": ("wacc≈r (pretpostavka strukture bez duga na razini metode; "
                  "DCF ionako gate-an za ADRS/CROS)"),
-        "holding_discount": DISCOUNT_SRC,
+        "holding_discount": disc_src,
     }
     p = Params(cost_of_equity=r, perpetual_growth=G, wacc=r)
     p.rates_calibrated = True
+    p.beta_calibrated = beta_cal
     p.sources = sources
 
     if ticker == "ADRS":
