@@ -39,3 +39,18 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_announcements_ext ON announcements (externa
 -- State machine ima eksplicitnu fazu "sektor nepoznat" (prije sector_assigned):
 -- v1 NOT NULL na companies.sector više ne odgovara modelu.
 ALTER TABLE companies ALTER COLUMN sector DROP NOT NULL;
+
+-- M10: kalibracija iz tržišnih serija (src/calibrate.py)
+CREATE TABLE IF NOT EXISTS index_eod (
+    index_isin  TEXT NOT NULL,
+    trade_date  DATE NOT NULL,
+    close_value NUMERIC NOT NULL,
+    source      TEXT,
+    PRIMARY KEY (index_isin, trade_date)
+);
+CREATE TABLE IF NOT EXISTS calibrations (
+    key         TEXT PRIMARY KEY,     -- 'beta:<TICKER>' | 'holding_discount:ADRS'
+    value       JSONB NOT NULL,       -- metoda + brojke + ograde
+    source      TEXT,
+    computed_at TIMESTAMPTZ DEFAULT now()
+);

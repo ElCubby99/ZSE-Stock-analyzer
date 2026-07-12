@@ -550,10 +550,12 @@ def build_stock_json(conn, ticker: str) -> dict:
         }
 
     # pretpostavke s izvorima (read-only na stranici) + eksplicitne oznake nesigurnosti
-    assumption_flags = [
-        {"key": "beta", "label": "β = 1,0", "status": "pretpostavka",
-         "why": "nema povijesne serije cijena za procjenu bete"},
-    ]
+    assumption_flags = []
+    if not params.beta_calibrated:
+        assumption_flags.append(
+            {"key": "beta", "label": "β = 1,0", "status": "pretpostavka",
+             "why": "beta nije kalibrirana za ovu firmu (serija prekratka/"
+                    "nelikvidna) — vidi src/calibrate.py"})
     if sotp_breakdown is not None:  # samo gdje se SOTP primjenjuje
         assumption_flags += [
             {"key": "holding_discount", "label": "holding diskont 15–25%",

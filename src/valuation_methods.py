@@ -57,6 +57,7 @@ class Params:
     # granularna kalibracija (M3): confidence po metodi ovisi o TOME jesu li
     # baš NJEZINI ulazi kalibrirani, ne o globalnoj zastavi
     rates_calibrated: bool = False    # r i g imaju izvor (CAPM komponente)
+    beta_calibrated: bool = False     # beta IZMJERENA iz serije (M10), ne 1,0
     peers_calibrated: bool = False    # peer multipli izvedeni iz baze (n>=3)
     sources: dict = field(default_factory=dict)  # komponenta -> izvor/obrazloženje
 
