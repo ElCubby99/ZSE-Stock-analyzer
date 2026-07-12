@@ -215,6 +215,117 @@ def _financials_3y(cur, company_id: int, shares: float | None,
     }
 
 
+def _pct_hr(x, dec=1):
+    return f"{x * 100:+.{dec}f}%".replace(".", ",")
+
+
+def _meur_hr(x):
+    return f"{x / 1e6:,.1f} M€".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def _direction(first, last, thresh=0.01):
+    """Smjer iz brojki: rast/pad/stabilno — bez epiteta."""
+    if first is None or last is None or not first:
+        return None
+    ch = last / first - 1
+    if abs(ch) <= thresh:
+        return "stabilno"
+    return "rast" if ch > 0 else "pad"
+
+
+def _trend(cur, company_id: int, sector: str) -> dict | None:
+    """Trend prihoda i EBITDA-e kroz dostupne godine (do 3) + ČINJENIČNA
+    naracija: samo brojke i smjer (rast/pad/stabilno), bez epiteta.
+    Banka: prihod = ukupni operativni prihod, EBITDA n/p.
+    Godina koje nema u bazi -> preskočena u nizu, navedena u napomeni."""
+    is_bank = sector == "bank"
+    is_fin = sector in FINANCIAL_SECTORS
+    rev_item = "total_operating_income" if is_bank else "revenue"
+    rev_label = "Ukupni operativni prihod" if is_bank else "Prihodi"
+    cur.execute(
+        """SELECT DISTINCT fiscal_year FROM v_financials_current
+           WHERE company_id=%s AND period_type='annual' AND basis='consolidated'
+             AND statement IN ('income','balance','cashflow') AND item <> 'dps'
+           ORDER BY fiscal_year DESC LIMIT 3""", (company_id,))
+    years = sorted(r[0] for r in cur.fetchall())
+    if not years:
+        return None
+    series = []
+    for y in years:
+        rev = _vfc(cur, company_id, y, rev_item)
+        ebd = None if is_fin else _vfc(cur, company_id, y, "ebitda")
+        series.append({
+            "year": y, "revenue": _f(rev), "ebitda": _f(ebd),
+            "ebitda_margin": (_f(ebd / rev) if (ebd is not None and rev) else None),
+        })
+
+    # naracija — SAMO brojke i smjer; rečenice se grade iz podataka
+    parts, missing = [], []
+    rv = [(s["year"], s["revenue"]) for s in series if s["revenue"] is not None]
+    missing += [f"FY{s['year']}: {rev_label.lower()} nema u bazi"
+                for s in series if s["revenue"] is None]
+    if len(rv) >= 2:
+        chain = [f"{rv[0][0]}. {_meur_hr(rv[0][1])}"]
+        for (y0, v0), (y1, v1) in zip(rv, rv[1:]):
+            chain.append(f"{y1}. {_meur_hr(v1)} ({_pct_hr(v1 / v0 - 1)})"
+                         if v0 else f"{y1}. {_meur_hr(v1)}")
+        d = _direction(rv[0][1], rv[-1][1])
+        tot = (f"; ukupno kroz razdoblje {_pct_hr(rv[-1][1] / rv[0][1] - 1)}"
+               if rv[0][1] else "")
+        parts.append(f"{rev_label}: " + " → ".join(chain)
+                     + (f". Smjer: {d}{tot}." if d else "."))
+    elif len(rv) == 1:
+        parts.append(f"{rev_label}: samo {rv[0][0]}. u bazi ({_meur_hr(rv[0][1])}) "
+                     f"— trend se ne računa iz jedne godine.")
+    if is_fin:
+        parts.append("EBITDA: n/p za financijski sektor"
+                     + (" — vidi bankovne pokazatelje (CIR, NIM)." if is_bank else
+                        " (osiguranje: premije/pričuve, ne operativna marža)."))
+    else:
+        mg = [(s["year"], s["ebitda_margin"]) for s in series
+              if s["ebitda_margin"] is not None]
+        missing += [f"FY{s['year']}: EBITDA nema u bazi"
+                    for s in series if s["ebitda"] is None]
+        if len(mg) >= 2:
+            chain = " → ".join(f"{m * 100:.1f}%".replace(".", ",") for _, m in mg)
+            d = _direction(mg[0][1], mg[-1][1])
+            parts.append(f"EBITDA marža: {chain} ({mg[0][0]}.–{mg[-1][0]}.)."
+                         + (f" Smjer: {d}." if d else ""))
+        elif len(mg) == 1:
+            parts.append(f"EBITDA marža: {mg[0][1] * 100:.1f}%".replace(".", ",")
+                         + f" ({mg[0][0]}.) — jedna godina u bazi.")
+    if missing:
+        parts.append("Nedostaje: " + "; ".join(missing) + ".")
+    return {
+        "series": series,
+        "revenue_label": rev_label,
+        "narration": " ".join(parts) if parts else None,
+        "note": ("naracija je izvedena isključivo iz brojki u bazi (bez ocjena); "
+                 "smjer = usporedba ruba razdoblja uz prag ±1%"),
+    }
+
+
+def _business_profile(cur, company_id: int) -> dict | None:
+    """M9: profil poslovanja — činjenice iz izvješća s citatima; epiteti
+    izdavatelja ODVOJENO u issuer_claims. Nema profila -> null (frontend
+    prikazuje 'nema u bazi', ništa se ne generira)."""
+    cur.execute(
+        """SELECT fiscal_year, activity, activity_source_page, segments,
+                  markets, export_share, issuer_claims, source
+           FROM business_profiles WHERE company_id=%s""", (company_id,))
+    r = cur.fetchone()
+    if not r:
+        return None
+    return {
+        "fiscal_year": r[0], "activity": r[1], "activity_source_page": r[2],
+        "segments": r[3] or [], "markets": r[4] or [],
+        "export_share": r[5], "issuer_claims": r[6] or [], "source": r[7],
+        "note": ("samo činjenice iz izvješća s citatima; kvalitativne tvrdnje "
+                 "('vodeći' i sl.) su TVRDNJE IZDAVATELJA, označene i citirane "
+                 "— platforma ih ne generira niti potvrđuje"),
+    }
+
+
 def _balance(cur, company_id: int, sector: str, fiscal_year: int | None,
              bvps: float | None) -> dict | None:
     """DIO 2: bilanca + leverage guard po sektoru (financije: bez net_debt)."""
@@ -580,6 +691,8 @@ def build_stock_json(conn, ticker: str) -> dict:
         "generated_at": str(today),
         "financials_3y": _financials_3y(cur, company_id, shares,
                                         BANK_THREE_Y_ROWS if is_bank else THREE_Y_ROWS),
+        "trend": _trend(cur, company_id, sector),
+        "business_profile": _business_profile(cur, company_id),
         "balance": _balance(cur, company_id, sector, latest_fy, bvps),
         "liquidity": _liquidity(cur, classes, today),
         "segments": _segments(cur, company_id, latest_fy),
