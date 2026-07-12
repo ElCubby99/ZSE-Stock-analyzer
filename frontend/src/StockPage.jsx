@@ -31,7 +31,147 @@ const LENS = {
 
 function classCss(i) { return i === 0 ? 'ord' : 'prf' }
 
+// M8: arhetipovi i imena metoda za naraciju sidrene fer-zone
+const ARCH_HR = { holding: 'holding', capital: 'banka/osiguranje — kapitalno sidro',
+  operating: 'operativna firma' }
+const METHOD_HR = {
+  sotp_nav: 'SOTP/NAV', residual_income: 'rezidualni dohodak',
+  justified_pb_roe: 'opravdani P/B', dcf_fcf: 'DCF',
+  multiples_relative: 'relativni multipli', ev_ebitda: 'EV/EBITDA',
+  ddm_gordon: 'dividendni diskont',
+}
+
 /* ---------- v2 sekcije ---------- */
+
+/* M9: mini trend prihoda i EBITDA-e (barovi iz baze) + ČINJENIČNA naracija */
+function TrendBlock({ trend }) {
+  if (!trend || !trend.series.length) return null
+  const s = trend.series
+  const vals = s.flatMap((r) => [r.revenue, r.ebitda]).filter((v) => v !== null)
+  if (!vals.length) return null
+  const vmax = Math.max(...vals)
+  const W = 460; const H = 150; const pB = 22; const pT = 26
+  const groupW = W / s.length
+  const barW = Math.min(44, groupW / 2.6)
+  const yH = (v) => (v / vmax) * (H - pT - pB)
+  return (
+    <section>
+      <div className="sec-label">Trend — {trend.revenue_label.toLowerCase()} i EBITDA</div>
+      <div className="trend-grid">
+        <svg viewBox={`0 0 ${W} ${H}`} className="trend-svg" role="img"
+          aria-label="Trend prihoda i EBITDA-e">
+          {s.map((r, i) => {
+            const cx = i * groupW + groupW / 2
+            return (
+              <g key={r.year}>
+                {r.revenue !== null && (
+                  <>
+                    <rect x={cx - barW - 2} y={H - pB - yH(r.revenue)} width={barW}
+                      height={yH(r.revenue)} fill="#2F5D86" opacity="0.85" />
+                    <text x={cx - barW / 2 - 2} y={H - pB - yH(r.revenue) - 5}
+                      textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9.5"
+                      fill="#5C6772">{num(r.revenue / 1e6, 0)}</text>
+                  </>
+                )}
+                {r.ebitda !== null && (
+                  <>
+                    <rect x={cx + 2} y={H - pB - yH(r.ebitda)} width={barW}
+                      height={yH(r.ebitda)} fill="#1F6E5A" opacity="0.85" />
+                    <text x={cx + barW / 2 + 2} y={H - pB - yH(r.ebitda) - 5}
+                      textAnchor="middle" fontFamily="IBM Plex Mono" fontSize="9.5"
+                      fill="#5C6772">{num(r.ebitda / 1e6, 0)}</text>
+                  </>
+                )}
+                <text x={cx} y={H - 7} textAnchor="middle"
+                  fontFamily="IBM Plex Mono" fontSize="10.5" fill="#5C6772">FY{r.year}</text>
+              </g>
+            )
+          })}
+        </svg>
+        <div>
+          <p className="trend-narr">{trend.narration}</p>
+          <div className="legend">
+            <span><i className="swatch" style={{ background: '#2F5D86' }} /> {trend.revenue_label} (M€)</span>
+            <span><i className="swatch" style={{ background: '#1F6E5A' }} /> EBITDA (M€)</span>
+          </div>
+        </div>
+      </div>
+      <div className="subnote">{trend.note}.</div>
+    </section>
+  )
+}
+
+/* M9: profil poslovanja — SAMO činjenice iz izvješća; epiteti = tvrdnje
+   izdavatelja, označene i citirane. Bez izvora -> sekcija kaže "nema u bazi". */
+function BusinessProfile({ bp }) {
+  return (
+    <section>
+      <div className="sec-label">Profil poslovanja — iz godišnjeg izvješća</div>
+      {!bp ? (
+        <div className="subnote"><span className="flag">nema u bazi</span>{' '}
+          profil poslovanja još nije ekstrahiran iz izvješća — ništa se ne generira.</div>
+      ) : (
+        <>
+          <p className="bp-activity">{bp.activity}
+            {bp.activity_source_page && <span className="fund-src"> ({bp.activity_source_page})</span>}
+          </p>
+          <div className="bp-grid">
+            {bp.segments.length > 0 && (
+              <div>
+                <div className="bp-h">Glavni segmenti</div>
+                <ul className="bp-list">
+                  {bp.segments.map((sg) => (
+                    <li key={sg.name}>
+                      <b>{sg.name}</b>{sg.description ? ` — ${sg.description}` : ''}
+                      {sg.source_page && <span className="fund-src"> ({sg.source_page})</span>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div>
+              {bp.markets.length > 0 && (
+                <>
+                  <div className="bp-h">Tržišta</div>
+                  <ul className="bp-list">
+                    {bp.markets.map((m) => (
+                      <li key={m.market}>{m.market}
+                        {m.source_page && <span className="fund-src"> ({m.source_page})</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              <div className="bp-h">Izvozni udio</div>
+              {bp.export_share ? (
+                <p className="bp-export">
+                  <b>{num(bp.export_share.value * 100, 0)}%</b> — {bp.export_share.basis}
+                  {bp.export_share.source_page && <span className="fund-src"> ({bp.export_share.source_page})</span>}
+                </p>
+              ) : (
+                <p className="bp-export"><span className="np">nije objavljen u izvješću</span></p>
+              )}
+            </div>
+          </div>
+          {bp.issuer_claims.length > 0 && (
+            <div className="bp-claims">
+              <div className="bp-h">Tvrdnje izdavatelja (necjenjeno, citirano)</div>
+              <ul className="bp-list">
+                {bp.issuer_claims.map((c, i) => (
+                  <li key={i}>
+                    <span className="flag">tvrdnja izdavatelja</span> {c.claim}
+                    {c.source_page && <span className="fund-src"> ({c.source_page})</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div className="subnote">{bp.note}. Izvor: {bp.source}.</div>
+        </>
+      )}
+    </section>
+  )
+}
 
 function Fin3Y({ f3 }) {
   if (!f3 || !f3.years.length) return null
@@ -322,12 +462,33 @@ function Narrative({ data }) {
         </p>
       )}
       <p>
-        Raspon središnjih procjena je {eur(rec.zone_low, 0)}–{eur(rec.zone_high, 0)} uz
-        disperziju od {num(rec.dispersion * 100, 0)}%
-        {rec.divergent
-          ? ' — metode se snažno razilaze, pa je sam raskorak informacija: svaka leća mjeri drugo svojstvo.'
-          : ' — metode su relativno usklađene.'}
+        Fer-zona je <b>sidrena arhetipom</b> ({ARCH_HR[rec.archetype] || rec.archetype}
+        {rec.anchor_methods?.length ? `: ${rec.anchor_methods.map((k) => METHOD_HR[k] || k).join(', ')}` : ''}):{' '}
+        {eur(rec.zone_low, 0)}–{eur(rec.zone_high, 0)} po dionici
+        (disperzija sidra {num(rec.dispersion * 100, 0)}%).
+        {rec.zone_note ? ` ${rec.zone_note}.` : ''}
       </p>
+      {(() => {
+        const secOut = ran.filter((m) => {
+          const role = rec.method_roles?.[m.key]
+          return role?.role === 'secondary' && role.vs_zone_pct
+        })
+        if (!secOut.length) return null
+        const note = rec.method_roles[secOut[0].key]?.note
+        return (
+          <p>
+            Sekundarne leće izvan zone:{' '}
+            {secOut.map((m, i) => (
+              <React.Fragment key={m.key}>
+                {i > 0 && ', '}
+                {m.label} ({num(rec.method_roles[m.key].vs_zone_pct * 100, 0)}%)
+              </React.Fragment>
+            ))}
+            {note ? ` — ${note}.` : '.'}
+            {' '}Raspon svih metoda: {eur(rec.all_methods_low, 0)}–{eur(rec.all_methods_high, 0)}.
+          </p>
+        )
+      })()}
       <p style={{ color: 'var(--muted)', fontSize: '13px' }}>
         Koja je leća mjerodavna ovisi o tome što društvo jest (operativna firma, holding, osiguratelj);
         procjenu prepuštamo čitatelju. Pretpostavke i izvori svake metode navedeni su iznad.
@@ -482,6 +643,7 @@ export default function StockPage() {
           ) : (
           <>
           <Metrics data={data} />
+          <BusinessProfile bp={data.business_profile} />
           <Assumptions valuation={data.valuation} />
 
           <section>
@@ -521,6 +683,7 @@ export default function StockPage() {
             <SotpTable sotp={data.valuation.sotp} />
           </div>
 
+          <TrendBlock trend={data.trend} />
           <Fin3Y f3={data.financials_3y} />
           <Balance b={data.balance} />
           <BankKpi bk={data.bank_kpi} />

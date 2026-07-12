@@ -79,10 +79,17 @@ export default function VerdictSpread({ methods, classes, reconciliation, liquid
         })}
         {rows.map((m, i) => {
           const y = topPad + i * rowH
-          const dotFill = m.key === 'sotp_nav' ? '#1F6E5A' : '#2E3B49'
+          const role = reconciliation?.method_roles?.[m.key]?.role
+          const isAnchor = role === 'anchor'
+          // M8: sekundarne leće (i sidro isključeno iz zone) su PRIGUŠENE —
+          // ostaju vidljive, ali ne vode; razlog odstupanja je u naraciji
+          const op = role && !isAnchor ? 0.45 : 1
+          const dotFill = isAnchor ? '#1F6E5A' : '#2E3B49'
           return (
-            <g key={m.key}>
-              <text x="8" y={y + 4} fontFamily="IBM Plex Sans" fontSize="13" fill="#1B242E">{m.label}</text>
+            <g key={m.key} opacity={op}>
+              <text x="8" y={y + 4} fontFamily="IBM Plex Sans" fontSize="13" fill="#1B242E">
+                {m.label}{role && !isAnchor ? ' *' : ''}
+              </text>
               <line x1={x(m.low)} y1={y} x2={x(m.high)} y2={y} stroke="#9AA4AF" strokeWidth="7" strokeLinecap="round" />
               <circle cx={x(m.base)} cy={y} r="6" fill={dotFill} />
               <text x={x(m.high) + 10} y={y + 4} fontFamily="IBM Plex Mono" fontSize="13"
@@ -96,12 +103,17 @@ export default function VerdictSpread({ methods, classes, reconciliation, liquid
         <div className="zoneout">
           <div>
             <div className="big">{num(reconciliation.zone_low, 0)}–{num(reconciliation.zone_high, 0)} €</div>
-            <div className="lab">zona preklapanja metoda (min–max baza)</div>
+            <div className="lab">
+              {reconciliation.anchor_methods?.length
+                ? 'fer-zona (raspon sidrenih metoda arhetipa)'
+                : 'zona preklapanja metoda (min–max baza; sidro nedostupno)'}
+            </div>
           </div>
           <div>
             <div className="big">{num(reconciliation.dispersion * 100, 0)}%</div>
             <div className="lab">
-              disperzija {reconciliation.divergent ? '(metode se snažno razilaze)' : '(metode se uglavnom slažu)'}
+              disperzija sidra {reconciliation.divergent ? '(sidrene metode se razilaze)' : '(sidro usklađeno)'}
+              {reconciliation.method_roles ? ' · * = sekundarna leća, prigušena' : ''}
             </div>
           </div>
         </div>

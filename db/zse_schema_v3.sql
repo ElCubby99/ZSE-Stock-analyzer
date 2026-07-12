@@ -59,3 +59,18 @@ CREATE TABLE IF NOT EXISTS calibrations (
     source      TEXT,
     computed_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- M9: profil poslovanja — ČINJENICE iz izvješća s citatima po stranicama.
+-- Epiteti izdavatelja idu ODVOJENO u issuer_claims (označeni kao tvrdnja).
+CREATE TABLE IF NOT EXISTS business_profiles (
+    company_id  INTEGER PRIMARY KEY REFERENCES companies(id),
+    fiscal_year INTEGER,
+    activity    TEXT,            -- djelatnost, neutralno, 1-2 rečenice
+    activity_source_page TEXT,
+    segments    JSONB,           -- [{name, description|null, source_page}]
+    markets     JSONB,           -- [{market, source_page}]
+    export_share JSONB,          -- {value, basis, source_page} | NULL (samo ako objavljen)
+    issuer_claims JSONB,         -- [{claim, source_page}] — tvrdnje izdavatelja, citirane
+    source      TEXT,            -- dokument + metoda (API ekstrakcija / ručno s citatima)
+    extracted_at TIMESTAMPTZ DEFAULT now()
+);

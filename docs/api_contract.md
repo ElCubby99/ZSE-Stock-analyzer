@@ -36,6 +36,8 @@ Opća pravila:
 | segments | obj\|null | **v2, DIO 4** — null kad segmenata nema (npr. CROS) |
 | ownership | obj | **v2, DIO 5** |
 | bank_kpi | obj\|null | **M5** — samo za sector='bank', inače null; vidi dolje |
+| trend | obj\|null | **M9** — {series[{year, revenue, ebitda, ebitda_margin}], revenue_label, narration, note}; naracija je ČINJENIČNA (brojke + smjer rast/pad/stabilno, bez epiteta); banka: revenue=ukupni operativni prihod; financijski sektor: ebitda=null + n/p u naraciji; godina koje nema → navedena u 'Nedostaje' |
+| business_profile | obj\|null | **M9** — {fiscal_year, activity (+activity_source_page), segments[{name, description, source_page}], markets[{market, source_page}], export_share {value, basis, source_page}\|null (samo ako IZRIJEKOM objavljen), issuer_claims[{claim, source_page}] (epiteti = TVRDNJE izdavatelja, citirane; platforma ih ne generira), source, note}; null → 'nema u bazi' |
 | mar_note | str | disclaimer |
 
 ## share_classes[]
@@ -79,7 +81,9 @@ payment_date, status, status_hr, source_url}`.
   opravdani P/B; operativne → DCF + multipli), NE min–max svih metoda;
   sekundarne metode ostaju u `ran` s ulogom i razlogom odstupanja; sidro s
   nepozitivnom bazom je isključeno iz zone ('anchor_excluded' + zone_note);
-  disperzija se i dalje mjeri preko svih metoda (raskorak = signal).
+  `dispersion` (i `divergent`) je širina SIDRENE zone — sekundarne leće ne
+  vode "razilaze se" naraciju; raspon svih metoda je u `dispersion_all` +
+  `all_methods_low/high` (informacija, raskorak ostaje vidljiv).
 - `sotp`: {parts[{name, value_eur, basis, pct, placeholder}], net_cash{value_eur,basis},
   net_cash_note, nav_gross_eur, nav_total_eur, holding_discount_range[2],
   holding_discount_reason, market_check{own_market_cap_eur, nav_pre_discount_eur,

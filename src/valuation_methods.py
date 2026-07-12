@@ -566,7 +566,12 @@ def reconcile(results: dict, sector: Optional[str] = None) -> dict:
         zone_note = ("sidrena metoda nije dostupna — zona je min–max svih "
                      "baza (fallback); vidi 'skipped' za razlog")
     lo_all, hi_all = min(bases.values()), max(bases.values())
-    spread = (hi_all - lo_all) / hi_all if hi_all else 0
+    spread_all = (hi_all - lo_all) / hi_all if hi_all else 0
+    # headline disperzija = širina SIDRENE zone (konsolidacija: sekundarne
+    # leće su prigušene s razlogom pa NE smiju voditi "razilaze se" naraciju);
+    # raspon svih metoda ostaje u izlazu kao informacija
+    spread = ((zone_high - zone_low) / zone_high if zone_high else 0) \
+        if anchors else spread_all
 
     roles = {}
     for k in results.keys():
@@ -601,9 +606,9 @@ def reconcile(results: dict, sector: Optional[str] = None) -> dict:
         "zone_low": zone_low, "zone_high": zone_high,
         "zone_note": zone_note,
         "all_methods_low": lo_all, "all_methods_high": hi_all,
-        "dispersion": spread,
-        "divergent": spread > 0.30,          # >30% raspon -> traži naraciju raskoraka
-        # disperzija se i dalje mjeri preko SVIH metoda: raskorak je signal
+        "dispersion": spread,                # širina sidrene zone (headline)
+        "dispersion_all": spread_all,        # raspon SVIH metoda (info/signal)
+        "divergent": spread > 0.30,          # >30% SIDRA -> naracija raskoraka
     }
 
 
@@ -860,9 +865,10 @@ def _print_company(ticker: str, out: dict) -> None:
               f"  (raspon sidra, NE min–max svih metoda)")
         if rec.get("zone_note"):
             print(f"  NAPOMENA: {rec['zone_note']}")
-        print(f"  sve metode (info): {_fmt(rec.get('all_methods_low'))} – "
-              f"{_fmt(rec.get('all_methods_high'))}  "
-              f"(disperzija {rec['dispersion']*100:.0f}%, divergent={rec['divergent']})")
+        print(f"  disperzija SIDRA: {rec['dispersion'] * 100:.0f}% "
+              f"(divergent={rec['divergent']}); sve metode (info): "
+              f"{_fmt(rec.get('all_methods_low'))} – {_fmt(rec.get('all_methods_high'))} "
+              f"(raspon {rec.get('dispersion_all', 0) * 100:.0f}%)")
         print(f"  baze po metodi: { {k: round(v, 2) for k, v in rec['method_bases'].items() if v} }")
 
 
