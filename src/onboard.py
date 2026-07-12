@@ -143,7 +143,15 @@ def stage_sector(conn, run_id: str, cid: int, ticker: str, name: str) -> str | N
     try:
         news = eho.feed("issuerNews", ticker=ticker, date_from="2025-07-01",
                         date_to=date.today().isoformat())
-        titles = [it.get("title", "") for it in (news.get("items") or [])[:12]]
+        items = news.get("items") or []
+        titles = [it.get("title", "") for it in items[:12]]
+        iname = next((it.get("issuerName") for it in items if it.get("issuerName")), None)
+        if iname and iname.strip() and iname.strip() != ticker:
+            with conn.cursor() as cur:  # službeno ime s EHO feeda (placeholder je bio simbol)
+                cur.execute("UPDATE companies SET name=%s WHERE id=%s AND name=%s",
+                            (iname.strip(), cid, ticker))
+                if cur.rowcount:
+                    name = iname.strip()
     except Exception:  # noqa: BLE001
         titles = []
     res = classify_sector(ticker, name, "\n".join(titles) or "(nema objava)")
@@ -327,11 +335,12 @@ def already_extracted(conn, cid: int, year: int, basis: str) -> bool:
 
 
 def stage_extract_validate(conn, run_id: str, cid: int, ticker: str, sector: str,
-                           rep: dict) -> tuple[bool, list[str]]:
-    """Ekstrakcija (template po SEKTORU) + validate gate. -> (ok, razlozi_review)."""
+                           rep: dict, force: bool = False) -> tuple[bool, list[str]]:
+    """Ekstrakcija (template po SEKTORU) + validate gate. -> (ok, razlozi_review).
+    force=True: re-ekstrakcija i kad filing postoji (load zamjenjuje retke)."""
     basis = "consolidated" if rep.get("consolidated") else "standalone"
     year = rep.get("year")
-    if already_extracted(conn, cid, year, basis):
+    if not force and already_extracted(conn, cid, year, basis):
         log(conn, run_id, "onboard:extract", cid, "skipped",
             f"{ticker}: FY{year}/{basis} već u bazi (idempotentno)")
     else:
@@ -476,7 +485,8 @@ def stage_valued(conn, run_id: str, cid: int, ticker: str) -> list[str]:
     return []
 
 
-def process_company(conn, run_id: str, member: dict, tier: int) -> dict:
+def process_company(conn, run_id: str, member: dict, tier: int,
+                    force: bool = False) -> dict:
     """Cijeli state machine za jednu firmu; izolirana greška."""
     result = {"symbol": member["symbol"], "name": member["name"], "ticker": None,
               "state": None, "sector": None, "sector_conf": None, "reasons": []}
@@ -515,7 +525,8 @@ def process_company(conn, run_id: str, member: dict, tier: int) -> dict:
             result["reasons"].append("nema godišnjeg PDF izvješća (možda samo ZIP)")
             return result
 
-        cont, review_reasons = stage_extract_validate(conn, run_id, cid, ticker, sector, rep)
+        cont, review_reasons = stage_extract_validate(conn, run_id, cid, ticker,
+                                                      sector, rep, force=force)
         result["reasons"].extend(review_reasons)
         if not cont:
             result["state"] = "needs_review"
@@ -525,7 +536,17 @@ def process_company(conn, run_id: str, member: dict, tier: int) -> dict:
         stage_holdings(conn, run_id, cid, ticker)
         result["reasons"].extend(stage_valued(conn, run_id, cid, ticker))
 
-        final = "valued" if not result["reasons"] else "needs_review"
+        if result["reasons"]:
+            final = "needs_review"
+        elif tier >= 2:
+            # Tier 2/3: AUTO-promocija kad je gate čist (spec Dio A)
+            final = "live"
+            with conn.cursor() as cur:
+                cur.execute("UPDATE companies SET is_live=TRUE WHERE id=%s", (cid,))
+            log(conn, run_id, "onboard:promote", cid, "ok",
+                f"{ticker}: AUTO-promocija u live (tier {tier}, gate čist)")
+        else:
+            final = "valued"   # Tier 1: ručna potvrda
         set_state(conn, cid, final)
         result["state"] = final
     except Exception as e:  # noqa: BLE001 — izolacija po firmi
@@ -550,6 +571,120 @@ def process_company(conn, run_id: str, member: dict, tier: int) -> dict:
                 if r:
                     result["sector"], result["sector_conf"] = r[0], r[1] and float(r[1])
     return result
+
+
+# ---------- TIER 2: svemir = uređeno tržište (tečajnica), ŽIVO ----------
+def fetch_tier2_universe(conn) -> list[dict]:
+    """EQTY s uređenog tržišta (RP/RO/RR, knjiga naloga) minus Tier 1 minus live.
+    Povlaštene klase (simbol s '2') grupiraju se pod matičnu firmu. Poredak po
+    prometu (silazno) — likvidnije firme prve u batchu."""
+    import requests
+    from datetime import timedelta
+    from .prices import ORDERBOOK_MODELS, _rest_base, _verify
+
+    base = _rest_base()
+    data = None
+    for back in range(0, 7):
+        d = (date.today() - timedelta(days=back)).isoformat()
+        r = requests.get(f"{base.rstrip('/')}/price-list/XZAG/{d}/json",
+                         timeout=60, verify=_verify())
+        if r.status_code == 200 and (r.json().get("securities") or []):
+            data = r.json()
+            break
+    if data is None:
+        raise RuntimeError("tečajnica nedostupna za zadnjih 7 dana")
+
+    eq = [row for row in data["securities"]
+          if row.get("security_class") == "EQTY"
+          and row.get("model") in ORDERBOOK_MODELS
+          and row.get("segment") in ("RP", "RO", "RR")]
+    symbols = {row["symbol"] for row in eq}
+    issuers: dict[str, dict] = {}
+    for row in eq:
+        sym = row["symbol"]
+        basesym = sym[:-1] if sym.endswith("2") and sym[:-1] in symbols else sym
+        m = issuers.setdefault(basesym, {"symbol": basesym, "isin": None, "name": None,
+                                         "turnover": 0.0, "classes": []})
+        m["classes"].append({"symbol": sym, "isin": row.get("isin")})
+        if sym == basesym:
+            m["isin"] = row.get("isin")
+        try:
+            m["turnover"] += float(row.get("turnover") or 0)
+        except (TypeError, ValueError):
+            pass
+
+    with conn.cursor() as cur:
+        cur.execute("""SELECT c.ticker FROM companies c WHERE c.tier=1 OR c.is_live""")
+        excluded = {r[0] for r in cur.fetchall()}
+        cur.execute("""SELECT sc.ticker FROM share_classes sc
+                       JOIN companies c ON c.id=sc.company_id
+                       WHERE c.tier=1 OR c.is_live""")
+        excluded |= {r[0] for r in cur.fetchall()}
+    out = [m for m in issuers.values() if m["symbol"] not in excluded]
+    for m in out:
+        m["isin"] = m["isin"] or m["classes"][0]["isin"]
+        m["name"] = m["name"] or m["symbol"]   # službeno ime dolazi s EHO feeda
+    out.sort(key=lambda m: m["turnover"], reverse=True)
+    print(f"Tier 2 svemir: {len(out)} firmi (uređeno tržište minus Tier1/live), "
+          f"segmenti RP/RO/RR, poredak po prometu")
+    return out
+
+
+# ---------- DIGEST (Tier 2): grupiranje po UZROKU umjesto firmu-po-firmu ----------
+CAUSE_RULES = [
+    ("sektor nejasan", "sektor dvojben (conf < 0.85) — ručna dodjela"),
+    ("nema izvora izvješća", "EHO feed bez financijskih izvješća"),
+    ("nema godišnjeg PDF/ZIP", "nema godišnjeg dokumenta u manifestu"),
+    ("slice nije lociran", "izvještaji nisu locirani u dokumentu (format izvora)"),
+    ("jezgrena", "jezgreni ulazi slabi (ekstrakcija/confidence)"),
+    ("nizak confidence na JEZGRENIM", "jezgreni ulazi slabi (ekstrakcija/confidence)"),
+    ("broj dionica", "broj dionica nedostupan"),
+    ("nijedna metoda", "nijedna metoda bez vrijednosti (ulazi)"),
+    ("6_yoy_sanity", "YoY sanity na jezgri"),
+    ("identitet", "identitet izdavatelja (ISIN)"),
+]
+
+
+def cause_of(reason: str) -> str:
+    for needle, cause in CAUSE_RULES:
+        if needle in reason:
+            return cause
+    return f"ostalo: {reason[:60]}"
+
+
+def digest(results: list[dict], batch_label: str) -> None:
+    from collections import Counter, defaultdict
+    live = [r for r in results if r["state"] == "live"]
+    failed = [r for r in results if r["state"] == "failed"]
+    review = [r for r in results if r["state"] == "needs_review"]
+    by_cause: dict[str, list[str]] = defaultdict(list)
+    for r in review:
+        for reason in (r["reasons"] or ["(bez zabilježenog razloga)"]):
+            by_cause[cause_of(reason)].append(r["ticker"] or r["symbol"])
+    for r in failed:
+        for reason in r["reasons"]:
+            by_cause[f"FAILED — {cause_of(reason)}"].append(r["ticker"] or r["symbol"])
+
+    print("\n" + "=" * 78)
+    print(f"DIGEST — {batch_label}: {len(live)} live / {len(review)} needs_review / "
+          f"{len(failed)} failed (od {len(results)})")
+    print("=" * 78)
+    if live:
+        print(f"LIVE (auto-promocija, gate čist): {', '.join(r['ticker'] for r in live)}")
+    if by_cause:
+        print("\nNEEDS_REVIEW / FAILED PO UZROKU:")
+        for cause, tickers in sorted(by_cause.items(), key=lambda kv: -len(kv[1])):
+            uniq = sorted(set(tickers))
+            print(f"  • {cause}  ({len(uniq)}): {', '.join(uniq)}")
+    # alert: >=30% batcha na ISTI uzrok -> vjerojatno format izvora, ne firme
+    counts = Counter(cause_of(reason) for r in review + failed
+                     for reason in (r["reasons"] or []))
+    if counts and results:
+        top_cause, n = counts.most_common(1)[0]
+        if n / len(results) >= 0.30:
+            print(f"\n*** ALERT: {n}/{len(results)} firmi ({n/len(results)*100:.0f}%) "
+                  f"pada na ISTI uzrok: '{top_cause}' — vjerojatno format/izvor, "
+                  f"ne pojedinačne firme. Pauziraj batcheve i pregledaj. ***")
 
 
 def report(results: list[dict]) -> None:
@@ -589,33 +724,53 @@ def promote(ticker: str) -> int:
 
 
 def main(argv=None) -> int:
-    p = argparse.ArgumentParser(description="tiered onboarding (M6)")
-    p.add_argument("--tier", type=int, choices=[1], help="pokreni onboarding tiera")
+    p = argparse.ArgumentParser(description="tiered onboarding (M6/M7)")
+    p.add_argument("--tier", type=int, choices=[1, 2], help="pokreni onboarding tiera")
     p.add_argument("--ticker", default=None, help="ograniči na jednu članicu (symbol)")
+    p.add_argument("--batch-size", type=int, default=10,
+                   help="Tier 2: veličina batcha (default 10)")
+    p.add_argument("--force", action="store_true",
+                   help="re-ekstrakcija i kad filing postoji (uz --ticker)")
     p.add_argument("--promote", default=None, help="ručna promocija firme u live")
     a = p.parse_args(argv)
 
     if a.promote:
         return promote(a.promote.upper())
-    if a.tier != 1:
-        p.error("za sada je podržan samo --tier 1 (Tier 2 tek nakon ručne potvrde Tiera 1)")
-
-    run_id = f"onboard-t1-{date.today().isoformat()}"
-    members = fetch_composition("CROBEX10")
-    print(f"CROBEX10 (živo, {len(members)} članica): "
-          f"{', '.join(m['symbol'] for m in members)}")
-    if a.ticker:
-        members = [m for m in members if m["symbol"] == a.ticker.upper()]
 
     results = []
+    if a.tier == 1:
+        run_id = f"onboard-t1-{date.today().isoformat()}"
+        members = fetch_composition("CROBEX10")
+        print(f"CROBEX10 (živo, {len(members)} članica): "
+              f"{', '.join(m['symbol'] for m in members)}")
+        if a.ticker:
+            members = [m for m in members if m["symbol"] == a.ticker.upper()]
+        with get_conn() as conn:
+            for m in members:
+                print(f"\n== {m['symbol']} — {m['name']}")
+                results.append(process_company(conn, run_id, m, tier=1, force=a.force))
+                conn.commit()
+        report(results)
+        print("\nSTOP: Tier 2 ne počinje dok Tier 1 nije ručno potvrđen "
+              "(python -m src.onboard --promote TICKER).")
+        return 0
+
+    # --- TIER 2: batchevi, auto-promocija kroz gate, digest po uzroku ---
+    run_id = f"onboard-t2-{date.today().isoformat()}"
     with get_conn() as conn:
-        for m in members:
-            print(f"\n== {m['symbol']} — {m['name']}")
-            results.append(process_company(conn, run_id, m, tier=1))
+        universe = fetch_tier2_universe(conn)
+        if a.ticker:
+            universe = [m for m in universe if m["symbol"] == a.ticker.upper()]
+        batch = universe[:a.batch_size]
+        print(f"BATCH ({len(batch)}/{len(universe)}): "
+              f"{', '.join(m['symbol'] for m in batch)}\n")
+        for m in batch:
+            print(f"== {m['symbol']}")
+            results.append(process_company(conn, run_id, m, tier=2, force=a.force))
             conn.commit()
-    report(results)
-    print("\nSTOP: Tier 2 ne počinje dok Tier 1 nije ručno potvrđen "
-          "(python -m src.onboard --promote TICKER).")
+    digest(results, batch_label=f"Tier 2, batch od {len(batch)}")
+    print(f"\nSTOP nakon batcha — pregledaj digest prije idućeg "
+          f"(preostalo u svemiru: {len(universe) - len(batch)}).")
     return 0
 
 

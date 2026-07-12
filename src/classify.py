@@ -18,7 +18,7 @@ CLASSIFIER_MODEL = os.getenv("CLASSIFIER_MODEL", "claude-haiku-4-5-20251001")
 
 # Sektori koje motor razumije (FINANCIAL_SECTORS + operativni + 'other').
 SECTORS = ["bank", "insurance", "holding", "tourism", "consumer", "industrial",
-           "energy", "telecom", "shipping", "aquaculture", "other"]
+           "energy", "telecom", "technology", "shipping", "aquaculture", "other"]
 
 ANNOUNCEMENT_CATEGORIES = ["financial_report", "dividend", "gsa",
                            "manager_transaction", "buyback", "capital_change", "other"]

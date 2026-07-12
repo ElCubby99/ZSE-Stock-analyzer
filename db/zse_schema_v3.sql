@@ -40,6 +40,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_announcements_ext ON announcements (externa
 -- v1 NOT NULL na companies.sector više ne odgovara modelu.
 ALTER TABLE companies ALTER COLUMN sector DROP NOT NULL;
 
+-- Profil dionice (priprema podataka): povijesni EOD backfill sa službenog
+-- zse.hr securityHistory endpointa nosi i STVARNI dnevni promet (turnover_n)
+-- — točniji od aproksimacije close×volumen za liquidity prag od 5.000 €.
+ALTER TABLE prices_eod ADD COLUMN IF NOT EXISTS turnover_eur NUMERIC;
+
 -- M10: kalibracija iz tržišnih serija (src/calibrate.py)
 CREATE TABLE IF NOT EXISTS index_eod (
     index_isin  TEXT NOT NULL,

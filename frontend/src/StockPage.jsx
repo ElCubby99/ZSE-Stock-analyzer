@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import VerdictSpread from './VerdictSpread.jsx'
+import {
+  AnalysisUnavailable, Dividends, IlliquidBanner, PriceChart, ProfileHeader,
+  SectionRule, StatsStrip,
+} from './MarketProfile.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
-// live firme (orchestrator --promote) + CROS/ZABA stranice iz M1–M5
-const TICKERS = ['ADRS', 'CROS', 'ZABA', 'ADPL', 'ATGR', 'KODT', 'KOEI', 'PODR', 'RIVP', 'ZITO']
+// live firme (orchestrator) + CROS/ZABA (M1–M5) + HPB/HT (samo tržišni profil)
+const TICKERS = ['ADRS', 'CROS', 'ZABA', 'ADPL', 'ARNT', 'ATGR', 'DLKV', 'HPB',
+  'HT', 'IG', 'KODT', 'KOEI', 'PODR', 'RIVP', 'SPAN', 'TOK', 'ZITO']
 
 const SECTOR_HR = {
   holding: 'Holding', insurance: 'Osiguranje', tourism: 'Turizam',
   consumer: 'Konzumeri', industrial: 'Industrija', bank: 'Banka',
+  telecom: 'Telekomunikacije', technology: 'Tehnologija', energy: 'Energetika',
+  shipping: 'Brodarstvo', aquaculture: 'Marikultura',
 }
 
 // leće metoda za naraciju raskoraka (opis mehanike, ne preporuka)
@@ -23,56 +30,6 @@ const LENS = {
 }
 
 function classCss(i) { return i === 0 ? 'ord' : 'prf' }
-
-function LiqBadge({ flag }) {
-  if (!flag || flag === 'ok') return null
-  return (
-    <span className={`liq ${flag === 'very_low' ? 'vlow' : 'low'}`}>
-      {flag === 'very_low' ? 'vrlo niska likvidnost · indikativna cijena' : 'niska likvidnost · indikativna cijena'}
-    </span>
-  )
-}
-
-function Header({ data }) {
-  const liqBy = {}
-  ;(data.liquidity?.classes || []).forEach((l) => { liqBy[l.class_ticker] = l })
-  return (
-    <header className="head">
-      <div>
-        <div className="eyebrow">Zagrebačka burza · {SECTOR_HR[data.sector] || data.sector}</div>
-        <h1>{data.name}</h1>
-        <div className="sub">
-          {data.share_classes.length > 1
-            ? `${data.share_classes.length} uvrštene klase`
-            : 'jedna uvrštena klasa'}
-          {' · sektor: '}{data.sector}
-          {data.fiscal_year ? ` · FY${data.fiscal_year}${data.audited ? ' revidirano' : ''}` : ''}
-        </div>
-      </div>
-      <div className="prices">
-        {data.share_classes.map((c, i) => {
-          const liq = liqBy[c.ticker]
-          return (
-            <div className={`chip ${classCss(i)}`} key={c.ticker}>
-              <div className="tk">{c.ticker}</div>
-              <div className="val">{c.last_price ? eur(c.last_price.close_eur, 2) : dash}</div>
-              <div className="cls">
-                {c.class_type === 'ordinary' ? 'redovna' : 'povlaštena'}
-                {c.last_price ? ` · ${c.last_price.trade_date}` : ' · nema cijene u bazi'}
-              </div>
-              {liq && liq.flag !== 'ok' && (
-                <>
-                  <LiqBadge flag={liq.flag} />
-                  <div className="liqnote">{liq.note}</div>
-                </>
-              )}
-            </div>
-          )
-        })}
-      </div>
-    </header>
-  )
-}
 
 /* ---------- v2 sekcije ---------- */
 
@@ -502,9 +459,28 @@ export default function StockPage() {
       {err && <section className="error">Greška: {err}</section>}
       {!data && !err && <div className="loading">učitavam {ticker}…</div>}
 
-      {data && (
+      {data && (() => {
+        const marketOnly = data.data_status === 'market_only'
+        const rec = data.valuation?.reconciliation
+        const zone = rec && rec.zone_low !== null && rec.zone_high !== null
+          ? [rec.zone_low, rec.zone_high] : null
+        return (
         <>
-          <Header data={data} />
+          {/* ============ GORE · TRŽIŠNI PROFIL ============ */}
+          <ProfileHeader data={{ ...data, sector_hr: SECTOR_HR[data.sector] || data.sector }}
+            zone={zone} />
+          <IlliquidBanner liquidity={data.liquidity} />
+          <SectionRule n="01" title="Tržišni podaci" />
+          <PriceChart data={data} zone={zone} />
+          <StatsStrip data={data} />
+          <Dividends data={data} />
+
+          {/* ============ DOLJE · POSTOJEĆA ANALIZA ============ */}
+          <SectionRule n="02" title="Analiza vrijednosti" />
+          {marketOnly ? (
+            <AnalysisUnavailable note={data.data_note} />
+          ) : (
+          <>
           <Metrics data={data} />
           <Assumptions valuation={data.valuation} />
 
@@ -562,6 +538,8 @@ export default function StockPage() {
           </section>
 
           <Fundamentals data={data} />
+          </>
+          )}
 
           <div className="disc">
             <b>Informativno, nije investicijski savjet ni preporuka.</b>{' '}
@@ -571,7 +549,8 @@ export default function StockPage() {
             su prazni — ništa se ne procjenjuje na stranici.
           </div>
         </>
-      )}
+        )
+      })()}
     </div>
   )
 }

@@ -3,10 +3,11 @@
   "name": "Podravka d.d.",
   "sector": "consumer",
   "is_group": true,
-  "isin": null,
+  "isin": "HRPODRRA0004",
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-05",
+  "generated_at": "2026-07-12",
+  "data_status": "full",
   "financials_3y": {
     "years": [
       2025
@@ -91,14 +92,27 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-05",
+    "as_of": "2026-07-12",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
       "very_low_shares": 3,
       "very_stale_days": 20
     },
-    "classes": [],
+    "classes": [
+      {
+        "class_ticker": "PODR",
+        "last_trade": {
+          "date": "2026-07-10",
+          "close_eur": 162.0,
+          "volume": 155.0,
+          "turnover_eur": 25153.5
+        },
+        "days_since_trade": 2,
+        "flag": "ok",
+        "note": "zadnja trgovina 2026-07-10: 155 kom / 25,154 € prometa (2 d)"
+      }
+    ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
   },
   "segments": null,
@@ -110,16 +124,42 @@
     "liquidity_link": null
   },
   "bank_kpi": null,
-  "share_classes": [],
+  "share_classes": [
+    {
+      "ticker": "PODR",
+      "class_type": "ordinary",
+      "isin": "HRPODRRA0004",
+      "shares_issued": 7120003.0,
+      "treasury_shares": 0.0,
+      "shares_ex_treasury": 7120003.0,
+      "is_primary": true,
+      "note": "ISIN iz službene ZSE tečajnice; broj dionica: GI FY2025 str. 347 (ekstrakcija)",
+      "last_price": {
+        "close_eur": 162.0,
+        "trade_date": "2026-07-10",
+        "volume": 155.0,
+        "source": "zse.hr securityHistory (web JSON)"
+      }
+    }
+  ],
   "metrics": {
     "eps": 19.014598729803907,
     "bvps": 102.25768163299931,
     "roe": 0.1859478762490128,
-    "dps": null,
+    "dps": 3.2,
     "shares_ex_treasury": 7120003.0,
-    "market_cap_eur": 1110720468.0,
+    "market_cap_eur": 1153440486.0,
     "ebitda_eur": 227581000.0,
-    "per_class": [],
+    "per_class": [
+      {
+        "class_ticker": "PODR",
+        "price": 162.0,
+        "pe": 8.519769588725403,
+        "pb": 1.5842330611544142,
+        "div_yield": 0.019753086419753086,
+        "basis": "izvedeno: zadnji close / per-share iz FY financija"
+      }
+    ],
     "basis_note": "per-share: FY konsolidirane financije / dionice bez trezorskih; trž.kap = Σ zadnji close klase × dionice klase"
   },
   "fundamentals": [
@@ -283,22 +323,4042 @@
       "item": "dps",
       "label": "Dividenda po dionici",
       "unit": "eur_per_share",
-      "value_eur": null,
-      "confidence": null,
-      "source_page": null,
-      "fiscal_year": null,
-      "source_url": null,
+      "value_eur": 3.2,
+      "confidence": 0.9,
+      "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67292",
       "audited": null,
-      "missing": true
+      "missing": false
     }
   ],
+  "price_summary": {
+    "as_of": "2026-07-12",
+    "classes": [
+      {
+        "class_ticker": "PODR",
+        "last": {
+          "date": "2026-07-10",
+          "close_eur": 162.0
+        },
+        "prev_close_eur": 163.0,
+        "change_pct": -0.006134969325153339,
+        "high_52w_eur": 168.0,
+        "low_52w_eur": 140.5,
+        "avg_turnover_20d_eur": 117637.175,
+        "data_from": "2024-07-01",
+        "note": null
+      }
+    ],
+    "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
+  },
+  "dividend_calendar": {
+    "as_of": "2026-07-12",
+    "events": [
+      {
+        "class_ticker": "PODR",
+        "fiscal_year": 2025,
+        "amount_eur": 3.2,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-06-29",
+        "record_date": "2026-06-30",
+        "payment_date": "2026-07-10",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67292"
+      },
+      {
+        "class_ticker": "PODR",
+        "fiscal_year": 2024,
+        "amount_eur": 3.2,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2025-07-16",
+        "record_date": "2025-07-17",
+        "payment_date": "2025-07-30",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/62097"
+      },
+      {
+        "class_ticker": "PODR",
+        "fiscal_year": 2023,
+        "amount_eur": 3.2,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-06-13",
+        "record_date": "2024-06-14",
+        "payment_date": "2024-07-12",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55701"
+      },
+      {
+        "class_ticker": "PODR",
+        "fiscal_year": 2022,
+        "amount_eur": 2.65,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2023-06-15",
+        "record_date": "2023-06-16",
+        "payment_date": "2023-07-14",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/49918"
+      }
+    ],
+    "upcoming_count": 0,
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+  },
   "prices": [
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-01",
+      "close_eur": 158.0,
+      "volume": 563.0,
+      "turnover_eur": 88614.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-02",
+      "close_eur": 158.5,
+      "volume": 37.0,
+      "turnover_eur": 5853.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-03",
+      "close_eur": 157.5,
+      "volume": 1328.0,
+      "turnover_eur": 210609.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-04",
+      "close_eur": 157.5,
+      "volume": 1.0,
+      "turnover_eur": 157.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-05",
+      "close_eur": 158.0,
+      "volume": 225.0,
+      "turnover_eur": 35550.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-08",
+      "close_eur": 159.5,
+      "volume": 172.0,
+      "turnover_eur": 27411.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-09",
+      "close_eur": 158.5,
+      "volume": 193.0,
+      "turnover_eur": 30739.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-10",
+      "close_eur": 161.0,
+      "volume": 19165.0,
+      "turnover_eur": 3069872.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-11",
+      "close_eur": 160.0,
+      "volume": 414.0,
+      "turnover_eur": 66274.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-12",
+      "close_eur": 167.0,
+      "volume": 1649.0,
+      "turnover_eur": 273894.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-15",
+      "close_eur": 169.0,
+      "volume": 1449.0,
+      "turnover_eur": 244411.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-16",
+      "close_eur": 168.0,
+      "volume": 854.0,
+      "turnover_eur": 143766.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-17",
+      "close_eur": 167.5,
+      "volume": 3877.0,
+      "turnover_eur": 650692.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-18",
+      "close_eur": 166.5,
+      "volume": 6405.0,
+      "turnover_eur": 1069058.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-19",
+      "close_eur": 165.5,
+      "volume": 1863.0,
+      "turnover_eur": 309429.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-22",
+      "close_eur": 164.5,
+      "volume": 688.0,
+      "turnover_eur": 113713.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-23",
+      "close_eur": 165.5,
+      "volume": 1424.0,
+      "turnover_eur": 235021.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-24",
+      "close_eur": 164.0,
+      "volume": 837.0,
+      "turnover_eur": 137413.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-25",
+      "close_eur": 163.5,
+      "volume": 348.0,
+      "turnover_eur": 56687.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-26",
+      "close_eur": 165.0,
+      "volume": 201.0,
+      "turnover_eur": 33135.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-29",
+      "close_eur": 163.0,
+      "volume": 604.0,
+      "turnover_eur": 98949.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-30",
+      "close_eur": 165.0,
+      "volume": 490.0,
+      "turnover_eur": 80268.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-07-31",
+      "close_eur": 163.5,
+      "volume": 361.0,
+      "turnover_eur": 59205.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-01",
+      "close_eur": 165.0,
+      "volume": 23.0,
+      "turnover_eur": 3794.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-02",
+      "close_eur": 165.0,
+      "volume": 72.0,
+      "turnover_eur": 11794.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-06",
+      "close_eur": 162.0,
+      "volume": 931.0,
+      "turnover_eur": 151758.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-07",
+      "close_eur": 162.0,
+      "volume": 15.0,
+      "turnover_eur": 2430.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-08",
+      "close_eur": 163.0,
+      "volume": 41.0,
+      "turnover_eur": 6683.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-09",
+      "close_eur": 162.0,
+      "volume": 750.0,
+      "turnover_eur": 120578.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-12",
+      "close_eur": 160.0,
+      "volume": 824.0,
+      "turnover_eur": 131025.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-13",
+      "close_eur": 159.5,
+      "volume": 242.0,
+      "turnover_eur": 38458.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-14",
+      "close_eur": 160.0,
+      "volume": 44.0,
+      "turnover_eur": 7005.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-16",
+      "close_eur": 160.0,
+      "volume": 90.0,
+      "turnover_eur": 14320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-19",
+      "close_eur": 158.5,
+      "volume": 211.0,
+      "turnover_eur": 33622.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-22",
+      "close_eur": 158.0,
+      "volume": 697.0,
+      "turnover_eur": 110212.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-23",
+      "close_eur": 158.5,
+      "volume": 117.0,
+      "turnover_eur": 18545.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-26",
+      "close_eur": 158.0,
+      "volume": 190.0,
+      "turnover_eur": 30020.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-27",
+      "close_eur": 159.0,
+      "volume": 244.0,
+      "turnover_eur": 38732.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-28",
+      "close_eur": 158.5,
+      "volume": 86.0,
+      "turnover_eur": 13754.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-29",
+      "close_eur": 160.0,
+      "volume": 1390.0,
+      "turnover_eur": 222095.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-08-30",
+      "close_eur": 160.0,
+      "volume": 106.0,
+      "turnover_eur": 16869.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-02",
+      "close_eur": 159.0,
+      "volume": 800.0,
+      "turnover_eur": 127200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-03",
+      "close_eur": 158.5,
+      "volume": 1251.0,
+      "turnover_eur": 197149.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-04",
+      "close_eur": 157.0,
+      "volume": 17.0,
+      "turnover_eur": 2669.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-05",
+      "close_eur": 159.0,
+      "volume": 149.0,
+      "turnover_eur": 23529.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-06",
+      "close_eur": 159.0,
+      "volume": 302.0,
+      "turnover_eur": 48018.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-09",
+      "close_eur": 159.5,
+      "volume": 231.0,
+      "turnover_eur": 36839.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-10",
+      "close_eur": 159.5,
+      "volume": 927.0,
+      "turnover_eur": 147856.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-11",
+      "close_eur": 159.0,
+      "volume": 2028.0,
+      "turnover_eur": 321810.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-12",
+      "close_eur": 157.0,
+      "volume": 1299.0,
+      "turnover_eur": 204508.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-13",
+      "close_eur": 156.5,
+      "volume": 601.0,
+      "turnover_eur": 94356.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-16",
+      "close_eur": 156.5,
+      "volume": 38.0,
+      "turnover_eur": 5940.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-17",
+      "close_eur": 158.0,
+      "volume": 368.0,
+      "turnover_eur": 57844.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-18",
+      "close_eur": 156.0,
+      "volume": 703.0,
+      "turnover_eur": 109668.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-19",
+      "close_eur": 158.0,
+      "volume": 129.0,
+      "turnover_eur": 20382.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-20",
+      "close_eur": 157.0,
+      "volume": 1313.0,
+      "turnover_eur": 205428.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-23",
+      "close_eur": 156.0,
+      "volume": 162.0,
+      "turnover_eur": 25272.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-24",
+      "close_eur": 156.0,
+      "volume": 245.0,
+      "turnover_eur": 38169.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-25",
+      "close_eur": 155.0,
+      "volume": 178.0,
+      "turnover_eur": 27590.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-26",
+      "close_eur": 155.0,
+      "volume": 428.0,
+      "turnover_eur": 65615.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-27",
+      "close_eur": 154.0,
+      "volume": 36.0,
+      "turnover_eur": 5545.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-09-30",
+      "close_eur": 153.0,
+      "volume": 715.0,
+      "turnover_eur": 109470.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-01",
+      "close_eur": 153.5,
+      "volume": 149.0,
+      "turnover_eur": 23093.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-02",
+      "close_eur": 153.5,
+      "volume": 79.0,
+      "turnover_eur": 12127.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-03",
+      "close_eur": 154.0,
+      "volume": 45.0,
+      "turnover_eur": 6920.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-04",
+      "close_eur": 155.0,
+      "volume": 63.0,
+      "turnover_eur": 9765.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-07",
+      "close_eur": 154.0,
+      "volume": 320.0,
+      "turnover_eur": 49280.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-08",
+      "close_eur": 153.5,
+      "volume": 160.0,
+      "turnover_eur": 24648.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-09",
+      "close_eur": 154.0,
+      "volume": 1055.0,
+      "turnover_eur": 162419.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-10",
+      "close_eur": 154.0,
+      "volume": 155.0,
+      "turnover_eur": 23845.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-11",
+      "close_eur": 153.0,
+      "volume": 250.0,
+      "turnover_eur": 38352.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-14",
+      "close_eur": 153.5,
+      "volume": 200.0,
+      "turnover_eur": 30575.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-15",
+      "close_eur": 153.0,
+      "volume": 1496.0,
+      "turnover_eur": 228889.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-16",
+      "close_eur": 153.0,
+      "volume": 198.0,
+      "turnover_eur": 30270.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-17",
+      "close_eur": 153.5,
+      "volume": 675.0,
+      "turnover_eur": 103232.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-18",
+      "close_eur": 154.0,
+      "volume": 260.0,
+      "turnover_eur": 40026.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-21",
+      "close_eur": 154.0,
+      "volume": 74.0,
+      "turnover_eur": 11396.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-22",
+      "close_eur": 155.0,
+      "volume": 245.0,
+      "turnover_eur": 37857.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-23",
+      "close_eur": 154.5,
+      "volume": 158.0,
+      "turnover_eur": 24550.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-24",
+      "close_eur": 155.5,
+      "volume": 266.0,
+      "turnover_eur": 41287.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-25",
+      "close_eur": 154.0,
+      "volume": 481.0,
+      "turnover_eur": 74489.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-28",
+      "close_eur": 154.0,
+      "volume": 110.0,
+      "turnover_eur": 16937.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-29",
+      "close_eur": 153.5,
+      "volume": 442.0,
+      "turnover_eur": 67846.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-30",
+      "close_eur": 153.5,
+      "volume": 369.0,
+      "turnover_eur": 56618.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-10-31",
+      "close_eur": 153.0,
+      "volume": 228.0,
+      "turnover_eur": 34946.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-04",
+      "close_eur": 153.5,
+      "volume": 338.0,
+      "turnover_eur": 51786.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-05",
+      "close_eur": 153.0,
+      "volume": 231.0,
+      "turnover_eur": 35504.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-07",
+      "close_eur": 154.0,
+      "volume": 173.0,
+      "turnover_eur": 26642.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-08",
+      "close_eur": 152.0,
+      "volume": 719.0,
+      "turnover_eur": 109617.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-11",
+      "close_eur": 153.0,
+      "volume": 189.0,
+      "turnover_eur": 28917.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-12",
+      "close_eur": 152.0,
+      "volume": 755.0,
+      "turnover_eur": 115500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-13",
+      "close_eur": 150.5,
+      "volume": 352.0,
+      "turnover_eur": 53217.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-14",
+      "close_eur": 151.5,
+      "volume": 217.0,
+      "turnover_eur": 32952.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-15",
+      "close_eur": 151.0,
+      "volume": 132.0,
+      "turnover_eur": 19991.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-19",
+      "close_eur": 150.5,
+      "volume": 551.0,
+      "turnover_eur": 83168.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-20",
+      "close_eur": 150.5,
+      "volume": 182.0,
+      "turnover_eur": 27358.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-21",
+      "close_eur": 146.0,
+      "volume": 3556.0,
+      "turnover_eur": 522671.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-22",
+      "close_eur": 145.0,
+      "volume": 668.0,
+      "turnover_eur": 96968.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-25",
+      "close_eur": 145.5,
+      "volume": 258.0,
+      "turnover_eur": 37406.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-26",
+      "close_eur": 144.5,
+      "volume": 684.0,
+      "turnover_eur": 98570.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-27",
+      "close_eur": 147.0,
+      "volume": 519.0,
+      "turnover_eur": 76105.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-28",
+      "close_eur": 147.5,
+      "volume": 285.0,
+      "turnover_eur": 41702.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-11-29",
+      "close_eur": 147.0,
+      "volume": 83.0,
+      "turnover_eur": 12164.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-02",
+      "close_eur": 143.0,
+      "volume": 1042.0,
+      "turnover_eur": 150753.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-03",
+      "close_eur": 140.0,
+      "volume": 2607.0,
+      "turnover_eur": 367202.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-04",
+      "close_eur": 135.0,
+      "volume": 2951.0,
+      "turnover_eur": 402734.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-05",
+      "close_eur": 135.0,
+      "volume": 317.0,
+      "turnover_eur": 42621.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-06",
+      "close_eur": 129.0,
+      "volume": 4032.0,
+      "turnover_eur": 530076.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-09",
+      "close_eur": 130.5,
+      "volume": 491.0,
+      "turnover_eur": 64026.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-10",
+      "close_eur": 139.0,
+      "volume": 1911.0,
+      "turnover_eur": 262148.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-11",
+      "close_eur": 145.5,
+      "volume": 1211.0,
+      "turnover_eur": 173578.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-12",
+      "close_eur": 150.5,
+      "volume": 1756.0,
+      "turnover_eur": 261182.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-13",
+      "close_eur": 149.0,
+      "volume": 849.0,
+      "turnover_eur": 128767.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-16",
+      "close_eur": 150.0,
+      "volume": 65.0,
+      "turnover_eur": 9715.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-17",
+      "close_eur": 150.5,
+      "volume": 923.0,
+      "turnover_eur": 139212.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-18",
+      "close_eur": 149.5,
+      "volume": 87.0,
+      "turnover_eur": 13123.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-19",
+      "close_eur": 144.5,
+      "volume": 776.0,
+      "turnover_eur": 114497.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-20",
+      "close_eur": 140.5,
+      "volume": 362.0,
+      "turnover_eur": 51901.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-23",
+      "close_eur": 146.0,
+      "volume": 511.0,
+      "turnover_eur": 73622.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-27",
+      "close_eur": 145.5,
+      "volume": 2494.0,
+      "turnover_eur": 361982.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2024-12-30",
+      "close_eur": 148.5,
+      "volume": 397.0,
+      "turnover_eur": 57919.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-02",
+      "close_eur": 145.0,
+      "volume": 747.0,
+      "turnover_eur": 109073.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-03",
+      "close_eur": 143.0,
+      "volume": 408.0,
+      "turnover_eur": 58847.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-07",
+      "close_eur": 146.0,
+      "volume": 201.0,
+      "turnover_eur": 29252.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-08",
+      "close_eur": 142.5,
+      "volume": 665.0,
+      "turnover_eur": 96115.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-09",
+      "close_eur": 143.0,
+      "volume": 650.0,
+      "turnover_eur": 92739.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-10",
+      "close_eur": 144.0,
+      "volume": 1278.0,
+      "turnover_eur": 182329.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-13",
+      "close_eur": 142.5,
+      "volume": 4005.0,
+      "turnover_eur": 571812.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-14",
+      "close_eur": 145.5,
+      "volume": 275.0,
+      "turnover_eur": 39851.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-15",
+      "close_eur": 144.5,
+      "volume": 168.0,
+      "turnover_eur": 24312.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-16",
+      "close_eur": 144.5,
+      "volume": 2035.0,
+      "turnover_eur": 291215.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-17",
+      "close_eur": 143.0,
+      "volume": 55.0,
+      "turnover_eur": 7865.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-20",
+      "close_eur": 143.0,
+      "volume": 283.0,
+      "turnover_eur": 40483.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-21",
+      "close_eur": 141.5,
+      "volume": 691.0,
+      "turnover_eur": 98424.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-22",
+      "close_eur": 141.0,
+      "volume": 1660.0,
+      "turnover_eur": 233753.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-23",
+      "close_eur": 143.0,
+      "volume": 790.0,
+      "turnover_eur": 112829.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-24",
+      "close_eur": 143.5,
+      "volume": 334.0,
+      "turnover_eur": 47765.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-27",
+      "close_eur": 142.0,
+      "volume": 67.0,
+      "turnover_eur": 9517.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-28",
+      "close_eur": 142.5,
+      "volume": 67.0,
+      "turnover_eur": 9556.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-29",
+      "close_eur": 143.0,
+      "volume": 165.0,
+      "turnover_eur": 23838.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-30",
+      "close_eur": 143.0,
+      "volume": 344.0,
+      "turnover_eur": 49291.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-01-31",
+      "close_eur": 143.0,
+      "volume": 29.0,
+      "turnover_eur": 4147.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-03",
+      "close_eur": 143.0,
+      "volume": 142.0,
+      "turnover_eur": 20202.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-04",
+      "close_eur": 145.0,
+      "volume": 347.0,
+      "turnover_eur": 50146.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-05",
+      "close_eur": 145.0,
+      "volume": 195.0,
+      "turnover_eur": 28255.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-06",
+      "close_eur": 142.5,
+      "volume": 778.0,
+      "turnover_eur": 110532.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-07",
+      "close_eur": 143.0,
+      "volume": 86.0,
+      "turnover_eur": 12240.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-10",
+      "close_eur": 142.0,
+      "volume": 428.0,
+      "turnover_eur": 60872.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-11",
+      "close_eur": 141.5,
+      "volume": 10.0,
+      "turnover_eur": 1415.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-13",
+      "close_eur": 143.0,
+      "volume": 220.0,
+      "turnover_eur": 31345.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-14",
+      "close_eur": 143.0,
+      "volume": 97.0,
+      "turnover_eur": 13870.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-17",
+      "close_eur": 145.0,
+      "volume": 237.0,
+      "turnover_eur": 34294.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-18",
+      "close_eur": 144.0,
+      "volume": 468.0,
+      "turnover_eur": 67856.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-20",
+      "close_eur": 145.5,
+      "volume": 134.0,
+      "turnover_eur": 19425.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-21",
+      "close_eur": 144.5,
+      "volume": 245.0,
+      "turnover_eur": 35407.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-24",
+      "close_eur": 144.5,
+      "volume": 114.0,
+      "turnover_eur": 16436.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-25",
+      "close_eur": 146.0,
+      "volume": 457.0,
+      "turnover_eur": 66406.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-26",
+      "close_eur": 146.0,
+      "volume": 317.0,
+      "turnover_eur": 46264.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-27",
+      "close_eur": 147.0,
+      "volume": 278.0,
+      "turnover_eur": 41010.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-02-28",
+      "close_eur": 144.0,
+      "volume": 547.0,
+      "turnover_eur": 79560.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-03",
+      "close_eur": 144.0,
+      "volume": 83.0,
+      "turnover_eur": 11963.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-04",
+      "close_eur": 140.0,
+      "volume": 2132.0,
+      "turnover_eur": 298904.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-05",
+      "close_eur": 142.0,
+      "volume": 944.0,
+      "turnover_eur": 133575.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-06",
+      "close_eur": 140.5,
+      "volume": 519.0,
+      "turnover_eur": 73005.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-07",
+      "close_eur": 141.5,
+      "volume": 133.0,
+      "turnover_eur": 18934.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-10",
+      "close_eur": 141.0,
+      "volume": 213.0,
+      "turnover_eur": 30026.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-11",
+      "close_eur": 140.5,
+      "volume": 578.0,
+      "turnover_eur": 81494.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-12",
+      "close_eur": 143.0,
+      "volume": 553.0,
+      "turnover_eur": 78450.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-13",
+      "close_eur": 142.0,
+      "volume": 1807.0,
+      "turnover_eur": 258049.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-14",
+      "close_eur": 142.5,
+      "volume": 194.0,
+      "turnover_eur": 27567.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-17",
+      "close_eur": 141.5,
+      "volume": 410.0,
+      "turnover_eur": 58015.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-18",
+      "close_eur": 143.0,
+      "volume": 2815.0,
+      "turnover_eur": 401787.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-19",
+      "close_eur": 142.0,
+      "volume": 156.0,
+      "turnover_eur": 22152.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-20",
+      "close_eur": 142.0,
+      "volume": 310.0,
+      "turnover_eur": 43701.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-21",
+      "close_eur": 143.0,
+      "volume": 1903.0,
+      "turnover_eur": 272113.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-24",
+      "close_eur": 142.0,
+      "volume": 513.0,
+      "turnover_eur": 73339.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-25",
+      "close_eur": 143.0,
+      "volume": 92.0,
+      "turnover_eur": 13146.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-26",
+      "close_eur": 142.5,
+      "volume": 157.0,
+      "turnover_eur": 22372.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-27",
+      "close_eur": 142.0,
+      "volume": 652.0,
+      "turnover_eur": 92653.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-28",
+      "close_eur": 143.0,
+      "volume": 17.0,
+      "turnover_eur": 2421.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-03-31",
+      "close_eur": 143.0,
+      "volume": 211.0,
+      "turnover_eur": 29963.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-01",
+      "close_eur": 141.5,
+      "volume": 478.0,
+      "turnover_eur": 67629.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-02",
+      "close_eur": 141.0,
+      "volume": 14.0,
+      "turnover_eur": 1974.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-03",
+      "close_eur": 140.0,
+      "volume": 476.0,
+      "turnover_eur": 66998.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-04",
+      "close_eur": 137.0,
+      "volume": 638.0,
+      "turnover_eur": 88613.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-07",
+      "close_eur": 132.5,
+      "volume": 3059.0,
+      "turnover_eur": 398090.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-08",
+      "close_eur": 137.0,
+      "volume": 966.0,
+      "turnover_eur": 129298.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-09",
+      "close_eur": 134.5,
+      "volume": 877.0,
+      "turnover_eur": 117302.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-10",
+      "close_eur": 137.0,
+      "volume": 396.0,
+      "turnover_eur": 54691.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-11",
+      "close_eur": 138.0,
+      "volume": 309.0,
+      "turnover_eur": 42678.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-14",
+      "close_eur": 138.0,
+      "volume": 632.0,
+      "turnover_eur": 86915.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-15",
+      "close_eur": 137.0,
+      "volume": 10.0,
+      "turnover_eur": 1374.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-16",
+      "close_eur": 138.0,
+      "volume": 218.0,
+      "turnover_eur": 30084.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-17",
+      "close_eur": 136.5,
+      "volume": 441.0,
+      "turnover_eur": 59879.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-22",
+      "close_eur": 138.0,
+      "volume": 386.0,
+      "turnover_eur": 52510.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-23",
+      "close_eur": 139.0,
+      "volume": 760.0,
+      "turnover_eur": 105350.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-24",
+      "close_eur": 139.5,
+      "volume": 102.0,
+      "turnover_eur": 14229.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-25",
+      "close_eur": 139.0,
+      "volume": 321.0,
+      "turnover_eur": 44626.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-28",
+      "close_eur": 139.5,
+      "volume": 59.0,
+      "turnover_eur": 8223.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-29",
+      "close_eur": 141.5,
+      "volume": 516.0,
+      "turnover_eur": 72589.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-04-30",
+      "close_eur": 139.5,
+      "volume": 552.0,
+      "turnover_eur": 77652.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-02",
+      "close_eur": 138.0,
+      "volume": 205.0,
+      "turnover_eur": 28310.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-05",
+      "close_eur": 139.0,
+      "volume": 1106.0,
+      "turnover_eur": 154285.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-06",
+      "close_eur": 139.0,
+      "volume": 1025.0,
+      "turnover_eur": 141663.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-07",
+      "close_eur": 139.5,
+      "volume": 200.0,
+      "turnover_eur": 27831.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-08",
+      "close_eur": 138.5,
+      "volume": 14.0,
+      "turnover_eur": 1939.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-09",
+      "close_eur": 139.0,
+      "volume": 83.0,
+      "turnover_eur": 11537.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-12",
+      "close_eur": 139.0,
+      "volume": 192.0,
+      "turnover_eur": 26669.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-13",
+      "close_eur": 138.0,
+      "volume": 1386.0,
+      "turnover_eur": 192286.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-14",
+      "close_eur": 137.5,
+      "volume": 155.0,
+      "turnover_eur": 21199.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-15",
+      "close_eur": 137.0,
+      "volume": 206.0,
+      "turnover_eur": 28265.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-16",
+      "close_eur": 136.5,
+      "volume": 368.0,
+      "turnover_eur": 50179.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-19",
+      "close_eur": 136.5,
+      "volume": 776.0,
+      "turnover_eur": 105884.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-20",
+      "close_eur": 137.0,
+      "volume": 1911.0,
+      "turnover_eur": 259972.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-21",
+      "close_eur": 136.5,
+      "volume": 1809.0,
+      "turnover_eur": 247831.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-22",
+      "close_eur": 139.0,
+      "volume": 241.0,
+      "turnover_eur": 33468.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-23",
+      "close_eur": 136.0,
+      "volume": 246.0,
+      "turnover_eur": 34022.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-26",
+      "close_eur": 136.0,
+      "volume": 60.0,
+      "turnover_eur": 8172.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-27",
+      "close_eur": 136.5,
+      "volume": 10.0,
+      "turnover_eur": 1365.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-28",
+      "close_eur": 138.5,
+      "volume": 421.0,
+      "turnover_eur": 57806.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-05-29",
+      "close_eur": 139.0,
+      "volume": 879.0,
+      "turnover_eur": 121974.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-02",
+      "close_eur": 142.5,
+      "volume": 697.0,
+      "turnover_eur": 98252.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-03",
+      "close_eur": 149.5,
+      "volume": 1239.0,
+      "turnover_eur": 179646.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-04",
+      "close_eur": 148.0,
+      "volume": 1418.0,
+      "turnover_eur": 208721.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-05",
+      "close_eur": 149.0,
+      "volume": 75.0,
+      "turnover_eur": 11175.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-06",
+      "close_eur": 150.0,
+      "volume": 1618.0,
+      "turnover_eur": 242526.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-09",
+      "close_eur": 149.5,
+      "volume": 595.0,
+      "turnover_eur": 89181.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-10",
+      "close_eur": 145.0,
+      "volume": 517.0,
+      "turnover_eur": 75191.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-11",
+      "close_eur": 146.5,
+      "volume": 50.0,
+      "turnover_eur": 7325.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-12",
+      "close_eur": 144.0,
+      "volume": 217.0,
+      "turnover_eur": 31668.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-13",
+      "close_eur": 145.5,
+      "volume": 687.0,
+      "turnover_eur": 99027.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-16",
+      "close_eur": 148.0,
+      "volume": 1382.0,
+      "turnover_eur": 203561.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-17",
+      "close_eur": 150.0,
+      "volume": 472.0,
+      "turnover_eur": 70548.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-18",
+      "close_eur": 150.5,
+      "volume": 1153.0,
+      "turnover_eur": 172579.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-20",
+      "close_eur": 150.5,
+      "volume": 2298.0,
+      "turnover_eur": 348525.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-23",
+      "close_eur": 148.5,
+      "volume": 6.0,
+      "turnover_eur": 891.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-24",
+      "close_eur": 150.0,
+      "volume": 927.0,
+      "turnover_eur": 139175.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-25",
+      "close_eur": 150.5,
+      "volume": 381.0,
+      "turnover_eur": 57165.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-26",
+      "close_eur": 149.0,
+      "volume": 381.0,
+      "turnover_eur": 57012.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-27",
+      "close_eur": 148.5,
+      "volume": 257.0,
+      "turnover_eur": 38248.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-06-30",
+      "close_eur": 147.5,
+      "volume": 1170.0,
+      "turnover_eur": 172436.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-01",
+      "close_eur": 147.5,
+      "volume": 595.0,
+      "turnover_eur": 88027.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-02",
+      "close_eur": 147.5,
+      "volume": 10.0,
+      "turnover_eur": 1475.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-03",
+      "close_eur": 149.0,
+      "volume": 88.0,
+      "turnover_eur": 13089.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-04",
+      "close_eur": 150.0,
+      "volume": 795.0,
+      "turnover_eur": 119176.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-07",
+      "close_eur": 150.5,
+      "volume": 1022.0,
+      "turnover_eur": 153803.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-08",
+      "close_eur": 150.5,
+      "volume": 59.0,
+      "turnover_eur": 8857.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-09",
+      "close_eur": 150.5,
+      "volume": 118.0,
+      "turnover_eur": 17759.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-10",
+      "close_eur": 150.0,
+      "volume": 386.0,
+      "turnover_eur": 57767.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-11",
+      "close_eur": 150.0,
+      "volume": 230.0,
+      "turnover_eur": 34574.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-14",
+      "close_eur": 150.0,
+      "volume": 202.0,
+      "turnover_eur": 30132.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-15",
+      "close_eur": 148.5,
+      "volume": 178.0,
+      "turnover_eur": 26474.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-16",
+      "close_eur": 146.0,
+      "volume": 905.0,
+      "turnover_eur": 131446.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-17",
+      "close_eur": 140.5,
+      "volume": 1166.0,
+      "turnover_eur": 166856.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-18",
+      "close_eur": 141.5,
+      "volume": 914.0,
+      "turnover_eur": 128828.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-21",
+      "close_eur": 144.5,
+      "volume": 636.0,
+      "turnover_eur": 90616.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-22",
+      "close_eur": 145.5,
+      "volume": 783.0,
+      "turnover_eur": 113770.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-23",
+      "close_eur": 145.0,
+      "volume": 283.0,
+      "turnover_eur": 40791.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-24",
+      "close_eur": 150.0,
+      "volume": 3029.0,
+      "turnover_eur": 444144.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-25",
+      "close_eur": 146.5,
+      "volume": 1041.0,
+      "turnover_eur": 155309.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-28",
+      "close_eur": 147.0,
+      "volume": 217.0,
+      "turnover_eur": 31913.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-29",
+      "close_eur": 146.5,
+      "volume": 76.0,
+      "turnover_eur": 11165.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-30",
+      "close_eur": 147.0,
+      "volume": 410.0,
+      "turnover_eur": 59927.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-07-31",
+      "close_eur": 147.0,
+      "volume": 40.0,
+      "turnover_eur": 5872.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-01",
+      "close_eur": 146.5,
+      "volume": 610.0,
+      "turnover_eur": 89068.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-04",
+      "close_eur": 145.0,
+      "volume": 24.0,
+      "turnover_eur": 3483.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-06",
+      "close_eur": 146.0,
+      "volume": 157.0,
+      "turnover_eur": 22617.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-07",
+      "close_eur": 143.5,
+      "volume": 192.0,
+      "turnover_eur": 27613.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-08",
+      "close_eur": 143.0,
+      "volume": 10.0,
+      "turnover_eur": 1430.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-11",
+      "close_eur": 143.5,
+      "volume": 10.0,
+      "turnover_eur": 1435.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-12",
+      "close_eur": 143.0,
+      "volume": 338.0,
+      "turnover_eur": 48509.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-13",
+      "close_eur": 145.0,
+      "volume": 49.0,
+      "turnover_eur": 7055.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-14",
+      "close_eur": 144.5,
+      "volume": 361.0,
+      "turnover_eur": 51820.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-18",
+      "close_eur": 143.0,
+      "volume": 124.0,
+      "turnover_eur": 17748.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-19",
+      "close_eur": 143.5,
+      "volume": 84.0,
+      "turnover_eur": 12065.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-20",
+      "close_eur": 143.5,
+      "volume": 155.0,
+      "turnover_eur": 22238.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-21",
+      "close_eur": 145.0,
+      "volume": 5.0,
+      "turnover_eur": 725.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-22",
+      "close_eur": 145.0,
+      "volume": 314.0,
+      "turnover_eur": 45354.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-25",
+      "close_eur": 146.0,
+      "volume": 708.0,
+      "turnover_eur": 102400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-26",
+      "close_eur": 144.5,
+      "volume": 63.0,
+      "turnover_eur": 9113.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-27",
+      "close_eur": 146.0,
+      "volume": 25.0,
+      "turnover_eur": 3610.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-28",
+      "close_eur": 145.0,
+      "volume": 808.0,
+      "turnover_eur": 118210.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-08-29",
+      "close_eur": 145.5,
+      "volume": 160.0,
+      "turnover_eur": 23420.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-01",
+      "close_eur": 149.0,
+      "volume": 520.0,
+      "turnover_eur": 76713.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-02",
+      "close_eur": 147.0,
+      "volume": 411.0,
+      "turnover_eur": 60725.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-03",
+      "close_eur": 148.5,
+      "volume": 641.0,
+      "turnover_eur": 95234.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-04",
+      "close_eur": 149.0,
+      "volume": 880.0,
+      "turnover_eur": 131105.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-05",
+      "close_eur": 150.5,
+      "volume": 2274.0,
+      "turnover_eur": 339779.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-08",
+      "close_eur": 148.5,
+      "volume": 1758.0,
+      "turnover_eur": 263077.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-09",
+      "close_eur": 150.0,
+      "volume": 1545.0,
+      "turnover_eur": 231498.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-10",
+      "close_eur": 151.0,
+      "volume": 917.0,
+      "turnover_eur": 138382.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-11",
+      "close_eur": 151.0,
+      "volume": 3346.0,
+      "turnover_eur": 504468.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-12",
+      "close_eur": 157.5,
+      "volume": 9822.0,
+      "turnover_eur": 1509833.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-15",
+      "close_eur": 158.5,
+      "volume": 1803.0,
+      "turnover_eur": 288798.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-16",
+      "close_eur": 155.5,
+      "volume": 664.0,
+      "turnover_eur": 103721.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-17",
+      "close_eur": 157.0,
+      "volume": 145.0,
+      "turnover_eur": 22583.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-18",
+      "close_eur": 154.5,
+      "volume": 874.0,
+      "turnover_eur": 135314.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-19",
+      "close_eur": 155.5,
+      "volume": 940.0,
+      "turnover_eur": 146305.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-22",
+      "close_eur": 150.5,
+      "volume": 1256.0,
+      "turnover_eur": 191197.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-23",
+      "close_eur": 149.5,
+      "volume": 1737.0,
+      "turnover_eur": 257770.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-24",
+      "close_eur": 150.0,
+      "volume": 1189.0,
+      "turnover_eur": 178616.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-25",
+      "close_eur": 150.0,
+      "volume": 1134.0,
+      "turnover_eur": 169662.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-26",
+      "close_eur": 150.5,
+      "volume": 2413.0,
+      "turnover_eur": 362448.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-29",
+      "close_eur": 151.5,
+      "volume": 492.0,
+      "turnover_eur": 74286.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-09-30",
+      "close_eur": 152.0,
+      "volume": 511.0,
+      "turnover_eur": 77364.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-01",
+      "close_eur": 154.0,
+      "volume": 964.0,
+      "turnover_eur": 147576.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-02",
+      "close_eur": 153.5,
+      "volume": 433.0,
+      "turnover_eur": 66891.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-03",
+      "close_eur": 152.0,
+      "volume": 346.0,
+      "turnover_eur": 52657.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-06",
+      "close_eur": 152.0,
+      "volume": 181.0,
+      "turnover_eur": 27512.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-07",
+      "close_eur": 152.0,
+      "volume": 173.0,
+      "turnover_eur": 26377.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-08",
+      "close_eur": 152.0,
+      "volume": 97.0,
+      "turnover_eur": 14698.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-09",
+      "close_eur": 151.0,
+      "volume": 104.0,
+      "turnover_eur": 15704.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-10",
+      "close_eur": 152.0,
+      "volume": 71.0,
+      "turnover_eur": 10772.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-13",
+      "close_eur": 152.5,
+      "volume": 48.0,
+      "turnover_eur": 7320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-14",
+      "close_eur": 154.0,
+      "volume": 97.0,
+      "turnover_eur": 14859.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-15",
+      "close_eur": 155.0,
+      "volume": 249.0,
+      "turnover_eur": 38357.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-16",
+      "close_eur": 159.0,
+      "volume": 717.0,
+      "turnover_eur": 112059.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-17",
+      "close_eur": 158.0,
+      "volume": 335.0,
+      "turnover_eur": 52970.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-20",
+      "close_eur": 158.0,
+      "volume": 70.0,
+      "turnover_eur": 11039.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-21",
+      "close_eur": 162.0,
+      "volume": 2301.0,
+      "turnover_eur": 371105.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-22",
+      "close_eur": 164.5,
+      "volume": 1336.0,
+      "turnover_eur": 221026.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-23",
+      "close_eur": 167.0,
+      "volume": 1021.0,
+      "turnover_eur": 170521.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-24",
+      "close_eur": 165.0,
+      "volume": 483.0,
+      "turnover_eur": 79963.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-27",
+      "close_eur": 167.0,
+      "volume": 677.0,
+      "turnover_eur": 110998.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-28",
+      "close_eur": 166.5,
+      "volume": 153.0,
+      "turnover_eur": 25405.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-29",
+      "close_eur": 166.0,
+      "volume": 279.0,
+      "turnover_eur": 45888.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-30",
+      "close_eur": 158.0,
+      "volume": 2361.0,
+      "turnover_eur": 386994.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-10-31",
+      "close_eur": 157.5,
+      "volume": 882.0,
+      "turnover_eur": 138006.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-03",
+      "close_eur": 158.0,
+      "volume": 92.0,
+      "turnover_eur": 14520.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-04",
+      "close_eur": 159.0,
+      "volume": 1049.0,
+      "turnover_eur": 164732.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-05",
+      "close_eur": 157.5,
+      "volume": 489.0,
+      "turnover_eur": 77019.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-06",
+      "close_eur": 158.0,
+      "volume": 135.0,
+      "turnover_eur": 21276.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-07",
+      "close_eur": 161.0,
+      "volume": 1289.0,
+      "turnover_eur": 206521.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-10",
+      "close_eur": 160.0,
+      "volume": 938.0,
+      "turnover_eur": 151505.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-11",
+      "close_eur": 162.0,
+      "volume": 522.0,
+      "turnover_eur": 83933.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-12",
+      "close_eur": 159.0,
+      "volume": 36.0,
+      "turnover_eur": 5734.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-13",
+      "close_eur": 159.0,
+      "volume": 579.0,
+      "turnover_eur": 93076.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-14",
+      "close_eur": 160.0,
+      "volume": 15.0,
+      "turnover_eur": 2397.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-17",
+      "close_eur": 159.0,
+      "volume": 16.0,
+      "turnover_eur": 2540.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-19",
+      "close_eur": 160.0,
+      "volume": 59.0,
+      "turnover_eur": 9398.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-20",
+      "close_eur": 159.5,
+      "volume": 59.0,
+      "turnover_eur": 9353.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-21",
+      "close_eur": 160.0,
+      "volume": 848.0,
+      "turnover_eur": 135096.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-24",
+      "close_eur": 163.0,
+      "volume": 683.0,
+      "turnover_eur": 110013.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-25",
+      "close_eur": 160.0,
+      "volume": 312.0,
+      "turnover_eur": 49924.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-26",
+      "close_eur": 160.0,
+      "volume": 2.0,
+      "turnover_eur": 320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-11-27",
+      "close_eur": 158.5,
+      "volume": 110.0,
+      "turnover_eur": 17485.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-01",
+      "close_eur": 159.0,
+      "volume": 20.0,
+      "turnover_eur": 3180.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-02",
+      "close_eur": 160.0,
+      "volume": 107.0,
+      "turnover_eur": 17070.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-03",
+      "close_eur": 160.0,
+      "volume": 212.0,
+      "turnover_eur": 33920.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-04",
+      "close_eur": 160.0,
+      "volume": 12.0,
+      "turnover_eur": 1926.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-05",
+      "close_eur": 160.0,
+      "volume": 178.0,
+      "turnover_eur": 28463.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-08",
+      "close_eur": 160.0,
+      "volume": 5.0,
+      "turnover_eur": 800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-09",
+      "close_eur": 158.0,
+      "volume": 418.0,
+      "turnover_eur": 66399.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-10",
+      "close_eur": 160.0,
+      "volume": 11.0,
+      "turnover_eur": 1764.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-11",
+      "close_eur": 155.0,
+      "volume": 861.0,
+      "turnover_eur": 134774.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-12",
+      "close_eur": 153.0,
+      "volume": 545.0,
+      "turnover_eur": 83985.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-15",
+      "close_eur": 152.5,
+      "volume": 863.0,
+      "turnover_eur": 133094.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-16",
+      "close_eur": 154.0,
+      "volume": 299.0,
+      "turnover_eur": 45786.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-17",
+      "close_eur": 153.0,
+      "volume": 542.0,
+      "turnover_eur": 82869.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-18",
+      "close_eur": 154.5,
+      "volume": 11.0,
+      "turnover_eur": 1684.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-19",
+      "close_eur": 152.5,
+      "volume": 276.0,
+      "turnover_eur": 42225.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-22",
+      "close_eur": 150.0,
+      "volume": 1211.0,
+      "turnover_eur": 182657.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-23",
+      "close_eur": 151.0,
+      "volume": 458.0,
+      "turnover_eur": 68833.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-29",
+      "close_eur": 149.5,
+      "volume": 606.0,
+      "turnover_eur": 90969.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2025-12-30",
+      "close_eur": 150.0,
+      "volume": 1748.0,
+      "turnover_eur": 264825.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-02",
+      "close_eur": 154.0,
+      "volume": 493.0,
+      "turnover_eur": 75521.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-05",
+      "close_eur": 154.5,
+      "volume": 271.0,
+      "turnover_eur": 41870.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-07",
+      "close_eur": 156.0,
+      "volume": 10.0,
+      "turnover_eur": 1560.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-08",
+      "close_eur": 156.5,
+      "volume": 380.0,
+      "turnover_eur": 59112.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-09",
+      "close_eur": 157.0,
+      "volume": 10.0,
+      "turnover_eur": 1552.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-12",
+      "close_eur": 157.0,
+      "volume": 64.0,
+      "turnover_eur": 10010.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-13",
+      "close_eur": 158.0,
+      "volume": 408.0,
+      "turnover_eur": 64435.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-14",
+      "close_eur": 156.0,
+      "volume": 644.0,
+      "turnover_eur": 100679.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-15",
+      "close_eur": 158.0,
+      "volume": 408.0,
+      "turnover_eur": 64367.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-16",
+      "close_eur": 155.0,
+      "volume": 564.0,
+      "turnover_eur": 87927.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-19",
+      "close_eur": 156.5,
+      "volume": 130.0,
+      "turnover_eur": 20135.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-20",
+      "close_eur": 155.5,
+      "volume": 6.0,
+      "turnover_eur": 933.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-21",
+      "close_eur": 151.0,
+      "volume": 1984.0,
+      "turnover_eur": 300313.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-22",
+      "close_eur": 155.0,
+      "volume": 423.0,
+      "turnover_eur": 65261.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-23",
+      "close_eur": 155.5,
+      "volume": 22.0,
+      "turnover_eur": 3401.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-26",
+      "close_eur": 153.0,
+      "volume": 181.0,
+      "turnover_eur": 27893.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-27",
+      "close_eur": 152.0,
+      "volume": 245.0,
+      "turnover_eur": 37371.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-28",
+      "close_eur": 151.0,
+      "volume": 381.0,
+      "turnover_eur": 57590.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-29",
+      "close_eur": 153.0,
+      "volume": 96.0,
+      "turnover_eur": 14544.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-01-30",
+      "close_eur": 153.0,
+      "volume": 64.0,
+      "turnover_eur": 9692.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-02",
+      "close_eur": 153.0,
+      "volume": 339.0,
+      "turnover_eur": 51549.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-03",
+      "close_eur": 154.0,
+      "volume": 387.0,
+      "turnover_eur": 59415.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-04",
+      "close_eur": 154.0,
+      "volume": 41.0,
+      "turnover_eur": 6279.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-05",
+      "close_eur": 152.5,
+      "volume": 89.0,
+      "turnover_eur": 13546.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-06",
+      "close_eur": 154.0,
+      "volume": 202.0,
+      "turnover_eur": 30745.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-09",
+      "close_eur": 153.0,
+      "volume": 321.0,
+      "turnover_eur": 49253.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-10",
+      "close_eur": 151.5,
+      "volume": 341.0,
+      "turnover_eur": 51906.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-11",
+      "close_eur": 151.5,
+      "volume": 2525.0,
+      "turnover_eur": 382909.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-12",
+      "close_eur": 153.0,
+      "volume": 12.0,
+      "turnover_eur": 1837.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-13",
+      "close_eur": 155.0,
+      "volume": 446.0,
+      "turnover_eur": 68644.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-16",
+      "close_eur": 153.5,
+      "volume": 553.0,
+      "turnover_eur": 85754.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-17",
+      "close_eur": 153.0,
+      "volume": 83.0,
+      "turnover_eur": 12645.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-18",
+      "close_eur": 153.0,
+      "volume": 155.0,
+      "turnover_eur": 23715.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-19",
+      "close_eur": 154.0,
+      "volume": 260.0,
+      "turnover_eur": 39786.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-20",
+      "close_eur": 151.0,
+      "volume": 2507.0,
+      "turnover_eur": 378087.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-23",
+      "close_eur": 151.0,
+      "volume": 400.0,
+      "turnover_eur": 60501.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-24",
+      "close_eur": 150.5,
+      "volume": 1052.0,
+      "turnover_eur": 157992.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-25",
+      "close_eur": 148.0,
+      "volume": 911.0,
+      "turnover_eur": 135110.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-26",
+      "close_eur": 148.5,
+      "volume": 860.0,
+      "turnover_eur": 129085.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-02-27",
+      "close_eur": 149.5,
+      "volume": 1474.0,
+      "turnover_eur": 218304.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-02",
+      "close_eur": 147.5,
+      "volume": 1365.0,
+      "turnover_eur": 198404.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-03",
+      "close_eur": 143.0,
+      "volume": 852.0,
+      "turnover_eur": 122296.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-04",
+      "close_eur": 146.5,
+      "volume": 725.0,
+      "turnover_eur": 105576.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-05",
+      "close_eur": 150.0,
+      "volume": 1021.0,
+      "turnover_eur": 153035.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-06",
+      "close_eur": 146.0,
+      "volume": 311.0,
+      "turnover_eur": 45937.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-09",
+      "close_eur": 141.0,
+      "volume": 1703.0,
+      "turnover_eur": 241424.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-10",
+      "close_eur": 143.5,
+      "volume": 351.0,
+      "turnover_eur": 50563.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-11",
+      "close_eur": 146.0,
+      "volume": 858.0,
+      "turnover_eur": 124166.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-12",
+      "close_eur": 147.0,
+      "volume": 1238.0,
+      "turnover_eur": 181334.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-13",
+      "close_eur": 148.5,
+      "volume": 580.0,
+      "turnover_eur": 85547.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-16",
+      "close_eur": 149.5,
+      "volume": 87.0,
+      "turnover_eur": 12906.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-17",
+      "close_eur": 147.5,
+      "volume": 50.0,
+      "turnover_eur": 7381.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-18",
+      "close_eur": 150.0,
+      "volume": 1174.0,
+      "turnover_eur": 175561.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-19",
+      "close_eur": 147.5,
+      "volume": 837.0,
+      "turnover_eur": 122083.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-20",
+      "close_eur": 154.5,
+      "volume": 1518.0,
+      "turnover_eur": 231807.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-23",
+      "close_eur": 153.5,
+      "volume": 1652.0,
+      "turnover_eur": 250215.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-24",
+      "close_eur": 151.0,
+      "volume": 604.0,
+      "turnover_eur": 92156.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-25",
+      "close_eur": 154.0,
+      "volume": 1247.0,
+      "turnover_eur": 190726.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-26",
+      "close_eur": 154.0,
+      "volume": 724.0,
+      "turnover_eur": 110951.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-27",
+      "close_eur": 153.0,
+      "volume": 27.0,
+      "turnover_eur": 4131.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-30",
+      "close_eur": 151.5,
+      "volume": 264.0,
+      "turnover_eur": 40036.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-03-31",
+      "close_eur": 149.0,
+      "volume": 615.0,
+      "turnover_eur": 92445.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-01",
+      "close_eur": 150.0,
+      "volume": 211.0,
+      "turnover_eur": 31701.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-02",
+      "close_eur": 149.0,
+      "volume": 231.0,
+      "turnover_eur": 34419.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-07",
+      "close_eur": 150.0,
+      "volume": 381.0,
+      "turnover_eur": 57284.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-08",
+      "close_eur": 151.5,
+      "volume": 320.0,
+      "turnover_eur": 48615.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-09",
+      "close_eur": 152.5,
+      "volume": 305.0,
+      "turnover_eur": 46447.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-10",
+      "close_eur": 152.5,
+      "volume": 6.0,
+      "turnover_eur": 915.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-13",
+      "close_eur": 153.0,
+      "volume": 292.0,
+      "turnover_eur": 44717.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-14",
+      "close_eur": 152.5,
+      "volume": 451.0,
+      "turnover_eur": 69307.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-15",
+      "close_eur": 151.0,
+      "volume": 137.0,
+      "turnover_eur": 20728.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-16",
+      "close_eur": 153.0,
+      "volume": 46.0,
+      "turnover_eur": 7038.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-17",
+      "close_eur": 152.0,
+      "volume": 315.0,
+      "turnover_eur": 48095.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-20",
+      "close_eur": 153.0,
+      "volume": 205.0,
+      "turnover_eur": 31223.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-21",
+      "close_eur": 152.0,
+      "volume": 166.0,
+      "turnover_eur": 25367.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-22",
+      "close_eur": 152.0,
+      "volume": 69.0,
+      "turnover_eur": 10496.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-23",
+      "close_eur": 154.5,
+      "volume": 31.0,
+      "turnover_eur": 4776.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-24",
+      "close_eur": 155.0,
+      "volume": 61.0,
+      "turnover_eur": 9438.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-27",
+      "close_eur": 152.5,
+      "volume": 239.0,
+      "turnover_eur": 36436.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-28",
+      "close_eur": 153.0,
+      "volume": 650.0,
+      "turnover_eur": 99293.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-29",
+      "close_eur": 153.0,
+      "volume": 219.0,
+      "turnover_eur": 33516.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-04-30",
+      "close_eur": 154.0,
+      "volume": 120.0,
+      "turnover_eur": 18276.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-04",
+      "close_eur": 151.0,
+      "volume": 189.0,
+      "turnover_eur": 28723.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-05",
+      "close_eur": 153.0,
+      "volume": 292.0,
+      "turnover_eur": 44245.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-06",
+      "close_eur": 154.0,
+      "volume": 128.0,
+      "turnover_eur": 19628.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-07",
+      "close_eur": 154.0,
+      "volume": 111.0,
+      "turnover_eur": 17094.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-08",
+      "close_eur": 154.5,
+      "volume": 246.0,
+      "turnover_eur": 37900.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-11",
+      "close_eur": 154.0,
+      "volume": 169.0,
+      "turnover_eur": 25907.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-12",
+      "close_eur": 150.5,
+      "volume": 1535.0,
+      "turnover_eur": 231619.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-13",
+      "close_eur": 152.0,
+      "volume": 125.0,
+      "turnover_eur": 18949.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-14",
+      "close_eur": 151.0,
+      "volume": 74.0,
+      "turnover_eur": 11144.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-15",
+      "close_eur": 151.0,
+      "volume": 335.0,
+      "turnover_eur": 50264.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-18",
+      "close_eur": 151.0,
+      "volume": 26.0,
+      "turnover_eur": 3926.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-19",
+      "close_eur": 152.0,
+      "volume": 140.0,
+      "turnover_eur": 21212.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-20",
+      "close_eur": 151.0,
+      "volume": 235.0,
+      "turnover_eur": 35485.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-21",
+      "close_eur": 150.0,
+      "volume": 104.0,
+      "turnover_eur": 15600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-22",
+      "close_eur": 151.0,
+      "volume": 172.0,
+      "turnover_eur": 26008.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-25",
+      "close_eur": 151.0,
+      "volume": 560.0,
+      "turnover_eur": 84056.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-27",
+      "close_eur": 149.0,
+      "volume": 1328.0,
+      "turnover_eur": 199145.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-28",
+      "close_eur": 148.0,
+      "volume": 95.0,
+      "turnover_eur": 14095.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-05-29",
+      "close_eur": 149.0,
+      "volume": 99.0,
+      "turnover_eur": 14743.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-01",
+      "close_eur": 149.0,
+      "volume": 140.0,
+      "turnover_eur": 20872.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-02",
+      "close_eur": 148.0,
+      "volume": 600.0,
+      "turnover_eur": 89011.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-03",
+      "close_eur": 150.0,
+      "volume": 657.0,
+      "turnover_eur": 97856.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-05",
+      "close_eur": 149.0,
+      "volume": 19.0,
+      "turnover_eur": 2831.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-08",
+      "close_eur": 149.5,
+      "volume": 691.0,
+      "turnover_eur": 103631.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-09",
+      "close_eur": 152.0,
+      "volume": 771.0,
+      "turnover_eur": 115611.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-10",
+      "close_eur": 151.0,
+      "volume": 192.0,
+      "turnover_eur": 29112.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-11",
+      "close_eur": 150.5,
+      "volume": 171.0,
+      "turnover_eur": 25763.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-12",
+      "close_eur": 152.0,
+      "volume": 1197.0,
+      "turnover_eur": 181987.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-15",
+      "close_eur": 151.0,
+      "volume": 768.0,
+      "turnover_eur": 116294.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-16",
+      "close_eur": 151.5,
+      "volume": 1095.0,
+      "turnover_eur": 165190.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-17",
+      "close_eur": 149.5,
+      "volume": 1115.0,
+      "turnover_eur": 168020.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-18",
+      "close_eur": 156.0,
+      "volume": 965.0,
+      "turnover_eur": 148470.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-19",
+      "close_eur": 161.5,
+      "volume": 1225.0,
+      "turnover_eur": 194662.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-23",
+      "close_eur": 168.0,
+      "volume": 1394.0,
+      "turnover_eur": 228282.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-24",
+      "close_eur": 162.5,
+      "volume": 1259.0,
+      "turnover_eur": 208537.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-25",
+      "close_eur": 165.0,
+      "volume": 826.0,
+      "turnover_eur": 134932.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-26",
+      "close_eur": 160.5,
+      "volume": 466.0,
+      "turnover_eur": 75462.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-29",
+      "close_eur": 156.0,
+      "volume": 367.0,
+      "turnover_eur": 57873.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-06-30",
+      "close_eur": 156.0,
+      "volume": 812.0,
+      "turnover_eur": 127335.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-07-01",
+      "close_eur": 156.0,
+      "volume": 364.0,
+      "turnover_eur": 56634.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
     {
       "class_ticker": "PODR",
       "trade_date": "2026-07-02",
       "close_eur": 156.0,
       "volume": 105.0,
-      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+      "turnover_eur": 16338.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-07-03",
+      "close_eur": 158.0,
+      "volume": 529.0,
+      "turnover_eur": 83147.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-07-06",
+      "close_eur": 159.0,
+      "volume": 267.0,
+      "turnover_eur": 42175.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-07-07",
+      "close_eur": 163.0,
+      "volume": 564.0,
+      "turnover_eur": 90553.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-07-08",
+      "close_eur": 162.5,
+      "volume": 730.0,
+      "turnover_eur": 117491.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-07-09",
+      "close_eur": 163.0,
+      "volume": 702.0,
+      "turnover_eur": 114203.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "PODR",
+      "trade_date": "2026-07-10",
+      "close_eur": 162.0,
+      "volume": 155.0,
+      "turnover_eur": 25153.5,
+      "source": "zse.hr securityHistory (web JSON)"
     }
   ],
   "valuation": {
@@ -388,6 +4448,25 @@
         }
       },
       {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "low": 39.277978339350184,
+        "base": 44.651162790697676,
+        "high": 51.72741679873217,
+        "confidence": 0.7,
+        "no_value": false,
+        "assumptions": {
+          "dps": 3.2,
+          "r": 0.0931,
+          "g": 0.02,
+          "placeholder": true,
+          "sources": {
+            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete traži povijesnu seriju; nije tržišno utvrđena",
+            "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
+          }
+        }
+      },
+      {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
         "low": 204.20511548909653,
@@ -410,11 +4489,6 @@
     ],
     "skipped": [
       {
-        "key": "ddm_gordon",
-        "label": "Dividendni diskont",
-        "reason": "ne isplaćuje (ili nepoznata) dividenda"
-      },
-      {
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
         "reason": "RI predložak je za financijske firme (banka/osiguranje), ne consumer"
@@ -434,6 +4508,7 @@
         "multiples_relative": 190.7808536035729,
         "ev_ebitda": 180.3273116598406,
         "dcf_fcf": -8.41666747533935,
+        "ddm_gordon": 44.651162790697676,
         "justified_pb_roe": 232.14015180771435
       }
     },

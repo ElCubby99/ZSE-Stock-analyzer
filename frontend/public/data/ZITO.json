@@ -6,7 +6,8 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-05",
+  "generated_at": "2026-07-12",
+  "data_status": "full",
   "financials_3y": {
     "years": [
       2025
@@ -91,7 +92,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-05",
+    "as_of": "2026-07-12",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -102,14 +103,14 @@
       {
         "class_ticker": "ZITO",
         "last_trade": {
-          "date": "2026-07-02",
-          "close_eur": 18.8,
-          "volume": 3350.0,
-          "turnover_eur": 62980.0
+          "date": "2026-07-10",
+          "close_eur": 18.3,
+          "volume": 1359.0,
+          "turnover_eur": 24927.4
         },
-        "days_since_trade": 3,
+        "days_since_trade": 2,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-02: 3350 kom / 62,980 € prometa (3 d)"
+        "note": "zadnja trgovina 2026-07-10: 1359 kom / 24,927 € prometa (2 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -134,10 +135,10 @@
       "is_primary": true,
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS)",
       "last_price": {
-        "close_eur": 18.8,
-        "trade_date": "2026-07-02",
-        "volume": 3350.0,
-        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+        "close_eur": 18.3,
+        "trade_date": "2026-07-10",
+        "volume": 1359.0,
+        "source": "zse.hr securityHistory (web JSON)"
       }
     }
   ],
@@ -145,17 +146,17 @@
     "eps": 1.367636851061254,
     "bvps": 14.268651878782435,
     "roe": 0.09584905866930131,
-    "dps": null,
+    "dps": 0.61,
     "shares_ex_treasury": 25607675.0,
-    "market_cap_eur": 481424290.0,
+    "market_cap_eur": 468620452.5,
     "ebitda_eur": null,
     "per_class": [
       {
         "class_ticker": "ZITO",
-        "price": 18.8,
-        "pe": 13.74633915824339,
-        "pb": 1.3175736684665849,
-        "div_yield": null,
+        "price": 18.3,
+        "pe": 13.380745031694365,
+        "pb": 1.2825318155818353,
+        "div_yield": 0.03333333333333333,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -322,22 +323,1934 @@
       "item": "dps",
       "label": "Dividenda po dionici",
       "unit": "eur_per_share",
-      "value_eur": null,
-      "confidence": null,
-      "source_page": null,
-      "fiscal_year": null,
-      "source_url": null,
+      "value_eur": 0.61,
+      "confidence": 0.9,
+      "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67450",
       "audited": null,
-      "missing": true
+      "missing": false
     }
   ],
+  "price_summary": {
+    "as_of": "2026-07-12",
+    "classes": [
+      {
+        "class_ticker": "ZITO",
+        "last": {
+          "date": "2026-07-10",
+          "close_eur": 18.3
+        },
+        "prev_close_eur": 18.4,
+        "change_pct": -0.005434782608695565,
+        "high_52w_eur": 22.1,
+        "low_52w_eur": 18.0,
+        "avg_turnover_20d_eur": 57669.25,
+        "data_from": "2025-07-28",
+        "note": "povijest dostupna od 2025-07-28 — 52-tjedni raspon pokriva kraće razdoblje"
+      }
+    ],
+    "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
+  },
+  "dividend_calendar": {
+    "as_of": "2026-07-12",
+    "events": [
+      {
+        "class_ticker": "ZITO",
+        "fiscal_year": 2025,
+        "amount_eur": 0.61,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-06-25",
+        "record_date": "2026-06-26",
+        "payment_date": "2026-07-03",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67450"
+      }
+    ],
+    "upcoming_count": 0,
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+  },
   "prices": [
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-07-28",
+      "close_eur": 21.5,
+      "volume": 30552.0,
+      "turnover_eur": 652441.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-07-29",
+      "close_eur": 21.2,
+      "volume": 23987.0,
+      "turnover_eur": 514746.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-07-30",
+      "close_eur": 21.2,
+      "volume": 6503.0,
+      "turnover_eur": 135684.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-07-31",
+      "close_eur": 21.3,
+      "volume": 9414.0,
+      "turnover_eur": 200946.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-01",
+      "close_eur": 20.8,
+      "volume": 4965.0,
+      "turnover_eur": 105202.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-04",
+      "close_eur": 20.4,
+      "volume": 6326.0,
+      "turnover_eur": 130279.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-06",
+      "close_eur": 20.1,
+      "volume": 7705.0,
+      "turnover_eur": 156022.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-07",
+      "close_eur": 20.3,
+      "volume": 2472.0,
+      "turnover_eur": 50208.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-08",
+      "close_eur": 20.4,
+      "volume": 3132.0,
+      "turnover_eur": 63723.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-11",
+      "close_eur": 20.4,
+      "volume": 5547.0,
+      "turnover_eur": 112658.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-12",
+      "close_eur": 20.3,
+      "volume": 420.0,
+      "turnover_eur": 8548.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-13",
+      "close_eur": 20.4,
+      "volume": 2941.0,
+      "turnover_eur": 59777.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-14",
+      "close_eur": 20.4,
+      "volume": 667.0,
+      "turnover_eur": 13606.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-18",
+      "close_eur": 20.4,
+      "volume": 5992.0,
+      "turnover_eur": 121569.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-19",
+      "close_eur": 20.5,
+      "volume": 9954.0,
+      "turnover_eur": 203728.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-20",
+      "close_eur": 20.4,
+      "volume": 1487.0,
+      "turnover_eur": 30406.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-21",
+      "close_eur": 20.6,
+      "volume": 8665.0,
+      "turnover_eur": 177426.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-22",
+      "close_eur": 20.6,
+      "volume": 3024.0,
+      "turnover_eur": 62212.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-25",
+      "close_eur": 20.6,
+      "volume": 5841.0,
+      "turnover_eur": 119856.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-26",
+      "close_eur": 20.5,
+      "volume": 760.0,
+      "turnover_eur": 15580.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-27",
+      "close_eur": 20.5,
+      "volume": 1923.0,
+      "turnover_eur": 39439.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-28",
+      "close_eur": 20.5,
+      "volume": 1544.0,
+      "turnover_eur": 31639.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-08-29",
+      "close_eur": 20.5,
+      "volume": 653.0,
+      "turnover_eur": 13362.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-01",
+      "close_eur": 20.4,
+      "volume": 1610.0,
+      "turnover_eur": 32968.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-02",
+      "close_eur": 20.4,
+      "volume": 5726.0,
+      "turnover_eur": 116731.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-03",
+      "close_eur": 20.3,
+      "volume": 2138.0,
+      "turnover_eur": 43285.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-04",
+      "close_eur": 20.3,
+      "volume": 2032.0,
+      "turnover_eur": 41277.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-05",
+      "close_eur": 20.0,
+      "volume": 11344.0,
+      "turnover_eur": 228839.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-08",
+      "close_eur": 19.5,
+      "volume": 13596.0,
+      "turnover_eur": 266119.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-09",
+      "close_eur": 19.3,
+      "volume": 8843.0,
+      "turnover_eur": 171302.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-10",
+      "close_eur": 19.5,
+      "volume": 7907.0,
+      "turnover_eur": 153043.55,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-11",
+      "close_eur": 19.6,
+      "volume": 1225.0,
+      "turnover_eur": 24013.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-12",
+      "close_eur": 20.8,
+      "volume": 26108.0,
+      "turnover_eur": 531317.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-15",
+      "close_eur": 21.6,
+      "volume": 46324.0,
+      "turnover_eur": 1008485.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-16",
+      "close_eur": 21.7,
+      "volume": 4493.0,
+      "turnover_eur": 97164.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-17",
+      "close_eur": 21.9,
+      "volume": 10391.0,
+      "turnover_eur": 226885.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-18",
+      "close_eur": 22.0,
+      "volume": 11737.0,
+      "turnover_eur": 257839.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-19",
+      "close_eur": 22.1,
+      "volume": 11059.0,
+      "turnover_eur": 243933.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-22",
+      "close_eur": 21.7,
+      "volume": 6443.0,
+      "turnover_eur": 139912.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-23",
+      "close_eur": 20.6,
+      "volume": 7939.0,
+      "turnover_eur": 165654.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-24",
+      "close_eur": 21.0,
+      "volume": 7967.0,
+      "turnover_eur": 166668.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-25",
+      "close_eur": 20.3,
+      "volume": 10539.0,
+      "turnover_eur": 216227.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-26",
+      "close_eur": 20.5,
+      "volume": 599.0,
+      "turnover_eur": 12279.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-29",
+      "close_eur": 20.4,
+      "volume": 5580.0,
+      "turnover_eur": 114045.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-09-30",
+      "close_eur": 20.6,
+      "volume": 5440.0,
+      "turnover_eur": 112060.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-01",
+      "close_eur": 20.5,
+      "volume": 2698.0,
+      "turnover_eur": 55462.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-02",
+      "close_eur": 20.4,
+      "volume": 5713.0,
+      "turnover_eur": 116647.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-03",
+      "close_eur": 20.2,
+      "volume": 1463.0,
+      "turnover_eur": 29572.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-06",
+      "close_eur": 20.0,
+      "volume": 3291.0,
+      "turnover_eur": 66024.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-07",
+      "close_eur": 20.1,
+      "volume": 1395.0,
+      "turnover_eur": 27953.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-08",
+      "close_eur": 20.0,
+      "volume": 1330.0,
+      "turnover_eur": 26531.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-09",
+      "close_eur": 21.3,
+      "volume": 6005.0,
+      "turnover_eur": 126125.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-10",
+      "close_eur": 20.0,
+      "volume": 6751.0,
+      "turnover_eur": 136342.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-13",
+      "close_eur": 20.0,
+      "volume": 359.0,
+      "turnover_eur": 7180.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-14",
+      "close_eur": 20.1,
+      "volume": 71.0,
+      "turnover_eur": 1427.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-15",
+      "close_eur": 20.0,
+      "volume": 2009.0,
+      "turnover_eur": 40155.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-16",
+      "close_eur": 20.1,
+      "volume": 1424.0,
+      "turnover_eur": 28489.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-17",
+      "close_eur": 19.95,
+      "volume": 1672.0,
+      "turnover_eur": 33609.45,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-20",
+      "close_eur": 20.1,
+      "volume": 887.0,
+      "turnover_eur": 17792.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-21",
+      "close_eur": 20.1,
+      "volume": 1339.0,
+      "turnover_eur": 26935.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-22",
+      "close_eur": 20.0,
+      "volume": 3604.0,
+      "turnover_eur": 71855.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-23",
+      "close_eur": 20.0,
+      "volume": 285.0,
+      "turnover_eur": 5673.35,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-24",
+      "close_eur": 19.65,
+      "volume": 2988.0,
+      "turnover_eur": 58991.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-27",
+      "close_eur": 19.65,
+      "volume": 1722.0,
+      "turnover_eur": 33987.55,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-28",
+      "close_eur": 19.65,
+      "volume": 1385.0,
+      "turnover_eur": 27350.25,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-29",
+      "close_eur": 19.8,
+      "volume": 2431.0,
+      "turnover_eur": 48087.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-30",
+      "close_eur": 20.0,
+      "volume": 3813.0,
+      "turnover_eur": 76188.35,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-10-31",
+      "close_eur": 19.7,
+      "volume": 10116.0,
+      "turnover_eur": 201424.75,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-03",
+      "close_eur": 19.9,
+      "volume": 316.0,
+      "turnover_eur": 6284.95,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-04",
+      "close_eur": 19.8,
+      "volume": 1042.0,
+      "turnover_eur": 20439.25,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-05",
+      "close_eur": 19.5,
+      "volume": 5710.0,
+      "turnover_eur": 111302.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-06",
+      "close_eur": 19.3,
+      "volume": 2534.0,
+      "turnover_eur": 49467.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-07",
+      "close_eur": 19.5,
+      "volume": 1406.0,
+      "turnover_eur": 27247.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-10",
+      "close_eur": 19.6,
+      "volume": 357.0,
+      "turnover_eur": 6974.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-12",
+      "close_eur": 19.6,
+      "volume": 4013.0,
+      "turnover_eur": 78752.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-13",
+      "close_eur": 20.1,
+      "volume": 12403.0,
+      "turnover_eur": 248087.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-14",
+      "close_eur": 20.1,
+      "volume": 979.0,
+      "turnover_eur": 19724.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-17",
+      "close_eur": 20.0,
+      "volume": 2208.0,
+      "turnover_eur": 44150.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-19",
+      "close_eur": 19.75,
+      "volume": 972.0,
+      "turnover_eur": 19284.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-20",
+      "close_eur": 19.9,
+      "volume": 635.0,
+      "turnover_eur": 12588.65,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-21",
+      "close_eur": 19.4,
+      "volume": 6014.0,
+      "turnover_eur": 118130.25,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-24",
+      "close_eur": 19.5,
+      "volume": 529.0,
+      "turnover_eur": 10280.85,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-25",
+      "close_eur": 19.6,
+      "volume": 163.0,
+      "turnover_eur": 3196.05,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-26",
+      "close_eur": 19.55,
+      "volume": 181.0,
+      "turnover_eur": 3542.35,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-27",
+      "close_eur": 19.8,
+      "volume": 175.0,
+      "turnover_eur": 3451.35,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-11-28",
+      "close_eur": 19.55,
+      "volume": 3449.0,
+      "turnover_eur": 67825.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-01",
+      "close_eur": 19.45,
+      "volume": 846.0,
+      "turnover_eur": 16500.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-02",
+      "close_eur": 19.6,
+      "volume": 2123.0,
+      "turnover_eur": 41303.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-03",
+      "close_eur": 19.7,
+      "volume": 2200.0,
+      "turnover_eur": 43220.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-04",
+      "close_eur": 19.45,
+      "volume": 2628.0,
+      "turnover_eur": 51170.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-05",
+      "close_eur": 19.6,
+      "volume": 2232.0,
+      "turnover_eur": 43452.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-08",
+      "close_eur": 19.45,
+      "volume": 760.0,
+      "turnover_eur": 14796.15,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-09",
+      "close_eur": 19.35,
+      "volume": 5451.0,
+      "turnover_eur": 105800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-10",
+      "close_eur": 19.35,
+      "volume": 4685.0,
+      "turnover_eur": 90580.55,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-11",
+      "close_eur": 19.4,
+      "volume": 331.0,
+      "turnover_eur": 6407.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-12",
+      "close_eur": 19.15,
+      "volume": 4466.0,
+      "turnover_eur": 85976.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-15",
+      "close_eur": 19.45,
+      "volume": 50.0,
+      "turnover_eur": 972.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-16",
+      "close_eur": 19.2,
+      "volume": 3661.0,
+      "turnover_eur": 70172.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-17",
+      "close_eur": 19.2,
+      "volume": 3094.0,
+      "turnover_eur": 59447.75,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-18",
+      "close_eur": 19.05,
+      "volume": 4434.0,
+      "turnover_eur": 84957.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-19",
+      "close_eur": 19.2,
+      "volume": 392.0,
+      "turnover_eur": 7526.85,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-22",
+      "close_eur": 19.15,
+      "volume": 182.0,
+      "turnover_eur": 3479.85,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-23",
+      "close_eur": 19.05,
+      "volume": 743.0,
+      "turnover_eur": 14176.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-29",
+      "close_eur": 18.95,
+      "volume": 2827.0,
+      "turnover_eur": 53701.45,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2025-12-30",
+      "close_eur": 19.0,
+      "volume": 2095.0,
+      "turnover_eur": 39788.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-02",
+      "close_eur": 19.0,
+      "volume": 372.0,
+      "turnover_eur": 7053.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-05",
+      "close_eur": 19.0,
+      "volume": 164.0,
+      "turnover_eur": 3117.35,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-07",
+      "close_eur": 19.1,
+      "volume": 3948.0,
+      "turnover_eur": 74820.05,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-08",
+      "close_eur": 18.9,
+      "volume": 4133.0,
+      "turnover_eur": 78084.25,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-09",
+      "close_eur": 18.9,
+      "volume": 539.0,
+      "turnover_eur": 10193.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-12",
+      "close_eur": 19.1,
+      "volume": 5624.0,
+      "turnover_eur": 107077.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-13",
+      "close_eur": 19.0,
+      "volume": 5437.0,
+      "turnover_eur": 103467.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-14",
+      "close_eur": 19.0,
+      "volume": 1848.0,
+      "turnover_eur": 35150.65,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-15",
+      "close_eur": 19.05,
+      "volume": 2249.0,
+      "turnover_eur": 42868.05,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-16",
+      "close_eur": 19.05,
+      "volume": 7168.0,
+      "turnover_eur": 136202.35,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-19",
+      "close_eur": 19.15,
+      "volume": 5559.0,
+      "turnover_eur": 105969.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-20",
+      "close_eur": 19.15,
+      "volume": 3111.0,
+      "turnover_eur": 59546.45,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-21",
+      "close_eur": 19.05,
+      "volume": 283.0,
+      "turnover_eur": 5393.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-22",
+      "close_eur": 19.15,
+      "volume": 4135.0,
+      "turnover_eur": 79135.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-23",
+      "close_eur": 19.05,
+      "volume": 4087.0,
+      "turnover_eur": 78036.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-26",
+      "close_eur": 19.15,
+      "volume": 986.0,
+      "turnover_eur": 18779.95,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-27",
+      "close_eur": 19.1,
+      "volume": 1984.0,
+      "turnover_eur": 37788.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-28",
+      "close_eur": 19.0,
+      "volume": 7763.0,
+      "turnover_eur": 147502.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-29",
+      "close_eur": 19.0,
+      "volume": 1149.0,
+      "turnover_eur": 21838.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-01-30",
+      "close_eur": 19.0,
+      "volume": 15010.0,
+      "turnover_eur": 285337.25,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-02",
+      "close_eur": 19.0,
+      "volume": 1685.0,
+      "turnover_eur": 32018.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-03",
+      "close_eur": 19.0,
+      "volume": 1612.0,
+      "turnover_eur": 30631.15,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-04",
+      "close_eur": 19.05,
+      "volume": 2689.0,
+      "turnover_eur": 51122.65,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-05",
+      "close_eur": 18.9,
+      "volume": 1844.0,
+      "turnover_eur": 34913.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-06",
+      "close_eur": 18.9,
+      "volume": 3468.0,
+      "turnover_eur": 65579.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-09",
+      "close_eur": 18.9,
+      "volume": 3084.0,
+      "turnover_eur": 58295.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-10",
+      "close_eur": 18.9,
+      "volume": 5489.0,
+      "turnover_eur": 103876.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-11",
+      "close_eur": 18.9,
+      "volume": 7117.0,
+      "turnover_eur": 134516.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-12",
+      "close_eur": 18.65,
+      "volume": 5390.0,
+      "turnover_eur": 101634.15,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-13",
+      "close_eur": 18.6,
+      "volume": 1205.0,
+      "turnover_eur": 22437.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-16",
+      "close_eur": 18.6,
+      "volume": 13097.0,
+      "turnover_eur": 242577.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-17",
+      "close_eur": 18.7,
+      "volume": 4046.0,
+      "turnover_eur": 75504.75,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-18",
+      "close_eur": 18.75,
+      "volume": 1925.0,
+      "turnover_eur": 36050.65,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-19",
+      "close_eur": 18.9,
+      "volume": 333.0,
+      "turnover_eur": 6270.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-20",
+      "close_eur": 18.95,
+      "volume": 569.0,
+      "turnover_eur": 10752.55,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-23",
+      "close_eur": 18.9,
+      "volume": 4675.0,
+      "turnover_eur": 88442.25,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-24",
+      "close_eur": 18.9,
+      "volume": 660.0,
+      "turnover_eur": 12496.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-25",
+      "close_eur": 18.9,
+      "volume": 115.0,
+      "turnover_eur": 2166.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-26",
+      "close_eur": 18.85,
+      "volume": 929.0,
+      "turnover_eur": 17511.65,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-02-27",
+      "close_eur": 18.75,
+      "volume": 15899.0,
+      "turnover_eur": 298400.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-02",
+      "close_eur": 18.5,
+      "volume": 5777.0,
+      "turnover_eur": 107271.45,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-03",
+      "close_eur": 18.2,
+      "volume": 10588.0,
+      "turnover_eur": 194407.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-04",
+      "close_eur": 18.2,
+      "volume": 3854.0,
+      "turnover_eur": 69948.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-05",
+      "close_eur": 18.2,
+      "volume": 2819.0,
+      "turnover_eur": 51396.55,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-06",
+      "close_eur": 18.15,
+      "volume": 4458.0,
+      "turnover_eur": 81077.45,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-09",
+      "close_eur": 18.0,
+      "volume": 11766.0,
+      "turnover_eur": 208901.85,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-10",
+      "close_eur": 18.0,
+      "volume": 9181.0,
+      "turnover_eur": 163566.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-11",
+      "close_eur": 18.25,
+      "volume": 6981.0,
+      "turnover_eur": 126837.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-12",
+      "close_eur": 19.0,
+      "volume": 22748.0,
+      "turnover_eur": 426685.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-13",
+      "close_eur": 19.35,
+      "volume": 7787.0,
+      "turnover_eur": 149957.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-16",
+      "close_eur": 19.6,
+      "volume": 3290.0,
+      "turnover_eur": 64339.85,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-17",
+      "close_eur": 19.35,
+      "volume": 4895.0,
+      "turnover_eur": 95646.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-18",
+      "close_eur": 19.4,
+      "volume": 127.0,
+      "turnover_eur": 2464.25,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-19",
+      "close_eur": 19.1,
+      "volume": 2412.0,
+      "turnover_eur": 46500.55,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-20",
+      "close_eur": 20.1,
+      "volume": 30749.0,
+      "turnover_eur": 605660.75,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-23",
+      "close_eur": 19.85,
+      "volume": 3767.0,
+      "turnover_eur": 72848.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-24",
+      "close_eur": 19.6,
+      "volume": 1223.0,
+      "turnover_eur": 24006.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-25",
+      "close_eur": 19.75,
+      "volume": 264.0,
+      "turnover_eur": 5203.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-26",
+      "close_eur": 19.7,
+      "volume": 2807.0,
+      "turnover_eur": 55299.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-27",
+      "close_eur": 19.6,
+      "volume": 50.0,
+      "turnover_eur": 980.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-30",
+      "close_eur": 19.5,
+      "volume": 605.0,
+      "turnover_eur": 11799.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-03-31",
+      "close_eur": 19.35,
+      "volume": 9382.0,
+      "turnover_eur": 182407.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-01",
+      "close_eur": 19.45,
+      "volume": 560.0,
+      "turnover_eur": 10906.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-02",
+      "close_eur": 19.3,
+      "volume": 3876.0,
+      "turnover_eur": 74985.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-07",
+      "close_eur": 19.3,
+      "volume": 3228.0,
+      "turnover_eur": 62303.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-08",
+      "close_eur": 19.6,
+      "volume": 1236.0,
+      "turnover_eur": 24123.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-09",
+      "close_eur": 19.7,
+      "volume": 615.0,
+      "turnover_eur": 12100.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-10",
+      "close_eur": 19.7,
+      "volume": 88.0,
+      "turnover_eur": 1728.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-13",
+      "close_eur": 19.6,
+      "volume": 450.0,
+      "turnover_eur": 8820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-14",
+      "close_eur": 19.7,
+      "volume": 1277.0,
+      "turnover_eur": 25051.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-15",
+      "close_eur": 19.7,
+      "volume": 663.0,
+      "turnover_eur": 13062.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-16",
+      "close_eur": 19.8,
+      "volume": 2319.0,
+      "turnover_eur": 45865.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-17",
+      "close_eur": 19.9,
+      "volume": 684.0,
+      "turnover_eur": 13593.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-20",
+      "close_eur": 19.7,
+      "volume": 255.0,
+      "turnover_eur": 5033.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-21",
+      "close_eur": 19.9,
+      "volume": 78.0,
+      "turnover_eur": 1552.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-22",
+      "close_eur": 19.8,
+      "volume": 2500.0,
+      "turnover_eur": 49500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-23",
+      "close_eur": 19.9,
+      "volume": 71.0,
+      "turnover_eur": 1412.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-24",
+      "close_eur": 19.8,
+      "volume": 705.0,
+      "turnover_eur": 13959.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-27",
+      "close_eur": 19.7,
+      "volume": 148.0,
+      "turnover_eur": 2910.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-28",
+      "close_eur": 19.7,
+      "volume": 574.0,
+      "turnover_eur": 11330.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-29",
+      "close_eur": 19.7,
+      "volume": 3405.0,
+      "turnover_eur": 67098.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-04-30",
+      "close_eur": 19.8,
+      "volume": 3789.0,
+      "turnover_eur": 74834.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-04",
+      "close_eur": 19.5,
+      "volume": 402.0,
+      "turnover_eur": 7858.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-05",
+      "close_eur": 19.6,
+      "volume": 192.0,
+      "turnover_eur": 3766.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-06",
+      "close_eur": 19.6,
+      "volume": 518.0,
+      "turnover_eur": 10154.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-07",
+      "close_eur": 19.6,
+      "volume": 575.0,
+      "turnover_eur": 11313.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-08",
+      "close_eur": 20.0,
+      "volume": 4751.0,
+      "turnover_eur": 94063.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-11",
+      "close_eur": 20.0,
+      "volume": 1515.0,
+      "turnover_eur": 30238.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-12",
+      "close_eur": 20.0,
+      "volume": 3964.0,
+      "turnover_eur": 78597.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-13",
+      "close_eur": 19.8,
+      "volume": 509.0,
+      "turnover_eur": 9991.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-14",
+      "close_eur": 19.6,
+      "volume": 1097.0,
+      "turnover_eur": 21559.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-15",
+      "close_eur": 19.4,
+      "volume": 3601.0,
+      "turnover_eur": 70064.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-18",
+      "close_eur": 19.4,
+      "volume": 150.0,
+      "turnover_eur": 2911.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-19",
+      "close_eur": 19.3,
+      "volume": 1870.0,
+      "turnover_eur": 36247.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-20",
+      "close_eur": 19.5,
+      "volume": 245.0,
+      "turnover_eur": 4755.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-21",
+      "close_eur": 19.8,
+      "volume": 4332.0,
+      "turnover_eur": 85375.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-22",
+      "close_eur": 19.7,
+      "volume": 269.0,
+      "turnover_eur": 5314.8,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-25",
+      "close_eur": 19.9,
+      "volume": 1142.0,
+      "turnover_eur": 22713.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-26",
+      "close_eur": 19.7,
+      "volume": 2265.0,
+      "turnover_eur": 44669.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-27",
+      "close_eur": 19.7,
+      "volume": 609.0,
+      "turnover_eur": 12013.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-28",
+      "close_eur": 19.6,
+      "volume": 1039.0,
+      "turnover_eur": 20364.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-05-29",
+      "close_eur": 19.6,
+      "volume": 4152.0,
+      "turnover_eur": 81175.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-01",
+      "close_eur": 19.3,
+      "volume": 4356.0,
+      "turnover_eur": 84208.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-02",
+      "close_eur": 19.2,
+      "volume": 4392.0,
+      "turnover_eur": 84052.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-03",
+      "close_eur": 19.1,
+      "volume": 4005.0,
+      "turnover_eur": 76190.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-05",
+      "close_eur": 18.9,
+      "volume": 5762.0,
+      "turnover_eur": 109351.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-08",
+      "close_eur": 19.0,
+      "volume": 831.0,
+      "turnover_eur": 15758.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-09",
+      "close_eur": 18.9,
+      "volume": 3032.0,
+      "turnover_eur": 57328.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-10",
+      "close_eur": 18.8,
+      "volume": 168.0,
+      "turnover_eur": 3167.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-11",
+      "close_eur": 18.9,
+      "volume": 268.0,
+      "turnover_eur": 5065.2,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-12",
+      "close_eur": 19.0,
+      "volume": 4131.0,
+      "turnover_eur": 78172.1,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-15",
+      "close_eur": 18.9,
+      "volume": 6632.0,
+      "turnover_eur": 125445.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-16",
+      "close_eur": 19.1,
+      "volume": 1212.0,
+      "turnover_eur": 23133.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-17",
+      "close_eur": 19.0,
+      "volume": 2086.0,
+      "turnover_eur": 39628.7,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-18",
+      "close_eur": 18.9,
+      "volume": 6179.0,
+      "turnover_eur": 116907.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-19",
+      "close_eur": 19.4,
+      "volume": 8086.0,
+      "turnover_eur": 155298.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-23",
+      "close_eur": 19.2,
+      "volume": 134.0,
+      "turnover_eur": 2569.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-24",
+      "close_eur": 19.2,
+      "volume": 1032.0,
+      "turnover_eur": 19857.3,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-25",
+      "close_eur": 19.0,
+      "volume": 2737.0,
+      "turnover_eur": 52003.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-26",
+      "close_eur": 19.1,
+      "volume": 9.0,
+      "turnover_eur": 171.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-29",
+      "close_eur": 18.9,
+      "volume": 3351.0,
+      "turnover_eur": 63338.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-06-30",
+      "close_eur": 19.0,
+      "volume": 584.0,
+      "turnover_eur": 11047.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-07-01",
+      "close_eur": 18.7,
+      "volume": 725.0,
+      "turnover_eur": 13574.6,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
     {
       "class_ticker": "ZITO",
       "trade_date": "2026-07-02",
       "close_eur": 18.8,
       "volume": 3350.0,
-      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+      "turnover_eur": 63277.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-07-03",
+      "close_eur": 18.6,
+      "volume": 925.0,
+      "turnover_eur": 17264.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-07-06",
+      "close_eur": 18.5,
+      "volume": 2043.0,
+      "turnover_eur": 37874.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-07-07",
+      "close_eur": 18.3,
+      "volume": 11200.0,
+      "turnover_eur": 205488.4,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-07-08",
+      "close_eur": 18.6,
+      "volume": 5087.0,
+      "turnover_eur": 93907.9,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-07-09",
+      "close_eur": 18.4,
+      "volume": 514.0,
+      "turnover_eur": 9496.5,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ZITO",
+      "trade_date": "2026-07-10",
+      "close_eur": 18.3,
+      "volume": 1359.0,
+      "turnover_eur": 24927.4,
+      "source": "zse.hr securityHistory (web JSON)"
     }
   ],
   "valuation": {
@@ -391,6 +2304,25 @@
         }
       },
       {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "low": 7.487364620938629,
+        "base": 8.511627906976743,
+        "high": 9.860538827258319,
+        "confidence": 0.7,
+        "no_value": false,
+        "assumptions": {
+          "dps": 0.61,
+          "r": 0.0931,
+          "g": 0.02,
+          "placeholder": true,
+          "sources": {
+            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete traži povijesnu seriju; nije tržišno utvrđena",
+            "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
+          }
+        }
+      },
+      {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
         "low": 13.023631931234721,
@@ -423,11 +2355,6 @@
         "reason": "nema operativni CF i capex"
       },
       {
-        "key": "ddm_gordon",
-        "label": "Dividendni diskont",
-        "reason": "ne isplaćuje (ili nepoznata) dividenda"
-      },
-      {
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
         "reason": "RI predložak je za financijske firme (banka/osiguranje), ne consumer"
@@ -439,12 +2366,13 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 14.805250526478869,
+      "zone_low": 8.511627906976743,
       "zone_high": 18.90731001545435,
-      "dispersion": 0.21695627170774495,
-      "divergent": false,
+      "dispersion": 0.5498234333694451,
+      "divergent": true,
       "method_bases": {
         "multiples_relative": 18.90731001545435,
+        "ddm_gordon": 8.511627906976743,
         "justified_pb_roe": 14.805250526478869
       }
     },

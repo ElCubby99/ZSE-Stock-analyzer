@@ -22,10 +22,13 @@ Opća pravila:
 | fiscal_year | int | zadnja fiskalna godina u bazi (FY0) |
 | audited | bool | je li FY0 filing revidiran |
 | generated_at | str (ISO date) | datum exporta — baza za `liquidity.days_since_trade` |
+| data_status | str | `full` (živa firma) ili `market_only` (izvješća u obradi — objavljuju se SAMO tržišni podaci: cijene, dividende, likvidnost; `valuation`, `financials_3y`, `balance`, `segments`, `ownership`, `bank_kpi` su null, `fundamentals` prazno, uz `data_note` s razlogom) |
 | share_classes | list | vidi dolje |
 | metrics | obj | eps, bvps, roe, dps, shares_ex_treasury, market_cap_eur, ebitda_eur, per_class[], basis_note |
 | fundamentals | list | FY0 stavke: item, label, value_eur, confidence (null = izvedeno), source_page ('computed' = izračun), fiscal_year, source_url, audited, missing |
-| prices | list | povijest EOD po klasi: class_ticker, trade_date, close_eur, volume, source |
+| prices | list | povijest EOD po klasi: class_ticker, trade_date, close_eur, volume, turnover_eur, source (backfill: zse.hr securityHistory, ~2 g) |
+| price_summary | obj | **profil** — vidi dolje |
+| dividend_calendar | obj | **profil** — vidi dolje |
 | valuation | obj | params (+sources), assumption_flags[], ran[], skipped[], reconciliation, sotp |
 | financials_3y | obj | **v2, DIO 1** — vidi dolje |
 | balance | obj\|null | **v2, DIO 2** |
@@ -39,6 +42,26 @@ Opća pravila:
 `ticker, class_type ('ordinary'|'preferred'), isin, shares_issued,
 treasury_shares, shares_ex_treasury, is_primary, note,
 last_price {close_eur, trade_date, volume, source} | null`
+
+## price_summary (profil)
+`{as_of, note, classes[]}`; po klasi:
+`{class_ticker, last {date, close_eur}, prev_close_eur, change_pct,
+high_52w_eur, low_52w_eur, avg_turnover_20d_eur, data_from, note}`.
+- `change_pct` je vs prethodni **trgovani** dan (dani bez trgovanja nemaju zapis).
+- 52-tjedni raspon računa se samo nad dostupnom poviješću; ako serija počinje
+  unutar zadnjih 365 dana, `note` to eksplicitno kaže (npr. TOK — novo uvrštenje).
+- `last: null` + note kad klasa nema nijednu cijenu.
+
+## dividend_calendar (profil)
+`{as_of, note, upcoming_count, events[]}`; po događaju:
+`{class_ticker, fiscal_year, amount_eur, div_type, ex_date, record_date,
+payment_date, status, status_hr, source_url}`.
+- `status`: `paid` (payment_date ≤ danas) | `upcoming` (izglasana, još nije
+  isplaćena) | `proposed` (prijedlog GS — NIJE izglasana).
+- Datumi dolaze iz EHO objava; datum koji u objavi ne postoji je `null` —
+  ništa se ne izvodi ni ne pogađa.
+- `fiscal_year` = godina dobiti iz koje se isplaćuje (konvencija ex-godina − 1,
+  vidi src/dividends.py).
 
 ## valuation
 - `params`: r, g, holding_discount_low/high, peer_pe, peer_pb,
@@ -105,6 +128,8 @@ last_price {close_eur, trade_date, volume, source} | null`
 ```
 - `last_trade` = zadnji dan s volumenom > 0 u `prices_eod`; `null` znači da u
   dostupnoj povijesti trgovine NEMA → `flag=very_low`, cijena je indikativna.
+- `turnover_eur` je STVARNI promet iz tečajnice (prices_eod.turnover_eur) kad
+  postoji; fallback je aproksimacija close×volumen (stariji retci bez prometa).
 - Pravila: `low` ako promet < min_turnover_eur ILI days > stale_days;
   `very_low` ako volume < very_low_shares ILI days > very_stale_days.
 - Frontend MORA prikazati flag uz cijenu u headeru I uz okomite linije cijena

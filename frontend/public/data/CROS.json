@@ -6,7 +6,8 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-05",
+  "generated_at": "2026-07-12",
+  "data_status": "full",
   "financials_3y": {
     "years": [
       2023,
@@ -100,7 +101,7 @@
     "leverage_note": "n/p — kod osiguratelja/banaka depoziti, pričuve i obveze iz ugovora nisu financijski dug pa net_debt i net_debt/EBITDA nemaju smisla (sektorski KPI dolaze zasebno)"
   },
   "liquidity": {
-    "as_of": "2026-07-05",
+    "as_of": "2026-07-12",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -110,17 +111,27 @@
     "classes": [
       {
         "class_ticker": "CROS",
-        "last_trade": null,
-        "days_since_trade": null,
+        "last_trade": {
+          "date": "2026-07-10",
+          "close_eur": 3320.0,
+          "volume": 2.0,
+          "turnover_eur": 6620.0
+        },
+        "days_since_trade": 2,
         "flag": "very_low",
-        "note": "u dostupnim podacima (od 2026-07-01) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski"
+        "note": "zadnja trgovina 2026-07-10: 2 kom / 6,620 € prometa (2 d)"
       },
       {
         "class_ticker": "CROS2",
-        "last_trade": null,
-        "days_since_trade": null,
+        "last_trade": {
+          "date": "2026-06-30",
+          "close_eur": 3360.0,
+          "volume": 1.0,
+          "turnover_eur": 3360.0
+        },
+        "days_since_trade": 12,
         "flag": "very_low",
-        "note": "u dostupnim podacima (od 2026-07-01) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski"
+        "note": "zadnja trgovina 2026-06-30: 1 kom / 3,360 € prometa (12 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -152,10 +163,10 @@
       "is_primary": true,
       "note": "redovne (I.+II. emisija)",
       "last_price": {
-        "close_eur": 3460.0,
-        "trade_date": "2026-07-02",
-        "volume": 0.0,
-        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+        "close_eur": 3320.0,
+        "trade_date": "2026-07-10",
+        "volume": 2.0,
+        "source": "zse.hr securityHistory (web JSON)"
       }
     },
     {
@@ -181,15 +192,15 @@
     "roe": 0.07513722894625866,
     "dps": 114.14,
     "shares_ex_treasury": 429697.0,
-    "market_cap_eur": 1485876620.0,
+    "market_cap_eur": 1426944040.0,
     "ebitda_eur": null,
     "per_class": [
       {
         "class_ticker": "CROS",
-        "price": 3460.0,
-        "pe": 22.737029469788496,
-        "pb": 1.7083973888293282,
-        "div_yield": 0.032988439306358384,
+        "price": 3320.0,
+        "pe": 21.81703405771613,
+        "pb": 1.6392714829229391,
+        "div_yield": 0.03437951807228916,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       },
       {
@@ -373,12 +384,2438 @@
       "missing": false
     }
   ],
+  "price_summary": {
+    "as_of": "2026-07-12",
+    "classes": [
+      {
+        "class_ticker": "CROS",
+        "last": {
+          "date": "2026-07-10",
+          "close_eur": 3320.0
+        },
+        "prev_close_eur": 3200.0,
+        "change_pct": 0.03750000000000009,
+        "high_52w_eur": 3660.0,
+        "low_52w_eur": 2200.0,
+        "avg_turnover_20d_eur": 9944.0,
+        "data_from": "2024-07-01",
+        "note": null
+      },
+      {
+        "class_ticker": "CROS2",
+        "last": {
+          "date": "2026-07-02",
+          "close_eur": 3360.0
+        },
+        "prev_close_eur": 3360.0,
+        "change_pct": 0.0,
+        "high_52w_eur": 3560.0,
+        "low_52w_eur": 2140.0,
+        "avg_turnover_20d_eur": 10970.0,
+        "data_from": "2024-07-17",
+        "note": null
+      }
+    ],
+    "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
+  },
+  "dividend_calendar": {
+    "as_of": "2026-07-12",
+    "events": [
+      {
+        "class_ticker": "CROS",
+        "fiscal_year": 2025,
+        "amount_eur": 114.14,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-07-01",
+        "record_date": "2026-07-02",
+        "payment_date": "2026-07-31",
+        "status": "upcoming",
+        "status_hr": "izglasana — nadolazeća",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67286"
+      },
+      {
+        "class_ticker": "CROS2",
+        "fiscal_year": 2025,
+        "amount_eur": 114.14,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-07-01",
+        "record_date": "2026-07-02",
+        "payment_date": "2026-07-31",
+        "status": "upcoming",
+        "status_hr": "izglasana — nadolazeća",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67286"
+      },
+      {
+        "class_ticker": "CROS",
+        "fiscal_year": 2024,
+        "amount_eur": 106.52,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2025-07-01",
+        "record_date": "2025-07-02",
+        "payment_date": "2025-07-31",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61674"
+      },
+      {
+        "class_ticker": "CROS2",
+        "fiscal_year": 2024,
+        "amount_eur": 106.52,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2025-07-01",
+        "record_date": "2025-07-02",
+        "payment_date": "2025-07-31",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61674"
+      },
+      {
+        "class_ticker": "CROS",
+        "fiscal_year": 2023,
+        "amount_eur": 116.37,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-07-09",
+        "record_date": "2024-07-10",
+        "payment_date": "2024-08-08",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55916"
+      },
+      {
+        "class_ticker": "CROS2",
+        "fiscal_year": 2023,
+        "amount_eur": 116.37,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-07-09",
+        "record_date": "2024-07-10",
+        "payment_date": "2024-08-08",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55916"
+      },
+      {
+        "class_ticker": "CROS",
+        "fiscal_year": 2023,
+        "amount_eur": 151.27,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-03-08",
+        "record_date": "2024-03-11",
+        "payment_date": "2024-03-18",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/53959"
+      },
+      {
+        "class_ticker": "CROS2",
+        "fiscal_year": 2023,
+        "amount_eur": 151.27,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-03-08",
+        "record_date": "2024-03-11",
+        "payment_date": "2024-03-18",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/53959"
+      }
+    ],
+    "upcoming_count": 2,
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+  },
   "prices": [
     {
       "class_ticker": "CROS",
+      "trade_date": "2024-07-01",
+      "close_eur": 1400.0,
+      "volume": 1.0,
+      "turnover_eur": 1400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-02",
+      "close_eur": 1400.0,
+      "volume": 3.0,
+      "turnover_eur": 4200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-03",
+      "close_eur": 1430.0,
+      "volume": 9.0,
+      "turnover_eur": 12720.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-04",
+      "close_eur": 1440.0,
+      "volume": 5.0,
+      "turnover_eur": 7190.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-05",
+      "close_eur": 1400.0,
+      "volume": 1.0,
+      "turnover_eur": 1400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-08",
+      "close_eur": 1440.0,
+      "volume": 9.0,
+      "turnover_eur": 12880.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-09",
+      "close_eur": 1370.0,
+      "volume": 2.0,
+      "turnover_eur": 2740.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-15",
+      "close_eur": 1360.0,
+      "volume": 1.0,
+      "turnover_eur": 1360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-17",
+      "close_eur": 1360.0,
+      "volume": 5.0,
+      "turnover_eur": 6730.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-07-17",
+      "close_eur": 1230.0,
+      "volume": 4.0,
+      "turnover_eur": 4920.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-19",
+      "close_eur": 1300.0,
+      "volume": 2.0,
+      "turnover_eur": 2600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-07-25",
+      "close_eur": 1230.0,
+      "volume": 2.0,
+      "turnover_eur": 2460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-07-31",
+      "close_eur": 1390.0,
+      "volume": 3.0,
+      "turnover_eur": 4080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-08-01",
+      "close_eur": 1390.0,
+      "volume": 2.0,
+      "turnover_eur": 2780.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-08-06",
+      "close_eur": 1390.0,
+      "volume": 1.0,
+      "turnover_eur": 1390.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-08-08",
+      "close_eur": 1380.0,
+      "volume": 1.0,
+      "turnover_eur": 1380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-08-19",
+      "close_eur": 1320.0,
+      "volume": 2.0,
+      "turnover_eur": 2640.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-08-19",
+      "close_eur": 1270.0,
+      "volume": 5.0,
+      "turnover_eur": 6350.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-09-04",
+      "close_eur": 1350.0,
+      "volume": 1.0,
+      "turnover_eur": 1350.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-09-04",
+      "close_eur": 1270.0,
+      "volume": 50.0,
+      "turnover_eur": 63500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-09-06",
+      "close_eur": 1270.0,
+      "volume": 5.0,
+      "turnover_eur": 6350.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-09-16",
+      "close_eur": 1350.0,
+      "volume": 1.0,
+      "turnover_eur": 1350.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-09-19",
+      "close_eur": 1350.0,
+      "volume": 1.0,
+      "turnover_eur": 1350.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-09-23",
+      "close_eur": 1270.0,
+      "volume": 4.0,
+      "turnover_eur": 5080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-09-24",
+      "close_eur": 1270.0,
+      "volume": 2.0,
+      "turnover_eur": 2540.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-09-30",
+      "close_eur": 1270.0,
+      "volume": 3.0,
+      "turnover_eur": 3810.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-01",
+      "close_eur": 1270.0,
+      "volume": 6.0,
+      "turnover_eur": 7620.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-10",
+      "close_eur": 1270.0,
+      "volume": 2.0,
+      "turnover_eur": 2540.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-11",
+      "close_eur": 1270.0,
+      "volume": 4.0,
+      "turnover_eur": 5080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-17",
+      "close_eur": 1250.0,
+      "volume": 1.0,
+      "turnover_eur": 1250.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-10-18",
+      "close_eur": 1350.0,
+      "volume": 2.0,
+      "turnover_eur": 2700.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-18",
+      "close_eur": 1290.0,
+      "volume": 1.0,
+      "turnover_eur": 1290.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-10-24",
+      "close_eur": 1350.0,
+      "volume": 6.0,
+      "turnover_eur": 7850.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-25",
+      "close_eur": 1260.0,
+      "volume": 8.0,
+      "turnover_eur": 10080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-10-28",
+      "close_eur": 1300.0,
+      "volume": 11.0,
+      "turnover_eur": 14600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-28",
+      "close_eur": 1300.0,
+      "volume": 1.0,
+      "turnover_eur": 1300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-10-29",
+      "close_eur": 1350.0,
+      "volume": 6.0,
+      "turnover_eur": 8100.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-29",
+      "close_eur": 1350.0,
+      "volume": 15.0,
+      "turnover_eur": 20190.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-30",
+      "close_eur": 1350.0,
+      "volume": 4.0,
+      "turnover_eur": 5400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-10-31",
+      "close_eur": 1350.0,
+      "volume": 1.0,
+      "turnover_eur": 1350.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-11-06",
+      "close_eur": 1300.0,
+      "volume": 1.0,
+      "turnover_eur": 1300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-08",
+      "close_eur": 1450.0,
+      "volume": 7.0,
+      "turnover_eur": 10120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-11-08",
+      "close_eur": 1350.0,
+      "volume": 8.0,
+      "turnover_eur": 10800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-11",
+      "close_eur": 1460.0,
+      "volume": 2.0,
+      "turnover_eur": 2910.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-12",
+      "close_eur": 1460.0,
+      "volume": 5.0,
+      "turnover_eur": 7300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-15",
+      "close_eur": 1600.0,
+      "volume": 5.0,
+      "turnover_eur": 7560.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-19",
+      "close_eur": 1680.0,
+      "volume": 2.0,
+      "turnover_eur": 3360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-11-19",
+      "close_eur": 1570.0,
+      "volume": 2.0,
+      "turnover_eur": 3140.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-11-21",
+      "close_eur": 1560.0,
+      "volume": 2.0,
+      "turnover_eur": 3120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-26",
+      "close_eur": 1680.0,
+      "volume": 2.0,
+      "turnover_eur": 3360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-27",
+      "close_eur": 1650.0,
+      "volume": 3.0,
+      "turnover_eur": 4950.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-11-29",
+      "close_eur": 1600.0,
+      "volume": 3.0,
+      "turnover_eur": 4800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-12-05",
+      "close_eur": 1590.0,
+      "volume": 2.0,
+      "turnover_eur": 3170.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2024-12-10",
+      "close_eur": 1630.0,
+      "volume": 3.0,
+      "turnover_eur": 4890.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-12-12",
+      "close_eur": 1650.0,
+      "volume": 2.0,
+      "turnover_eur": 3300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-12-27",
+      "close_eur": 1690.0,
+      "volume": 1.0,
+      "turnover_eur": 1690.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2024-12-30",
+      "close_eur": 1710.0,
+      "volume": 1.0,
+      "turnover_eur": 1710.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-02",
+      "close_eur": 1690.0,
+      "volume": 2.0,
+      "turnover_eur": 3380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-03",
+      "close_eur": 1640.0,
+      "volume": 5.0,
+      "turnover_eur": 8200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-08",
+      "close_eur": 1690.0,
+      "volume": 3.0,
+      "turnover_eur": 5070.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-10",
+      "close_eur": 1630.0,
+      "volume": 1.0,
+      "turnover_eur": 1630.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-14",
+      "close_eur": 1630.0,
+      "volume": 3.0,
+      "turnover_eur": 4890.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-23",
+      "close_eur": 1630.0,
+      "volume": 3.0,
+      "turnover_eur": 4890.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-24",
+      "close_eur": 1730.0,
+      "volume": 3.0,
+      "turnover_eur": 5030.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-01-24",
+      "close_eur": 1600.0,
+      "volume": 1.0,
+      "turnover_eur": 1600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-27",
+      "close_eur": 1730.0,
+      "volume": 10.0,
+      "turnover_eur": 17300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-01-27",
+      "close_eur": 1640.0,
+      "volume": 1.0,
+      "turnover_eur": 1640.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-28",
+      "close_eur": 1730.0,
+      "volume": 7.0,
+      "turnover_eur": 12110.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-29",
+      "close_eur": 1730.0,
+      "volume": 1.0,
+      "turnover_eur": 1730.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-01-30",
+      "close_eur": 1750.0,
+      "volume": 8.0,
+      "turnover_eur": 14000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-01-30",
+      "close_eur": 1640.0,
+      "volume": 2.0,
+      "turnover_eur": 3280.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-02-03",
+      "close_eur": 1610.0,
+      "volume": 1.0,
+      "turnover_eur": 1610.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-02-05",
+      "close_eur": 1850.0,
+      "volume": 5.0,
+      "turnover_eur": 9250.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-02-07",
+      "close_eur": 1710.0,
+      "volume": 2.0,
+      "turnover_eur": 3420.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-02-11",
+      "close_eur": 1840.0,
+      "volume": 3.0,
+      "turnover_eur": 5520.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-02-18",
+      "close_eur": 1900.0,
+      "volume": 4.0,
+      "turnover_eur": 7600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-02-21",
+      "close_eur": 1900.0,
+      "volume": 10.0,
+      "turnover_eur": 19000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-02-24",
+      "close_eur": 1900.0,
+      "volume": 10.0,
+      "turnover_eur": 18740.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-02-24",
+      "close_eur": 1700.0,
+      "volume": 4.0,
+      "turnover_eur": 6800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-02-25",
+      "close_eur": 1820.0,
+      "volume": 1.0,
+      "turnover_eur": 1820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-02-26",
+      "close_eur": 1820.0,
+      "volume": 1.0,
+      "turnover_eur": 1820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-03-04",
+      "close_eur": 1820.0,
+      "volume": 1.0,
+      "turnover_eur": 1820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-03-04",
+      "close_eur": 1700.0,
+      "volume": 2.0,
+      "turnover_eur": 3400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-03-11",
+      "close_eur": 1750.0,
+      "volume": 1.0,
+      "turnover_eur": 1750.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-03-11",
+      "close_eur": 1700.0,
+      "volume": 2.0,
+      "turnover_eur": 3330.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-03-26",
+      "close_eur": 1810.0,
+      "volume": 8.0,
+      "turnover_eur": 14430.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-03-27",
+      "close_eur": 1920.0,
+      "volume": 1.0,
+      "turnover_eur": 1920.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-03-28",
+      "close_eur": 1970.0,
+      "volume": 3.0,
+      "turnover_eur": 5930.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-03-31",
+      "close_eur": 1700.0,
+      "volume": 6.0,
+      "turnover_eur": 10250.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-01",
+      "close_eur": 1980.0,
+      "volume": 1.0,
+      "turnover_eur": 1980.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-04-01",
+      "close_eur": 1800.0,
+      "volume": 7.0,
+      "turnover_eur": 12440.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-02",
+      "close_eur": 1950.0,
+      "volume": 2.0,
+      "turnover_eur": 3900.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-03",
+      "close_eur": 1850.0,
+      "volume": 1.0,
+      "turnover_eur": 1850.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-04",
+      "close_eur": 1930.0,
+      "volume": 6.0,
+      "turnover_eur": 10950.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-04-04",
+      "close_eur": 1800.0,
+      "volume": 3.0,
+      "turnover_eur": 5400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-07",
+      "close_eur": 1800.0,
+      "volume": 5.0,
+      "turnover_eur": 9000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-09",
+      "close_eur": 1800.0,
+      "volume": 5.0,
+      "turnover_eur": 9000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-10",
+      "close_eur": 1940.0,
+      "volume": 8.0,
+      "turnover_eur": 15250.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-04-10",
+      "close_eur": 1950.0,
+      "volume": 1.0,
+      "turnover_eur": 1950.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-15",
+      "close_eur": 1980.0,
+      "volume": 40.0,
+      "turnover_eur": 77620.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-17",
+      "close_eur": 2040.0,
+      "volume": 7.0,
+      "turnover_eur": 14080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-22",
+      "close_eur": 2100.0,
+      "volume": 4.0,
+      "turnover_eur": 8340.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-04-22",
+      "close_eur": 1960.0,
+      "volume": 4.0,
+      "turnover_eur": 7820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-23",
+      "close_eur": 2140.0,
+      "volume": 6.0,
+      "turnover_eur": 12540.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-24",
+      "close_eur": 2080.0,
+      "volume": 5.0,
+      "turnover_eur": 10400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-28",
+      "close_eur": 2080.0,
+      "volume": 1.0,
+      "turnover_eur": 2080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-29",
+      "close_eur": 2040.0,
+      "volume": 11.0,
+      "turnover_eur": 22520.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-04-29",
+      "close_eur": 2100.0,
+      "volume": 2.0,
+      "turnover_eur": 4200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-04-30",
+      "close_eur": 2020.0,
+      "volume": 25.0,
+      "turnover_eur": 50660.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-04-30",
+      "close_eur": 2000.0,
+      "volume": 2.0,
+      "turnover_eur": 4000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-05-06",
+      "close_eur": 2100.0,
+      "volume": 5.0,
+      "turnover_eur": 10480.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-05-07",
+      "close_eur": 2100.0,
+      "volume": 5.0,
+      "turnover_eur": 10460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-05-12",
+      "close_eur": 2140.0,
+      "volume": 2.0,
+      "turnover_eur": 4280.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-05-12",
+      "close_eur": 2100.0,
+      "volume": 2.0,
+      "turnover_eur": 4200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-05-13",
+      "close_eur": 2160.0,
+      "volume": 5.0,
+      "turnover_eur": 10760.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-05-15",
+      "close_eur": 2240.0,
+      "volume": 10.0,
+      "turnover_eur": 22080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-05-15",
+      "close_eur": 2140.0,
+      "volume": 1.0,
+      "turnover_eur": 2140.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-05-16",
+      "close_eur": 2140.0,
+      "volume": 1.0,
+      "turnover_eur": 2140.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-05-22",
+      "close_eur": 2240.0,
+      "volume": 3.0,
+      "turnover_eur": 6720.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-06-05",
+      "close_eur": 2180.0,
+      "volume": 2.0,
+      "turnover_eur": 4340.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-06",
+      "close_eur": 2140.0,
+      "volume": 3.0,
+      "turnover_eur": 6420.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-09",
+      "close_eur": 2120.0,
+      "volume": 1.0,
+      "turnover_eur": 2120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-10",
+      "close_eur": 2300.0,
+      "volume": 12.0,
+      "turnover_eur": 27500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-06-10",
+      "close_eur": 2400.0,
+      "volume": 45.0,
+      "turnover_eur": 105760.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-13",
+      "close_eur": 2300.0,
+      "volume": 1.0,
+      "turnover_eur": 2300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-17",
+      "close_eur": 2300.0,
+      "volume": 1.0,
+      "turnover_eur": 2300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-24",
+      "close_eur": 2360.0,
+      "volume": 1.0,
+      "turnover_eur": 2360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-26",
+      "close_eur": 2400.0,
+      "volume": 44.0,
+      "turnover_eur": 105600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-06-26",
+      "close_eur": 2380.0,
+      "volume": 8.0,
+      "turnover_eur": 19040.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-06-27",
+      "close_eur": 2400.0,
+      "volume": 7.0,
+      "turnover_eur": 16800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-07-01",
+      "close_eur": 2340.0,
+      "volume": 3.0,
+      "turnover_eur": 7020.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-07",
+      "close_eur": 1980.0,
+      "volume": 4.0,
+      "turnover_eur": 7820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-09",
+      "close_eur": 1970.0,
+      "volume": 1.0,
+      "turnover_eur": 1970.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-10",
+      "close_eur": 2000.0,
+      "volume": 1.0,
+      "turnover_eur": 2000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-11",
+      "close_eur": 2000.0,
+      "volume": 1.0,
+      "turnover_eur": 2000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-07-16",
+      "close_eur": 2200.0,
+      "volume": 1.0,
+      "turnover_eur": 2200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-16",
+      "close_eur": 2200.0,
+      "volume": 118.0,
+      "turnover_eur": 259520.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-07-18",
+      "close_eur": 2320.0,
+      "volume": 1.0,
+      "turnover_eur": 2320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-22",
+      "close_eur": 2280.0,
+      "volume": 1.0,
+      "turnover_eur": 2280.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-07-28",
+      "close_eur": 2340.0,
+      "volume": 2.0,
+      "turnover_eur": 4660.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-07-29",
+      "close_eur": 2380.0,
+      "volume": 35.0,
+      "turnover_eur": 83120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-29",
+      "close_eur": 2300.0,
+      "volume": 3.0,
+      "turnover_eur": 6900.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-07-30",
+      "close_eur": 2380.0,
+      "volume": 2.0,
+      "turnover_eur": 4760.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-07-30",
+      "close_eur": 2300.0,
+      "volume": 1.0,
+      "turnover_eur": 2300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-07-31",
+      "close_eur": 2300.0,
+      "volume": 3.0,
+      "turnover_eur": 6920.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-08-01",
+      "close_eur": 2280.0,
+      "volume": 1.0,
+      "turnover_eur": 2280.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-08-06",
+      "close_eur": 2140.0,
+      "volume": 2.0,
+      "turnover_eur": 4280.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-08-08",
+      "close_eur": 2360.0,
+      "volume": 1.0,
+      "turnover_eur": 2360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-08-08",
+      "close_eur": 2260.0,
+      "volume": 3.0,
+      "turnover_eur": 6580.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-08-11",
+      "close_eur": 2160.0,
+      "volume": 4.0,
+      "turnover_eur": 8640.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-08-18",
+      "close_eur": 2280.0,
+      "volume": 3.0,
+      "turnover_eur": 6840.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-08-20",
+      "close_eur": 2320.0,
+      "volume": 1.0,
+      "turnover_eur": 2320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-08-21",
+      "close_eur": 2380.0,
+      "volume": 1.0,
+      "turnover_eur": 2380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-08-22",
+      "close_eur": 2180.0,
+      "volume": 1.0,
+      "turnover_eur": 2180.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-08-25",
+      "close_eur": 2380.0,
+      "volume": 2.0,
+      "turnover_eur": 4760.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-09-05",
+      "close_eur": 2400.0,
+      "volume": 13.0,
+      "turnover_eur": 31100.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-09-18",
+      "close_eur": 2380.0,
+      "volume": 3.0,
+      "turnover_eur": 7140.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-09-19",
+      "close_eur": 2300.0,
+      "volume": 12.0,
+      "turnover_eur": 27460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-09-22",
+      "close_eur": 2380.0,
+      "volume": 1.0,
+      "turnover_eur": 2380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-09-22",
+      "close_eur": 2220.0,
+      "volume": 1.0,
+      "turnover_eur": 2220.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-09-25",
+      "close_eur": 2320.0,
+      "volume": 4.0,
+      "turnover_eur": 9280.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-09-29",
+      "close_eur": 2320.0,
+      "volume": 1.0,
+      "turnover_eur": 2320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-01",
+      "close_eur": 2380.0,
+      "volume": 1.0,
+      "turnover_eur": 2380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-10-02",
+      "close_eur": 2320.0,
+      "volume": 2.0,
+      "turnover_eur": 4640.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-03",
+      "close_eur": 2380.0,
+      "volume": 5.0,
+      "turnover_eur": 11900.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-10-03",
+      "close_eur": 2320.0,
+      "volume": 2.0,
+      "turnover_eur": 4640.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-06",
+      "close_eur": 2400.0,
+      "volume": 29.0,
+      "turnover_eur": 69600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-10-06",
+      "close_eur": 2340.0,
+      "volume": 2.0,
+      "turnover_eur": 4680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-10",
+      "close_eur": 2400.0,
+      "volume": 1.0,
+      "turnover_eur": 2400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-10-13",
+      "close_eur": 2240.0,
+      "volume": 2.0,
+      "turnover_eur": 4480.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-20",
+      "close_eur": 2400.0,
+      "volume": 6.0,
+      "turnover_eur": 14320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-21",
+      "close_eur": 2400.0,
+      "volume": 2.0,
+      "turnover_eur": 4800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-22",
+      "close_eur": 2580.0,
+      "volume": 5.0,
+      "turnover_eur": 12400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-23",
+      "close_eur": 2560.0,
+      "volume": 2.0,
+      "turnover_eur": 5120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-10-23",
+      "close_eur": 2360.0,
+      "volume": 2.0,
+      "turnover_eur": 4720.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-27",
+      "close_eur": 2500.0,
+      "volume": 2.0,
+      "turnover_eur": 5000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-10-27",
+      "close_eur": 2380.0,
+      "volume": 1.0,
+      "turnover_eur": 2380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-28",
+      "close_eur": 2660.0,
+      "volume": 4.0,
+      "turnover_eur": 10380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-10-28",
+      "close_eur": 2460.0,
+      "volume": 61.0,
+      "turnover_eur": 146880.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-29",
+      "close_eur": 2500.0,
+      "volume": 4.0,
+      "turnover_eur": 10000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-10-30",
+      "close_eur": 2500.0,
+      "volume": 1.0,
+      "turnover_eur": 2500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-11-03",
+      "close_eur": 2500.0,
+      "volume": 3.0,
+      "turnover_eur": 7380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-11-03",
+      "close_eur": 2400.0,
+      "volume": 6.0,
+      "turnover_eur": 14400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-11-04",
+      "close_eur": 2400.0,
+      "volume": 4.0,
+      "turnover_eur": 9600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-11-07",
+      "close_eur": 2280.0,
+      "volume": 4.0,
+      "turnover_eur": 9120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-11-10",
+      "close_eur": 2360.0,
+      "volume": 1.0,
+      "turnover_eur": 2360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-11-19",
+      "close_eur": 2400.0,
+      "volume": 4.0,
+      "turnover_eur": 9680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-11-21",
+      "close_eur": 2320.0,
+      "volume": 1.0,
+      "turnover_eur": 2320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-11-24",
+      "close_eur": 2300.0,
+      "volume": 6.0,
+      "turnover_eur": 13680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-11-25",
+      "close_eur": 2300.0,
+      "volume": 1.0,
+      "turnover_eur": 2300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-11-26",
+      "close_eur": 2200.0,
+      "volume": 1.0,
+      "turnover_eur": 2200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-11-27",
+      "close_eur": 2360.0,
+      "volume": 1.0,
+      "turnover_eur": 2360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-11-27",
+      "close_eur": 2300.0,
+      "volume": 1.0,
+      "turnover_eur": 2300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-12-02",
+      "close_eur": 2500.0,
+      "volume": 1.0,
+      "turnover_eur": 2500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-12-05",
+      "close_eur": 2460.0,
+      "volume": 6.0,
+      "turnover_eur": 14120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-12-08",
+      "close_eur": 2460.0,
+      "volume": 2.0,
+      "turnover_eur": 4900.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2025-12-08",
+      "close_eur": 2420.0,
+      "volume": 2.0,
+      "turnover_eur": 4840.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-12-16",
+      "close_eur": 2440.0,
+      "volume": 1.0,
+      "turnover_eur": 2440.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-12-18",
+      "close_eur": 2440.0,
+      "volume": 1.0,
+      "turnover_eur": 2440.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2025-12-30",
+      "close_eur": 2260.0,
+      "volume": 13.0,
+      "turnover_eur": 29740.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-02",
+      "close_eur": 2400.0,
+      "volume": 10.0,
+      "turnover_eur": 24000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-05",
+      "close_eur": 2300.0,
+      "volume": 1.0,
+      "turnover_eur": 2300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-12",
+      "close_eur": 2400.0,
+      "volume": 14.0,
+      "turnover_eur": 33600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-13",
+      "close_eur": 2460.0,
+      "volume": 30.0,
+      "turnover_eur": 73400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-14",
+      "close_eur": 2700.0,
+      "volume": 11.0,
+      "turnover_eur": 28380.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-01-14",
+      "close_eur": 2500.0,
+      "volume": 8.0,
+      "turnover_eur": 19740.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-15",
+      "close_eur": 2700.0,
+      "volume": 1.0,
+      "turnover_eur": 2700.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-01-15",
+      "close_eur": 2500.0,
+      "volume": 3.0,
+      "turnover_eur": 7500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-19",
+      "close_eur": 2560.0,
+      "volume": 2.0,
+      "turnover_eur": 5180.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-21",
+      "close_eur": 2500.0,
+      "volume": 5.0,
+      "turnover_eur": 12660.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-01-23",
+      "close_eur": 2500.0,
+      "volume": 2.0,
+      "turnover_eur": 5000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-02",
+      "close_eur": 2680.0,
+      "volume": 1.0,
+      "turnover_eur": 2680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-04",
+      "close_eur": 2680.0,
+      "volume": 1.0,
+      "turnover_eur": 2680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-09",
+      "close_eur": 2540.0,
+      "volume": 2.0,
+      "turnover_eur": 5080.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-02-09",
+      "close_eur": 2600.0,
+      "volume": 4.0,
+      "turnover_eur": 10340.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-10",
+      "close_eur": 2700.0,
+      "volume": 1.0,
+      "turnover_eur": 2700.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-11",
+      "close_eur": 2700.0,
+      "volume": 64.0,
+      "turnover_eur": 172800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-16",
+      "close_eur": 2700.0,
+      "volume": 1.0,
+      "turnover_eur": 2700.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-17",
+      "close_eur": 2700.0,
+      "volume": 2.0,
+      "turnover_eur": 5400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-19",
+      "close_eur": 2700.0,
+      "volume": 1.0,
+      "turnover_eur": 2700.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-02-20",
+      "close_eur": 2600.0,
+      "volume": 1.0,
+      "turnover_eur": 2600.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-23",
+      "close_eur": 2700.0,
+      "volume": 2.0,
+      "turnover_eur": 5400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-26",
+      "close_eur": 2600.0,
+      "volume": 2.0,
+      "turnover_eur": 5200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-02-26",
+      "close_eur": 2500.0,
+      "volume": 2.0,
+      "turnover_eur": 5000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-02-27",
+      "close_eur": 2680.0,
+      "volume": 2.0,
+      "turnover_eur": 5360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-02-27",
+      "close_eur": 2500.0,
+      "volume": 5.0,
+      "turnover_eur": 12500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-03-02",
+      "close_eur": 2400.0,
+      "volume": 2.0,
+      "turnover_eur": 4900.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-03-06",
+      "close_eur": 2560.0,
+      "volume": 1.0,
+      "turnover_eur": 2560.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-03-09",
+      "close_eur": 2500.0,
+      "volume": 1.0,
+      "turnover_eur": 2500.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-03-10",
+      "close_eur": 2700.0,
+      "volume": 35.0,
+      "turnover_eur": 94460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-03-10",
+      "close_eur": 2600.0,
+      "volume": 13.0,
+      "turnover_eur": 33800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-03-11",
+      "close_eur": 2980.0,
+      "volume": 2.0,
+      "turnover_eur": 5680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-03-11",
+      "close_eur": 2700.0,
+      "volume": 5.0,
+      "turnover_eur": 13460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-03-17",
+      "close_eur": 2920.0,
+      "volume": 1.0,
+      "turnover_eur": 2920.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-03-19",
+      "close_eur": 2640.0,
+      "volume": 7.0,
+      "turnover_eur": 18520.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-03-23",
+      "close_eur": 2840.0,
+      "volume": 2.0,
+      "turnover_eur": 5680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-03-31",
+      "close_eur": 2960.0,
+      "volume": 3.0,
+      "turnover_eur": 8760.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-02",
+      "close_eur": 2960.0,
+      "volume": 1.0,
+      "turnover_eur": 2960.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-08",
+      "close_eur": 3100.0,
+      "volume": 1.0,
+      "turnover_eur": 3100.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-08",
+      "close_eur": 2820.0,
+      "volume": 1.0,
+      "turnover_eur": 2820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-10",
+      "close_eur": 2940.0,
+      "volume": 7.0,
+      "turnover_eur": 20120.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-17",
+      "close_eur": 3080.0,
+      "volume": 3.0,
+      "turnover_eur": 9160.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-17",
+      "close_eur": 3040.0,
+      "volume": 1.0,
+      "turnover_eur": 3040.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-24",
+      "close_eur": 3080.0,
+      "volume": 2.0,
+      "turnover_eur": 6160.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-24",
+      "close_eur": 2900.0,
+      "volume": 1.0,
+      "turnover_eur": 2900.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-27",
+      "close_eur": 3200.0,
+      "volume": 4.0,
+      "turnover_eur": 12780.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-27",
+      "close_eur": 3260.0,
+      "volume": 1.0,
+      "turnover_eur": 3260.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-28",
+      "close_eur": 3560.0,
+      "volume": 1.0,
+      "turnover_eur": 3560.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-28",
+      "close_eur": 3500.0,
+      "volume": 14.0,
+      "turnover_eur": 46460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-29",
+      "close_eur": 3500.0,
+      "volume": 9.0,
+      "turnover_eur": 31820.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-29",
+      "close_eur": 3440.0,
+      "volume": 3.0,
+      "turnover_eur": 10360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-04-30",
+      "close_eur": 3480.0,
+      "volume": 1.0,
+      "turnover_eur": 3480.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-04-30",
+      "close_eur": 3440.0,
+      "volume": 3.0,
+      "turnover_eur": 10260.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-04",
+      "close_eur": 3500.0,
+      "volume": 4.0,
+      "turnover_eur": 14000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-05-05",
+      "close_eur": 3340.0,
+      "volume": 1.0,
+      "turnover_eur": 3340.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-06",
+      "close_eur": 3660.0,
+      "volume": 12.0,
+      "turnover_eur": 42760.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-05-06",
+      "close_eur": 3460.0,
+      "volume": 3.0,
+      "turnover_eur": 10340.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-07",
+      "close_eur": 3660.0,
+      "volume": 2.0,
+      "turnover_eur": 7320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-05-07",
+      "close_eur": 3500.0,
+      "volume": 3.0,
+      "turnover_eur": 10480.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-08",
+      "close_eur": 3660.0,
+      "volume": 5.0,
+      "turnover_eur": 18300.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-05-08",
+      "close_eur": 3560.0,
+      "volume": 3.0,
+      "turnover_eur": 10620.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-18",
+      "close_eur": 3520.0,
+      "volume": 1.0,
+      "turnover_eur": 3520.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-19",
+      "close_eur": 3460.0,
+      "volume": 2.0,
+      "turnover_eur": 6920.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-20",
+      "close_eur": 3440.0,
+      "volume": 3.0,
+      "turnover_eur": 10360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-22",
+      "close_eur": 3460.0,
+      "volume": 1.0,
+      "turnover_eur": 3460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-05-26",
+      "close_eur": 3460.0,
+      "volume": 4.0,
+      "turnover_eur": 13840.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-05-28",
+      "close_eur": 3320.0,
+      "volume": 1.0,
+      "turnover_eur": 3320.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-05-29",
+      "close_eur": 3380.0,
+      "volume": 3.0,
+      "turnover_eur": 10140.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-01",
+      "close_eur": 3400.0,
+      "volume": 2.0,
+      "turnover_eur": 6800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-06-01",
+      "close_eur": 3360.0,
+      "volume": 1.0,
+      "turnover_eur": 3360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-02",
+      "close_eur": 3400.0,
+      "volume": 5.0,
+      "turnover_eur": 16620.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-06-02",
+      "close_eur": 3300.0,
+      "volume": 2.0,
+      "turnover_eur": 6620.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-05",
+      "close_eur": 3400.0,
+      "volume": 1.0,
+      "turnover_eur": 3400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-08",
+      "close_eur": 3200.0,
+      "volume": 5.0,
+      "turnover_eur": 16000.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-09",
+      "close_eur": 3260.0,
+      "volume": 6.0,
+      "turnover_eur": 18980.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-10",
+      "close_eur": 3260.0,
+      "volume": 1.0,
+      "turnover_eur": 3260.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-11",
+      "close_eur": 3260.0,
+      "volume": 2.0,
+      "turnover_eur": 6520.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-06-11",
+      "close_eur": 3200.0,
+      "volume": 2.0,
+      "turnover_eur": 6400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-12",
+      "close_eur": 3200.0,
+      "volume": 1.0,
+      "turnover_eur": 3200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-15",
+      "close_eur": 3320.0,
+      "volume": 2.0,
+      "turnover_eur": 6480.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-25",
+      "close_eur": 3460.0,
+      "volume": 1.0,
+      "turnover_eur": 3460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-06-25",
+      "close_eur": 3400.0,
+      "volume": 10.0,
+      "turnover_eur": 33680.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-26",
+      "close_eur": 3400.0,
+      "volume": 3.0,
+      "turnover_eur": 10200.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-29",
+      "close_eur": 3400.0,
+      "volume": 7.0,
+      "turnover_eur": 23800.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-06-30",
+      "close_eur": 3460.0,
+      "volume": 1.0,
+      "turnover_eur": 3460.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS2",
+      "trade_date": "2026-06-30",
+      "close_eur": 3360.0,
+      "volume": 1.0,
+      "turnover_eur": 3360.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
       "trade_date": "2026-07-01",
       "close_eur": 3460.0,
       "volume": 0.0,
+      "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     },
     {
@@ -386,6 +2823,7 @@
       "trade_date": "2026-07-01",
       "close_eur": 3360.0,
       "volume": 0.0,
+      "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     },
     {
@@ -393,6 +2831,7 @@
       "trade_date": "2026-07-02",
       "close_eur": 3460.0,
       "volume": 0.0,
+      "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     },
     {
@@ -400,7 +2839,32 @@
       "trade_date": "2026-07-02",
       "close_eur": 3360.0,
       "volume": 0.0,
+      "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-07-06",
+      "close_eur": 3400.0,
+      "volume": 1.0,
+      "turnover_eur": 3400.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-07-09",
+      "close_eur": 3200.0,
+      "volume": 10.0,
+      "turnover_eur": 32100.0,
+      "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CROS",
+      "trade_date": "2026-07-10",
+      "close_eur": 3320.0,
+      "volume": 2.0,
+      "turnover_eur": 6620.0,
+      "source": "zse.hr securityHistory (web JSON)"
     }
   ],
   "valuation": {
