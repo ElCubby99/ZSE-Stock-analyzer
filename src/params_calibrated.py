@@ -64,10 +64,11 @@ def _calibration(key: str):
     except Exception:  # noqa: BLE001 — kalibracija je opcionalna nadogradnja
         return None
 
-G = 0.02
-G_SRC = ("g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan "
-         "perpetualni nominalni rast; namjerno ispod povijesnog nominalnog "
-         "rasta BDP-a; g<r zadovoljeno")
+G = 0.025
+G_SRC = ("g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a "
+         "(~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod "
+         "povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve "
+         "kalibrirane r (min ~7,2%)")
 
 DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holdinge "
                 "(nelikvidnost, dvostruko oporezivanje, trošak centra); "

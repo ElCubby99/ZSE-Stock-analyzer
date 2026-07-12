@@ -84,6 +84,12 @@ payment_date, status, status_hr, source_url}`.
   `dispersion` (i `divergent`) je širina SIDRENE zone — sekundarne leće ne
   vode "razilaze se" naraciju; raspon svih metoda je u `dispersion_all` +
   `all_methods_low/high` (informacija, raskorak ostaje vidljiv).
+- `sotp` (Dio 0.5 — rekurzivni): parts[] nosi `value_eur` (fer),
+  `value_market_eur` i `fair_basis` ('our_estimate' = kći po NAŠEM sidru,
+  rekurzivno; 'market_fallback' = kći neanalizirana → tržišna vrijednost s
+  oznakom; 'multiple' = neuvrštena); dodatno `sotp_fair` i `sotp_market`
+  {nav_eur, base_per_share, note} + `market_vs_fair_pct` (signal: tržište
+  kćeri iznad/ispod naše procjene) — fer-zona koristi `sotp_fair`.
 - `sotp`: {parts[{name, value_eur, basis, pct, placeholder}], net_cash{value_eur,basis},
   net_cash_note, nav_gross_eur, nav_total_eur, holding_discount_range[2],
   holding_discount_reason, market_check{own_market_cap_eur, nav_pre_discount_eur,

@@ -4374,7 +4374,7 @@
   "valuation": {
     "params": {
       "r": 0.131746,
-      "g": 0.02,
+      "g": 0.025,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "peer_pe": 12.0,
@@ -4383,7 +4383,7 @@
       "peers_calibrated": false,
       "sources": {
         "r": "r=0.1317 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.678: IZMJERENA — OLS tjednih log-prinosa klase DLKV vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.24); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-        "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno",
+        "g": "g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a (~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve kalibrirane r (min ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
         "peers": "DLKV: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
@@ -4435,58 +4435,58 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 3.4299886342248187,
-        "base": 3.7146565849559,
-        "high": 4.055281123804663,
+        "low": 3.5824879457809877,
+        "base": 3.894775974727806,
+        "high": 4.271622337651601,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.131746,
-          "g": 0.02,
+          "g": 0.025,
           "model": "jednofazni Gordon (pojednostavljeno)",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-            "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
+            "g": "g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a (~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve kalibrirane r (min ~7,2%)"
           }
         }
       },
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 0.9215908530875758,
-        "base": 1.0040627852451096,
-        "high": 1.1027460538989249,
+        "low": 0.9657718465729016,
+        "base": 1.0562456672849567,
+        "high": 1.165422859859839,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "dps": 0.11,
           "r": 0.131746,
-          "g": 0.02,
+          "g": 0.025,
           "placeholder": true,
           "sources": {
             "r": "r=0.1317 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.678: IZMJERENA — OLS tjednih log-prinosa klase DLKV vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.24); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-            "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
+            "g": "g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a (~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve kalibrirane r (min ~7,2%)"
           }
         }
       },
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 1.9923369246666665,
-        "base": 2.17062848988302,
-        "high": 2.3839664579488917,
+        "low": 1.9915294246531472,
+        "base": 2.17809654891571,
+        "high": 2.4032321151319573,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "roe": 0.1406,
           "r": 0.131746,
-          "g": 0.02,
+          "g": 0.025,
           "bvps": 2.01,
           "placeholder": true,
           "sources": {
             "r": "r=0.1317 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.678: IZMJERENA — OLS tjednih log-prinosa klase DLKV vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.24); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-            "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
+            "g": "g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a (~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve kalibrirane r (min ~7,2%)"
           }
         }
       }
@@ -4505,8 +4505,8 @@
     ],
     "reconciliation": {
       "zone_low": 2.7243272045203173,
-      "zone_high": 4.055281123804663,
-      "dispersion": 0.3282026273028503,
+      "zone_high": 4.271622337651601,
+      "dispersion": 0.36222657595285823,
       "divergent": true,
       "archetype": "operating",
       "anchor_methods": [
@@ -4533,24 +4533,24 @@
         "ddm_gordon": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": -0.6314455974381026
+          "vs_zone_pct": -0.6122911867809455
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": -0.20324236887499314
+          "vs_zone_pct": -0.2005011199456067
         }
       },
       "zone_note": null,
-      "all_methods_low": 1.0040627852451096,
-      "all_methods_high": 3.7146565849559,
-      "dispersion_all": 0.7297023931333265,
+      "all_methods_low": 1.0562456672849567,
+      "all_methods_high": 3.894775974727806,
+      "dispersion_all": 0.7288045129838888,
       "method_bases": {
         "multiples_relative": 3.2050908288474322,
         "ev_ebitda": 3.179295134095549,
-        "dcf_fcf": 3.7146565849559,
-        "ddm_gordon": 1.0040627852451096,
-        "justified_pb_roe": 2.17062848988302
+        "dcf_fcf": 3.894775974727806,
+        "ddm_gordon": 1.0562456672849567,
+        "justified_pb_roe": 2.17809654891571
       }
     },
     "sotp": null

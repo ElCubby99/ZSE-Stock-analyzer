@@ -45,7 +45,7 @@ class Params:
     nego se ijedan broj tretira kao valuacija, a ne kao ilustracija mehanike.
     """
     cost_of_equity: float = 0.09      # PLACEHOLDER r (DDM, opravdani P/B)
-    perpetual_growth: float = 0.02    # PLACEHOLDER g (terminalni rast)
+    perpetual_growth: float = 0.025   # PRETPOSTAVKA g: nominalni BDP proxy (~2,5%), ne inflacijski cilj
     wacc: float = 0.09                # PLACEHOLDER (DCF diskont)
     peer_pe: float = 12.0             # PLACEHOLDER P/E sidro
     peer_pb: float = 1.5              # PLACEHOLDER P/B sidro
@@ -78,6 +78,8 @@ class Ctx:
     own_market_cap: Optional[float] = None              # vlastita trž.kap (po klasi)
     market_cap_of: Optional[Callable[[str], Optional[float]]] = None  # ticker -> trž.kap ili None
     segment_ebitda_of: Optional[Callable[[str], Optional[float]]] = None  # segment_key -> EBITDA ili None
+    # Dio 0.5: fer-vrijednost uvrštene kćeri iz NJENOG sidra (rekurzivno) ili None
+    fair_equity_of: Optional[Callable[[int], Optional[tuple]]] = None
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -347,16 +349,34 @@ def compute_sotp(c: Ctx) -> ValueRange:
         "listed_repricing_scenario": "CROS @ P/E 12 = konzervativno sidro",
         "placeholder": p.placeholder,
     }
-    gross, parts, missing = 0.0, [], []
+    # Dio 0.5 (rekurzivni SOTP): za UVRŠTENE kćeri vodimo DVIJE vrijednosti —
+    # tržišnu (kao dosad) i NAŠU fer-procjenu (sidro kćeri, rekurzivno).
+    # Primarni NAV (fer-zona) koristi fer-procjenu; obje brojke idu u izlaz.
+    gross_fair, gross_mkt, parts, missing = 0.0, 0.0, [], []
     for h in c.holdings:
         pct = h["ownership_pct"]
         if h["valuation_basis"] == "market":
             mc = c.market_cap_of(h["held_company_id"]) if (c.market_cap_of and h.get("held_company_id")) else None
             if mc is None:
                 missing.append(f"trž.kap({h['held_name']})"); continue
-            stake = mc * pct
-            basis = f"market: trž.kap {mc:,.0f} × {pct:.4f}"
-            is_placeholder = False
+            stake_mkt = mc * pct
+            fv = c.fair_equity_of(h["held_company_id"]) if c.fair_equity_of else None
+            if fv is not None:
+                stake_fair = fv[0] * pct
+                basis = f"fer-procjena: {fv[1]} × {pct:.4f}"
+                fair_basis = "our_estimate"
+            else:
+                stake_fair = stake_mkt
+                basis = (f"market: trž.kap {mc:,.0f} × {pct:.4f} — kći nije "
+                         f"analizirana u sustavu, tržišna vrijednost")
+                fair_basis = "market_fallback"
+            gross_mkt += stake_mkt
+            gross_fair += stake_fair
+            parts.append({"name": h["held_name"], "value_eur": round(stake_fair, 0),
+                          "value_market_eur": round(stake_mkt, 0),
+                          "fair_basis": fair_basis,
+                          "basis": basis, "pct": pct, "placeholder": False})
+            continue
         elif h["valuation_basis"] == "ebitda_multiple":
             seg = c.segment_ebitda_of(h["segment_key"]) if (c.segment_ebitda_of and h.get("segment_key")) else None
             if seg is None:
@@ -367,9 +387,12 @@ def compute_sotp(c: Ctx) -> ValueRange:
             is_placeholder = True  # default_multiple je pretpostavka
         else:
             missing.append(f"{h['valuation_basis']}({h['held_name']})"); continue
-        gross += stake
+        gross_fair += stake
+        gross_mkt += stake
         parts.append({"name": h["held_name"], "value_eur": round(stake, 0),
+                      "value_market_eur": round(stake, 0), "fair_basis": "multiple",
                       "basis": basis, "pct": pct, "placeholder": is_placeholder})
+    gross = gross_fair
     assum["parts"] = parts
     if missing:
         assum["missing"] = missing
@@ -389,6 +412,7 @@ def compute_sotp(c: Ctx) -> ValueRange:
         "već vrednovana tržišno/multiplom — gruba NAV aproksimacija"
     )
     nav = gross + net_cash
+    nav_mkt = gross_mkt + net_cash
     lo = _per_share(nav * (1 - p.holding_discount_high), c)
     base = _per_share(nav * (1 - (p.holding_discount_low + p.holding_discount_high) / 2), c)
     hi = _per_share(nav * (1 - p.holding_discount_low), c)
@@ -397,6 +421,19 @@ def compute_sotp(c: Ctx) -> ValueRange:
         return ValueRange(0, 0, 0, assum, 0.0)
     assum["nav_gross_eur"] = round(gross, 0)
     assum["nav_total_eur"] = round(nav, 0)
+    # Dio 0.5: obje SOTP brojke + signal razlike (tržište kćeri vs naša procjena)
+    mid_disc = 1 - (p.holding_discount_low + p.holding_discount_high) / 2
+    assum["sotp_fair"] = {"nav_eur": round(nav, 0),
+                          "base_per_share": _per_share(nav * mid_disc, c),
+                          "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"}
+    assum["sotp_market"] = {"nav_eur": round(nav_mkt, 0),
+                            "base_per_share": _per_share(nav_mkt * mid_disc, c),
+                            "note": "kćeri po tržišnoj kapitalizaciji"}
+    if nav:
+        assum["market_vs_fair_pct"] = round((nav_mkt / nav - 1) * 100, 1)
+        assum["market_vs_fair_note"] = (
+            "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene "
+            "(fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka")
     if p.sources.get("holding_discount"):
         assum["sources"] = {"holding_discount": p.sources["holding_discount"]}
     # TRŽIŠNA USPOREDBA (dokaz uz diskont): vlastita trž.kap vs NAV prije diskonta
@@ -685,7 +722,8 @@ def class_positions(conn, ticker: str, zone_low: Optional[float],
 # ============================================================
 #  CTX IZ BAZE  (glue: v_financials_current / v_sotp_inputs / v_shares_canonical)
 # ============================================================
-def build_ctx(conn, ticker: str, params: Optional[Params] = None) -> Ctx:
+def build_ctx(conn, ticker: str, params: Optional[Params] = None,
+              _depth: int = 0, _visited: Optional[set] = None) -> Ctx:
     params = params or Params()
     cur = conn.cursor()
 
@@ -780,12 +818,49 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None) -> Ctx:
         r = cur.fetchone()
         return float(r[0]) if r and r[0] is not None else None
 
+    # --- rekurzivni SOTP (Dio 0.5): fer-vrijednost UVRŠTENE kćeri iz NJENOG
+    # sidra (arhetip kćeri), rekurzivno; dubina/ciklus guardovi. Ne dira
+    # eligibility — koristi ga SAMO compute_sotp.
+    visited = set(_visited or ()) | {ticker}
+
+    def fair_equity_of(held_company_id):
+        """-> (fair_equity_eur, opis) | None. None = kći nije analizirana
+        (pozivatelj radi fallback na tržišnu vrijednost s oznakom)."""
+        if not held_company_id or _depth >= 2:
+            return None
+        cur.execute("SELECT ticker, is_live FROM companies WHERE id=%s",
+                    (held_company_id,))
+        r = cur.fetchone()
+        if not r or r[0] in visited or not r[1]:
+            return None            # ciklus, neanaliziran ili nije live
+        sub_ticker = r[0]
+        try:
+            from .params_calibrated import build_params  # lazy (kruženje importa)
+            sub_ctx = build_ctx(conn, sub_ticker, params=build_params(sub_ticker),
+                                _depth=_depth + 1, _visited=visited)
+            sub_out = value_company(sub_ctx)
+        except Exception:  # noqa: BLE001 — kći bez ulaza nije greška roditelja
+            return None
+        rec = sub_out["reconciliation"]
+        if rec.get("status") == "no_value" or not rec.get("anchor_methods"):
+            return None
+        sh = shares_of(held_company_id)
+        if not sh:
+            return None
+        mid = (rec["zone_low"] + rec["zone_high"]) / 2
+        return (mid * sh,
+                f"fer-procjena {sub_ticker}: sidro {rec['archetype']} "
+                f"({', '.join(rec['anchor_methods'])}) sredina zone "
+                f"{rec['zone_low']:,.0f}–{rec['zone_high']:,.0f} €/dionici × "
+                f"{sh:,.0f} dionica")
+
     return Ctx(
         ticker=ticker, sector=sector, is_group=is_group,
         holdings=holdings, has_segments=has_segments, data=data,
         shares_ex_treasury=shares_of(company_id), price=latest_price(company_id),
         own_market_cap=market_cap_of(company_id),
-        market_cap_of=market_cap_of, segment_ebitda_of=segment_ebitda_of, params=params,
+        market_cap_of=market_cap_of, segment_ebitda_of=segment_ebitda_of,
+        fair_equity_of=fair_equity_of, params=params,
     )
 
 
@@ -829,7 +904,10 @@ def _print_company(ticker: str, out: dict) -> None:
             a = vr.assumptions
             print("      SOTP BREAKDOWN (EUR):")
             for part in a["parts"]:
-                ph = "PLACEHOLDER multipla" if part["placeholder"] else "tržišno"
+                ph = ("PLACEHOLDER multipla" if part["placeholder"] else
+                      {"our_estimate": "NAŠA PROCJENA",
+                       "market_fallback": "tržišno (kći neanalizirana)"}.get(
+                          part.get("fair_basis"), "tržišno"))
                 print(f"        {part['name']:20} {part['value_eur']:>15,.0f}   "
                       f"[{ph}]  {part['basis']}")
             nc = a.get("net_cash")
@@ -839,6 +917,15 @@ def _print_company(ticker: str, out: dict) -> None:
                 print(f"          ({a.get('net_cash_note', '')})")
             if a.get("nav_total_eur") is not None:
                 print(f"        {'NAV (prije diskonta)':20} {a['nav_total_eur']:>15,.0f}")
+                sf, sm = a.get("sotp_fair"), a.get("sotp_market")
+                if sf and sm:
+                    print(f"        SOTP PO NAŠOJ PROCJENI: NAV {sf['nav_eur']:,.0f} "
+                          f"-> {_fmt(sf['base_per_share'])} €/dionici  [sidro fer-zone]")
+                    print(f"        SOTP PO TRŽIŠTU:        NAV {sm['nav_eur']:,.0f} "
+                          f"-> {_fmt(sm['base_per_share'])} €/dionici")
+                    if a.get("market_vs_fair_pct") is not None:
+                        print(f"        SIGNAL: tržište kćeri {a['market_vs_fair_pct']:+.1f}% "
+                              f"vs naša procjena ({a.get('market_vs_fair_note', '')})")
                 print(f"        holding diskont {a['holding_discount_range']} — "
                       f"{a.get('holding_discount_reason', '')}")
             mc = a.get("market_check")
