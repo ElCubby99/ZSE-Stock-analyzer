@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Link, NavLink, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
+import { SiteFooter, SiteHeader } from './Shell.jsx'
 
 /* Blog (dizajn B): statični JSON-ovi iz content/blog/*.md (scripts/build_blog.py).
    Kategorije: Edukacija / Analize / Tržište. Bez backend poziva. */
-
-export function SiteHeader({ active }) {
-  return (
-    <nav className="topnav">
-      <span className="brand">Burzovni list · ZSE analiza</span>
-      <NavLink to="/dionica/ADRS" className={active === 'dionice' ? 'active' : ''}>DIONICE</NavLink>
-      <NavLink to="/blog" className={({ isActive }) => (isActive ? 'active' : '')}>BLOG</NavLink>
-      <NavLink to="/alati" className={({ isActive }) => (isActive ? 'active' : '')}>ALATI</NavLink>
-    </nav>
-  )
-}
 
 const CATS = ['Sve', 'Edukacija', 'Analize', 'Tržište']
 
@@ -47,6 +37,7 @@ export function BlogIndex() {
       <div className="disc" style={{ marginTop: 32 }}>
         Edukativni i informativni sadržaj — nije investicijski savjet ni preporuka.
       </div>
+      <SiteFooter />
     </div>
   )
 }

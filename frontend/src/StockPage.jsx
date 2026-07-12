@@ -6,6 +6,7 @@ import {
   SectionRule, StatsStrip,
 } from './MarketProfile.jsx'
 import { AnchorPanel, FinChart, Risks, SecondaryList } from './AnalysisBlocks.jsx'
+import { SiteFooter, SiteHeader } from './Shell.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
 // live firme (orchestrator) + CROS/ZABA (M1–M5) + HPB/HT (samo tržišni profil)
@@ -391,6 +392,7 @@ function Metrics({ data }) {
         <div className="v">{m.ebitda_eur ? `${num(m.ebitda_eur / 1e6, 0)} M€` : dash}</div>
         <div className="split">ROE {pct(m.roe)}</div>
       </div>
+      <SiteFooter />
     </div>
   )
 }
@@ -604,21 +606,15 @@ export default function StockPage() {
   }, [ticker])
 
   useEffect(() => {
-    if (data) document.title = `${data.ticker} — ${data.name} · analiza`
+    if (data) {
+      document.title = `${data.ticker} — ${data.name} · analiza`
+      try { localStorage.setItem('lastTicker', data.ticker) } catch {}
+    }
   }, [data])
 
   return (
     <div className="wrap">
-      <nav className="topnav">
-        <span className="brand">Burzovni list · ZSE</span>
-        <NavLink to="/blog">BLOG</NavLink>
-        <NavLink to="/alati">ALATI</NavLink>
-        {TICKERS.map((t) => (
-          <NavLink key={t} to={`/dionica/${t}`} className={({ isActive }) => (isActive ? 'active' : '')}>
-            {t}
-          </NavLink>
-        ))}
-      </nav>
+      <SiteHeader />
 
       {err && <section className="error">Greška: {err}</section>}
       {!data && !err && <div className="loading">učitavam {ticker}…</div>}

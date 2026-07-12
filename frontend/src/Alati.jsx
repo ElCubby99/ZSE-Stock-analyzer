@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { SiteHeader } from './Blog.jsx'
+import { SiteFooter, SiteHeader } from './Shell.jsx'
 import { num } from './format.js'
 
 /* Alati (dizajn B): SVE klijentski — računa isključivo IZ KORISNIKOVA UNOSA,
@@ -235,6 +235,7 @@ export default function Alati() {
         Svi izračuni su informativni i temelje se na unosima korisnika. Ništa na
         ovoj stranici nije investicijski, porezni ni pravni savjet.
       </div>
+      <SiteFooter />
     </div>
   )
 }
