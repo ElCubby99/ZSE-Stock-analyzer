@@ -65,10 +65,12 @@ def _calibration(key: str):
         return None
 
 G = 0.025
-G_SRC = ("g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a "
-         "(~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod "
-         "povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve "
-         "kalibrirane r (min ~7,2%)")
+G_TERMINAL = 0.04
+G_SRC = ("M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: "
+         "realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a "
+         "prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani "
+         "P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); "
+         "g<r zadovoljeno (min r ~7,2%)")
 
 DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holdinge "
                 "(nelikvidnost, dvostruko oporezivanje, trošak centra); "
@@ -113,7 +115,8 @@ def build_params(ticker: str) -> Params:
                  "DCF ionako gate-an za ADRS/CROS)"),
         "holding_discount": disc_src,
     }
-    p = Params(cost_of_equity=r, perpetual_growth=G, wacc=r)
+    p = Params(cost_of_equity=r, perpetual_growth=G, wacc=r,
+               terminal_growth=G_TERMINAL)
     p.rates_calibrated = True
     p.beta_calibrated = beta_cal
     p.sources = sources

@@ -7672,7 +7672,7 @@
       "peers_calibrated": true,
       "sources": {
         "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-        "g": "g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a (~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve kalibrirane r (min ~7,2%)",
+        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija (M10, 2024-07-17..2026-07-10, n=489 d) mjeri cijenu prema KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: medijan -12.1%, p25 -16.4%, p75 -5.3%, zadnje -25.5% (2026-07-10) — negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove na placeholder multiplama i grupni neto dug konstantnim pa NE mjeri čisti holding diskont; raspon se zato NE zamjenjuje opaženim (docs/calibration.md)",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + FY2025 kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; nijedan isključen — profitabilni, konzumeri+turizam). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
@@ -7713,19 +7713,22 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 40.27149891073026,
-        "base": 46.073388944115486,
-        "high": 53.82841561327027,
+        "low": 56.82765074546192,
+        "base": 67.34055076170405,
+        "high": 82.59015044287807,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "dps": 3.12,
           "r": 0.094411,
-          "g": 0.025,
+          "g_terminal": 0.04,
+          "g1_explicit": 0.0941,
+          "model": "dvofazni DDM",
+          "growth_source": "g1=9.4%: CAGR prihoda FY2023->FY2025 iz baze (cap 0-20%); eksplicitna faza 5 g s fadeom prema terminalnom g",
           "placeholder": false,
           "sources": {
             "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-            "g": "g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a (~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve kalibrirane r (min ~7,2%)"
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
       },
@@ -7745,7 +7748,7 @@
           "placeholder": false,
           "sources": {
             "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-            "g": "g=2,5%: PRETPOSTAVKA — proxy dugoročnog nominalnog rasta BDP-a (~2,5%), ne inflacijski cilj; iznad ECB cilja (2%), i dalje ispod povijesnog hrvatskog nominalnog rasta; g<r zadovoljeno za sve kalibrirane r (min ~7,2%)"
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
       },
@@ -7880,7 +7883,7 @@
         "ddm_gordon": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": -0.28395861845808634
+          "vs_zone_pct": 0.0
         },
         "justified_pb_roe": {
           "role": "secondary",
@@ -7899,7 +7902,7 @@
       "dispersion_all": 0.6293771525733365,
       "method_bases": {
         "multiples_relative": 106.62307469216645,
-        "ddm_gordon": 46.073388944115486,
+        "ddm_gordon": 67.34055076170405,
         "justified_pb_roe": 39.51694754379656,
         "sotp_nav": 68.63422907378407
       }

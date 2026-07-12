@@ -45,7 +45,8 @@ class Params:
     nego se ijedan broj tretira kao valuacija, a ne kao ilustracija mehanike.
     """
     cost_of_equity: float = 0.09      # PLACEHOLDER r (DDM, opravdani P/B)
-    perpetual_growth: float = 0.025   # PRETPOSTAVKA g: nominalni BDP proxy (~2,5%), ne inflacijski cilj
+    perpetual_growth: float = 0.025   # g za justified P/B / RI (konzervativni kapitalni g)
+    terminal_growth: float = 0.04     # M11 terminal g za DCF/DDM: nominalni BDP (~2% real + ~2% inflacija)
     wacc: float = 0.09                # PLACEHOLDER (DCF diskont)
     peer_pe: float = 12.0             # PLACEHOLDER P/E sidro
     peer_pb: float = 1.5              # PLACEHOLDER P/B sidro
@@ -80,6 +81,10 @@ class Ctx:
     segment_ebitda_of: Optional[Callable[[str], Optional[float]]] = None  # segment_key -> EBITDA ili None
     # Dio 0.5: fer-vrijednost uvrštene kćeri iz NJENOG sidra (rekurzivno) ili None
     fair_equity_of: Optional[Callable[[int], Optional[tuple]]] = None
+    # M11: signal rasta IZ PODATAKA (3g CAGR prihoda) ili None kad serije nema
+    growth_hint: Optional[dict] = None
+    # M11 (KOEI): dobit matici kćeri po company_id (standalone ostatak SOTP-a)
+    ni_parent_of: Optional[Callable[[int], Optional[float]]] = None
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -246,7 +251,10 @@ def compute_ev_ebitda(c: Ctx) -> ValueRange:
 
 
 def compute_dcf(c: Ctx) -> ValueRange:
-    """Pojednostavljeni jednofazni DCF: EV = FCF×(1+g)/(wacc−g); equity = EV − net_dug; /dionice."""
+    """M11 dvofazni DCF: eksplicitna faza rasta (g1 iz 3g CAGR-a prihoda,
+    linearni fade prema terminalnom g kroz 5 g) + terminalna vrijednost.
+    NE rasti trailing FCF terminalnim g-om; bez serije rasta -> jednofazno
+    s OZNAKOM da eksplicitna faza nije izvedena iz podataka."""
     p = c.params
     fcf = c.val("free_cash_flow")
     if fcf is None:
@@ -255,16 +263,33 @@ def compute_dcf(c: Ctx) -> ValueRange:
     if fcf is None:
         return _missing(c, "free_cash_flow|operating_cf+capex")
     net_debt = c.val("net_debt") or 0.0
+    gT = p.terminal_growth
+    gh = c.growth_hint or {}
+    g1 = gh.get("g1")
+
     def ps(wacc):
-        if wacc <= p.perpetual_growth:
+        if wacc <= gT:
             return None
-        ev = fcf * (1 + p.perpetual_growth) / (wacc - p.perpetual_growth)
+        if g1 is None:
+            ev = fcf * (1 + gT) / (wacc - gT)
+        else:
+            ev, f = 0.0, fcf
+            for yr in range(1, 6):
+                g_yr = g1 + (gT - g1) * (yr - 1) / 4     # linearni fade g1 -> gT
+                f *= (1 + g_yr)
+                ev += f / (1 + wacc) ** yr
+            ev += (f * (1 + gT) / (wacc - gT)) / (1 + wacc) ** 5
         return _per_share(ev - net_debt, c)
+
     base = ps(p.wacc)
     if base is None:
         return _missing(c, "shares_ex_treasury|wacc>g")
-    lo, hi = ps(p.wacc + 0.01), ps(p.wacc - 0.01)   # viši diskont => niža vrijednost
-    assum = {"wacc": p.wacc, "g": p.perpetual_growth, "model": "jednofazni Gordon (pojednostavljeno)",
+    lo, hi = ps(p.wacc + 0.01), ps(p.wacc - 0.01)
+    assum = {"wacc": p.wacc, "g_terminal": gT, "g1_explicit": g1,
+             "model": ("dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal"
+                       if g1 is not None else
+                       "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)"),
+             "growth_source": gh.get("source"),
              "placeholder": p.placeholder}
     src = {k: p.sources[k] for k in ("wacc", "g") if p.sources.get(k)}
     if src:
@@ -274,18 +299,36 @@ def compute_dcf(c: Ctx) -> ValueRange:
 
 
 def compute_ddm(c: Ctx) -> ValueRange:
-    """Gordon: vrijednost/dionica = DPS×(1+g)/(r−g)."""
+    """M11 dvofazni DDM: DPS raste g1 (iz 3g CAGR-a prihoda, fade->gT) 5 g,
+    zatim Gordon terminal; bez serije -> jednofazno s oznakom."""
     p = c.params
     dps = c.val("dps")
     if dps is None:
         return _missing(c, "dps")
+    gT = p.terminal_growth
+    gh = c.growth_hint or {}
+    g1 = gh.get("g1")
+
     def v(r):
-        return dps * (1 + p.perpetual_growth) / (r - p.perpetual_growth) if r > p.perpetual_growth else None
+        if r <= gT:
+            return None
+        if g1 is None:
+            return dps * (1 + gT) / (r - gT)
+        pv, d = 0.0, dps
+        for yr in range(1, 6):
+            g_yr = g1 + (gT - g1) * (yr - 1) / 4
+            d *= (1 + g_yr)
+            pv += d / (1 + r) ** yr
+        return pv + (d * (1 + gT) / (r - gT)) / (1 + r) ** 5
+
     base = v(p.cost_of_equity)
     if base is None:
         return _missing(c, "r>g")
     lo, hi = v(p.cost_of_equity + 0.01), v(p.cost_of_equity - 0.01)
-    assum = {"dps": dps, "r": p.cost_of_equity, "g": p.perpetual_growth, "placeholder": p.placeholder}
+    assum = {"dps": dps, "r": p.cost_of_equity, "g_terminal": gT, "g1_explicit": g1,
+             "model": ("dvofazni DDM" if g1 is not None else
+                       "jednofazni Gordon — RAST NIJE IZVEDEN"),
+             "growth_source": gh.get("source"), "placeholder": p.placeholder}
     src = {k: p.sources[k] for k in ("r", "g") if p.sources.get(k)}
     if src:
         assum["sources"] = src
@@ -385,6 +428,31 @@ def compute_sotp(c: Ctx) -> ValueRange:
             basis = (f"ebitda_multiple: {seg:,.0f} [{h['segment_key']}] "
                      f"× {h['default_multiple']} × {pct:.2f}")
             is_placeholder = True  # default_multiple je pretpostavka
+        elif h["valuation_basis"] == "residual_pe":
+            # standalone ostatak matice: (NI matici grupe - Σ pripisive NI
+            # uvrštenih kćeri) × peer P/E — aproksimacija, jasno označena
+            ni_group = c.val("net_income_parent")
+            if ni_group is None or not c.ni_parent_of:
+                missing.append(f"residual_pe({h['held_name']})"); continue
+            attributable = 0.0
+            for h2 in c.holdings:
+                if h2["valuation_basis"] == "market" and h2.get("held_company_id"):
+                    ni_sub = c.ni_parent_of(h2["held_company_id"])
+                    if ni_sub is not None:
+                        attributable += ni_sub * h2["ownership_pct"]
+            resid_ni = ni_group - attributable
+            if resid_ni <= 0:
+                missing.append(f"residual_pe({h['held_name']}): ostatak dobiti <= 0")
+                continue
+            stake = resid_ni * p.peer_pe * pct
+            basis = (f"residual_pe: (NI matici {ni_group:,.0f} - pripisivo kćerima "
+                     f"{attributable:,.0f}) × P/E {p.peer_pe} × {pct:.2f} — aproksimacija")
+            is_placeholder = not p.peers_calibrated
+        elif h["valuation_basis"] == "no_data":
+            # dio bez podataka u bazi (npr. JV) — NE blokira, ide u napomenu
+            missing.append(f"{h['held_name']}: nema podataka u bazi (udjel "
+                           f"{pct:.0%}) — dio NIJE u NAV-u")
+            continue
         else:
             missing.append(f"{h['valuation_basis']}({h['held_name']})"); continue
         gross_fair += stake
@@ -396,8 +464,11 @@ def compute_sotp(c: Ctx) -> ValueRange:
     assum["parts"] = parts
     if missing:
         assum["missing"] = missing
-        # Nedostaju ulazi (cijene/segmenti) => ne proizvodi vrijednost, radije prazno nego izmišljeno.
-        return ValueRange(0, 0, 0, assum, 0.0)
+        if not parts:
+            # NIJEDNA komponenta nije izračunljiva -> prazno, ne izmišljeno
+            return ValueRange(0, 0, 0, assum, 0.0)
+        assum["missing_note"] = ("dijelovi bez ulaza NISU u NAV-u (konzervativno "
+                                 "podcjenjuje) — vidi missing")
     nd = c.val("net_debt")
     if nd is not None:
         net_cash = -nd
@@ -568,10 +639,29 @@ def value_company(c: Ctx) -> dict:
             results[m.key] = {"label": m.label, "range": m.compute(c)}
         else:
             skipped[m.key] = reason          # zašto NE — ide na sajt ("SOTP n/p: ...")
+    rec = reconcile(results, c.sector)
+    # M11 QA: drastičan raskorak metoda ili zone vs tržišta -> red flag o
+    # PRETPOSTAVKAMA (ne o tržištu); činjenica za reviziju, ne ocjena
+    if rec.get("status") != "no_value":
+        flags = []
+        if rec.get("dispersion_all", 0) > 0.60:
+            flags.append(f"metode se međusobno razilaze {rec['dispersion_all']:.0%} "
+                         "(sve metode) — provjeri ulaze/pretpostavke")
+        if c.price and rec.get("zone_low") is not None:
+            mid = (rec["zone_low"] + rec["zone_high"]) / 2
+            gap = c.price / mid - 1 if mid else None
+            if gap is not None:
+                rec["vs_market_pct"] = round(gap * 100, 1)
+                if abs(gap) > 0.50:
+                    flags.append(f"fer-zona odstupa {gap:+.0%} od tržišta — "
+                                 "mogući propust u pretpostavkama (rast, arhetip, "
+                                 "jedinice) ili tržišni raskorak; tretiraj kao "
+                                 "pitanje, ne zaključak")
+        rec["qa_flags"] = flags
     return {
         "ran": results,
         "skipped": skipped,
-        "reconciliation": reconcile(results, c.sector),
+        "reconciliation": rec,
     }
 
 def reconcile(results: dict, sector: Optional[str] = None) -> dict:
@@ -818,6 +908,38 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         r = cur.fetchone()
         return float(r[0]) if r and r[0] is not None else None
 
+    # M11: signal rasta IZ PODATAKA — CAGR prihoda zadnje 3 fiskalne godine
+    # (kvartali/backlog nisu u bazi -> to je najbolji dostupni signal; capano
+    # na [0, 20%]; growth arhetip = CAGR > 8%). Bez 3 godine -> None (OZNAKA).
+    rev_item = "total_operating_income" if sector == "bank" else "revenue"
+    cur.execute(
+        """SELECT f.fiscal_year, fin.value_eur FROM financials fin
+           JOIN filings f ON f.id = fin.filing_id
+           WHERE f.company_id=%s AND fin.item=%s AND f.period_type='annual'
+                 AND f.basis='consolidated' AND fin.value_eur IS NOT NULL
+           ORDER BY f.fiscal_year DESC LIMIT 3""", (company_id, rev_item))
+    revs = cur.fetchall()
+    growth_hint = None
+    if len(revs) >= 3 and revs[-1][1] and float(revs[-1][1]) > 0:
+        yrs = revs[0][0] - revs[-1][0]
+        cagr = (float(revs[0][1]) / float(revs[-1][1])) ** (1 / yrs) - 1
+        g1 = max(0.0, min(0.20, cagr))
+        growth_hint = {"g1": round(g1, 4), "rev_cagr_3y": round(cagr, 4),
+                       "archetype": "growth" if cagr > 0.08 else "mature",
+                       "source": (f"g1={g1:.1%}: CAGR prihoda FY{revs[-1][0]}->"
+                                  f"FY{revs[0][0]} iz baze (cap 0-20%); "
+                                  "eksplicitna faza 5 g s fadeom prema terminalnom g")}
+
+    def ni_parent_of(cid):
+        cur.execute(
+            """SELECT fin.value_eur FROM financials fin
+               JOIN filings f ON f.id = fin.filing_id
+               WHERE f.company_id=%s AND fin.item='net_income_parent'
+                     AND f.period_type='annual' AND f.basis='consolidated'
+               ORDER BY f.fiscal_year DESC LIMIT 1""", (cid,))
+        r = cur.fetchone()
+        return float(r[0]) if r and r[0] is not None else None
+
     # --- rekurzivni SOTP (Dio 0.5): fer-vrijednost UVRŠTENE kćeri iz NJENOG
     # sidra (arhetip kćeri), rekurzivno; dubina/ciklus guardovi. Ne dira
     # eligibility — koristi ga SAMO compute_sotp.
@@ -860,7 +982,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         shares_ex_treasury=shares_of(company_id), price=latest_price(company_id),
         own_market_cap=market_cap_of(company_id),
         market_cap_of=market_cap_of, segment_ebitda_of=segment_ebitda_of,
-        fair_equity_of=fair_equity_of, params=params,
+        fair_equity_of=fair_equity_of, growth_hint=growth_hint,
+        ni_parent_of=ni_parent_of, params=params,
     )
 
 
@@ -958,6 +1081,8 @@ def _print_company(ticker: str, out: dict) -> None:
               f"{_fmt(rec.get('all_methods_low'))} – {_fmt(rec.get('all_methods_high'))} "
               f"(raspon {rec.get('dispersion_all', 0) * 100:.0f}%)")
         print(f"  baze po metodi: { {k: round(v, 2) for k, v in rec['method_bases'].items() if v} }")
+        for f in rec.get("qa_flags") or []:
+            print(f"  QA RED-FLAG: {f}")
 
 
 def _print_class_positions(cp: dict) -> None:

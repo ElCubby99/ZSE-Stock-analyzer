@@ -110,7 +110,7 @@ def main() -> None:
     overview = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "indices": load_indices(),
-        "stocks": stocks,
+        "stocks": stocks, "qa": systemic_qa(stocks),
     }
     out = DATA_DIR / "overview.json"
     out.write_text(
@@ -119,6 +119,23 @@ def main() -> None:
     )
     print(f"[overview] {out}: {len(stocks)} klasa, "
           f"{len(overview['indices'])} indeksa")
+
+
+def systemic_qa(stocks):
+    """M11 QA: ako model za >70% klasa (s zonom i cijenom) kaže da je cijena
+    IZNAD fer-zone -> upozorenje o mogućoj SUSTAVNOJ pristranosti naniže."""
+    rated = [s for s in stocks if s.get("zone_high") and s.get("price")]
+    if not rated:
+        return None
+    above = [s for s in rated if s["price"] > s["zone_high"]]
+    share = len(above) / len(rated)
+    if share > 0.70:
+        msg = (f"UPOZORENJE (sustavna pristranost?): {len(above)}/{len(rated)} "
+               f"({share:.0%}) klasa ima cijenu IZNAD fer-zone — provjeri "
+               "pretpostavke modela (rast, terminal g, arhetipovi), ne tržište")
+        print(msg)
+        return {"share_above_zone": round(share, 3), "warning": msg}
+    return {"share_above_zone": round(share, 3), "warning": None}
 
 
 if __name__ == "__main__":
