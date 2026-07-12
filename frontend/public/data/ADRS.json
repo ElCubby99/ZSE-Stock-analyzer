@@ -90,6 +90,81 @@
     ],
     "note": "konsolidirano, godišnje (v_financials_current); EPS uz kanonski današnji broj dionica bez trezorskih; prazno = nema u bazi, ne procjenjuje se"
   },
+  "trend": {
+    "series": [
+      {
+        "year": 2023,
+        "revenue": 447724000.0,
+        "ebitda": 171115000.0,
+        "ebitda_margin": 0.3821885804647506
+      },
+      {
+        "year": 2024,
+        "revenue": 477212000.0,
+        "ebitda": 185149000.0,
+        "ebitda_margin": 0.38798060400828144
+      },
+      {
+        "year": 2025,
+        "revenue": 535986000.0,
+        "ebitda": 217911000.0,
+        "ebitda_margin": 0.4065609922647233
+      }
+    ],
+    "revenue_label": "Prihodi",
+    "narration": "Prihodi: 2023. 447,7 M€ → 2024. 477,2 M€ (+6,6%) → 2025. 536,0 M€ (+12,3%). Smjer: rast; ukupno kroz razdoblje +19,7%. EBITDA marža: 38,2% → 38,8% → 40,7% (2023.–2025.). Smjer: rast.",
+    "note": "naracija je izvedena isključivo iz brojki u bazi (bez ocjena); smjer = usporedba ruba razdoblja uz prag ±1%"
+  },
+  "business_profile": {
+    "fiscal_year": 2025,
+    "activity": "Osnovna djelatnost Adris grupe d.d. je upravljanje i ulaganje; Društvo kao korporativni centar koordinira ulaganja, upravljanje, razvoj i rad sustava koji čine četiri strateške poslovne jedinice.",
+    "activity_source_page": "str. 4 (Izvještaj poslovodstva, t. 1)",
+    "segments": [
+      {
+        "name": "Turizam",
+        "description": "upravlja MAISTRA d.d. (udjel Adrisa 93,54%); u sustavu i HUP-ZAGREB d.d. (100%)",
+        "source_page": "str. 4"
+      },
+      {
+        "name": "Proizvodnja zdrave hrane",
+        "description": "upravlja CROMARIS d.d. (udjel 100%)",
+        "source_page": "str. 4"
+      },
+      {
+        "name": "Osiguranje",
+        "description": "upravlja CROATIA osiguranje d.d. (udjel 67,47%)",
+        "source_page": "str. 4"
+      },
+      {
+        "name": "Energetika",
+        "description": "strateška poslovna jedinica; udjeli 50% u ZELOVO, BABINDUB, ENCRO VOŠTANE i VRTAČA d.o.o.",
+        "source_page": "str. 4"
+      }
+    ],
+    "markets": [
+      {
+        "market": "Hrvatska (turizam, osiguranje, energetika)",
+        "source_page": "str. 4–7"
+      },
+      {
+        "market": "inozemna tržišta segmenta zdrave hrane — najveći rast prihoda na francuskom i talijanskom tržištu",
+        "source_page": "str. 7"
+      }
+    ],
+    "export_share": {
+      "basis": "udio prihoda od prodaje na inozemnim tržištima za segment zdrave hrane (Cromaris); količinski 86% — NIJE udio izvoza cijele grupe",
+      "value": 0.85,
+      "source_page": "str. 7"
+    },
+    "issuer_claims": [
+      {
+        "claim": "Grand Park Hotel Rovinj jedini je hrvatski hotel na listi The World's 50 Best Hotels 2025; njime je, navodi izdavatelj, potvrđen 'status jednog od vodećih luksuznih hotela u regiji i šire'",
+        "source_page": "str. 6"
+      }
+    ],
+    "source": "Godišnje izvješće FY2025 (konsolidirano, PDF s EHO-a); ručna ekstrakcija s citatima po stranicama — API ekstrakcija nedostupna (kredit)",
+    "note": "samo činjenice iz izvješća s citatima; kvalitativne tvrdnje ('vodeći' i sl.) su TVRDNJE IZDAVATELJA, označene i citirane — platforma ih ne generira niti potvrđuje"
+  },
   "balance": {
     "fiscal_year": 2025,
     "is_financial": false,
@@ -7381,7 +7456,7 @@
   ],
   "valuation": {
     "params": {
-      "r": 0.0931,
+      "r": 0.094411,
       "g": 0.02,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
@@ -7390,20 +7465,14 @@
       "rates_calibrated": true,
       "peers_calibrated": true,
       "sources": {
-        "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete traži povijesnu seriju; nije tržišno utvrđena",
+        "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
         "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-        "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); PRETPOSTAVKA — povijesni ADRS diskont neizvediv iz baze (2 dana cijena); tekuća usporedba cijena↔NAV u assumptions.market_check SOTP-a",
+        "holding_discount": "holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija (M10, 2024-07-17..2026-07-10, n=489 d) mjeri cijenu prema KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: medijan -12.1%, p25 -16.4%, p75 -5.3%, zadnje -25.5% (2026-07-10) — negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove na placeholder multiplama i grupni neto dug konstantnim pa NE mjeri čisti holding diskont; raspon se zato NE zamjenjuje opaženim (docs/calibration.md)",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + FY2025 kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; nijedan isključen — profitabilni, konzumeri+turizam). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
       }
     },
     "assumption_flags": [
-      {
-        "key": "beta",
-        "label": "β = 1,0",
-        "status": "pretpostavka",
-        "why": "nema povijesne serije cijena za procjenu bete"
-      },
       {
         "key": "holding_discount",
         "label": "holding diskont 15–25%",
@@ -7438,18 +7507,18 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 38.29602888086643,
-        "base": 43.53488372093024,
-        "high": 50.43423137876387,
+        "low": 37.7012474677471,
+        "base": 42.76787034175056,
+        "high": 49.40770986322213,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "dps": 3.12,
-          "r": 0.0931,
+          "r": 0.094411,
           "g": 0.02,
           "placeholder": false,
           "sources": {
-            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete traži povijesnu seriju; nije tržišno utvrđena",
+            "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
             "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
           }
         }
@@ -7457,19 +7526,19 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 38.54787079469885,
-        "base": 43.82117733296135,
-        "high": 50.76589640316124,
+        "low": 37.94917798674906,
+        "base": 43.04911992903569,
+        "high": 49.732624288389786,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "roe": 0.0548,
-          "r": 0.0931,
+          "r": 0.094411,
           "g": 0.02,
           "bvps": 92.08,
           "placeholder": false,
           "sources": {
-            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — u bazi 2 dana cijena, procjena bete traži povijesnu seriju; nije tržišno utvrđena",
+            "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
             "g": "g=2,0%: ECB inflacijski cilj (HR u eurozoni) kao konzervativan perpetualni nominalni rast; namjerno ispod povijesnog nominalnog rasta BDP-a; g<r zadovoljeno"
           }
         }
@@ -7477,9 +7546,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 84.55442363473935,
-        "base": 90.19138521038865,
-        "high": 95.82834678603793,
+        "low": 83.34554129096117,
+        "base": 88.90191071035856,
+        "high": 94.45828012975598,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -7501,8 +7570,8 @@
             },
             {
               "name": "Maistra",
-              "value_eur": 696138760.0,
-              "basis": "market: trž.kap 744,215,052 × 0.9354",
+              "value_eur": 670545423.0,
+              "basis": "market: trž.kap 716,854,204 × 0.9354",
               "pct": 0.9354,
               "placeholder": false
             },
@@ -7533,18 +7602,18 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 1960797903.0,
-          "nav_total_eur": 1790107903.0,
+          "nav_gross_eur": 1935204567.0,
+          "nav_total_eur": 1764514567.0,
           "sources": {
-            "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); PRETPOSTAVKA — povijesni ADRS diskont neizvediv iz baze (2 dana cijena); tekuća usporedba cijena↔NAV u assumptions.market_check SOTP-a"
+            "holding_discount": "holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija (M10, 2024-07-17..2026-07-10, n=489 d) mjeri cijenu prema KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: medijan -12.1%, p25 -16.4%, p75 -5.3%, zadnje -25.5% (2026-07-10) — negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove na placeholder multiplama i grupni neto dug konstantnim pa NE mjeri čisti holding diskont; raspon se zato NE zamjenjuje opaženim (docs/calibration.md)"
           },
           "market_check": {
             "own_market_cap_eur": 2213953141.0,
-            "nav_pre_discount_eur": 1790107903.0,
-            "price_vs_nav_pct": 23.7,
-            "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesni diskont neizvediv iz baze — premalo dana cijena"
+            "nav_pre_discount_eur": 1764514567.0,
+            "price_vs_nav_pct": 25.5,
+            "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana (M10) — vidi izvor holding diskonta i docs/calibration.md"
           },
-          "market_based_share_of_gross": 0.85
+          "market_based_share_of_gross": 0.84
         }
       }
     ],
@@ -7566,15 +7635,45 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 43.53488372093024,
-      "zone_high": 106.62307469216645,
-      "dispersion": 0.5916936005961125,
-      "divergent": true,
+      "zone_low": 83.34554129096117,
+      "zone_high": 94.45828012975598,
+      "dispersion": 0.11764705882352931,
+      "divergent": false,
+      "archetype": "holding",
+      "anchor_methods": [
+        "sotp_nav"
+      ],
+      "method_roles": {
+        "multiples_relative": {
+          "role": "secondary",
+          "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
+          "vs_zone_pct": 0.12878484073285978
+        },
+        "ddm_gordon": {
+          "role": "secondary",
+          "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
+          "vs_zone_pct": -0.4868607284887987
+        },
+        "justified_pb_roe": {
+          "role": "secondary",
+          "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
+          "vs_zone_pct": -0.48348622779051564
+        },
+        "sotp_nav": {
+          "role": "anchor",
+          "note": null,
+          "vs_zone_pct": null
+        }
+      },
+      "zone_note": null,
+      "all_methods_low": 42.76787034175056,
+      "all_methods_high": 106.62307469216645,
+      "dispersion_all": 0.5988872909055896,
       "method_bases": {
         "multiples_relative": 106.62307469216645,
-        "ddm_gordon": 43.53488372093024,
-        "justified_pb_roe": 43.82117733296135,
-        "sotp_nav": 90.19138521038865
+        "ddm_gordon": 42.76787034175056,
+        "justified_pb_roe": 43.04911992903569,
+        "sotp_nav": 88.90191071035856
       }
     },
     "sotp": {
@@ -7588,8 +7687,8 @@
         },
         {
           "name": "Maistra",
-          "value_eur": 696138760.0,
-          "basis": "market: trž.kap 744,215,052 × 0.9354",
+          "value_eur": 670545423.0,
+          "basis": "market: trž.kap 716,854,204 × 0.9354",
           "pct": 0.9354,
           "placeholder": false
         },
@@ -7620,8 +7719,8 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 1960797903.0,
-      "nav_total_eur": 1790107903.0,
+      "nav_gross_eur": 1935204567.0,
+      "nav_total_eur": 1764514567.0,
       "holding_discount_range": [
         0.15,
         0.25
@@ -7629,9 +7728,9 @@
       "holding_discount_reason": "empirijski raspon konglomeratskog/holding diskonta za europske holdinge (nelikvidnost, dvostruko oporezivanje dividendi, trošak centra); PLACEHOLDER dok se ne kalibrira na ZSE povijest",
       "market_check": {
         "own_market_cap_eur": 2213953141.0,
-        "nav_pre_discount_eur": 1790107903.0,
-        "price_vs_nav_pct": 23.7,
-        "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesni diskont neizvediv iz baze — premalo dana cijena"
+        "nav_pre_discount_eur": 1764514567.0,
+        "price_vs_nav_pct": 25.5,
+        "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana (M10) — vidi izvor holding diskonta i docs/calibration.md"
       },
       "missing": null
     }

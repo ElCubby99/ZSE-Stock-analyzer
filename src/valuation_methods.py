@@ -406,8 +406,9 @@ def compute_sotp(c: Ctx) -> ValueRange:
             "own_market_cap_eur": round(c.own_market_cap, 0),
             "nav_pre_discount_eur": round(nav, 0),
             "price_vs_nav_pct": round(prem * 100, 1),
-            "note": ("tekuća cijena vs OVAJ (konzervativni) NAV; povijesni "
-                     "diskont neizvediv iz baze — premalo dana cijena"),
+            "note": ("tekuća cijena vs OVAJ (konzervativni) NAV; povijesna "
+                     "serija cijena↔NAV je kalibrirana (M10) — vidi izvor "
+                     "holding diskonta i docs/calibration.md"),
         }
     # confidence: većina NAV-a iz tržišnih cijena -> 0.6; inače 0.5.
     market_share = (sum(x["value_eur"] for x in parts if not x["placeholder"]) / gross) if gross else 0

@@ -781,6 +781,16 @@ def build_stock_json(conn, ticker: str) -> dict:
     reconciliation = (None if rec.get("status") == "no_value" else {
         "zone_low": _f(rec.get("zone_low")), "zone_high": _f(rec.get("zone_high")),
         "dispersion": _f(rec.get("dispersion")), "divergent": rec.get("divergent"),
+        # M8: sidrena fer-zona — arhetip, uloge metoda, raspon svih metoda
+        "archetype": rec.get("archetype"),
+        "anchor_methods": rec.get("anchor_methods"),
+        "method_roles": {k: {"role": v["role"], "note": v["note"],
+                             "vs_zone_pct": _f(v["vs_zone_pct"])}
+                         for k, v in (rec.get("method_roles") or {}).items()},
+        "zone_note": rec.get("zone_note"),
+        "all_methods_low": _f(rec.get("all_methods_low")),
+        "all_methods_high": _f(rec.get("all_methods_high")),
+        "dispersion_all": _f(rec.get("dispersion_all")),
         "method_bases": {k: _f(v) for k, v in (rec.get("method_bases") or {}).items()},
     })
 
