@@ -134,6 +134,71 @@ def fetch_zse_json(tickers: list[str], dates: list[str],
     return n
 
 
+ZSE_HISTORY_URL = "https://zse.hr/json/securityHistory"
+
+
+def fetch_zse_history(tickers: list[str], date_from: str, date_to: str | None = None,
+                      source: str = "zse.hr securityHistory (web JSON)") -> int:
+    """Povijesni EOD po KLASI sa službenog zse.hr securityHistory endpointa
+    (isti izvor koji puni graf na stranici papira; javni web REST token).
+    ISIN se čita iz share_classes — bez ISIN-a klasa se preskače (ne pogađamo).
+    Upis: close = last_price_n, volume = volume_n, turnover_eur = turnover_n.
+    Retci bez trgovanja (last_price_n null) se NE upisuju."""
+    import requests
+
+    rest = _rest_base()
+    date_to = date_to or _date.today().isoformat()
+    n = 0
+    with get_conn() as conn:
+        cur = conn.cursor()
+        for t in tickers:
+            cur.execute("SELECT company_id, id, isin FROM share_classes WHERE ticker=%s", (t,))
+            r = cur.fetchone()
+            if not r or not r[2]:
+                print(f"  [skip] {t}: nema share_classes retka s ISIN-om — dodaj klasu prvo",
+                      file=sys.stderr)
+                continue
+            company_id, class_id, isin = r
+            rows = []
+            for model in sorted(ORDERBOOK_MODELS):   # CT pa CTLL
+                resp = requests.get(
+                    f"{ZSE_HISTORY_URL}/{isin}/{date_from}/{date_to}/hr",
+                    params={"trading_model_id": model, "restAPI": rest},
+                    headers={"X-Requested-With": "XMLHttpRequest"},
+                    timeout=90, verify=_verify())
+                resp.raise_for_status()
+                rows = (resp.json() or {}).get("rows") or []
+                if rows:
+                    break
+            if not rows:
+                print(f"  [skip] {t}: securityHistory prazan za {date_from}..{date_to}")
+                continue
+            written = 0
+            for row in rows:
+                d = row.get("date_yyyy_MM_dd")
+                close = row.get("last_price_n")
+                if not d or close in (None, 0):
+                    continue    # dan bez trgovanja — nema close, ne izmišljamo
+                cur.execute(
+                    """
+                    INSERT INTO prices_eod (company_id, share_class_id, trade_date,
+                                            close_eur, volume, turnover_eur, source)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s)
+                    ON CONFLICT (company_id, trade_date, COALESCE(share_class_id, 0))
+                    DO UPDATE SET close_eur    = EXCLUDED.close_eur,
+                                  volume       = EXCLUDED.volume,
+                                  turnover_eur = EXCLUDED.turnover_eur,
+                                  source       = EXCLUDED.source
+                    """,
+                    (company_id, class_id, d, float(close), row.get("volume_n"),
+                     row.get("turnover_n"), source))
+                written += 1
+            print(f"  {t}: {written} EOD zapisa ({date_from}..{date_to}, "
+                  f"model {rows[0].get('trading_model_id')})")
+            n += written
+    return n
+
+
 def _resolve(cur, ticker: str) -> tuple[int, int | None]:
     """ticker (klasa ili firma) -> (company_id, share_class_id|None)."""
     cur.execute("SELECT company_id, id FROM share_classes WHERE ticker = %s", (ticker,))
@@ -195,6 +260,11 @@ def main(argv=None) -> int:
                     help="YYYY-MM-DD, može više puta; default: danas")
     pz.add_argument("--source", default="zse.hr sluzbena tecajnica (web REST JSON)")
 
+    ph = sub.add_parser("zse-history", help="povijesni EOD (zse.hr securityHistory) -> prices_eod")
+    ph.add_argument("tickers", nargs="+", help="tickere KLASA (ADRS ADRS2 ...)")
+    ph.add_argument("--from", dest="date_from", required=True, help="YYYY-MM-DD")
+    ph.add_argument("--to", dest="date_to", default=None, help="YYYY-MM-DD; default danas")
+
     pc = sub.add_parser("import-csv", help="uvoz iz CSV-a (class_ticker,trade_date,close_eur[,volume])")
     pc.add_argument("csv_path")
     pc.add_argument("--source", required=True, help="opis izvora zapisa (audit trail)")
@@ -207,6 +277,9 @@ def main(argv=None) -> int:
         dates = a.dates or [_date.today().isoformat()]
         n = fetch_zse_json(a.tickers, dates, source=a.source)
         print(f"Upisano/ažurirano {n} EOD zapisa ({', '.join(dates)})")
+    elif a.cmd == "zse-history":
+        n = fetch_zse_history(a.tickers, a.date_from, a.date_to)
+        print(f"Upisano/ažurirano {n} povijesnih EOD zapisa")
     elif a.cmd == "import-csv":
         n = import_csv(a.csv_path, a.source)
         print(f"Upisano/ažurirano {n} EOD zapisa iz {a.csv_path}")

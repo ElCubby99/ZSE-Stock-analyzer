@@ -39,3 +39,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_announcements_ext ON announcements (externa
 -- State machine ima eksplicitnu fazu "sektor nepoznat" (prije sector_assigned):
 -- v1 NOT NULL na companies.sector više ne odgovara modelu.
 ALTER TABLE companies ALTER COLUMN sector DROP NOT NULL;
+
+-- Profil dionice (priprema podataka): povijesni EOD backfill sa službenog
+-- zse.hr securityHistory endpointa nosi i STVARNI dnevni promet (turnover_n)
+-- — točniji od aproksimacije close×volumen za liquidity prag od 5.000 €.
+ALTER TABLE prices_eod ADD COLUMN IF NOT EXISTS turnover_eur NUMERIC;

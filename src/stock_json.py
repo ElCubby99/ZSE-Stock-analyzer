@@ -263,14 +263,15 @@ def _liquidity(cur, classes: list[dict], as_of) -> dict:
         last_trade = None
         if sc_id is not None:
             cur.execute(
-                """SELECT trade_date, close_eur, volume FROM prices_eod
+                """SELECT trade_date, close_eur, volume, turnover_eur FROM prices_eod
                    WHERE share_class_id=%s AND volume IS NOT NULL AND volume > 0
                    ORDER BY trade_date DESC LIMIT 1""", (sc_id,))
             r = cur.fetchone()
             if r:
+                # stvarni promet iz tečajnice kad postoji; inače close×volumen
+                tov = _f(r[3]) if r[3] is not None else (_f(r[1]) or 0) * (_f(r[2]) or 0)
                 last_trade = {"date": str(r[0]), "close_eur": _f(r[1]),
-                              "volume": _f(r[2]),
-                              "turnover_eur": (_f(r[1]) or 0) * (_f(r[2]) or 0)}
+                              "volume": _f(r[2]), "turnover_eur": tov}
         cur.execute(
             """SELECT MIN(trade_date) FROM prices_eod p
                JOIN share_classes sc ON sc.id=p.share_class_id
@@ -462,12 +463,107 @@ def _share_classes(cur, company_id: int) -> list[dict]:
 
 def _price_history(cur, company_id: int) -> list[dict]:
     cur.execute(
-        """SELECT COALESCE(sc.ticker, c.ticker), p.trade_date, p.close_eur, p.volume, p.source
+        """SELECT COALESCE(sc.ticker, c.ticker), p.trade_date, p.close_eur, p.volume,
+                  p.turnover_eur, p.source
            FROM prices_eod p JOIN companies c ON c.id = p.company_id
            LEFT JOIN share_classes sc ON sc.id = p.share_class_id
            WHERE p.company_id = %s ORDER BY p.trade_date, 1""", (company_id,))
     return [{"class_ticker": r[0], "trade_date": str(r[1]), "close_eur": _f(r[2]),
-             "volume": _f(r[3]), "source": r[4]} for r in cur.fetchall()]
+             "volume": _f(r[3]), "turnover_eur": _f(r[4]), "source": r[5]}
+            for r in cur.fetchall()]
+
+
+def _price_summary(cur, classes: list[dict], as_of) -> dict:
+    """Zaglavlje profila po klasi: zadnja cijena, dnevna promjena, 52-tjedni
+    raspon, prosječni promet — SVE iz prices_eod, ništa izvedeno izvan baze."""
+    from datetime import timedelta
+
+    cutoff_52w = as_of - timedelta(days=365)
+    out = []
+    for c in classes:
+        cur.execute("SELECT id FROM share_classes WHERE ticker=%s", (c["ticker"],))
+        r = cur.fetchone()
+        if not r:
+            continue
+        sc_id = r[0]
+        cur.execute(
+            """SELECT trade_date, close_eur FROM prices_eod
+               WHERE share_class_id=%s AND close_eur IS NOT NULL
+               ORDER BY trade_date DESC LIMIT 2""", (sc_id,))
+        rows = cur.fetchall()
+        if not rows:
+            out.append({"class_ticker": c["ticker"], "last": None,
+                        "note": "nema cijena u bazi"})
+            continue
+        last_d, last_px = rows[0]
+        prev = rows[1] if len(rows) > 1 else None
+        change_pct = ((float(last_px) / float(prev[1])) - 1.0) if prev and prev[1] else None
+        cur.execute(
+            """SELECT MAX(close_eur), MIN(close_eur) FROM prices_eod
+               WHERE share_class_id=%s AND close_eur IS NOT NULL
+                 AND trade_date >= %s""", (sc_id, cutoff_52w))
+        hi52, lo52 = cur.fetchone()
+        cur.execute(
+            """SELECT AVG(t) FROM (SELECT turnover_eur AS t FROM prices_eod
+                 WHERE share_class_id=%s AND turnover_eur IS NOT NULL
+                 ORDER BY trade_date DESC LIMIT 20) x""", (sc_id,))
+        avg_tov = cur.fetchone()[0]
+        cur.execute("SELECT MIN(trade_date) FROM prices_eod WHERE share_class_id=%s",
+                    (sc_id,))
+        data_from = cur.fetchone()[0]
+        note = None
+        if data_from and data_from > cutoff_52w:
+            note = (f"povijest dostupna od {data_from} — 52-tjedni raspon pokriva "
+                    f"kraće razdoblje")
+        out.append({
+            "class_ticker": c["ticker"],
+            "last": {"date": str(last_d), "close_eur": _f(last_px)},
+            "prev_close_eur": _f(prev[1]) if prev else None,
+            "change_pct": _f(change_pct),
+            "high_52w_eur": _f(hi52), "low_52w_eur": _f(lo52),
+            "avg_turnover_20d_eur": _f(avg_tov),
+            "data_from": str(data_from) if data_from else None,
+            "note": note,
+        })
+    return {
+        "as_of": str(as_of), "classes": out,
+        "note": ("dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs "
+                 "prethodni TRGOVANI dan, ne kalendarski"),
+    }
+
+
+def _dividend_calendar(cur, company_id: int, as_of) -> dict:
+    """Jedinstveni pogled: isplaćene (povijest) + izglasane/najavljene nadolazeće.
+    Statusi iz PODATAKA (datumi iz EHO objava) — datumi koji fale ostaju null."""
+    cur.execute(
+        """SELECT class_ticker, fiscal_year, amount_eur, div_type, ex_date,
+                  record_date, payment_date, source_url
+           FROM dividends WHERE company_id=%s
+           ORDER BY COALESCE(ex_date, payment_date) DESC NULLS LAST, class_ticker""",
+        (company_id,))
+    events, n_upcoming = [], 0
+    for ct, fy, amt, dtyp, ex, rec, pay, src in cur.fetchall():
+        if pay is not None and pay <= as_of:
+            status, label = "paid", "isplaćena"
+        elif dtyp and "rijedlog" in dtyp:
+            status, label = "proposed", "prijedlog (nije izglasana)"
+        else:
+            status, label = "upcoming", "izglasana — nadolazeća"
+        if status != "paid":
+            n_upcoming += 1
+        events.append({
+            "class_ticker": ct, "fiscal_year": fy, "amount_eur": _f(amt),
+            "div_type": dtyp, "ex_date": str(ex) if ex else None,
+            "record_date": str(rec) if rec else None,
+            "payment_date": str(pay) if pay else None,
+            "status": status, "status_hr": label, "source_url": src,
+        })
+    return {
+        "as_of": str(as_of), "events": events, "upcoming_count": n_upcoming,
+        "note": ("izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); "
+                 "fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); "
+                 "prijedlozi su označeni i NISU izglasane isplate"),
+    }
 
 
 def _per_class_ratios(classes: list[dict], eps, bvps, dps) -> list[dict]:
@@ -596,6 +692,8 @@ def build_stock_json(conn, ticker: str) -> dict:
                            "trezorskih; trž.kap = Σ zadnji close klase × dionice klase"),
         },
         "fundamentals": fund,
+        "price_summary": _price_summary(cur, classes, today),
+        "dividend_calendar": _dividend_calendar(cur, company_id, today),
         "prices": _price_history(cur, company_id),
         "valuation": {
             "params": {
