@@ -350,6 +350,20 @@ def _risks(sector, is_group, sotp, liquidity, ownership, assumption_flags,
                      "bez ocjena i preporuka; zaključak je čitateljev")}
 
 
+def _news(cur, company_id: int) -> dict:
+    """Novosti tab: SLUŽBENE objave izdavatelja (EHO) — naslov+datum+link kako
+    jesu; bez medija, bez agregacije, bez komentara."""
+    cur.execute(
+        """SELECT published_at, title, source_url, category FROM announcements
+           WHERE company_id=%s AND title IS NOT NULL
+           ORDER BY published_at DESC NULLS LAST LIMIT 30""", (company_id,))
+    items = [{"date": str(d) if d else None, "title": t, "url": u, "category": c}
+             for d, t, u, c in cur.fetchall()]
+    return {"items": items,
+            "note": ("službene objave izdavatelja s EHO-a (zse.hr) — bez medijskih "
+                     "napisa i bez komentara platforme; prazno = nema objava u bazi")}
+
+
 def _business_profile(cur, company_id: int) -> dict | None:
     """M9: profil poslovanja — činjenice iz izvješća s citatima; epiteti
     izdavatelja ODVOJENO u issuer_claims. Nema profila -> null (frontend
@@ -782,6 +796,7 @@ def _market_only_json(cur, company_id: int, ticker: str, name, sector, is_group,
         "dividend_calendar": _dividend_calendar(cur, company_id, today),
         "prices": _price_history(cur, company_id),
         "liquidity": _liquidity(cur, classes, today),
+        "news": _news(cur, company_id),
         "valuation": None,
         "mar_note": ("Informativni prikaz javnih tržišnih podataka; nije "
                      "investicijski savjet ni preporuka."),
@@ -903,6 +918,7 @@ def build_stock_json(conn, ticker: str) -> dict:
         "financials_3y": _financials_3y(cur, company_id, shares,
                                         BANK_THREE_Y_ROWS if is_bank else THREE_Y_ROWS),
         "trend": _trend(cur, company_id, sector),
+        "news": _news(cur, company_id),
         "business_profile": _business_profile(cur, company_id),
         "risks": _risks(sector, is_group, sotp_breakdown,
                         _liquidity(cur, classes, today),

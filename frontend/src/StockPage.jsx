@@ -7,6 +7,7 @@ import {
 } from './MarketProfile.jsx'
 import { AnchorPanel, FinChart, Risks, SecondaryList } from './AnalysisBlocks.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
+import { Comparison, KeyIndicators, NewsTab, TabBar } from './StockTabs.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
 // live firme (orchestrator) + CROS/ZABA (M1–M5) + HPB/HT (samo tržišni profil)
@@ -589,6 +590,9 @@ export default function StockPage() {
   const { ticker } = useParams()
   const [data, setData] = useState(null)
   const [err, setErr] = useState(null)
+  const [tab, setTabRaw] = useState(() =>
+    (typeof window !== 'undefined' && window.location.hash.slice(1)) || 'pregled')
+  const setTab = (k) => { setTabRaw(k); try { window.history.replaceState(null, '', `#${k}`) } catch {} }
 
   useEffect(() => {
     setData(null); setErr(null)
@@ -639,30 +643,32 @@ export default function StockPage() {
             </div>
           )}
           <IlliquidBanner liquidity={data.liquidity} />
-          <SectionRule n="01" title="Tržišni podaci" />
+
+          <TabBar tab={tab} setTab={setTab} />
+
+          {/* ============ PREGLED ============ */}
+          {tab === 'pregled' && (
+          <>
           <PriceChart data={data} zone={zone} />
           <StatsStrip data={data} />
+          {!marketOnly && (
+            <div className="fin3-grid">
+              <FinChart trend={data.trend} />
+              <BusinessProfile bp={data.business_profile} />
+            </div>
+          )}
           <Dividends data={data} />
+          </>
+          )}
 
-          {/* ============ 02 · ANALIZA VRIJEDNOSTI (dizajn A) ============ */}
-          <SectionRule n="02" title="Analiza vrijednosti" />
-          {marketOnly ? (
+          {/* ============ ANALIZA VRIJEDNOSTI ============ */}
+          {tab === 'analiza' && (marketOnly ? (
             <AnalysisUnavailable note={data.data_note} />
           ) : (
           <>
           <AnchorPanel data={data} />
           <SecondaryList data={data} />
           <Risks risks={data.risks} />
-          <div className="fin3-grid">
-            <FinChart trend={data.trend} />
-            <Fin3Y f3={data.financials_3y} />
-          </div>
-
-          <p className="risk-sub" style={{ margin: '18px 0 0' }}>
-            OSTALE SEKCIJE — DETALJI ANALIZE
-          </p>
-          <Metrics data={data} />
-          <BusinessProfile bp={data.business_profile} />
           <Assumptions valuation={data.valuation} />
 
           <section>
@@ -702,11 +708,6 @@ export default function StockPage() {
             <SotpTable sotp={data.valuation.sotp} />
           </div>
 
-          <Balance b={data.balance} />
-          <BankKpi bk={data.bank_kpi} />
-          <Segments seg={data.segments} />
-          <Ownership own={data.ownership} liquidity={data.liquidity} />
-
           <section>
             <div className="sec-label">Metode koje se ne primjenjuju</div>
             {data.valuation.skipped.map((s) => (
@@ -716,10 +717,45 @@ export default function StockPage() {
               </div>
             ))}
           </section>
+          </>
+          ))}
 
+          {/* ============ KLJUČNI POKAZATELJI ============ */}
+          {tab === 'pokazatelji' && (marketOnly ? (
+            <AnalysisUnavailable note={data.data_note} />
+          ) : (
+          <>
+          <KeyIndicators data={data} />
+          <Metrics data={data} />
           <Fundamentals data={data} />
           </>
+          ))}
+
+          {/* ============ USPOREDBA ============ */}
+          {tab === 'usporedba' && <Comparison data={data} />}
+
+          {/* ============ IZVJEŠTAJI ============ */}
+          {tab === 'izvjestaji' && (marketOnly ? (
+            <AnalysisUnavailable note={data.data_note} />
+          ) : (
+          <>
+          <div className="fin3-grid">
+            <FinChart trend={data.trend} />
+            <Fin3Y f3={data.financials_3y} />
+          </div>
+          <Balance b={data.balance} />
+          <Segments seg={data.segments} />
+          <BankKpi bk={data.bank_kpi} />
+          </>
+          ))}
+
+          {/* ============ DIONIČARI ============ */}
+          {tab === 'dionicari' && (
+            <Ownership own={data.ownership} liquidity={data.liquidity} />
           )}
+
+          {/* ============ NOVOSTI ============ */}
+          {tab === 'novosti' && <NewsTab news={data.news} />}
 
           <div className="disc">
             <b>Informativno, nije investicijski savjet ni preporuka.</b>{' '}
