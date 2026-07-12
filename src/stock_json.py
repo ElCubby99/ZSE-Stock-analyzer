@@ -582,14 +582,67 @@ def _per_class_ratios(classes: list[dict], eps, bvps, dps) -> list[dict]:
     return out
 
 
+def _market_only_json(cur, company_id: int, ticker: str, name, sector, is_group,
+                      comp_isin) -> dict:
+    """Firma NIJE live (izvješća u obradi / needs_review): objavljujemo SAMO
+    javne tržišne podatke (cijene, dividende, likvidnost). Financije i
+    valuacija se NE objavljuju dok ne prođu validate/promotion gate."""
+    from datetime import date
+    today = date.today()
+    classes = _share_classes(cur, company_id)
+    # dps je dividendna činjenica (EHO objava s citatom) — javna, smije van
+    cur.execute("""SELECT value_eur FROM financials
+                   WHERE company_id=%s AND item='dps'
+                   ORDER BY fiscal_year DESC LIMIT 1""", (company_id,))
+    r = cur.fetchone()
+    dps = _f(r[0]) if r else None
+    per_class = [{
+        "class_ticker": c["ticker"],
+        "price": c["last_price"]["close_eur"] if c["last_price"] else None,
+        "pe": None, "pb": None,
+        "div_yield": (dps / c["last_price"]["close_eur"]
+                      if dps and c["last_price"] and c["last_price"]["close_eur"] else None),
+        "basis": "samo tržišni podaci — P/E i P/B čekaju validirana izvješća",
+    } for c in classes]
+    mcap = sum((c["last_price"]["close_eur"] or 0) * (c["shares_ex_treasury"] or 0)
+               for c in classes if c["last_price"] and c["shares_ex_treasury"]) or None
+    return {
+        "ticker": ticker, "name": name, "sector": sector, "is_group": is_group,
+        "isin": comp_isin, "fiscal_year": None, "audited": None,
+        "generated_at": str(today),
+        "data_status": "market_only",
+        "data_note": ("financijska izvješća su u obradi (needs_review) — "
+                      "prikazani su samo javni tržišni podaci; financije i "
+                      "vrednovanje se objavljuju tek nakon validacije"),
+        "financials_3y": None, "balance": None, "segments": None,
+        "ownership": None, "bank_kpi": None,
+        "share_classes": classes,
+        "metrics": {"eps": None, "bvps": None, "roe": None, "dps": dps,
+                    "shares_ex_treasury": None, "market_cap_eur": _f(mcap),
+                    "ebitda_eur": None, "per_class": per_class,
+                    "basis_note": "trž.kap = Σ zadnji close klase × uvrštene dionice"},
+        "fundamentals": [],
+        "price_summary": _price_summary(cur, classes, today),
+        "dividend_calendar": _dividend_calendar(cur, company_id, today),
+        "prices": _price_history(cur, company_id),
+        "liquidity": _liquidity(cur, classes, today),
+        "valuation": None,
+        "mar_note": ("Informativni prikaz javnih tržišnih podataka; nije "
+                     "investicijski savjet ni preporuka."),
+    }
+
+
 def build_stock_json(conn, ticker: str) -> dict:
     cur = conn.cursor()
-    cur.execute("SELECT id, name, sector, is_group, isin FROM companies WHERE ticker = %s",
-                (ticker,))
+    cur.execute("SELECT id, name, sector, is_group, isin, is_live FROM companies "
+                "WHERE ticker = %s", (ticker,))
     row = cur.fetchone()
     if not row:
         raise ValueError(f"nepoznat ticker: {ticker}")
-    company_id, name, sector, is_group, comp_isin = row
+    company_id, name, sector, is_group, comp_isin, is_live = row
+    if not is_live:
+        return _market_only_json(cur, company_id, ticker, name, sector, is_group,
+                                 comp_isin)
     is_bank = sector == "bank"
 
     fund = _fundamentals(cur, company_id,
@@ -674,6 +727,7 @@ def build_stock_json(conn, ticker: str) -> dict:
         "ticker": ticker, "name": name, "sector": sector, "is_group": is_group,
         "isin": comp_isin, "fiscal_year": latest_fy, "audited": audited,
         "generated_at": str(today),
+        "data_status": "full",
         "financials_3y": _financials_3y(cur, company_id, shares,
                                         BANK_THREE_Y_ROWS if is_bank else THREE_Y_ROWS),
         "balance": _balance(cur, company_id, sector, latest_fy, bvps),

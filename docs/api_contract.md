@@ -22,6 +22,7 @@ Opća pravila:
 | fiscal_year | int | zadnja fiskalna godina u bazi (FY0) |
 | audited | bool | je li FY0 filing revidiran |
 | generated_at | str (ISO date) | datum exporta — baza za `liquidity.days_since_trade` |
+| data_status | str | `full` (živa firma) ili `market_only` (izvješća u obradi — objavljuju se SAMO tržišni podaci: cijene, dividende, likvidnost; `valuation`, `financials_3y`, `balance`, `segments`, `ownership`, `bank_kpi` su null, `fundamentals` prazno, uz `data_note` s razlogom) |
 | share_classes | list | vidi dolje |
 | metrics | obj | eps, bvps, roe, dps, shares_ex_treasury, market_cap_eur, ebitda_eur, per_class[], basis_note |
 | fundamentals | list | FY0 stavke: item, label, value_eur, confidence (null = izvedeno), source_page ('computed' = izračun), fiscal_year, source_url, audited, missing |
