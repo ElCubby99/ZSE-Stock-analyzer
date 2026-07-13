@@ -7699,16 +7699,15 @@
       {
         "key": "multiples_relative",
         "label": "Relativni multiplikatori",
-        "low": 53.37987324796021,
-        "base": 62.79985087995319,
-        "high": 72.21982851194616,
+        "low": 57.591162469797624,
+        "base": 67.7543087879972,
+        "high": 77.91745510619678,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "peer_pe": 13.43,
-          "pb_roe_scale": "P/B leća skalirana omjerom ROE: vlastiti 5.5% / peer medijan 13.8% = 0.40 (klampano na [0,3–3,0] -> 0.40); peer P/B bez ROE konteksta nije prenosiv",
-          "peer_pb": 0.63,
+          "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
           "sources": {
             "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
           }
@@ -7728,7 +7727,7 @@
           "g_terminal": 0.04,
           "g1_explicit": 0.0941,
           "model": "dvofazni DDM",
-          "growth_source": "g1=9.4%: CAGR prihoda FY2023->FY2025 iz baze (cap 0-20%); eksplicitna faza 5 g s fadeom prema terminalnom g",
+          "growth_source": "g1=9.4%: CAGR prihoda FY2023->FY2025 iz baze (cap 0-20%) — POVIJESNI proxy jer forward procjena (backlog/guidance) još nije ekstrahirana; eksplicitna faza 5 g s fadeom prema terminalnom g",
           "placeholder": false,
           "sources": {
             "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
@@ -7882,7 +7881,7 @@
         "multiples_relative": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": -0.024007284568306364
+          "vs_zone_pct": 0.0
         },
         "ddm_gordon": {
           "role": "secondary",
@@ -7905,7 +7904,7 @@
       "all_methods_high": 68.63422907378407,
       "dispersion_all": 0.4242384874562438,
       "method_bases": {
-        "multiples_relative": 62.79985087995319,
+        "multiples_relative": 67.7543087879972,
         "ddm_gordon": 67.34055076170405,
         "justified_pb_roe": 39.51694754379656,
         "sotp_nav": 68.63422907378407
@@ -7915,7 +7914,7 @@
       ],
       "vs_market_pct": 140.4,
       "anchor_inconsistency": [],
-      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,362 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 68.63 € po dionici. Tržište te iste kćeri trenutačno vrednuje 29.5% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu."
+      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća; forward procjena iz backloga/guidance-a još nije izvedena). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,362 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 68.63 € po dionici. Tržište te iste kćeri trenutačno vrednuje 29.5% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu."
     },
     "sotp": {
       "parts": [

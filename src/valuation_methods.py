@@ -220,33 +220,42 @@ def _peer_confidence(p, assum: dict) -> float:
 def compute_multiples(c: Ctx) -> ValueRange:
     """P/E i P/B leća: vrijednost/dionica = peer_multiple × (zarada matice | knjiga matice) / dionice.
 
-    P/B leća: peer P/B je funkcija peer ROE-a (opravdani P/B), pa se na firmu
-    DRUGAČIJE profitabilnosti prenosi skaliran omjerom ROE (vlastiti/peer
-    medijan, klampan na [0,3, 3,0] protiv ekstrema). Bez peer ROE-a ili
-    vlastitog ROE-a leća ide sirovo (placeholder režim) — označeno."""
+    P/B leća: za OPERATIVNE firme se NE koristi kad P/E leća postoji —
+    standardna praksa: operativna firma se multiplira na zaradu/EBITDA, P/B je
+    smislen za financijske (i njih ionako nosi opravdani P/B iz vlastitog
+    ROE-a). P/B ostaje samo kao FALLBACK bez pozitivne zarade, skaliran
+    omjerom ROE naniže (peer P/B nije prenosiv na drugačiju profitabilnost)."""
     p = c.params
     ni = c.val("net_income_parent")
     eq = c.val("equity_parent") or c.val("total_equity")
     lenses, assum = [], {"placeholder": p.placeholder}
-    if ni is not None:
+    if ni is not None and ni > 0:
         pe_ps = _per_share(p.peer_pe * ni, c)
         if pe_ps is not None:
             lenses.append(pe_ps); assum["peer_pe"] = p.peer_pe
-    if eq is not None:
+    arche = ARCHETYPE_OF.get(c.sector or "", "operating")
+    use_pb = (arche == "capital") or not lenses   # operativna: P/E leća dovoljna
+    if eq is not None and use_pb:
         pb_mult = p.peer_pb
         peer_roe = getattr(p, "peer_roe", None)
         own_roe = (ni / eq) if (ni is not None and eq and ni > 0) else None
         if peer_roe and own_roe:
-            scale = max(0.3, min(3.0, own_roe / peer_roe))
+            # korekcija SAMO NANIŽE: firmi nižeg ROE-a peer P/B se smanjuje;
+            # višem ROE-u se NE ekstrapolira naviše (zarada je već u P/E leći)
+            scale = max(0.3, min(1.0, own_roe / peer_roe))
             pb_mult = p.peer_pb * scale
             assum["pb_roe_scale"] = (
                 f"P/B leća skalirana omjerom ROE: vlastiti {own_roe:.1%} / "
                 f"peer medijan {peer_roe:.1%} = {own_roe / peer_roe:.2f} "
-                f"(klampano na [0,3–3,0] -> {scale:.2f}); peer P/B bez ROE "
-                f"konteksta nije prenosiv")
+                f"(klampano na [0,3–1,0] -> {scale:.2f}); peer P/B bez ROE "
+                f"konteksta nije prenosiv, a naviše se ne ekstrapolira")
         pb_ps = _per_share(pb_mult * eq, c)
         if pb_ps is not None:
             lenses.append(pb_ps); assum["peer_pb"] = round(pb_mult, 2)
+    elif eq is not None and not use_pb:
+        assum["pb_lens"] = ("P/B leća izostavljena: operativna firma se "
+                            "multiplira na zaradu (P/E) i EBITDA; peer P/B "
+                            "nije prenosiv bez ROE konteksta")
     if not lenses:
         return _missing(c, "net_income_parent|equity_parent", "shares_ex_treasury")
     if p.sources.get("peers"):
@@ -723,14 +732,21 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
     gh = c.growth_hint or {}
     prim = (rec.get("anchor_methods") or [None])[0]
     parts = []
-    if gh.get("rev_cagr_3y") is not None:
+    if gh.get("forward"):
+        parts.append(f"Očekivani rast {gh['g1']:+.1%} godišnje procijenjen je iz "
+                     f"zadnjeg izvješća — {gh.get('drivers', 'forward signali')}"
+                     + (f"; povijesni prosjek ({gh['rev_cagr_3y']:+.1%} godišnje) "
+                        f"služi samo kao kontekst"
+                        if gh.get("rev_cagr_3y") is not None else ""))
+    elif gh.get("rev_cagr_3y") is not None:
         parts.append(f"Prihodi su zadnje tri godine rasli u prosjeku "
                      f"{gh['rev_cagr_3y']:+.1%} godišnje (izračun iz objavljenih "
-                     f"izvješća)")
+                     f"izvješća; forward procjena iz backloga/guidance-a još "
+                     f"nije izvedena)")
     else:
         parts.append("Stopu rasta ne možemo izračunati — u bazi još nije cijela "
-                     "trogodišnja serija prihoda, pa računamo oprezno, bez faze "
-                     "rasta")
+                     "trogodišnja serija prihoda ni forward procjena, pa računamo "
+                     "oprezno, bez faze rasta")
     rev, ebd = c.val("revenue"), c.val("ebitda")
     if rev and ebd is not None:
         parts.append(f"Od svakih 100 € prihoda firmi ostaje {ebd / rev * 100:,.0f} € "
@@ -1062,9 +1078,10 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         r = cur.fetchone()
         return float(r[0]) if r and r[0] is not None else None
 
-    # M11: signal rasta IZ PODATAKA — CAGR prihoda zadnje 3 fiskalne godine
-    # (kvartali/backlog nisu u bazi -> to je najbolji dostupni signal; capano
-    # na [0, 20%]; growth arhetip = CAGR > 8%). Bez 3 godine -> None (OZNAKA).
+    # M13 (Korak 2): rast eksplicitne faze PRIMARNO iz FORWARD signala zadnjeg
+    # izvješća (backlog, book-to-bill, guidance — tablica growth_estimates,
+    # verified seed s citatima); trailing 3g CAGR je samo POMOĆNI kontekst i
+    # fallback kad forward procjene nema. Cap [0, 20%] vrijedi za obje rute.
     rev_item = "total_operating_income" if sector == "bank" else "revenue"
     cur.execute(
         """SELECT f.fiscal_year, fin.value_eur FROM financials fin
@@ -1073,16 +1090,42 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                  AND f.basis='consolidated' AND fin.value_eur IS NOT NULL
            ORDER BY f.fiscal_year DESC LIMIT 3""", (company_id, rev_item))
     revs = cur.fetchall()
-    growth_hint = None
+    trailing = None
     if len(revs) >= 3 and revs[-1][1] and float(revs[-1][1]) > 0:
         yrs = revs[0][0] - revs[-1][0]
-        cagr = (float(revs[0][1]) / float(revs[-1][1])) ** (1 / yrs) - 1
-        g1 = max(0.0, min(0.20, cagr))
-        growth_hint = {"g1": round(g1, 4), "rev_cagr_3y": round(cagr, 4),
-                       "archetype": "growth" if cagr > 0.08 else "mature",
+        trailing = (float(revs[0][1]) / float(revs[-1][1])) ** (1 / yrs) - 1
+    growth_hint = None
+    try:
+        cur.execute(
+            """SELECT g1, rule, drivers, basis, fiscal_year FROM growth_estimates
+               WHERE company_id=%s AND method='forward_signals'
+               ORDER BY fiscal_year DESC, created_at DESC LIMIT 1""", (company_id,))
+        fw = cur.fetchone()
+    except Exception:  # noqa: BLE001 — tablica je opcionalna nadogradnja
+        conn.rollback()
+        fw = None
+    if fw and fw[0] is not None:
+        g1 = max(0.0, min(0.20, float(fw[0])))
+        growth_hint = {
+            "g1": round(g1, 4), "forward": True, "rule": fw[1],
+            "drivers": fw[2],
+            "rev_cagr_3y": round(trailing, 4) if trailing is not None else None,
+            "archetype": "growth" if g1 > 0.08 else "mature",
+            "source": (f"g1={g1:.1%}: FORWARD procjena iz GI FY{fw[4]} "
+                       f"(pravilo {fw[1]}; {fw[2]}). {fw[3]}"
+                       + (f" Trailing 3g CAGR {trailing:+.1%} je pomoćni kontekst."
+                          if trailing is not None else
+                          " Trailing 3g serije u bazi nema — forward je jedini signal.")),
+        }
+    elif trailing is not None:
+        g1 = max(0.0, min(0.20, trailing))
+        growth_hint = {"g1": round(g1, 4), "rev_cagr_3y": round(trailing, 4),
+                       "archetype": "growth" if trailing > 0.08 else "mature",
                        "source": (f"g1={g1:.1%}: CAGR prihoda FY{revs[-1][0]}->"
-                                  f"FY{revs[0][0]} iz baze (cap 0-20%); "
-                                  "eksplicitna faza 5 g s fadeom prema terminalnom g")}
+                                  f"FY{revs[0][0]} iz baze (cap 0-20%) — POVIJESNI "
+                                  "proxy jer forward procjena (backlog/guidance) "
+                                  "još nije ekstrahirana; eksplicitna faza 5 g s "
+                                  "fadeom prema terminalnom g")}
 
     def ni_parent_of(cid):
         cur.execute(

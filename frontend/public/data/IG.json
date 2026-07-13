@@ -3206,16 +3206,15 @@
       {
         "key": "multiples_relative",
         "label": "Relativni multiplikatori",
-        "low": 71.27786490068924,
-        "base": 83.85631164786969,
-        "high": 96.43475839505014,
+        "low": 55.865351545739344,
+        "base": 65.72394299498747,
+        "high": 75.58253444423558,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "peer_pe": 15.59,
-          "pb_roe_scale": "P/B leća skalirana omjerom ROE: vlastiti 80.0% / peer medijan 14.1% = 5.69 (klampano na [0,3–3,0] -> 3.00); peer P/B bez ROE konteksta nije prenosiv",
-          "peer_pb": 19.35,
+          "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
           "sources": {
             "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.59 (n=3), P/B=6.45 (n=3), EV/EBITDA=12.0 (n=3). Skup ['KODT', 'ADPL', 'DLKV'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: KODT P/E=15.59 P/B=6.45; ADPL P/E=8.92 P/B=1.11; DLKV P/E=62.95 P/B=8.85"
           }
@@ -3287,8 +3286,8 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 71.27786490068924,
-      "zone_high": 96.43475839505014,
+      "zone_low": 55.865351545739344,
+      "zone_high": 75.58253444423558,
       "dispersion": 0.26086956521739124,
       "divergent": false,
       "archetype": "operating",
@@ -3313,18 +3312,18 @@
         }
       },
       "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 72.31915583689356,
-      "all_methods_high": 83.85631164786969,
-      "dispersion_all": 0.13758243815233703,
+      "all_methods_low": 65.72394299498747,
+      "all_methods_high": 75.23148148148148,
+      "dispersion_all": 0.1263771269589358,
       "method_bases": {
-        "multiples_relative": 83.85631164786969,
+        "multiples_relative": 65.72394299498747,
         "ddm_gordon": 75.23148148148148,
         "justified_pb_roe": 72.31915583689356
       },
       "qa_flags": [],
-      "vs_market_pct": -14.6,
+      "vs_market_pct": 8.9,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda, pa računamo oprezno, bez faze rasta. Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 83.86 € po dionici. Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive."
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 65.72 € po dionici. Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive."
     },
     "sotp": null
   },

@@ -279,7 +279,7 @@
     "cards": [
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 36–344 € (raspon 90%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 44–344 € (raspon 87%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -4595,16 +4595,15 @@
       {
         "key": "multiples_relative",
         "label": "Relativni multiplikatori",
-        "low": 241.46859825505365,
-        "base": 284.0807038294749,
-        "high": 326.6928094038961,
+        "low": 241.78963744818645,
+        "base": 284.45839699786643,
+        "high": 327.12715654754635,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "peer_pe": 14.96,
-          "pb_roe_scale": "P/B leća skalirana omjerom ROE: vlastiti 18.6% / peer medijan 8.8% = 2.12 (klampano na [0,3–3,0] -> 2.12); peer P/B bez ROE konteksta nije prenosiv",
-          "peer_pb": 2.77,
+          "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
           "sources": {
             "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=14.96 (n=3), P/B=1.31 (n=3), EV/EBITDA=6.66 (n=2). Skup ['ATGR', 'ZITO', 'TOK'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; ZITO P/E=13.38 P/B=1.28; TOK P/E=14.96 P/B=1.31"
           }
@@ -4630,17 +4629,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 17.44201850414757,
-        "base": 35.96019216553612,
-        "high": 70.67619977521993,
+        "low": 23.251670408540324,
+        "base": 43.607818489103906,
+        "high": 81.7723343662482,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.072865,
           "g_terminal": 0.04,
-          "g1_explicit": null,
-          "model": "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)",
-          "growth_source": null,
+          "g1_explicit": 0.08,
+          "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
+          "growth_source": "g1=8.0%: FORWARD procjena iz GI FY2025 (pravilo R2; završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a). g1=8% (cap R2) — kvalitativni i strukturni signali bez brojčanog guidance-a: 'početkom 2025. dovršen investicijski ciklus u tehnološku, logističku i informatičku modernizaciju Prehrane vrijedan 250 milijuna eura, investicije se u sljedećem petogodišnjem razdoblju planiraju na uobičajenoj razini' (str. 41) — jednogodišnji FCF FY2025 je zato potišten izvanrednim capexom; 'Grupa nakon akvizicije premašuje prihode od milijardu eura' (Agri: Belje, PIK Vinkovci..., str. 40); Strategija 2030: 'rast temeljen na produktivnosti, inovacijama... međunarodno širenje' (str. 40). Brojčani guidance uprava ne daje. Trailing 3g serije u bazi nema — forward je jedini signal.",
           "placeholder": false,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -4651,18 +4650,18 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 77.63909949842531,
-        "base": 101.26274151833259,
-        "high": 145.54996719877542,
+        "low": 85.05047490505143,
+        "base": 111.0188216736171,
+        "high": 159.70531081830958,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "dps": 3.2,
           "r": 0.072865,
           "g_terminal": 0.04,
-          "g1_explicit": null,
-          "model": "jednofazni Gordon — RAST NIJE IZVEDEN",
-          "growth_source": null,
+          "g1_explicit": 0.08,
+          "model": "dvofazni DDM",
+          "growth_source": "g1=8.0%: FORWARD procjena iz GI FY2025 (pravilo R2; završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a). g1=8% (cap R2) — kvalitativni i strukturni signali bez brojčanog guidance-a: 'početkom 2025. dovršen investicijski ciklus u tehnološku, logističku i informatičku modernizaciju Prehrane vrijedan 250 milijuna eura, investicije se u sljedećem petogodišnjem razdoblju planiraju na uobičajenoj razini' (str. 41) — jednogodišnji FCF FY2025 je zato potišten izvanrednim capexom; 'Grupa nakon akvizicije premašuje prihode od milijardu eura' (Agri: Belje, PIK Vinkovci..., str. 40); Strategija 2030: 'rast temeljen na produktivnosti, inovacijama... međunarodno širenje' (str. 40). Brojčani guidance uprava ne daje. Trailing 3g serije u bazi nema — forward je jedini signal.",
           "placeholder": false,
           "sources": {
             "r": "r=0.0729 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.645: IZMJERENA — OLS tjednih log-prinosa klase PODR vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.097); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
@@ -4704,9 +4703,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 17.44201850414757,
-      "zone_high": 70.67619977521993,
-      "dispersion": 0.7532122757077979,
+      "zone_low": 23.251670408540324,
+      "zone_high": 81.7723343662482,
+      "dispersion": 0.715653581510845,
       "divergent": true,
       "archetype": "operating",
       "anchor_methods": [
@@ -4718,12 +4717,12 @@
         "multiples_relative": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 5.447717835801752
+          "vs_zone_pct": 4.417016759318093
         },
         "ev_ebitda": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 2.846189528689176
+          "vs_zone_pct": 2.2270657471082216
         },
         "dcf_fcf": {
           "role": "anchor",
@@ -4733,37 +4732,37 @@
         "ddm_gordon": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 0.4327700391417584
+          "vs_zone_pct": 0.35765748323115587
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 3.86507948129747
+          "vs_zone_pct": 3.2049102793429194
         }
       },
       "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 35.96019216553612,
+      "all_methods_low": 43.607818489103906,
       "all_methods_high": 343.84532934250336,
-      "dispersion_all": 0.8954175348715694,
+      "dispersion_all": 0.8731760627009527,
       "method_bases": {
-        "multiples_relative": 284.0807038294749,
+        "multiples_relative": 284.45839699786643,
         "ev_ebitda": 169.4596842164252,
-        "dcf_fcf": 35.96019216553612,
-        "ddm_gordon": 101.26274151833259,
+        "dcf_fcf": 43.607818489103906,
+        "ddm_gordon": 111.0188216736171,
         "justified_pb_roe": 343.84532934250336
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: multiples_relative +545% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
-        "ULAZI NEKONZISTENTNI: ev_ebitda +285% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
-        "metode se međusobno razilaze 90% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +268% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "ULAZI NEKONZISTENTNI: multiples_relative +442% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "ULAZI NEKONZISTENTNI: ev_ebitda +223% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "metode se međusobno razilaze 87% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +209% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 267.7,
+      "vs_market_pct": 208.5,
       "anchor_inconsistency": [
-        "multiples_relative +545% vs primarno sidro",
-        "ev_ebitda +285% vs primarno sidro"
+        "multiples_relative +442% vs primarno sidro",
+        "ev_ebitda +223% vs primarno sidro"
       ],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 22 € operativne zarade (EBITDA marža 22.4%). Firma je lani stvorila 17.9 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 7.3%, bez faze rasta (samo dugoročni rast 4%) — tako izlazi 35.96 € po dionici. Kontrolne metode uz sidro: Relativni multiplikatori +545%, EV/EBITDA +285% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je."
+      "reasoning": "Očekivani rast +8.0% godišnje procijenjen je iz zadnjeg izvješća — završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a. Od svakih 100 € prihoda firmi ostaje 22 € operativne zarade (EBITDA marža 22.4%). Firma je lani stvorila 17.9 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 7.3%, uz izračunati rast 8.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 43.61 € po dionici. Kontrolne metode uz sidro: Relativni multiplikatori +442%, EV/EBITDA +223% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je."
     },
     "sotp": null
   },
