@@ -63,10 +63,14 @@ def peer_row(cur, ticker: str) -> dict:
     mcap = price * shares
     out = {"ticker": ticker, "price": price, "price_date": str(price_date),
            "mcap": mcap, "skip": None}
+    ebit = _latest(cur, cid, "ebit")
     out["pe"] = mcap / ni if ni and ni > 0 else None
     out["pb"] = mcap / eq if eq and eq > 0 else None
     out["ev_ebitda"] = ((mcap + net_debt) / ebitda
                         if ebitda and ebitda > 0 and net_debt is not None else None)
+    # EV/EBIT: manje laska firmama s visokim D&A/dugom (doktrina v2 §2)
+    out["ev_ebit"] = ((mcap + net_debt) / ebit
+                      if ebit and ebit > 0 and net_debt is not None else None)
     # ROE peera: P/B je funkcija ROE (opravdani P/B) pa peer P/B bez peer ROE
     # konteksta nije prenosiv na firmu drugačije profitabilnosti
     out["roe"] = ni / eq if (ni and eq and ni > 0 and eq > 0) else None
@@ -79,7 +83,7 @@ def derive(tickers: list[str]) -> dict:
         rows = [peer_row(cur, t) for t in tickers]
     usable = [r for r in rows if not r.get("skip")]
     med = {}
-    for k in ("pe", "pb", "ev_ebitda", "roe"):
+    for k in ("pe", "pb", "ev_ebitda", "ev_ebit", "roe"):
         vals = [r[k] for r in usable if r.get(k)]
         med[k] = statistics.median(vals) if vals else None
         med[f"{k}_n"] = len(vals)

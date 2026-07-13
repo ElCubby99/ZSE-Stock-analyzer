@@ -465,6 +465,31 @@ function Assumptions({ valuation }) {
   )
 }
 
+/* v2 §7: objašnjenje klasa — prava, zašto se cijene razlikuju; fer je
+   klasno-agnostičan pa se premija redovne prikazuje, ne ugrađuje */
+function ClassExplainer({ data }) {
+  const ex = data.share_class_explainer
+  if (!ex) return null
+  return (
+    <section>
+      <div className="sec-label">Klase dionica — prava i zašto se cijene razlikuju</div>
+      <table>
+        <thead><tr><th>Klasa</th><th>Tip</th><th>Prava</th></tr></thead>
+        <tbody>
+          {ex.rows.map((r) => (
+            <tr key={r.ticker}>
+              <td><b>{r.ticker}</b></td>
+              <td>{r.type}</td>
+              <td>{r.rights}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="subnote">{ex.note}</div>
+    </section>
+  )
+}
+
 function Narrative({ data }) {
   const rec = data.valuation.reconciliation
   const ran = data.valuation.ran.filter((m) => !m.no_value)
@@ -522,8 +547,42 @@ function Narrative({ data }) {
   )
 }
 
+const IDENTITY_BASIS = {
+  our_estimate: 'naša procjena', market_fallback: 'tržišna (fallback)',
+  multiple: 'multipl', izvještaj: 'izvještaj',
+}
+
 function SotpTable({ sotp }) {
   if (!sotp) return null
+  if (sotp.identity) {
+    // v2 §5: reconciliation identitet — svaka stavka s osnovom, per-share
+    return (
+      <section>
+        <div className="sec-label">SOTP — identitet po stavkama (v2 §5)</div>
+        <table>
+          <thead><tr><th>Stavka</th><th className="num">M€</th>
+            <th className="num">€/dionici</th><th>Osnova</th></tr></thead>
+          <tbody>
+            {sotp.identity.map((row, i) => (
+              <tr key={i}>
+                <td>{row.item}</td>
+                <td className="num">{meur(row.eur)}</td>
+                <td className="num">{row.per_share === null || row.per_share === undefined
+                  ? dash : num(row.per_share, 2)}</td>
+                <td><span className="basis">{IDENTITY_BASIS[row.basis] || row.basis}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="subnote">
+          {sotp.identity_note}. {sotp.missing ? `Izvan NAV-a: ${sotp.missing.join('; ')}.` : ''}
+          {sotp.parent_child_mismatch
+            ? <span className="flag" style={{ marginLeft: 6 }}>MISMATCH: {sotp.parent_child_mismatch}</span>
+            : null}
+        </div>
+      </section>
+    )
+  }
   return (
     <section>
       <div className="sec-label">SOTP — vrijednost po dijelu</div>
@@ -673,6 +732,7 @@ export default function StockPage() {
           <>
           <PriceChart data={data} zone={zone} />
           <StatsStrip data={data} />
+          <ClassExplainer data={data} />
           {!marketOnly && (
             <div className="fin3-grid">
               <FinChart trend={data.trend} />

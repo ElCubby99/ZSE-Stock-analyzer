@@ -4427,6 +4427,7 @@
       "source": "zse.hr securityHistory (web JSON)"
     }
   ],
+  "share_class_explainer": null,
   "valuation": {
     "params": {
       "r": 0.082099,
@@ -4458,8 +4459,8 @@
     ],
     "ran": [
       {
-        "key": "multiples_relative",
-        "label": "Relativni multiplikatori",
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
         "low": 329.32757066123355,
         "base": 387.4442007779218,
         "high": 445.56083089461004,
@@ -4467,8 +4468,22 @@
         "no_value": false,
         "assumptions": {
           "placeholder": true,
-          "peer_pe": 12.0,
-          "peer_pb": 1.5,
+          "lenses": {
+            "pe": {
+              "mult": 12.0,
+              "per_share": 348.33
+            },
+            "pb": {
+              "mult": 1.5,
+              "per_share": 426.56
+            }
+          },
+          "carrier": "pb",
+          "carrier_reason": "nositelj po arhetipu 'bank' (v2 §2)",
+          "intra_spread": {
+            "spread_pct": 22.0,
+            "rule": "leće konzistentne (<40%) -> prosjek"
+          },
           "sources": {
             "peers": "HPB: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
           },
@@ -4543,11 +4558,6 @@
     ],
     "skipped": [
       {
-        "key": "ev_ebitda",
-        "label": "EV/EBITDA",
-        "reason": "financijski sektor (bank) — EBITDA nije smislena"
-      },
-      {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
         "reason": "financije — FCF loše definiran"
@@ -4563,20 +4573,20 @@
       "zone_high": 465.35398162045976,
       "dispersion": 0.2980670352762334,
       "divergent": false,
-      "archetype": "capital",
+      "archetype": "bank",
       "anchor_methods": [
         "justified_pb_roe",
         "residual_income"
       ],
       "method_roles": {
-        "multiples_relative": {
+        "comps": {
           "role": "secondary",
-          "note": "sekundarna leća uz kapitalno sidro (RI / opravdani P/B) — multipli i DDM ovise o peer skupu i politici isplate, ne o profitabilnosti kapitala",
+          "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
           "vs_zone_pct": 0.0
         },
         "ddm_gordon": {
           "role": "secondary",
-          "note": "sekundarna leća uz kapitalno sidro (RI / opravdani P/B) — multipli i DDM ovise o peer skupu i politici isplate, ne o profitabilnosti kapitala",
+          "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
           "vs_zone_pct": 0.15886237011081272
         },
         "justified_pb_roe": {
@@ -4595,7 +4605,7 @@
       "all_methods_high": 539.2812180811895,
       "dispersion_all": 0.45420981672217964,
       "method_bases": {
-        "multiples_relative": 387.4442007779218,
+        "comps": 387.4442007779218,
         "ddm_gordon": 539.2812180811895,
         "justified_pb_roe": 383.8544839724345,
         "residual_income": 294.33439485481864
@@ -4607,7 +4617,9 @@
       "anchor_inconsistency": [
         "residual_income -26% vs primarno sidro"
       ],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Firma ima 576 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 10.2% godišnje — više od 8.2% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 383.85 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -26% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je."
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Firma ima 576 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 10.2% godišnje — više od 8.2% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 383.85 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -26% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "red_rules": [],
+      "market_implied": null
     },
     "sotp": null
   },

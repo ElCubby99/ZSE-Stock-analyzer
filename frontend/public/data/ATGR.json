@@ -283,7 +283,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -9–46 € (raspon 119%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -9–33 € (raspon 127%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -4333,6 +4333,7 @@
       "source": "zse.hr securityHistory (web JSON)"
     }
   ],
+  "share_class_explainer": null,
   "valuation": {
     "params": {
       "r": 0.079876,
@@ -4357,34 +4358,41 @@
     "assumption_flags": [],
     "ran": [
       {
-        "key": "multiples_relative",
-        "label": "Relativni multiplikatori",
-        "low": 27.446876793762367,
-        "base": 32.29044328677926,
-        "high": 37.134009779796145,
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
+        "low": 28.079808309849717,
+        "base": 33.0350685998232,
+        "high": 37.99032888979667,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
-          "peer_pe": 13.38,
-          "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
-          "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.38 (n=3), P/B=1.31 (n=3), EV/EBITDA=6.0 (n=2). Skup ['PODR', 'ZITO', 'TOK'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PODR P/E=8.52 P/B=1.58; ZITO P/E=13.38 P/B=1.28; TOK P/E=14.96 P/B=1.31"
-          }
-        }
-      },
-      {
-        "key": "ev_ebitda",
-        "label": "EV/EBITDA",
-        "low": 29.38061291068293,
-        "base": 36.579926278818654,
-        "high": 43.779239646954366,
-        "confidence": 0.7,
-        "no_value": false,
-        "assumptions": {
-          "peer_ev_ebitda": 6.0,
-          "net_debt": 151304000.0,
-          "placeholder": false,
+          "lenses": {
+            "pe": {
+              "mult": 13.38,
+              "per_share": 32.29
+            },
+            "ev_ebitda": {
+              "mult": 6.0,
+              "per_share": 36.58
+            },
+            "ev_ebit": {
+              "mult": 10.5,
+              "per_share": 30.27
+            },
+            "pb": {
+              "mult": 0.93,
+              "per_share": 33.0
+            }
+          },
+          "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 6.8% / peer medijan 9.6% -> faktor 0.71 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
+          "ev_ebitda_carrier_ban": "EV/EBITDA ne smije biti nositelj: neto dug/EBITDA=1.43, D&A/EBITDA=0.5 — multipl laska firmama s visokim D&A/dugom (v2 §2)",
+          "carrier": "pb",
+          "carrier_reason": "nositelj po arhetipu 'cyclical' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
+          "intra_spread": {
+            "spread_pct": 21.0,
+            "rule": "leće konzistentne (<40%) -> prosjek"
+          },
           "sources": {
             "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.38 (n=3), P/B=1.31 (n=3), EV/EBITDA=6.0 (n=2). Skup ['PODR', 'ZITO', 'TOK'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PODR P/E=8.52 P/B=1.58; ZITO P/E=13.38 P/B=1.28; TOK P/E=14.96 P/B=1.31"
           }
@@ -4412,28 +4420,6 @@
         }
       },
       {
-        "key": "ddm_gordon",
-        "label": "Dividendni diskont",
-        "low": 36.49049643114925,
-        "base": 45.64148861470559,
-        "high": 60.91846298031864,
-        "confidence": 0.7,
-        "no_value": false,
-        "assumptions": {
-          "dps": 1.75,
-          "r": 0.079876,
-          "g_terminal": 0.04,
-          "g1_explicit": null,
-          "model": "jednofazni Gordon — RAST NIJE IZVEDEN",
-          "growth_source": null,
-          "placeholder": false,
-          "sources": {
-            "r": "r=0.0799 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.768: IZMJERENA — OLS tjednih log-prinosa klase ATGR vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.147); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
-          }
-        }
-      },
-      {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
         "low": 23.56839258611023,
@@ -4456,6 +4442,11 @@
     ],
     "skipped": [
       {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
+      },
+      {
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
         "reason": "RI predložak je za financijske firme (banka/osiguranje), ne consumer"
@@ -4467,60 +4458,57 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 27.446876793762367,
-      "zone_high": 37.134009779796145,
-      "dispersion": 0.2608695652173913,
-      "divergent": false,
-      "archetype": "operating",
+      "zone_low": 23.56839258611023,
+      "zone_high": 34.07217749836187,
+      "dispersion": 0.30828041186263017,
+      "divergent": true,
+      "archetype": "cyclical",
       "anchor_methods": [
-        "multiples_relative",
-        "ev_ebitda"
+        "justified_pb_roe",
+        "comps"
       ],
       "method_roles": {
-        "multiples_relative": {
-          "role": "anchor",
-          "note": null,
-          "vs_zone_pct": null
-        },
-        "ev_ebitda": {
+        "comps": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.1328406350431135
+          "vs_zone_pct": 0.14624364580053228
         },
         "dcf_fcf": {
           "role": "anchor_excluded",
           "note": "sidrena metoda ISKLJUČENA iz zone — nepozitivna baza (jednogodišnji ulaz)",
           "vs_zone_pct": null
         },
-        "ddm_gordon": {
-          "role": "secondary",
-          "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 0.22910207880480993
-        },
         "justified_pb_roe": {
-          "role": "secondary",
-          "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 0.0
+          "role": "anchor",
+          "note": null,
+          "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
+      "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
       "all_methods_low": -8.894830398280547,
-      "all_methods_high": 45.64148861470559,
-      "dispersion_all": 1.1948847565724368,
+      "all_methods_high": 33.0350685998232,
+      "dispersion_all": 1.2692541827604424,
       "method_bases": {
-        "multiples_relative": 32.29044328677926,
-        "ev_ebitda": 36.579926278818654,
+        "comps": 33.0350685998232,
         "dcf_fcf": -8.894830398280547,
-        "ddm_gordon": 45.64148861470559,
         "justified_pb_roe": 27.8632377982449
       },
       "qa_flags": [
-        "metode se međusobno razilaze 119% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +56% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 127% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +75% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 56.4,
+      "vs_market_pct": 75.2,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 9 € operativne zarade (EBITDA marža 8.8%). Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 32.29 € po dionici. Kontrolne metode uz sidro: EV/EBITDA +13% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke."
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 9 € operativne zarade (EBITDA marža 8.8%). Firma ima 469 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 6.8% godišnje — manje od 8.0% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 27.86 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +15% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+7.8% trajnog rasta godišnje / multipl P/E 20.9×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "red_rules": [],
+      "market_implied": {
+        "implied_g_pct": 7.8,
+        "implied_g_note": "uz naš r=8.0% cijena implicira trajni rast FCF-a ~+7.8% godišnje",
+        "implied_pe": 20.9,
+        "peer_pe": 13.38,
+        "implied_pe_note": "cijena implicira P/E 20.9× vs peer medijan 13.38×",
+        "narrative": "Tržišna cijena implicira ~+7.8% trajnog rasta godišnje / multipl P/E 20.9×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+      }
     },
     "sotp": null
   },

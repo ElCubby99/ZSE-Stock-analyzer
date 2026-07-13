@@ -106,7 +106,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -1–6 € (raspon 110%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -1–5 € (raspon 112%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -375,6 +375,7 @@
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [],
+  "share_class_explainer": null,
   "valuation": {
     "params": {
       "r": 0.0931,
@@ -412,35 +413,37 @@
     ],
     "ran": [
       {
-        "key": "multiples_relative",
-        "label": "Relativni multiplikatori",
-        "low": 2.2287148817833935,
-        "base": 2.622017507980463,
-        "high": 3.015320134177532,
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
+        "low": 4.4759723121893105,
+        "base": 5.265849779046248,
+        "high": 6.055727245903185,
         "confidence": 0.3,
         "no_value": false,
         "assumptions": {
           "placeholder": true,
-          "peer_pe": 12.0,
-          "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
-          "sources": {
-            "peers": "VLEN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+          "lenses": {
+            "pe": {
+              "mult": 12.0,
+              "per_share": 2.62
+            },
+            "ev_ebitda": {
+              "mult": 7.0,
+              "per_share": 6.19
+            },
+            "pb": {
+              "mult": 1.5,
+              "per_share": 5.27
+            }
           },
-          "low_confidence": "peer multipli su placeholder (nema peer skupa na ZSE) -> niska pouzdanost"
-        }
-      },
-      {
-        "key": "ev_ebitda",
-        "label": "EV/EBITDA",
-        "low": 5.343986557147469,
-        "base": 6.186778318310556,
-        "high": 7.029570079473642,
-        "confidence": 0.3,
-        "no_value": false,
-        "assumptions": {
-          "peer_ev_ebitda": 7.0,
-          "net_debt": -9552725.0,
-          "placeholder": true,
+          "ev_ebitda_carrier_ban": "EV/EBITDA ne smije biti nositelj: neto dug/EBITDA=-0.71, D&A/EBITDA=0.59 — multipl laska firmama s visokim D&A/dugom (v2 §2)",
+          "carrier": "pb",
+          "carrier_reason": "nositelj po arhetipu 'cyclical' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
+          "intra_spread": {
+            "spread_pct": 136.0,
+            "rule": "leće razmaknute 136% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst (v2 §3)",
+            "anomaly": "visok D&A (59% EBITDA-e)"
+          },
           "sources": {
             "peers": "VLEN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
           },
@@ -493,7 +496,7 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "reason": "ne isplaćuje (ili nepoznata) dividenda"
+        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
       },
       {
         "key": "residual_income",
@@ -507,25 +510,19 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 2.2287148817833935,
-      "zone_high": 3.015320134177532,
-      "dispersion": 0.26086956521739124,
+      "zone_low": 1.6739730603619436,
+      "zone_high": 2.2502116353574486,
+      "dispersion": 0.2560819462227911,
       "divergent": false,
-      "archetype": "operating",
+      "archetype": "cyclical",
       "anchor_methods": [
-        "multiples_relative",
-        "ev_ebitda"
+        "justified_pb_roe"
       ],
       "method_roles": {
-        "multiples_relative": {
-          "role": "anchor",
-          "note": null,
+        "comps": {
+          "role": "anchor_excluded",
+          "note": "sidrena metoda ISKLJUČENA iz zone — placeholder ulazi (conf < 0,5) — red rule v2 §8: ne smije sidriti",
           "vs_zone_pct": null
-        },
-        "ev_ebitda": {
-          "role": "anchor_alt",
-          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 1.3595488205094988
         },
         "dcf_fcf": {
           "role": "anchor_excluded",
@@ -533,30 +530,28 @@
           "vs_zone_pct": null
         },
         "justified_pb_roe": {
-          "role": "secondary",
-          "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": -0.13861387199724096
+          "role": "anchor",
+          "note": null,
+          "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
+      "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf, comps",
       "all_methods_low": -0.6317230949656405,
-      "all_methods_high": 6.186778318310556,
-      "dispersion_all": 1.102108571289192,
+      "all_methods_high": 5.265849779046248,
+      "dispersion_all": 1.1199660304552133,
       "method_bases": {
-        "multiples_relative": 2.622017507980463,
-        "ev_ebitda": 6.186778318310556,
+        "comps": 5.265849779046248,
         "dcf_fcf": -0.6317230949656405,
         "justified_pb_roe": 1.9197840824415242
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: ev_ebitda +136% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
-        "metode se međusobno razilaze 110% (sve metode) — provjeri ulaze/pretpostavke"
+        "metode se međusobno razilaze 112% (sve metode) — provjeri ulaze/pretpostavke"
       ],
       "vs_market_pct": null,
-      "anchor_inconsistency": [
-        "ev_ebitda +136% vs primarno sidro"
-      ],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 14 € operativne zarade (EBITDA marža 14.2%). Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 2.62 € po dionici. Kontrolne metode uz sidro: EV/EBITDA +136% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je."
+      "anchor_inconsistency": [],
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 14 € operativne zarade (EBITDA marža 14.2%). Firma ima 59 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 6.2% godišnje — manje od 9.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 1.92 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
+      "red_rules": [],
+      "market_implied": null
     },
     "sotp": null
   },

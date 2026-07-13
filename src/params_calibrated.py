@@ -92,6 +92,7 @@ PEER_SETS = {
     "ZITO": ["ATGR", "PODR", "TOK"],
     "TOK": ["ATGR", "PODR", "ZITO"],
     # industrija
+    "KOEI": ["ADPL", "IG"],  # bez KODT/DLKV (cirkularnost: njegove kćeri); uski skup
     "KODT": ["ADPL", "DLKV", "IG"],
     "ADPL": ["KODT", "DLKV", "IG"],
     "DLKV": ["KODT", "ADPL", "IG"],
@@ -121,17 +122,27 @@ def build_params(ticker: str) -> Params:
 
     disc_src = DISCOUNT_SRC
     dc = _calibration("holding_discount:ADRS") if ticker == "ADRS" else None
+    pnav_measured = None
     if dc:
+        # doktrina v2 §4: IZMJERENI vlastiti P/NAV zamjenjuje default;
+        # serija (M10): diskont d = 1 − cijena/NAV proxy -> P/NAV = 1 − d.
+        # Negativan d (premija) se u diskontu KLAMPA na 0 (premija se ne
+        # ugrađuje u fer — konzervativno), uz punu oznaku ograničenja proxyja.
+        pnav_measured = {
+            "median": round(1 - dc["median"], 3),
+            "p25": round(1 - dc["p75"], 3),   # veći diskont -> niži P/NAV
+            "p75": round(1 - dc["p25"], 3),
+            "note": (f"serija M10 ({dc['period']}, n={dc['n_days']} d) na "
+                     f"KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na "
+                     f"placeholder multiplama, grupni neto dug konstantan); "
+                     f"opažena PREMIJA se klampa na diskont 0 — premija se ne "
+                     f"ugrađuje u fer (v2 §4)"),
+        }
         disc_src = (
-            f"holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija "
-            f"(M10, {dc['period']}, n={dc['n_days']} d) mjeri cijenu prema "
-            f"KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: "
-            f"medijan {dc['median']:+.1%}, p25 {dc['p25']:+.1%}, p75 "
-            f"{dc['p75']:+.1%}, zadnje {dc['latest']:+.1%} ({dc['latest_date']}) "
-            f"— negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove "
-            f"na placeholder multiplama i grupni neto dug konstantnim pa NE "
-            f"mjeri čisti holding diskont; raspon se zato NE zamjenjuje "
-            f"opaženim (docs/calibration.md)")
+            f"IZMJERENI vlastiti P/NAV (v2 §4): medijan {pnav_measured['median']:.2f} "
+            f"(p25 {pnav_measured['p25']:.2f}, p75 {pnav_measured['p75']:.2f}), "
+            f"zadnje {1 - dc['latest']:.2f} ({dc['latest_date']}). "
+            f"{pnav_measured['note']}")
 
     sources = {
         "r": f"r={r:.4f} (CAPM: rf+beta×ERP). {RF_SRC}. {ERP_SRC}. {beta_src}",
@@ -145,6 +156,8 @@ def build_params(ticker: str) -> Params:
     p.rates_calibrated = True
     p.beta_calibrated = beta_cal
     p.beta = beta  # numerički, samo za prikaz (for-dummies kartica pretpostavki)
+    if pnav_measured:
+        p.pnav_measured = pnav_measured  # v2 §4: izmjereni P/NAV za SOTP diskont
     p.sources = sources
 
     p.peers_narrow = False
@@ -167,6 +180,8 @@ def build_params(ticker: str) -> Params:
             # ROE peera: P/B leća se skalira omjerom ROE (P/B je funkcija ROE)
             if m.get("roe"):
                 p.peer_roe = round(m["roe"], 4)
+            if m.get("ev_ebit") and m["ev_ebit_n"] >= 2:
+                p.peer_ev_ebit = round(m["ev_ebit"], 2)  # doktrina v2: EV/EBIT leća
             narrow_note = (" USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda."
                            if p.peers_narrow else "")
             sources["peers"] = (

@@ -3152,6 +3152,21 @@
       "source": "zse.hr securityHistory (web JSON)"
     }
   ],
+  "share_class_explainer": {
+    "rows": [
+      {
+        "ticker": "CROS",
+        "type": "redovna",
+        "rights": "pravo glasa na glavnoj skupštini; dividenda nakon povlaštenih"
+      },
+      {
+        "ticker": "CROS2",
+        "type": "povlaštena",
+        "rights": "bez prava glasa (u pravilu); prioritetna dividenda — uvjeti u statutu/odluci o izdanju"
+      }
+    ],
+    "note": "Fer vrijednost po dionici je KLASNO-AGNOSTIČNA (firma / sve dionice ex-trezor). Tržišne cijene klasa se ipak razlikuju: glasačka premija redovne, razlika u likvidnosti i članstvo u indeksu. Ta premija je tržišna struktura — prikazuje se i objašnjava, ali se NE ugrađuje u fer (v2 §7)."
+  },
   "valuation": {
     "params": {
       "r": 0.079363,
@@ -3183,17 +3198,32 @@
     ],
     "ran": [
       {
-        "key": "multiples_relative",
-        "label": "Relativni multiplikatori",
-        "low": 2067.213146705702,
-        "base": 2432.0154667125908,
-        "high": 2796.817786719479,
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
+        "low": 2582.2446398275993,
+        "base": 3037.934870385411,
+        "high": 3493.6251009432226,
         "confidence": 0.3,
         "no_value": false,
         "assumptions": {
           "placeholder": true,
-          "peer_pe": 12.0,
-          "peer_pb": 1.5,
+          "lenses": {
+            "pe": {
+              "mult": 12.0,
+              "per_share": 1826.1
+            },
+            "pb": {
+              "mult": 1.5,
+              "per_share": 3037.93
+            }
+          },
+          "carrier": "pb",
+          "carrier_reason": "nositelj po arhetipu 'insurance' (v2 §2)",
+          "intra_spread": {
+            "spread_pct": 66.0,
+            "rule": "leće razmaknute 66% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst (v2 §3)",
+            "anomaly": "razlika nazivnika (marža/knjiga/zarada)"
+          },
           "sources": {
             "peers": "CROS: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
           },
@@ -3268,11 +3298,6 @@
     ],
     "skipped": [
       {
-        "key": "ev_ebitda",
-        "label": "EV/EBITDA",
-        "reason": "financijski sektor (insurance) — EBITDA nije smislena"
-      },
-      {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
         "reason": "financije — FCF loše definiran"
@@ -3288,20 +3313,20 @@
       "zone_high": 2288.8989491293187,
       "dispersion": 0.31073753554060557,
       "divergent": true,
-      "archetype": "capital",
+      "archetype": "insurance",
       "anchor_methods": [
         "justified_pb_roe",
         "residual_income"
       ],
       "method_roles": {
-        "multiples_relative": {
+        "comps": {
           "role": "secondary",
-          "note": "sekundarna leća uz kapitalno sidro (RI / opravdani P/B) — multipli i DDM ovise o peer skupu i politici isplate, ne o profitabilnosti kapitala",
-          "vs_zone_pct": 0.06252635907658255
+          "note": "kapitalno sidro — DDM potvrda (v2 §2)",
+          "vs_zone_pct": 0.32724726512763724
         },
         "ddm_gordon": {
           "role": "secondary",
-          "note": "sekundarna leća uz kapitalno sidro (RI / opravdani P/B) — multipli i DDM ovise o peer skupu i politici isplate, ne o profitabilnosti kapitala",
+          "note": "kapitalno sidro — DDM potvrda (v2 §2)",
           "vs_zone_pct": 0.6081501134921485
         },
         "justified_pb_roe": {
@@ -3320,7 +3345,7 @@
       "all_methods_high": 3680.893104814373,
       "dispersion_all": 0.4925527464046023,
       "method_bases": {
-        "multiples_relative": 2432.0154667125908,
+        "comps": 3037.934870385411,
         "ddm_gordon": 3680.893104814373,
         "justified_pb_roe": 1867.85909681629,
         "residual_income": 2010.210453052156
@@ -3330,7 +3355,16 @@
       ],
       "vs_market_pct": 71.7,
       "anchor_inconsistency": [],
-      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +12.9% godišnje (izračun iz objavljenih izvješća; forward procjena iz backloga/guidance-a još nije izvedena). Firma ima 870 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 7.5% godišnje — manje od 7.9% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 1,867.86 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) +4% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu."
+      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +12.9% godišnje (izračun iz objavljenih izvješća; forward procjena iz backloga/guidance-a još nije izvedena). Firma ima 870 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 7.5% godišnje — manje od 7.9% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 1,867.86 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) +4% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~-1.4% trajnog rasta godišnje / multipl P/E 21.8×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "red_rules": [],
+      "market_implied": {
+        "implied_g_pct": -1.4,
+        "implied_g_note": "uz naš r=7.9% cijena implicira trajni rast FCF-a ~-1.4% godišnje",
+        "implied_pe": 21.8,
+        "peer_pe": 12.0,
+        "implied_pe_note": "cijena implicira P/E 21.8× vs peer medijan 12.0× (placeholder)",
+        "narrative": "Tržišna cijena implicira ~-1.4% trajnog rasta godišnje / multipl P/E 21.8×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+      }
     },
     "sotp": null
   },

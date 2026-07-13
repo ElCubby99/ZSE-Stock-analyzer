@@ -820,6 +820,30 @@ def build_stock_json(conn, ticker: str) -> dict:
                          BANK_FUNDAMENTAL_ITEMS if is_bank else FUNDAMENTAL_ITEMS)
     classes = _share_classes(cur, company_id)
 
+    # v2 §7: vrednuje se FIRMA (fer po dionici je klasno-agnostična); stranica
+    # OBJAŠNJAVA prava po klasi i zašto se tržišne cijene klasa razlikuju
+    share_class_explainer = None
+    if len(classes) > 1:
+        rows = []
+        for c0 in classes:
+            typ = c0.get("class_type")
+            rows.append({
+                "ticker": c0["ticker"],
+                "type": "redovna" if typ == "ordinary" else "povlaštena",
+                "rights": ("pravo glasa na glavnoj skupštini; dividenda nakon "
+                           "povlaštenih" if typ == "ordinary" else
+                           "bez prava glasa (u pravilu); prioritetna dividenda — "
+                           "uvjeti u statutu/odluci o izdanju"),
+            })
+        share_class_explainer = {
+            "rows": rows,
+            "note": ("Fer vrijednost po dionici je KLASNO-AGNOSTIČNA (firma / sve "
+                     "dionice ex-trezor). Tržišne cijene klasa se ipak razlikuju: "
+                     "glasačka premija redovne, razlika u likvidnosti i članstvo u "
+                     "indeksu. Ta premija je tržišna struktura — prikazuje se i "
+                     "objašnjava, ali se NE ugrađuje u fer (v2 §7)."),
+        }
+
     # valuacija: postojeći motor, kalibrirani Params (read-only za frontend)
     params = build_params(ticker)
     ctx = build_ctx(conn, ticker, params=params)
@@ -857,6 +881,10 @@ def build_stock_json(conn, ticker: str) -> dict:
         "vs_market_pct": _f(rec.get("vs_market_pct")),
         "anchor_inconsistency": rec.get("anchor_inconsistency") or [],
         "reasoning": rec.get("reasoning"),
+        # doktrina v2: red rules (§8) + market-implied check (§6)
+        "red_rules": rec.get("red_rules") or [],
+        "market_implied": json.loads(json.dumps(rec.get("market_implied"), default=_f))
+        if rec.get("market_implied") else None,
     })
 
     shares = _f(ctx.shares_ex_treasury)
@@ -886,6 +914,11 @@ def build_stock_json(conn, ticker: str) -> dict:
             "market_vs_fair_pct": a.get("market_vs_fair_pct"),
             "market_vs_fair_note": a.get("market_vs_fair_note"),
             "missing": a.get("missing"),
+            # v2 §5: reconciliation identitet — raščlamba po stavkama
+            "identity": json.loads(json.dumps(a.get("identity"), default=_f))
+            if a.get("identity") else None,
+            "identity_note": a.get("identity_note"),
+            "parent_child_mismatch": a.get("parent_child_mismatch"),
         }
 
     # pretpostavke s izvorima (read-only na stranici) + eksplicitne oznake nesigurnosti
@@ -950,6 +983,7 @@ def build_stock_json(conn, ticker: str) -> dict:
         "price_summary": _price_summary(cur, classes, today),
         "dividend_calendar": _dividend_calendar(cur, company_id, today),
         "prices": _price_history(cur, company_id),
+        "share_class_explainer": share_class_explainer,
         "valuation": {
             "params": {
                 "r": _f(params.cost_of_equity), "g": _f(params.perpetual_growth),

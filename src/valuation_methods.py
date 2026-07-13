@@ -85,6 +85,8 @@ class Ctx:
     growth_hint: Optional[dict] = None
     # M11 (KOEI): dobit matici kćeri po company_id (standalone ostatak SOTP-a)
     ni_parent_of: Optional[Callable[[int], Optional[float]]] = None
+    # v2 §2/§4: 'operating' (integrirani parent, KOEI tip) ili 'passive' (ADRS)
+    holding_type: str = "passive"
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -135,39 +137,45 @@ class Method:
 #  >>> NEPROMIJENJENO (zahtjev: ne mijenjaj eligibility logiku) <<<
 # ============================================================
 
-def elig_multiples(c: Ctx):
-    if c.have("net_income_parent") or c.have("total_equity") or c.have("dps"):
-        return True, "ima zaradu/knjigu/dividendu"
-    return False, "nema osnovnih per-share ulaza"
-
-def elig_ev_ebitda(c: Ctx):
-    if c.sector in FINANCIAL_SECTORS:
-        return False, f"financijski sektor ({c.sector}) — EBITDA nije smislena"
-    if c.consolidates_insurer:
-        return False, "konsolidira osiguratelja — EV/EBITDA kontaminiran (deck: 10,7× s ogradom)"
-    if not (c.have("ebitda") or (c.have("ebit") and c.have("depreciation_amortization"))):
-        return False, "nema EBITDA niti (EBIT + D&A)"
-    return True, "operativna firma s EBITDA"
+def elig_comps(c: Ctx):
+    """Doktrina v2: JEDNA tržišna metoda (interna triangulacija leća)."""
+    if c.have("net_income_parent") or c.have("total_equity") or c.have("ebitda") \
+            or (c.have("ebit") and c.have("depreciation_amortization")):
+        return True, "ima zaradu/knjigu/EBITDA za peer usporedbu"
+    return False, "nema nazivnika za peer usporedbu"
 
 def elig_dcf(c: Ctx):
     if c.sector in FINANCIAL_SECTORS:
         return False, "financije — FCF loše definiran"
-    if c.is_holding:
-        return False, "holding — FCF ne hvata vrijednost udjela"
-    if not (c.have("operating_cf") and c.have("capex")):
-        return False, "nema operativni CF i capex"
-    return True, "operativna firma s mjerljivim FCF"
+    if c.is_holding and getattr(c, "holding_type", "passive") != "operating":
+        return False, "pasivni holding — FCF ne hvata vrijednost udjela (v2 §2)"
+    if c.have("operating_cf") and c.have("capex"):
+        return True, "operativna firma s mjerljivim FCF"
+    # v2 §9.2 (ADPL tip): guidance-DCF — brojčani guidance uprave (rast, marža,
+    # capex) + prihod iz izvješća dopuštaju FCF proxy kad CF izvještaj fali
+    gh = c.growth_hint or {}
+    sig = gh.get("guidance_signals") or {}
+    if gh.get("rule") == "R0" and c.have("revenue") \
+            and sig.get("guidance_ebitda_margin") and sig.get("guidance_capex_eur") is not None:
+        return True, "guidance-DCF: brojčani guidance uprave (rast+marža+capex)"
+    return False, "nema operativni CF i capex (ni brojčani guidance za proxy)"
 
 def elig_ddm(c: Ctx):
+    if c.sector not in FINANCIAL_SECTORS:
+        return False, ("DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); "
+                       "dividendni prinos je pokazatelj")
     if not c.have("dps"):
         return False, "ne isplaćuje (ili nepoznata) dividenda"
-    return True, "stabilan isplatitelj dividende"
+    return True, "financijski isplatitelj dividende"
 
 def elig_justified_pb_roe(c: Ctx):
     if not (c.have("total_equity") and c.have("net_income_parent")):
         return False, "nema kapital i/ili dobit za ROE"
-    # Posebno vrijedno za financije i niska-ROE holdinge (deck: opravdani P/B 0,6–0,8 -> 55–74€)
-    return True, "ima knjigu i ROE (osobito za financije/holding)"
+    arche = archetype_v2(c)
+    if arche in ("bank", "insurance", "cyclical", "industrial_noforward"):
+        return True, f"nositelj/potvrda arhetipa '{arche}' (v2 §2)"
+    return False, (f"arhetip '{arche}': opravdani P/B je ovdje leća/pokazatelj, "
+                   "ne metoda (v2 §1/§9.1)")
 
 def elig_sotp(c: Ctx):
     if not c.is_group:
@@ -217,77 +225,120 @@ def _peer_confidence(p, assum: dict) -> float:
     return 0.3
 
 
-def compute_multiples(c: Ctx) -> ValueRange:
-    """P/E i P/B leća: vrijednost/dionica = peer_multiple × (zarada matice | knjiga matice) / dionice.
+def compute_comps(c: Ctx) -> ValueRange:
+    """Doktrina v2 §1/§3: JEDNA tržišna metoda "peer usporedba" koja INTERNO
+    triangulira 2–4 leće (P/E, EV/EBITDA, EV/EBIT, P/B-ROE) u JEDAN raspon.
+    Leće su ULAZI, ne zasebne metode.
 
-    P/B leća: za OPERATIVNE firme se NE koristi kad P/E leća postoji —
-    standardna praksa: operativna firma se multiplira na zaradu/EBITDA, P/B je
-    smislen za financijske (i njih ionako nosi opravdani P/B iz vlastitog
-    ROE-a). P/B ostaje samo kao FALLBACK bez pozitivne zarade, skaliran
-    omjerom ROE naniže (peer P/B nije prenosiv na drugačiju profitabilnost)."""
+    Pravila:
+      - izbor NOSITELJA po arhetipu (§2); EV/EBITDA ne smije biti nositelj kad
+        je neto dug/EBITDA > 2,5 ili D&A/EBITDA > 0,45 (laska zaduženima).
+      - INTRA-SPREAD (§3): leće razmaknute > 40% -> NE prosječi; nositelj nosi
+        bazu, ostale su kontekst s objašnjenjem anomalije (poluga, D&A, marža).
+      - P/B leća ROE-skalirana naniže (peer P/B nije prenosiv na nižu
+        profitabilnost); naviše se ne ekstrapolira."""
     p = c.params
     ni = c.val("net_income_parent")
     eq = c.val("equity_parent") or c.val("total_equity")
-    lenses, assum = [], {"placeholder": p.placeholder}
+    ebitda = c.val("ebitda")
+    if ebitda is None:
+        ebit_, da_ = c.val("ebit"), c.val("depreciation_amortization")
+        ebitda = (ebit_ + da_) if (ebit_ is not None and da_ is not None) else None
+    ebit = c.val("ebit")
+    da = c.val("depreciation_amortization")
+    net_debt = c.val("net_debt")
+    assum: dict = {"placeholder": p.placeholder, "lenses": {}}
+
+    lenses: dict = {}
     if ni is not None and ni > 0:
-        pe_ps = _per_share(p.peer_pe * ni, c)
-        if pe_ps is not None:
-            lenses.append(pe_ps); assum["peer_pe"] = p.peer_pe
-    arche = ARCHETYPE_OF.get(c.sector or "", "operating")
-    use_pb = (arche == "capital") or not lenses   # operativna: P/E leća dovoljna
-    if eq is not None and use_pb:
+        v = _per_share(p.peer_pe * ni, c)
+        if v is not None:
+            lenses["pe"] = v
+            assum["lenses"]["pe"] = {"mult": p.peer_pe, "per_share": round(v, 2)}
+    ev_ok = (c.sector not in FINANCIAL_SECTORS and not c.consolidates_insurer
+             and net_debt is not None)
+    if ev_ok and ebitda and ebitda > 0 and p.peer_ev_ebitda:
+        v = _per_share(p.peer_ev_ebitda * ebitda - net_debt, c)
+        if v is not None and v > 0:
+            lenses["ev_ebitda"] = v
+            assum["lenses"]["ev_ebitda"] = {"mult": p.peer_ev_ebitda, "per_share": round(v, 2)}
+    if ev_ok and ebit and ebit > 0 and getattr(p, "peer_ev_ebit", None):
+        v = _per_share(p.peer_ev_ebit * ebit - net_debt, c)
+        if v is not None and v > 0:
+            lenses["ev_ebit"] = v
+            assum["lenses"]["ev_ebit"] = {"mult": p.peer_ev_ebit, "per_share": round(v, 2)}
+    if eq is not None and eq > 0:
         pb_mult = p.peer_pb
         peer_roe = getattr(p, "peer_roe", None)
-        own_roe = (ni / eq) if (ni is not None and eq and ni > 0) else None
+        own_roe = (ni / eq) if (ni is not None and ni > 0) else None
         if peer_roe and own_roe:
-            # korekcija SAMO NANIŽE: firmi nižeg ROE-a peer P/B se smanjuje;
-            # višem ROE-u se NE ekstrapolira naviše (zarada je već u P/E leći)
             scale = max(0.3, min(1.0, own_roe / peer_roe))
             pb_mult = p.peer_pb * scale
             assum["pb_roe_scale"] = (
-                f"P/B leća skalirana omjerom ROE: vlastiti {own_roe:.1%} / "
-                f"peer medijan {peer_roe:.1%} = {own_roe / peer_roe:.2f} "
-                f"(klampano na [0,3–1,0] -> {scale:.2f}); peer P/B bez ROE "
-                f"konteksta nije prenosiv, a naviše se ne ekstrapolira")
-        pb_ps = _per_share(pb_mult * eq, c)
-        if pb_ps is not None:
-            lenses.append(pb_ps); assum["peer_pb"] = round(pb_mult, 2)
-    elif eq is not None and not use_pb:
-        assum["pb_lens"] = ("P/B leća izostavljena: operativna firma se "
-                            "multiplira na zaradu (P/E) i EBITDA; peer P/B "
-                            "nije prenosiv bez ROE konteksta")
+                f"P/B leća ROE-skalirana: vlastiti {own_roe:.1%} / peer medijan "
+                f"{peer_roe:.1%} -> faktor {scale:.2f} (samo naniže; naviše se "
+                f"ne ekstrapolira — zaradu nosi P/E leća)")
+        v = _per_share(pb_mult * eq, c)
+        if v is not None and v > 0:
+            lenses["pb"] = v
+            assum["lenses"]["pb"] = {"mult": round(pb_mult, 2), "per_share": round(v, 2)}
     if not lenses:
-        return _missing(c, "net_income_parent|equity_parent", "shares_ex_treasury")
+        return _missing(c, "net_income_parent|equity_parent|ebitda", "shares_ex_treasury")
+
+    # --- izbor nositelja (§2) + isključenje EV/EBITDA kod poluge/visokog D&A
+    lev = (net_debt / ebitda) if (net_debt is not None and ebitda and ebitda > 0) else None
+    da_share = (da / ebitda) if (da is not None and ebitda and ebitda > 0) else None
+    ev_ebitda_banned = ((lev is not None and lev > 2.5)
+                        or (da_share is not None and da_share > 0.45))
+    if ev_ebitda_banned:
+        assum["ev_ebitda_carrier_ban"] = (
+            f"EV/EBITDA ne smije biti nositelj: neto dug/EBITDA="
+            f"{lev if lev is None else round(lev, 2)}, D&A/EBITDA="
+            f"{da_share if da_share is None else round(da_share, 2)} — "
+            "multipl laska firmama s visokim D&A/dugom (v2 §2)")
+    arche = archetype_v2(c)
+    pref = {
+        "bank": ["pb", "pe"], "insurance": ["pb", "pe"],
+        "tourism": ["ev_ebitda", "pe", "ev_ebit"],
+        "cyclical": ["pb", "ev_ebit", "pe"],
+        "holding_passive": ["pe", "pb"], "holding_operating": ["pe", "ev_ebit"],
+    }.get(arche, ["ev_ebit", "pe", "ev_ebitda", "pb"])
+    if ev_ebitda_banned:
+        pref = [x for x in pref if x != "ev_ebitda"] + ["pe", "ev_ebit", "pb"]
+    carrier = next((k for k in pref if k in lenses), next(iter(lenses)))
+    assum["carrier"] = carrier
+    assum["carrier_reason"] = (f"nositelj po arhetipu '{arche}' (v2 §2)"
+                               + ("; EV/EBITDA isključen (poluga/D&A)" if ev_ebitda_banned else "")
+                               + ("; uz napomenu o najmovima (MSFI 16 diže EBITDA)"
+                                  if arche == "tourism" and carrier == "ev_ebitda" else ""))
+
+    # --- intra-spread pravilo (§3)
+    vals = list(lenses.values())
+    spread = (max(vals) - min(vals)) / min(vals) if min(vals) > 0 else None
+    if spread is not None and spread > 0.40 and len(lenses) > 1:
+        base = lenses[carrier]
+        expl = []
+        if lev is not None and abs(lev) > 1.5:
+            expl.append(f"poluga (neto dug/EBITDA {lev:.1f})")
+        if da_share is not None and da_share > 0.35:
+            expl.append(f"visok D&A ({da_share:.0%} EBITDA-e)")
+        if "pb" in lenses and assum.get("pb_roe_scale"):
+            expl.append("ROE ispod peer medijana (P/B leća skalirana)")
+        assum["intra_spread"] = {
+            "spread_pct": round(spread * 100, 0),
+            "rule": (f"leće razmaknute {spread:.0%} > 40% -> NE prosječi; bazu "
+                     f"nosi '{carrier}', ostale su kontekst (v2 §3)"),
+            "anomaly": ("; ".join(expl) or "razlika nazivnika (marža/knjiga/zarada)"),
+        }
+    else:
+        base = sum(vals) / len(vals)
+        if spread is not None:
+            assum["intra_spread"] = {"spread_pct": round(spread * 100, 0),
+                                     "rule": "leće konzistentne (<40%) -> prosjek"}
     if p.sources.get("peers"):
         assum["sources"] = {"peers": p.sources["peers"]}
-    base = sum(lenses) / len(lenses)
     return ValueRange(base * (1 - p.band), base, base * (1 + p.band), assum,
                       _peer_confidence(p, assum))
-
-
-def compute_ev_ebitda(c: Ctx) -> ValueRange:
-    """EV = peer_ev_ebitda × EBITDA; equity = EV − net_dug; /dionice. (Ne treba tekuća cijena.)"""
-    p = c.params
-    ebitda = c.val("ebitda")
-    if ebitda is None:
-        ebit, da = c.val("ebit"), c.val("depreciation_amortization")
-        ebitda = (ebit + da) if (ebit is not None and da is not None) else None
-    if ebitda is None:
-        return _missing(c, "ebitda")
-    net_debt = c.val("net_debt")
-    if net_debt is None:
-        return _missing(c, "net_debt")
-    def ps(mult):
-        ev = mult * ebitda
-        return _per_share(ev - net_debt, c)  # net_debt<0 (neto novac) => equity > EV
-    base = ps(p.peer_ev_ebitda)
-    if base is None:
-        return _missing(c, "shares_ex_treasury")
-    lo, hi = ps(p.peer_ev_ebitda * (1 - p.band)), ps(p.peer_ev_ebitda * (1 + p.band))
-    assum = {"peer_ev_ebitda": p.peer_ev_ebitda, "net_debt": net_debt, "placeholder": p.placeholder}
-    if p.sources.get("peers"):
-        assum["sources"] = {"peers": p.sources["peers"]}
-    return ValueRange(lo, base, hi, assum, _peer_confidence(p, assum))
 
 
 def compute_dcf(c: Ctx) -> ValueRange:
@@ -297,11 +348,26 @@ def compute_dcf(c: Ctx) -> ValueRange:
     s OZNAKOM da eksplicitna faza nije izvedena iz podataka."""
     p = c.params
     fcf = c.val("free_cash_flow")
+    guidance_fcf_note = None
     if fcf is None:
         ocf, capex = c.val("operating_cf"), c.val("capex")
         fcf = (ocf - capex) if (ocf is not None and capex is not None) else None
     if fcf is None:
-        return _missing(c, "free_cash_flow|operating_cf+capex")
+        # v2 §9.2 guidance-DCF (ADPL tip): FCF proxy iz brojčanog guidancea
+        gh0 = c.growth_hint or {}
+        sig = gh0.get("guidance_signals") or {}
+        rev = c.val("revenue")
+        if (gh0.get("rule") == "R0" and rev
+                and sig.get("guidance_ebitda_margin") and sig.get("guidance_capex_eur") is not None):
+            m_, cap_ = sig["guidance_ebitda_margin"], sig["guidance_capex_eur"]
+            fcf = rev * m_ * (1 - 0.18) - cap_
+            guidance_fcf_note = (
+                f"FCF PROXY iz guidancea: prihod {rev / 1e6:,.0f} M€ × EBITDA marža "
+                f"{m_:.0%} × (1−18% porez) − capex {cap_ / 1e6:,.0f} M€ = "
+                f"{fcf / 1e6:,.1f} M€ — aproksimacija (zanemaruje kamate i obrtni "
+                f"kapital), guidance uprave citiran u growth_source")
+    if fcf is None:
+        return _missing(c, "free_cash_flow|operating_cf+capex|guidance")
     net_debt = c.val("net_debt") or 0.0
     gT = p.terminal_growth
     gh = c.growth_hint or {}
@@ -331,11 +397,17 @@ def compute_dcf(c: Ctx) -> ValueRange:
                        "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)"),
              "growth_source": gh.get("source"),
              "placeholder": p.placeholder}
+    if guidance_fcf_note:
+        assum["guidance_fcf"] = guidance_fcf_note
     src = {k: p.sources[k] for k in ("wacc", "g") if p.sources.get(k)}
     if src:
         assum["sources"] = src
-    return ValueRange(lo or base, base, hi or base, assum,
-                      0.6 if p.rates_calibrated else 0.4)
+    # v2: forward rast iz izvješća + izmjerena beta smanjuju najveću DCF
+    # nesigurnost -> 0,7 (prag confidence gatea za rekurzivni SOTP)
+    conf = (0.7 if (p.rates_calibrated and getattr(p, "beta_calibrated", False)
+                    and gh.get("forward")) else
+            0.6 if p.rates_calibrated else 0.4)
+    return ValueRange(lo or base, base, hi or base, assum, conf)
 
 
 def compute_ddm(c: Ctx) -> ValueRange:
@@ -383,6 +455,13 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
     eq = c.val("equity_parent") or c.val("total_equity")
     if ni is None or not eq:
         return _missing(c, "net_income_parent", "equity_parent")
+    if eq <= 0:
+        # negativna knjiga: (ROE−g)/(r−g) × BVPS daje dvostruki minus ->
+        # besmislen plus; metoda nije primjenjiva
+        return ValueRange(0, 0, 0,
+                          {"missing": ["equity_parent>0"],
+                           "note": "knjiga negativna — opravdani P/B nije primjenjiv"},
+                          0.0)
     bvps = _per_share(eq, c)
     if bvps is None:
         return _missing(c, "shares_ex_treasury")
@@ -421,15 +500,34 @@ def compute_sotp(c: Ctx) -> ValueRange:
       komponente (default_multiple je pretpostavka), False za tržišne.
     """
     p = c.params
+    # v2 §4 taksonomija diskonta: integrirani operativni parent (KOEI tip)
+    # 0–5% (kontrola + konsolidacija, NIJE pasivni holding); pasivni holding:
+    # IZMJERENI vlastiti P/NAV ako postoji (params ga donosi iz kalibracije),
+    # inače default 15–25% s OZNAKOM. DLOC/DLOM na uvrštene se NE stacka.
+    if getattr(c, "holding_type", "passive") == "operating":
+        disc_lo, disc_hi = 0.0, 0.05
+        disc_reason = ("integrirani operativni parent (v2 §4): kontrola + "
+                       "konsolidacija iste djelatnosti -> diskont 0–5%, "
+                       "NE tretira se kao pasivni holding")
+    elif getattr(p, "pnav_measured", None):
+        pm = p.pnav_measured  # {'median':..., 'p25':..., 'p75':..., 'note':...}
+        disc_lo = max(0.0, 1 - pm["p75"])
+        disc_hi = max(0.0, 1 - pm["p25"])
+        disc_reason = (f"IZMJERENI vlastiti P/NAV (v2 §4): medijan "
+                       f"{pm['median']:.2f} (p25 {pm['p25']:.2f}, p75 "
+                       f"{pm['p75']:.2f}) -> diskont {disc_lo:.0%}–{disc_hi:.0%}. "
+                       + pm.get("note", ""))
+    else:
+        disc_lo, disc_hi = p.holding_discount_low, p.holding_discount_high
+        disc_reason = ("default 15–25% — vlastiti P/NAV NIJE mjerljiv "
+                       "(nedovoljno uvrštenih kćeri/serije); OZNAČENA "
+                       "pretpostavka (v2 §4)")
+    if disc_hi - disc_lo < 0.05:
+        disc_hi = disc_lo + 0.05   # pod osjetljivosti: zona ne smije biti točka
     assum = {
-        "holding_discount_range": [p.holding_discount_low, p.holding_discount_high],
-        "holding_discount_reason": (
-            "empirijski raspon konglomeratskog/holding diskonta za europske "
-            "holdinge (nelikvidnost, dvostruko oporezivanje dividendi, trošak "
-            "centra); PLACEHOLDER dok se ne kalibrira na ZSE povijest"
-        ),
+        "holding_discount_range": [disc_lo, disc_hi],
+        "holding_discount_reason": disc_reason,
         "net_cash_excludes_insurance_portfolio": True,
-        "listed_repricing_scenario": "CROS @ P/E 12 = konzervativno sidro",
         "placeholder": p.placeholder,
     }
     # Dio 0.5 (rekurzivni SOTP): za UVRŠTENE kćeri vodimo DVIJE vrijednosti —
@@ -450,8 +548,9 @@ def compute_sotp(c: Ctx) -> ValueRange:
                 fair_basis = "our_estimate"
             else:
                 stake_fair = stake_mkt
-                basis = (f"market: trž.kap {mc:,.0f} × {pct:.4f} — kći nije "
-                         f"analizirana u sustavu, tržišna vrijednost")
+                basis = (f"market: trž.kap {mc:,.0f} × {pct:.4f} — kći po "
+                         f"tržištu (naša procjena low-confidence/placeholder "
+                         f"ili nije analizirana; v2 §5 gate)")
                 fair_basis = "market_fallback"
             gross_mkt += stake_mkt
             gross_fair += stake_fair
@@ -468,9 +567,23 @@ def compute_sotp(c: Ctx) -> ValueRange:
             basis = (f"ebitda_multiple: {seg:,.0f} [{h['segment_key']}] "
                      f"× {h['default_multiple']} × {pct:.2f}")
             is_placeholder = True  # default_multiple je pretpostavka
+        elif h["valuation_basis"] == "associate_pe":
+            # v2 §9.3 (KPT): pridruženo društvo po metodi udjela — udjel u
+            # NJEGOVOJ dobiti × peer P/E; ista se dobit ODUZIMA iz residual_pe
+            # (metoda udjela ju je već unijela u konsolidiranu NI — bez toga
+            # bi se dvostruko brojala)
+            ani = h.get("associate_ni")
+            if not ani:
+                missing.append(f"associate_pe({h['held_name']}): nema dobiti"); continue
+            ani = float(ani)
+            stake = ani * pct * p.peer_pe
+            basis = (f"associate_pe: dobit pridruženog {ani:,.0f} × {pct:.2f} "
+                     f"× P/E {p.peer_pe} — metoda udjela (izvor u holdings)")
+            is_placeholder = not p.peers_calibrated
         elif h["valuation_basis"] == "residual_pe":
             # standalone ostatak matice: (NI matici grupe - Σ pripisive NI
-            # uvrštenih kćeri) × peer P/E — aproksimacija, jasno označena
+            # uvrštenih kćeri - Σ udjela u dobiti pridruženih koji su zasebno
+            # vrednovani) × peer P/E — aproksimacija, jasno označena
             ni_group = c.val("net_income_parent")
             if ni_group is None or not c.ni_parent_of:
                 missing.append(f"residual_pe({h['held_name']})"); continue
@@ -480,13 +593,16 @@ def compute_sotp(c: Ctx) -> ValueRange:
                     ni_sub = c.ni_parent_of(h2["held_company_id"])
                     if ni_sub is not None:
                         attributable += ni_sub * h2["ownership_pct"]
+                elif h2["valuation_basis"] == "associate_pe" and h2.get("associate_ni"):
+                    attributable += float(h2["associate_ni"]) * h2["ownership_pct"]
             resid_ni = ni_group - attributable
             if resid_ni <= 0:
                 missing.append(f"residual_pe({h['held_name']}): ostatak dobiti <= 0")
                 continue
             stake = resid_ni * p.peer_pe * pct
-            basis = (f"residual_pe: (NI matici {ni_group:,.0f} - pripisivo kćerima "
-                     f"{attributable:,.0f}) × P/E {p.peer_pe} × {pct:.2f} — aproksimacija")
+            basis = (f"residual_pe: (NI matici {ni_group:,.0f} - pripisivo kćerima/"
+                     f"pridruženima {attributable:,.0f}) × P/E {p.peer_pe} × {pct:.2f} "
+                     f"— aproksimacija")
             is_placeholder = not p.peers_calibrated
         elif h["valuation_basis"] == "no_data":
             # dio bez podataka u bazi (npr. JV) — NE blokira, ide u napomenu
@@ -524,16 +640,41 @@ def compute_sotp(c: Ctx) -> ValueRange:
     )
     nav = gross + net_cash
     nav_mkt = gross_mkt + net_cash
-    lo = _per_share(nav * (1 - p.holding_discount_high), c)
-    base = _per_share(nav * (1 - (p.holding_discount_low + p.holding_discount_high) / 2), c)
-    hi = _per_share(nav * (1 - p.holding_discount_low), c)
+    lo = _per_share(nav * (1 - disc_hi), c)
+    base = _per_share(nav * (1 - (disc_lo + disc_hi) / 2), c)
+    hi = _per_share(nav * (1 - disc_lo), c)
     if base is None:
         assum["missing"] = ["shares_ex_treasury"]
         return ValueRange(0, 0, 0, assum, 0.0)
     assum["nav_gross_eur"] = round(gross, 0)
     assum["nav_total_eur"] = round(nav, 0)
+    # v2 §5 RECONCILIATION IDENTITET: raščlamba po stavkama, per-share,
+    # s osnovom — VIDLJIVA tablica; mismatch = red flag (ne ide live)
+    identity = [{"item": x["name"], "eur": x["value_eur"],
+                 "per_share": _per_share(x["value_eur"], c),
+                 "basis": x["fair_basis"], "pct": x["pct"]} for x in parts]
+    identity.append({"item": "neto novac (−neto dug) centra/grupe",
+                     "eur": round(net_cash, 0),
+                     "per_share": _per_share(net_cash, c), "basis": "izvještaj"})
+    disc_eur = -nav * (disc_lo + disc_hi) / 2
+    identity.append({"item": f"holding diskont ({(disc_lo + disc_hi) / 2:.0%} sredina)",
+                     "eur": round(disc_eur, 0),
+                     "per_share": _per_share(disc_eur, c), "basis": "v2 §4 taksonomija"})
+    assum["identity"] = identity
+    assum["identity_note"] = ("Σ stavki = sidro po dionici (v2 §5); svaka stavka "
+                              "s osnovom: our_estimate / market_fallback / multiple")
+    # mismatch: pojedinačna stavka veća od cijele vrijednosti nakon diskonta
+    total_ps = _per_share(nav * (1 - (disc_lo + disc_hi) / 2), c) or 0
+    for x in parts:
+        x_ps = _per_share(x["value_eur"], c) or 0
+        if total_ps and x_ps > total_ps * 1.02:
+            assum["parent_child_mismatch"] = (
+                f"stavka '{x['name']}' ({x_ps:,.2f} €/d) veća od cijelog sidra "
+                f"({total_ps:,.2f} €/d) — negativan ostatak: lokaliziraj "
+                f"(dug centra? missing dijelovi: {', '.join(missing) or 'nema'})")
+            break
     # Dio 0.5: obje SOTP brojke + signal razlike (tržište kćeri vs naša procjena)
-    mid_disc = 1 - (p.holding_discount_low + p.holding_discount_high) / 2
+    mid_disc = 1 - (disc_lo + disc_hi) / 2
     assum["sotp_fair"] = {"nav_eur": round(nav, 0),
                           "base_per_share": _per_share(nav * mid_disc, c),
                           "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"}
@@ -621,8 +762,8 @@ def compute_residual_income(c: Ctx) -> ValueRange:
 
 
 REGISTRY = [
-    Method("multiples_relative", "Relativni multiplikatori", elig_multiples,      compute_multiples),
-    Method("ev_ebitda",          "EV/EBITDA",                elig_ev_ebitda,      compute_ev_ebitda),
+    # v2 §1: tržišni pristup = JEDNA metoda (interna triangulacija leća)
+    Method("comps",              "Peer usporedba (comps)",   elig_comps,          compute_comps),
     Method("dcf_fcf",            "DCF (FCF)",                elig_dcf,            compute_dcf),
     Method("ddm_gordon",         "Dividendni diskont",       elig_ddm,            compute_ddm),
     Method("justified_pb_roe",   "Opravdani P/B (ROE)",      elig_justified_pb_roe, compute_justified_pb_roe),
@@ -637,37 +778,89 @@ REGISTRY = [
 #  metoda) + razlog zašto sekundarne odstupaju. Sekundarne se i dalje
 #  računaju i prikazuju, ali IZVAN headline zone, s razlogom odstupanja.
 # ============================================================
+# zadržano za grube provjere izvan motora (audit); motor koristi archetype_v2
 ARCHETYPE_OF = {
     "holding": "holding",
     "bank": "capital", "insurance": "capital",
-    # sve ostalo (industrial, consumer, tourism, telecom, technology...)
-    # -> "operating"
 }
 
-HIERARCHY = {
-    "holding": {
-        "anchor": ("sotp_nav",),
-        "secondary_note": ("operativna leća — mjeri maticu kroz zaradu/knjigu/"
-                           "dividendu pa strukturno podcjenjuje holding čiji "
-                           "udjeli imaju tržišnu cijenu"),
+
+def archetype_v2(c: Ctx) -> str:
+    """Doktrina v2 §2: arhetip iz PODATAKA firme, ne samo sektora.
+
+    holding_operating (KOEI tip) / holding_passive (ADRS) / bank / insurance /
+    tourism / cyclical (niska ROE ili poluga) / industrial_forward (ima forward
+    signal rasta) / industrial_noforward."""
+    if c.is_holding:
+        return ("holding_operating" if getattr(c, "holding_type", "passive") == "operating"
+                else "holding_passive")
+    if c.sector == "bank":
+        return "bank"
+    if c.sector == "insurance":
+        return "insurance"
+    if c.sector == "tourism":
+        return "tourism"
+    ni = c.val("net_income_parent")
+    eq = c.val("equity_parent") or c.val("total_equity")
+    roe = (ni / eq) if (ni is not None and eq and eq > 0) else None
+    ebitda = c.val("ebitda")
+    nd = c.val("net_debt")
+    lev = (nd / ebitda) if (nd is not None and ebitda and ebitda > 0) else None
+    if (roe is not None and roe < c.params.cost_of_equity) or (lev is not None and lev > 2.5):
+        return "cyclical"
+    gh = c.growth_hint or {}
+    return "industrial_forward" if gh.get("forward") else "industrial_noforward"
+
+
+HIERARCHY_V2 = {
+    # sidro = prvi u redoslijedu s pozitivnom bazom I pouzdanošću >= 0,5
+    # (red rule: placeholder ulazi ne smiju sidriti); ostali = potvrda
+    "industrial_forward": {
+        "anchor": ("dcf_fcf", "comps"),
+        "secondary_note": ("potvrda uz DCF sidro (forward rast iz izvješća) — "
+                           "knjiga/dividenda ne mjere operativni zamah"),
     },
-    "capital": {
+    "industrial_noforward": {
+        "anchor": ("comps", "justified_pb_roe"),
+        "secondary_note": ("bez forward signala sidro je peer usporedba; "
+                           "opravdani P/B je potvrda (v2 §2)"),
+    },
+    "cyclical": {
+        "anchor": ("dcf_fcf", "justified_pb_roe", "comps"),
+        "secondary_note": ("ciklikal (niska ROE/poluga): guidance-DCF ako "
+                           "postoji, inače opravdani P/B; comps potvrda; "
+                           "EV/EBITDA nije nositelj (v2 §2)"),
+    },
+    "bank": {
         "anchor": ("justified_pb_roe", "residual_income"),
-        "secondary_note": ("sekundarna leća uz kapitalno sidro (RI / opravdani "
-                           "P/B) — multipli i DDM ovise o peer skupu i politici "
-                           "isplate, ne o profitabilnosti kapitala"),
+        "secondary_note": ("kapitalno sidro — DDM i comps (P/B, P/E) su "
+                           "potvrda; ovise o isplati i peer skupu"),
     },
-    "operating": {
-        "anchor": ("dcf_fcf", "multiples_relative", "ev_ebitda"),
-        "secondary_note": ("sekundarna leća uz operativno sidro (DCF + multipli) "
-                           "— knjiga/dividenda ne mjere operativni zamah"),
+    "insurance": {
+        "anchor": ("justified_pb_roe", "residual_income"),
+        "secondary_note": ("kapitalno sidro — DDM potvrda (v2 §2)"),
+    },
+    "tourism": {
+        "anchor": ("comps", "dcf_fcf"),
+        "secondary_note": ("EV/EBITDA comps + DCF (v2 §2) — uz napomenu o "
+                           "najmovima (MSFI 16)"),
+    },
+    "holding_passive": {
+        "anchor": ("sotp_nav",),
+        "secondary_note": ("operativna leća strukturno podcjenjuje pasivni "
+                           "holding čiji udjeli imaju tržišnu cijenu"),
+    },
+    "holding_operating": {
+        "anchor": ("sotp_nav", "dcf_fcf"),
+        "secondary_note": ("integrirani operativni parent: SOTP BEZ holding "
+                           "diskonta; konsolidirani DCF je potvrda (v2 §2/§4)"),
     },
 }
 
 
-def hierarchy_for(sector: Optional[str]) -> tuple[str, dict]:
-    arche = ARCHETYPE_OF.get(sector or "", "operating")
-    return arche, HIERARCHY[arche]
+def hierarchy_for_ctx(c: Ctx) -> tuple[str, dict]:
+    arche = archetype_v2(c)
+    return arche, HIERARCHY_V2[arche]
 
 
 def value_company(c: Ctx) -> dict:
@@ -679,7 +872,7 @@ def value_company(c: Ctx) -> dict:
             results[m.key] = {"label": m.label, "range": m.compute(c)}
         else:
             skipped[m.key] = reason          # zašto NE — ide na sajt ("SOTP n/p: ...")
-    rec = reconcile(results, c.sector)
+    rec = reconcile(results, c.sector, ctx=c)
     # M11 QA: drastičan raskorak metoda ili zone vs tržišta -> red flag o
     # PRETPOSTAVKAMA (ne o tržištu); činjenica za reviziju, ne ocjena
     if rec.get("status") != "no_value":
@@ -690,6 +883,7 @@ def value_company(c: Ctx) -> dict:
         if rec.get("dispersion_all", 0) > 0.60:
             flags.append(f"metode se međusobno razilaze {rec['dispersion_all']:.0%} "
                          "(sve metode) — provjeri ulaze/pretpostavke")
+        gap = None
         if c.price and rec.get("zone_low") is not None:
             mid = (rec["zone_low"] + rec["zone_high"]) / 2
             gap = c.price / mid - 1 if mid else None
@@ -700,6 +894,21 @@ def value_company(c: Ctx) -> dict:
                                  "mogući propust u pretpostavkama (rast, arhetip, "
                                  "jedinice) ili tržišni raskorak; tretiraj kao "
                                  "pitanje, ne zaključak")
+        # v2 §6: market-implied check (inverse DCF) OBAVEZAN kad |gap| > 40%
+        if gap is not None and abs(gap) > 0.40:
+            rec["market_implied"] = _market_implied(c, results, rec)
+        # v2 §8 RED RULES — analiza ne ide live dok se ne razriješe
+        red = []
+        prim = (rec.get("anchor_methods") or [None])[0]
+        if prim and results[prim]["range"].confidence < 0.5:
+            red.append("sidro sadrži placeholder ulaz (v2 §8.1)")
+        if gap is not None and abs(gap) > 0.40 and not rec.get("market_implied"):
+            red.append("odstupanje >40% bez market-implied narativa (v2 §8.3)")
+        sotp_a = results.get("sotp_nav", {}).get("range")
+        if sotp_a is not None and sotp_a.assumptions.get("parent_child_mismatch"):
+            red.append("parent-child identitet ne prolazi: "
+                       + sotp_a.assumptions["parent_child_mismatch"] + " (v2 §8.2)")
+        rec["red_rules"] = red
         rec["qa_flags"] = flags
         rec["reasoning"] = _reasoning(c, results, rec)
     return {
@@ -707,6 +916,55 @@ def value_company(c: Ctx) -> dict:
         "skipped": skipped,
         "reconciliation": rec,
     }
+
+
+def _market_implied(c: Ctx, results: dict, rec: dict) -> dict:
+    """v2 §6: ŠTO tržišna cijena implicira — implicirani trajni rast (inverse
+    DCF uz naše r) i/ili implicirani P/E vs peer medijan; plauzibilnost se
+    prosuđuje uz forward signal. Činjenična usporedba, ne preporuka."""
+    p = c.params
+    out: dict = {}
+    fcf = c.val("free_cash_flow")
+    if fcf is None:
+        ocf, capex = c.val("operating_cf"), c.val("capex")
+        fcf = (ocf - capex) if (ocf is not None and capex is not None) else None
+    shares, price = c.shares_ex_treasury, c.price
+    if fcf and fcf > 0 and shares and price:
+        ev_mkt = price * shares + (c.val("net_debt") or 0.0)
+        if ev_mkt > 0:
+            # FCF×(1+g)/(r−g) = EV  ->  g = (r·EV − FCF)/(EV + FCF)
+            g_imp = (p.wacc * ev_mkt - fcf) / (ev_mkt + fcf)
+            out["implied_g_pct"] = round(g_imp * 100, 1)
+            out["implied_g_note"] = (f"uz naš r={p.wacc:.1%} cijena implicira "
+                                     f"trajni rast FCF-a ~{g_imp:+.1%} godišnje")
+    ni = c.val("net_income_parent")
+    if ni and ni > 0 and shares and price:
+        pe_imp = price * shares / ni
+        out["implied_pe"] = round(pe_imp, 1)
+        out["peer_pe"] = p.peer_pe
+        out["implied_pe_note"] = (f"cijena implicira P/E {pe_imp:.1f}× vs peer "
+                                  f"medijan {p.peer_pe}×"
+                                  + ("" if p.peers_calibrated else " (placeholder)"))
+    gh = c.growth_hint or {}
+    fw = (f"naš forward signal ({gh.get('drivers')}) sugerira {gh['g1']:+.1%}"
+          if gh.get("forward") else "forward signal još nije ekstrahiran")
+    g_imp_v = out.get("implied_g_pct")
+    if g_imp_v is not None and gh.get("forward"):
+        diff_ok = abs(g_imp_v / 100 - gh["g1"]) <= 0.03
+        verdict = "plauzibilna" if diff_ok else "upitna"
+        why = ("implicirani rast blizu forward signala"
+               if diff_ok else "implicirani rast se bitno razlikuje od "
+               "backloga/guidance-a iz izvješća")
+    else:
+        verdict, why = "neprovjerljiva bez forward signala", "nema kvantificiranog forward signala"
+    out["narrative"] = (
+        "Tržišna cijena implicira "
+        + (f"~{g_imp_v:+.1f}% trajnog rasta godišnje" if g_imp_v is not None else "")
+        + (" / " if g_imp_v is not None and out.get("implied_pe") else "")
+        + (f"multipl P/E {out['implied_pe']}×" if out.get("implied_pe") else "")
+        + f"; {fw} — razlika je {verdict} jer {why}. "
+          "Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.")
+    return out
 
 def _plain_risk(flag: str) -> str:
     """QA flag -> jedna rečenica OBIČNIM jezikom (tehnički tekst ostaje u
@@ -755,12 +1013,19 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
         a = results[prim]["range"].assumptions
         sf = a.get("sotp_fair")
         if sf:
+            dr = a.get("holding_discount_range", [0, 0])
+            if getattr(c, "holding_type", "passive") == "operating":
+                disc_txt = "bez holding popusta (integrirani parent s kontrolom)"
+            elif dr[0] <= 0.001 and dr[1] <= 0.06:
+                disc_txt = ("bez popusta — izmjereni vlastiti P/NAV pokazuje "
+                            "premiju pa se popust klampa na 0 (v2 §4)")
+            else:
+                disc_txt = f"uz popust ({dr[0]:.0%}–{dr[1]:.0%})"
             parts.append(f"Vrijednost smo složili po dijelovima: uvrštene "
-                         f"tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom "
+                         f"tvrtke-kćeri po našoj procjeni (ili tržištu gdje je "
+                         f"naša procjena low-confidence), neuvrštene usporedbom "
                          f"sa sličnima, minus dug grupe — ukupno "
-                         f"{sf['nav_eur'] / 1e6:,.0f} M€. Burza holdinge obično "
-                         f"vrednuje uz popust ({p.holding_discount_low:.0%}–"
-                         f"{p.holding_discount_high:.0%}), pa je sidro "
+                         f"{sf['nav_eur'] / 1e6:,.0f} M€, {disc_txt}; sidro je "
                          f"{results[prim]['range'].base:,.2f} € po dionici")
         if a.get("market_vs_fair_pct") is not None:
             mv = a["market_vs_fair_pct"]
@@ -773,6 +1038,12 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
         if fcf is None:
             ocf, capex = c.val("operating_cf"), c.val("capex")
             fcf = (ocf - capex) if (ocf is not None and capex is not None) else None
+        a = results[prim]["range"].assumptions
+        if fcf is None and a.get("guidance_fcf"):
+            parts.append(f"Novčani tok je izveden iz guidancea uprave — "
+                         f"{a['guidance_fcf']}. Diskontiran uz zahtijevani "
+                         f"prinos {p.wacc:.1%} to daje "
+                         f"{results[prim]['range'].base:,.2f} € po dionici")
         if fcf is not None:
             grow = (f", uz izračunati rast {gh['g1']:.1%} kroz pet godina i zatim "
                     f"dugoročni rast {p.terminal_growth:.0%}"
@@ -799,12 +1070,23 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
                          f"knjigovodstvene brojke — sidro je "
                          f"{results[prim]['range'].base:,.2f} € po dionici")
         risk = "koliko je današnja zarada na kapital održiva"
-    elif prim and prim in results:
-        parts.append(f"Gledali smo koliko tržište plaća slične firme po euru "
-                     f"zarade i operativne dobiti te to primijenili na njezine "
-                     f"brojke — sidro je {results[prim]['range'].base:,.2f} € "
-                     f"po dionici")
+    elif prim == "comps" and prim in results:
+        a = results[prim]["range"].assumptions
+        carrier = {"pe": "cijena/zarada (P/E)", "ev_ebitda": "EV/EBITDA",
+                   "ev_ebit": "EV/EBIT", "pb": "cijena/knjiga (P/B)"}.get(
+            a.get("carrier"), a.get("carrier", "?"))
+        parts.append(f"Usporedili smo firmu sa sličnima kroz više leća, a bazu "
+                     f"nosi {carrier} kao sektorski primjerena — sidro je "
+                     f"{results[prim]['range'].base:,.2f} € po dionici")
+        if a.get("intra_spread", {}).get("anomaly") and a["intra_spread"].get(
+                "spread_pct", 0) > 40:
+            parts.append(f"Leće se razilaze ({a['intra_spread']['spread_pct']:.0f}%) "
+                         f"pa se ne prosječe; razlog: {a['intra_spread']['anomaly']}")
         risk = "koliko su odabrane usporedive firme zaista usporedive"
+    elif prim and prim in results:
+        parts.append(f"Sidro {results[prim]['label']}: "
+                     f"{results[prim]['range'].base:,.2f} € po dionici")
+        risk = "ograničeni ulazi sidrene metode"
     else:
         return "Sidro nije dostupno — vidi preskočene metode i razloge."
     alt = [f"{results[k]['label'] if k in results else k} "
@@ -816,10 +1098,16 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
                      " (razlog odstupanja naveden je uz svaku metodu)")
     if rec.get("qa_flags"):
         risk = _plain_risk(rec["qa_flags"][0])
-    return ". ".join(parts) + f". Glavni rizik za procjenu: {risk}."
+    out = ". ".join(parts) + f". Glavni rizik za procjenu: {risk}."
+    # v2 §6: market-implied narativ (obavezan kad |odstupanje| > 40%)
+    mi = rec.get("market_implied")
+    if mi and mi.get("narrative"):
+        out += " " + mi["narrative"]
+    return out
 
 
-def reconcile(results: dict, sector: Optional[str] = None) -> dict:
+def reconcile(results: dict, sector: Optional[str] = None,
+              ctx: Optional[Ctx] = None) -> dict:
     """
     NE bira pobjednika među SVIM metodama — ali fer-zona je sidrena arhetipom
     (M8): holding -> SOTP low–high; banka/osiguranje -> RI / opravdani P/B;
@@ -831,11 +1119,15 @@ def reconcile(results: dict, sector: Optional[str] = None) -> dict:
     bases = {k: r["range"].base for k, r in results.items() if r["range"].base}
     if not bases:
         return {"status": "no_value"}
-    arche, h = hierarchy_for(sector)
+    arche, h = (hierarchy_for_ctx(ctx) if ctx is not None
+                else ("industrial_noforward", HIERARCHY_V2["industrial_noforward"]))
     anchors_all = [k for k in h["anchor"] if k in bases]
     # sidro s nepozitivnom bazom (npr. DCF u godini negativnog FCF-a) ne smije
-    # definirati fer-zonu — ostaje prikazano, ali izvan zone, s napomenom
-    anchors = [k for k in anchors_all if bases[k] > 0]
+    # definirati fer-zonu — ostaje prikazano, ali izvan zone, s napomenom;
+    # RED RULE (v2 §8): sidro s placeholder ulazima (conf < 0,5) ne smije
+    # sidriti — pada na sljedeći pristup u hijerarhiji
+    anchors = [k for k in anchors_all
+               if bases[k] > 0 and results[k]["range"].confidence >= 0.5]
     dropped = [k for k in anchors_all if k not in anchors]
     if anchors:
         prim = anchors[0]              # primarno sidro (redoslijed arhetipa)
@@ -876,9 +1168,11 @@ def reconcile(results: dict, sector: Optional[str] = None) -> dict:
                 inconsistent.append(f"{k} {dev:+.0%} vs primarno sidro")
             continue
         if k in dropped:
+            why = ("placeholder ulazi (conf < 0,5) — red rule v2 §8: ne smije "
+                   "sidriti" if results[k]["range"].confidence < 0.5
+                   else "nepozitivna baza (jednogodišnji ulaz)")
             roles[k] = {"role": "anchor_excluded",
-                        "note": ("sidrena metoda ISKLJUČENA iz zone — "
-                                 "nepozitivna baza (jednogodišnji ulaz)"),
+                        "note": f"sidrena metoda ISKLJUČENA iz zone — {why}",
                         "vs_zone_pct": None}
             continue
         b = bases.get(k)
@@ -992,6 +1286,14 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     if not row:
         raise ValueError(f"nepoznat ticker u companies: {ticker}")
     company_id, sector, is_group = row
+    # v2 §2/§4: tip holdinga (operating = integrirani parent, KOEI tip)
+    holding_type = "passive"
+    try:
+        cur.execute("SELECT holding_type FROM companies WHERE id=%s", (company_id,))
+        r0 = cur.fetchone()
+        holding_type = (r0[0] or "passive") if r0 else "passive"
+    except Exception:  # noqa: BLE001 — kolona je opcionalna nadogradnja
+        conn.rollback()
 
     def data(item: str):
         # zadnja (najnovija) annual/consolidated vrijednost + confidence iz financials
@@ -1097,7 +1399,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     growth_hint = None
     try:
         cur.execute(
-            """SELECT g1, rule, drivers, basis, fiscal_year FROM growth_estimates
+            """SELECT g1, rule, drivers, basis, fiscal_year, signals
+               FROM growth_estimates
                WHERE company_id=%s AND method='forward_signals'
                ORDER BY fiscal_year DESC, created_at DESC LIMIT 1""", (company_id,))
         fw = cur.fetchone()
@@ -1109,6 +1412,7 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         growth_hint = {
             "g1": round(g1, 4), "forward": True, "rule": fw[1],
             "drivers": fw[2],
+            "guidance_signals": fw[5] or {},  # v2: guidance-DCF ulazi (R0)
             "rev_cagr_3y": round(trailing, 4) if trailing is not None else None,
             "archetype": "growth" if g1 > 0.08 else "mature",
             "source": (f"g1={g1:.1%}: FORWARD procjena iz GI FY{fw[4]} "
@@ -1163,15 +1467,22 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         rec = sub_out["reconciliation"]
         if rec.get("status") == "no_value" or not rec.get("anchor_methods"):
             return None
+        # v2 §5 CONFIDENCE GATE: kći ulazi po NAŠOJ procjeni SAMO ako je njen
+        # anchor confidence >= 0,7 I ulazi bez placeholdera; inače -> tržišna
+        # vrijednost s oznakom (pozivatelj radi fallback kad vratimo None)
+        prim = rec["anchor_methods"][0]
+        prim_conf = sub_out["ran"][prim]["range"].confidence
+        if prim_conf < 0.7 or sub_ctx.params.placeholder:
+            return None
         sh = shares_of(held_company_id)
         if not sh:
             return None
         mid = (rec["zone_low"] + rec["zone_high"]) / 2
         return (mid * sh,
                 f"fer-procjena {sub_ticker}: sidro {rec['archetype']} "
-                f"({', '.join(rec['anchor_methods'])}) sredina zone "
-                f"{rec['zone_low']:,.0f}–{rec['zone_high']:,.0f} €/dionici × "
-                f"{sh:,.0f} dionica")
+                f"({', '.join(rec['anchor_methods'])}, conf {prim_conf:.1f}) "
+                f"sredina zone {rec['zone_low']:,.0f}–{rec['zone_high']:,.0f} "
+                f"€/dionici × {sh:,.0f} dionica")
 
     return Ctx(
         ticker=ticker, sector=sector, is_group=is_group,
@@ -1180,7 +1491,7 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         own_market_cap=market_cap_of(company_id),
         market_cap_of=market_cap_of, segment_ebitda_of=segment_ebitda_of,
         fair_equity_of=fair_equity_of, growth_hint=growth_hint,
-        ni_parent_of=ni_parent_of, params=params,
+        ni_parent_of=ni_parent_of, holding_type=holding_type, params=params,
     )
 
 

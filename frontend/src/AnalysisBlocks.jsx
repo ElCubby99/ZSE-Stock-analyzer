@@ -33,6 +33,7 @@ const STEEL = '#2F5D86'
 const METHOD_SHORT = {
   sotp_nav: 'SOTP / NAV', residual_income: 'REZIDUALNI DOHODAK',
   justified_pb_roe: 'OPRAVDANI P/B', dcf_fcf: 'DCF',
+  comps: 'PEER USPOREDBA (COMPS)',
   multiples_relative: 'RELATIVNI MULTIPLI', ev_ebitda: 'EV/EBITDA',
   ddm_gordon: 'DIVIDENDNI DISKONT',
 }
@@ -46,6 +47,23 @@ const METHOD_TERM = {
 export function AnchorPanel({ data }) {
   const rec = data.valuation?.reconciliation
   if (!rec || rec.zone_low === null) return null
+  // v2 §8 RED RULES: analiza ne ide live dok se pravila ne razriješe
+  if ((rec.red_rules || []).length > 0) {
+    return (
+      <div className="anch anch-held">
+        <div className="anch-head">
+          <span className="anch-tag" style={{ color: OX }}>ANALIZA ZADRŽANA — CRVENO PRAVILO</span>
+        </div>
+        <p className="anch-plain">
+          Fer-zona se ne objavljuje dok se ne razriješe pravila kvalitete
+          (doktrina v2 §8):
+        </p>
+        <ul className="anch-red-list">
+          {rec.red_rules.map((r, i) => <li key={i}>{r}</li>)}
+        </ul>
+      </div>
+    )
+  }
   const sum = data.price_summary?.classes || []
   const classes = (data.share_classes || [])
     .map((c) => ({

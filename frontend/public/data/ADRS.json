@@ -354,11 +354,11 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri +55.8% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri +15.0% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
-        "txt": "Vrijednost i dividende matice ovise o društvima: Croatia osiguranje (67%), Maistra (94%), HUP-Zagreb (100%), Cromaris (100%)."
+        "txt": "Vrijednost i dividende matice ovise o društvima: Croatia osiguranje (67%), Cromaris (100%), Energetika (50%), HUP-Zagreb (100%)."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -366,7 +366,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 40–68 € (raspon 42%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 63–94 € (raspon 33%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -7660,6 +7660,21 @@
       "source": "zse.hr securityHistory (web JSON)"
     }
   ],
+  "share_class_explainer": {
+    "rows": [
+      {
+        "ticker": "ADRS",
+        "type": "redovna",
+        "rights": "pravo glasa na glavnoj skupštini; dividenda nakon povlaštenih"
+      },
+      {
+        "ticker": "ADRS2",
+        "type": "povlaštena",
+        "rights": "bez prava glasa (u pravilu); prioritetna dividenda — uvjeti u statutu/odluci o izdanju"
+      }
+    ],
+    "note": "Fer vrijednost po dionici je KLASNO-AGNOSTIČNA (firma / sve dionice ex-trezor). Tržišne cijene klasa se ipak razlikuju: glasačka premija redovne, razlika u likvidnosti i članstvo u indeksu. Ta premija je tržišna struktura — prikazuje se i objašnjava, ali se NE ugrađuje u fer (v2 §7)."
+  },
   "valuation": {
     "params": {
       "r": 0.094411,
@@ -7677,7 +7692,7 @@
         "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-        "holding_discount": "holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija (M10, 2024-07-17..2026-07-10, n=489 d) mjeri cijenu prema KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: medijan -12.1%, p25 -16.4%, p75 -5.3%, zadnje -25.5% (2026-07-10) — negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove na placeholder multiplama i grupni neto dug konstantnim pa NE mjeri čisti holding diskont; raspon se zato NE zamjenjuje opaženim (docs/calibration.md)",
+        "holding_discount": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.25 (2026-07-10). serija M10 (2024-07-17..2026-07-10, n=489 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
       }
     },
@@ -7697,108 +7712,62 @@
     ],
     "ran": [
       {
-        "key": "multiples_relative",
-        "label": "Relativni multiplikatori",
-        "low": 57.591162469797624,
-        "base": 67.7543087879972,
-        "high": 77.91745510619678,
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
+        "low": 53.37987324796021,
+        "base": 62.79985087995319,
+        "high": 72.21982851194616,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
-          "peer_pe": 13.43,
-          "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
+          "lenses": {
+            "pe": {
+              "mult": 13.43,
+              "per_share": 67.75
+            },
+            "pb": {
+              "mult": 0.63,
+              "per_share": 57.85
+            }
+          },
+          "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 5.5% / peer medijan 13.8% -> faktor 0.40 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
+          "carrier": "pe",
+          "carrier_reason": "nositelj po arhetipu 'holding_passive' (v2 §2)",
+          "intra_spread": {
+            "spread_pct": 17.0,
+            "rule": "leće konzistentne (<40%) -> prosjek"
+          },
           "sources": {
             "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
           }
         }
       },
       {
-        "key": "ddm_gordon",
-        "label": "Dividendni diskont",
-        "low": 56.82765074546192,
-        "base": 67.34055076170405,
-        "high": 82.59015044287807,
-        "confidence": 0.7,
-        "no_value": false,
-        "assumptions": {
-          "dps": 3.12,
-          "r": 0.094411,
-          "g_terminal": 0.04,
-          "g1_explicit": 0.0941,
-          "model": "dvofazni DDM",
-          "growth_source": "g1=9.4%: CAGR prihoda FY2023->FY2025 iz baze (cap 0-20%) — POVIJESNI proxy jer forward procjena (backlog/guidance) još nije ekstrahirana; eksplicitna faza 5 g s fadeom prema terminalnom g",
-          "placeholder": false,
-          "sources": {
-            "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
-          }
-        }
-      },
-      {
-        "key": "justified_pb_roe",
-        "label": "Opravdani P/B (ROE)",
-        "low": 34.54069141507428,
-        "base": 39.51694754379656,
-        "high": 46.16840056492002,
-        "confidence": 0.7,
-        "no_value": false,
-        "assumptions": {
-          "roe": 0.0548,
-          "r": 0.094411,
-          "g": 0.025,
-          "bvps": 92.08,
-          "placeholder": false,
-          "sources": {
-            "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
-          }
-        }
-      },
-      {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 53.498801756412135,
-        "base": 57.065388540172954,
-        "high": 60.63197532393376,
+        "low": 91.8330208348876,
+        "base": 94.24967927791097,
+        "high": 96.66633772093434,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "holding_discount_range": [
-            0.15,
-            0.25
+            0.0,
+            0.05
           ],
-          "holding_discount_reason": "empirijski raspon konglomeratskog/holding diskonta za europske holdinge (nelikvidnost, dvostruko oporezivanje dividendi, trošak centra); PLACEHOLDER dok se ne kalibrira na ZSE povijest",
+          "holding_discount_reason": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-10, n=489 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
           "net_cash_excludes_insurance_portfolio": true,
-          "listed_repricing_scenario": "CROS @ P/E 12 = konzervativno sidro",
           "placeholder": false,
           "parts": [
             {
               "name": "Croatia osiguranje",
-              "value_eur": 560488605.0,
+              "value_eur": 962759144.0,
               "value_market_eur": 962759144.0,
-              "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena CROS: sidro capital (justified_pb_roe, residual_income) sredina zone 1,578–2,289 €/dionici × 429,697 dionica × 0.6747",
+              "fair_basis": "market_fallback",
+              "basis": "market: trž.kap 1,426,944,040 × 0.6747 — kći po tržištu (naša procjena low-confidence/placeholder ili nije analizirana; v2 §5 gate)",
               "pct": 0.6747,
               "placeholder": false
-            },
-            {
-              "name": "Maistra",
-              "value_eur": 440928450.0,
-              "value_market_eur": 670545423.0,
-              "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena MAIS: sidro operating (multiples_relative, ev_ebitda) sredina zone 37–50 €/dionici × 10,944,339 dionica × 0.9354",
-              "pct": 0.9354,
-              "placeholder": false
-            },
-            {
-              "name": "HUP-Zagreb",
-              "value_eur": 169500000.0,
-              "value_market_eur": 169500000.0,
-              "fair_basis": "multiple",
-              "basis": "ebitda_multiple: 22,600,000 [tourism_hup] × 7.5 × 1.00",
-              "pct": 1.0,
-              "placeholder": true
             },
             {
               "name": "Cromaris",
@@ -7817,6 +7786,24 @@
               "basis": "ebitda_multiple: 12,000,000 [energy] × 7.0 × 0.50",
               "pct": 0.5,
               "placeholder": true
+            },
+            {
+              "name": "HUP-Zagreb",
+              "value_eur": 169500000.0,
+              "value_market_eur": 169500000.0,
+              "fair_basis": "multiple",
+              "basis": "ebitda_multiple: 22,600,000 [tourism_hup] × 7.5 × 1.00",
+              "pct": 1.0,
+              "placeholder": true
+            },
+            {
+              "name": "Maistra",
+              "value_eur": 440928450.0,
+              "value_market_eur": 670545423.0,
+              "fair_basis": "our_estimate",
+              "basis": "fer-procjena: fer-procjena MAIS: sidro tourism (comps, conf 0.7) sredina zone 37–50 €/dionici × 10,944,339 dionica × 0.9354",
+              "pct": 0.9354,
+              "placeholder": false
             }
           ],
           "net_cash": {
@@ -7824,43 +7811,98 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 1303317055.0,
-          "nav_total_eur": 1132627055.0,
+          "nav_gross_eur": 1705587594.0,
+          "nav_total_eur": 1534897594.0,
+          "identity": [
+            {
+              "item": "Croatia osiguranje",
+              "eur": 962759144.0,
+              "per_share": 60.633622039632066,
+              "basis": "market_fallback",
+              "pct": 0.6747
+            },
+            {
+              "item": "Cromaris",
+              "eur": 90400000.0,
+              "per_share": 5.693302906072153,
+              "basis": "multiple",
+              "pct": 1.0
+            },
+            {
+              "item": "Energetika",
+              "eur": 42000000.0,
+              "per_share": 2.645118606803434,
+              "basis": "multiple",
+              "pct": 0.5
+            },
+            {
+              "item": "HUP-Zagreb",
+              "eur": 169500000.0,
+              "per_share": 10.674942948885286,
+              "basis": "multiple",
+              "pct": 1.0
+            },
+            {
+              "item": "Maistra",
+              "eur": 440928450.0,
+              "per_share": 27.769239222952322,
+              "basis": "our_estimate",
+              "pct": 0.9354
+            },
+            {
+              "item": "neto novac (−neto dug) centra/grupe",
+              "eur": -170690000.0,
+              "per_share": -10.749887976078051,
+              "basis": "izvještaj"
+            },
+            {
+              "item": "holding diskont (2% sredina)",
+              "eur": -38372440.0,
+              "per_share": -2.4166584430233584,
+              "basis": "v2 §4 taksonomija"
+            }
+          ],
+          "identity_note": "Σ stavki = sidro po dionici (v2 §5); svaka stavka s osnovom: our_estimate / market_fallback / multiple",
           "sotp_fair": {
-            "nav_eur": 1132627055.0,
-            "base_per_share": 57.065388540172954,
+            "nav_eur": 1534897594.0,
+            "base_per_share": 94.24967927791097,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
             "nav_eur": 1764514567.0,
-            "base_per_share": 88.90191071035856,
+            "base_per_share": 108.3492036782495,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": 55.8,
+          "market_vs_fair_pct": 15.0,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
-            "holding_discount": "holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija (M10, 2024-07-17..2026-07-10, n=489 d) mjeri cijenu prema KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: medijan -12.1%, p25 -16.4%, p75 -5.3%, zadnje -25.5% (2026-07-10) — negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove na placeholder multiplama i grupni neto dug konstantnim pa NE mjeri čisti holding diskont; raspon se zato NE zamjenjuje opaženim (docs/calibration.md)"
+            "holding_discount": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.25 (2026-07-10). serija M10 (2024-07-17..2026-07-10, n=489 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)"
           },
           "market_check": {
             "own_market_cap_eur": 2213953141.0,
-            "nav_pre_discount_eur": 1132627055.0,
-            "price_vs_nav_pct": 95.5,
+            "nav_pre_discount_eur": 1534897594.0,
+            "price_vs_nav_pct": 44.2,
             "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana (M10) — vidi izvor holding diskonta i docs/calibration.md"
           },
-          "market_based_share_of_gross": 0.77
+          "market_based_share_of_gross": 0.82
         }
       }
     ],
     "skipped": [
       {
-        "key": "ev_ebitda",
-        "label": "EV/EBITDA",
-        "reason": "konsolidira osiguratelja — EV/EBITDA kontaminiran (deck: 10,7× s ogradom)"
-      },
-      {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "reason": "holding — FCF ne hvata vrijednost udjela"
+        "reason": "pasivni holding — FCF ne hvata vrijednost udjela (v2 §2)"
+      },
+      {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
+      },
+      {
+        "key": "justified_pb_roe",
+        "label": "Opravdani P/B (ROE)",
+        "reason": "arhetip 'holding_passive': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
       },
       {
         "key": "residual_income",
@@ -7869,29 +7911,19 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 53.498801756412135,
-      "zone_high": 60.63197532393376,
-      "dispersion": 0.1176470588235295,
+      "zone_low": 91.8330208348876,
+      "zone_high": 96.66633772093434,
+      "dispersion": 0.05000000000000015,
       "divergent": false,
-      "archetype": "holding",
+      "archetype": "holding_passive",
       "anchor_methods": [
         "sotp_nav"
       ],
       "method_roles": {
-        "multiples_relative": {
+        "comps": {
           "role": "secondary",
-          "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": 0.11746827356376732
-        },
-        "ddm_gordon": {
-          "role": "secondary",
-          "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": 0.11064418406177445
-        },
-        "justified_pb_roe": {
-          "role": "secondary",
-          "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": -0.2613489228464779
+          "note": "operativna leća strukturno podcjenjuje pasivni holding čiji udjeli imaju tržišnu cijenu",
+          "vs_zone_pct": -0.3161517468442532
         },
         "sotp_nav": {
           "role": "anchor",
@@ -7900,50 +7932,39 @@
         }
       },
       "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 39.51694754379656,
-      "all_methods_high": 67.7543087879972,
-      "dispersion_all": 0.4167611145226965,
+      "all_methods_low": 62.79985087995319,
+      "all_methods_high": 94.24967927791097,
+      "dispersion_all": 0.3336863174379903,
       "method_bases": {
-        "multiples_relative": 67.7543087879972,
-        "ddm_gordon": 67.34055076170405,
-        "justified_pb_roe": 39.51694754379656,
-        "sotp_nav": 57.065388540172954
+        "comps": 62.79985087995319,
+        "sotp_nav": 94.24967927791097
       },
       "qa_flags": [
-        "fer-zona odstupa +189% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +75% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 189.1,
+      "vs_market_pct": 75.1,
       "anchor_inconsistency": [],
-      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća; forward procjena iz backloga/guidance-a još nije izvedena). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,133 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 57.07 € po dionici. Tržište te iste kćeri trenutačno vrednuje 55.8% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu."
+      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća; forward procjena iz backloga/guidance-a još nije izvedena). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,535 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa se popust klampa na 0 (v2 §4); sidro je 94.25 € po dionici. Tržište te iste kćeri trenutačno vrednuje 15.0% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~+6.7% trajnog rasta godišnje / multipl P/E 32.7×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "red_rules": [],
+      "market_implied": {
+        "implied_g_pct": 6.7,
+        "implied_g_note": "uz naš r=9.4% cijena implicira trajni rast FCF-a ~+6.7% godišnje",
+        "implied_pe": 32.7,
+        "peer_pe": 13.43,
+        "implied_pe_note": "cijena implicira P/E 32.7× vs peer medijan 13.43×",
+        "narrative": "Tržišna cijena implicira ~+6.7% trajnog rasta godišnje / multipl P/E 32.7×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+      }
     },
     "sotp": {
       "parts": [
         {
           "name": "Croatia osiguranje",
-          "value_eur": 560488605.0,
+          "value_eur": 962759144.0,
           "value_market_eur": 962759144.0,
-          "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena CROS: sidro capital (justified_pb_roe, residual_income) sredina zone 1,578–2,289 €/dionici × 429,697 dionica × 0.6747",
+          "fair_basis": "market_fallback",
+          "basis": "market: trž.kap 1,426,944,040 × 0.6747 — kći po tržištu (naša procjena low-confidence/placeholder ili nije analizirana; v2 §5 gate)",
           "pct": 0.6747,
           "placeholder": false
-        },
-        {
-          "name": "Maistra",
-          "value_eur": 440928450.0,
-          "value_market_eur": 670545423.0,
-          "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena MAIS: sidro operating (multiples_relative, ev_ebitda) sredina zone 37–50 €/dionici × 10,944,339 dionica × 0.9354",
-          "pct": 0.9354,
-          "placeholder": false
-        },
-        {
-          "name": "HUP-Zagreb",
-          "value_eur": 169500000.0,
-          "value_market_eur": 169500000.0,
-          "fair_basis": "multiple",
-          "basis": "ebitda_multiple: 22,600,000 [tourism_hup] × 7.5 × 1.00",
-          "pct": 1.0,
-          "placeholder": true
         },
         {
           "name": "Cromaris",
@@ -7962,6 +7983,24 @@
           "basis": "ebitda_multiple: 12,000,000 [energy] × 7.0 × 0.50",
           "pct": 0.5,
           "placeholder": true
+        },
+        {
+          "name": "HUP-Zagreb",
+          "value_eur": 169500000.0,
+          "value_market_eur": 169500000.0,
+          "fair_basis": "multiple",
+          "basis": "ebitda_multiple: 22,600,000 [tourism_hup] × 7.5 × 1.00",
+          "pct": 1.0,
+          "placeholder": true
+        },
+        {
+          "name": "Maistra",
+          "value_eur": 440928450.0,
+          "value_market_eur": 670545423.0,
+          "fair_basis": "our_estimate",
+          "basis": "fer-procjena: fer-procjena MAIS: sidro tourism (comps, conf 0.7) sredina zone 37–50 €/dionici × 10,944,339 dionica × 0.9354",
+          "pct": 0.9354,
+          "placeholder": false
         }
       ],
       "net_cash": {
@@ -7969,32 +8008,83 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 1303317055.0,
-      "nav_total_eur": 1132627055.0,
+      "nav_gross_eur": 1705587594.0,
+      "nav_total_eur": 1534897594.0,
       "holding_discount_range": [
-        0.15,
-        0.25
+        0.0,
+        0.05
       ],
-      "holding_discount_reason": "empirijski raspon konglomeratskog/holding diskonta za europske holdinge (nelikvidnost, dvostruko oporezivanje dividendi, trošak centra); PLACEHOLDER dok se ne kalibrira na ZSE povijest",
+      "holding_discount_reason": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-10, n=489 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
       "market_check": {
         "own_market_cap_eur": 2213953141.0,
-        "nav_pre_discount_eur": 1132627055.0,
-        "price_vs_nav_pct": 95.5,
+        "nav_pre_discount_eur": 1534897594.0,
+        "price_vs_nav_pct": 44.2,
         "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana (M10) — vidi izvor holding diskonta i docs/calibration.md"
       },
       "sotp_fair": {
-        "nav_eur": 1132627055.0,
-        "base_per_share": 57.065388540172954,
+        "nav_eur": 1534897594.0,
+        "base_per_share": 94.24967927791097,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
         "nav_eur": 1764514567.0,
-        "base_per_share": 88.90191071035856,
+        "base_per_share": 108.3492036782495,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": 55.8,
+      "market_vs_fair_pct": 15.0,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
-      "missing": null
+      "missing": null,
+      "identity": [
+        {
+          "item": "Croatia osiguranje",
+          "eur": 962759144.0,
+          "per_share": 60.633622039632066,
+          "basis": "market_fallback",
+          "pct": 0.6747
+        },
+        {
+          "item": "Cromaris",
+          "eur": 90400000.0,
+          "per_share": 5.693302906072153,
+          "basis": "multiple",
+          "pct": 1.0
+        },
+        {
+          "item": "Energetika",
+          "eur": 42000000.0,
+          "per_share": 2.645118606803434,
+          "basis": "multiple",
+          "pct": 0.5
+        },
+        {
+          "item": "HUP-Zagreb",
+          "eur": 169500000.0,
+          "per_share": 10.674942948885286,
+          "basis": "multiple",
+          "pct": 1.0
+        },
+        {
+          "item": "Maistra",
+          "eur": 440928450.0,
+          "per_share": 27.769239222952322,
+          "basis": "our_estimate",
+          "pct": 0.9354
+        },
+        {
+          "item": "neto novac (−neto dug) centra/grupe",
+          "eur": -170690000.0,
+          "per_share": -10.749887976078051,
+          "basis": "izvještaj"
+        },
+        {
+          "item": "holding diskont (2% sredina)",
+          "eur": -38372440.0,
+          "per_share": -2.4166584430233584,
+          "basis": "v2 §4 taksonomija"
+        }
+      ],
+      "identity_note": "Σ stavki = sidro po dionici (v2 §5); svaka stavka s osnovom: our_estimate / market_fallback / multiple",
+      "parent_child_mismatch": null
     }
   },
   "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."

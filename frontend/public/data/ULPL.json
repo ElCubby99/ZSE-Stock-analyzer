@@ -375,6 +375,7 @@
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [],
+  "share_class_explainer": null,
   "valuation": {
     "params": {
       "r": 0.0931,
@@ -412,8 +413,8 @@
     ],
     "ran": [
       {
-        "key": "multiples_relative",
-        "label": "Relativni multiplikatori",
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
         "low": 32.60971655172414,
         "base": 38.364372413793106,
         "high": 44.11902827586207,
@@ -421,26 +422,23 @@
         "no_value": false,
         "assumptions": {
           "placeholder": true,
-          "peer_pe": 12.0,
-          "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
-          "sources": {
-            "peers": "ULPL: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+          "lenses": {
+            "pe": {
+              "mult": 12.0,
+              "per_share": 38.36
+            },
+            "ev_ebitda": {
+              "mult": 7.0,
+              "per_share": 87.63
+            }
           },
-          "low_confidence": "peer multipli su placeholder (nema peer skupa na ZSE) -> niska pouzdanost"
-        }
-      },
-      {
-        "key": "ev_ebitda",
-        "label": "EV/EBITDA",
-        "low": 67.67657318965517,
-        "base": 87.62699137931034,
-        "high": 107.57740956896549,
-        "confidence": 0.3,
-        "no_value": false,
-        "assumptions": {
-          "peer_ev_ebitda": 7.0,
-          "net_debt": 26317962.0,
-          "placeholder": true,
+          "carrier": "pe",
+          "carrier_reason": "nositelj po arhetipu 'industrial_noforward' (v2 §2)",
+          "intra_spread": {
+            "spread_pct": 128.0,
+            "rule": "leće razmaknute 128% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
+            "anomaly": "poluga (neto dug/EBITDA 2.4)"
+          },
           "sources": {
             "peers": "ULPL: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
           },
@@ -471,21 +469,16 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 56.631976577332324,
-        "base": 64.94797901159552,
-        "high": 76.1266328862247,
-        "confidence": 0.7,
-        "no_value": false,
+        "low": 0,
+        "base": 0,
+        "high": 0,
+        "confidence": 0.0,
+        "no_value": true,
         "assumptions": {
-          "roe": -0.0652,
-          "r": 0.0931,
-          "g": 0.025,
-          "bvps": -49.04,
-          "placeholder": true,
-          "sources": {
-            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); vidi src/calibrate.py",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
-          }
+          "missing": [
+            "equity_parent>0"
+          ],
+          "note": "knjiga negativna — opravdani P/B nije primjenjiv"
         }
       }
     ],
@@ -493,7 +486,7 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "reason": "ne isplaćuje (ili nepoznata) dividenda"
+        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
       },
       {
         "key": "residual_income",
@@ -507,59 +500,46 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 137.6002371113176,
-      "zone_high": 222.50790934474756,
-      "dispersion": 0.3815939509003088,
+      "zone_low": 38.364372413793106,
+      "zone_high": 172.05900051302032,
+      "dispersion": 0.7770278084877638,
       "divergent": true,
-      "archetype": "operating",
-      "anchor_methods": [
-        "dcf_fcf",
-        "multiples_relative",
-        "ev_ebitda"
-      ],
+      "archetype": "industrial_noforward",
+      "anchor_methods": [],
       "method_roles": {
-        "multiples_relative": {
-          "role": "anchor_alt",
-          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": -0.7869286058016256
-        },
-        "ev_ebitda": {
-          "role": "anchor_alt",
-          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": -0.5133295803403812
+        "comps": {
+          "role": "anchor_excluded",
+          "note": "sidrena metoda ISKLJUČENA iz zone — placeholder ulazi (conf < 0,5) — red rule v2 §8: ne smije sidriti",
+          "vs_zone_pct": null
         },
         "dcf_fcf": {
-          "role": "anchor",
-          "note": null,
-          "vs_zone_pct": null
+          "role": "secondary",
+          "note": "bez forward signala sidro je peer usporedba; opravdani P/B je potvrda (v2 §2)",
+          "vs_zone_pct": 0.0
         },
         "justified_pb_roe": {
           "role": "secondary",
-          "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": -0.5279951519338366
+          "note": "bez forward signala sidro je peer usporedba; opravdani P/B je potvrda (v2 §2)",
+          "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
+      "zone_note": "sidrena metoda nije dostupna — zona je min–max svih baza (fallback); vidi 'skipped' za razlog",
       "all_methods_low": 38.364372413793106,
       "all_methods_high": 172.05900051302032,
       "dispersion_all": 0.7770278084877638,
       "method_bases": {
-        "multiples_relative": 38.364372413793106,
-        "ev_ebitda": 87.62699137931034,
+        "comps": 38.364372413793106,
         "dcf_fcf": 172.05900051302032,
-        "justified_pb_roe": 64.94797901159552
+        "justified_pb_roe": 0
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: multiples_relative -79% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
-        "ULAZI NEKONZISTENTNI: ev_ebitda -51% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
         "metode se međusobno razilaze 78% (sve metode) — provjeri ulaze/pretpostavke"
       ],
       "vs_market_pct": null,
-      "anchor_inconsistency": [
-        "multiples_relative -79% vs primarno sidro",
-        "ev_ebitda -51% vs primarno sidro"
-      ],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 61 € operativne zarade (EBITDA marža 60.7%). Firma je lani stvorila 6.4 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 9.3%, bez faze rasta (samo dugoročni rast 4%) — tako izlazi 172.06 € po dionici. Kontrolne metode uz sidro: Relativni multiplikatori -79%, EV/EBITDA -51% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je."
+      "anchor_inconsistency": [],
+      "reasoning": "Sidro nije dostupno — vidi preskočene metode i razloge.",
+      "red_rules": [],
+      "market_implied": null
     },
     "sotp": null
   },

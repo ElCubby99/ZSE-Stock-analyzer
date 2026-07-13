@@ -9,6 +9,7 @@ export const TERMS = {
   'P/B': 'Cijena dionice podijeljena knjigovodstvenom vrijednošću po dionici — koliko plaćate po euru vlastitog kapitala firme.',
   'EV/EBITDA': 'Vrijednost cijelog poslovanja (s dugom) podijeljena operativnom zaradom — omjer neovisan o načinu financiranja.',
   DCF: 'Diskontirani novčani tok — budući slobodni novac firme preračunat na današnju vrijednost.',
+  comps: 'Peer usporedba — jedna metoda koja kroz više leća (P/E, EV/EBITDA, EV/EBIT, P/B) uspoređuje firmu sa sličnima; leće su ulazi, ne zasebne metode.',
   SOTP: 'Zbroj dijelova (sum-of-the-parts) — holding se vrednuje tako da se zbroje vrijednosti svih tvrtki koje drži, minus dug.',
   DDM: 'Dividendni model — vrijednost dionice kao zbroj svih budućih dividendi preračunatih na danas.',
   ROE: 'Povrat na kapital — koliko firma godišnje zaradi na svakih 100 € vlastitog kapitala.',

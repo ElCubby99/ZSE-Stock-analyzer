@@ -39,7 +39,7 @@ sys.path.insert(0, ".")
 from src.db import get_conn  # noqa: E402
 from src.params_calibrated import build_params  # noqa: E402
 from src.valuation_methods import (  # noqa: E402
-    MATERIAL_PCT, build_ctx, hierarchy_for, value_company,
+    ARCHETYPE_OF, MATERIAL_PCT, build_ctx, value_company,
 )
 
 EXTREME_GAP = 0.40        # |cijena vs sredina zone| iznad ovoga = ekstrem
@@ -132,7 +132,7 @@ def audit_company(conn, cur, comp: dict, plist: dict, scrape: bool) -> dict:
                    WHERE parent_company_id=%s AND ownership_pct >= %s""",
                 (cid, MATERIAL_PCT))
     n_material = cur.fetchone()[0]
-    arche, _ = hierarchy_for(comp["sector"])
+    arche = ARCHETYPE_OF.get(comp["sector"] or "", "operating")
     if n_material and arche != "holding":
         tags.append("TREBA SOTP")
         why.append(f"roditelj {n_material} materijalnih udjela u holdings grafu, "
