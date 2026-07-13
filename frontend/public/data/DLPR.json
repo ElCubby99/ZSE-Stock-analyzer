@@ -4,68 +4,128 @@
   "sector": null,
   "is_group": false,
   "isin": null,
-  "fiscal_year": null,
-  "audited": null,
+  "fiscal_year": 2025,
+  "audited": false,
   "generated_at": "2026-07-13",
-  "data_status": "market_only",
-  "data_note": "financijska izvješća su u obradi (needs_review) — prikazani su samo javni tržišni podaci; financije i vrednovanje se objavljuju tek nakon validacije",
-  "financials_3y": null,
-  "balance": null,
-  "segments": null,
-  "ownership": null,
-  "bank_kpi": null,
-  "share_classes": [
-    {
-      "ticker": "DLPR",
-      "class_type": "ordinary",
-      "isin": "HRDLPRRA0007",
-      "shares_issued": 2836174.0,
-      "treasury_shares": 0.0,
-      "shares_ex_treasury": 2836174.0,
-      "is_primary": true,
-      "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 7022); trezorske NEPOZNATE (0 uz ogradu)",
-      "last_price": null
+  "data_status": "full",
+  "financials_3y": {
+    "years": [
+      2025
+    ],
+    "rows": [
+      {
+        "item": "revenue",
+        "label": "Poslovni prihodi",
+        "values": {
+          "2025": 24692148.0
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      },
+      {
+        "item": "ebitda",
+        "label": "EBITDA",
+        "values": {
+          "2025": 17858415.0
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      },
+      {
+        "item": "ebit",
+        "label": "EBIT",
+        "values": {
+          "2025": 7838388.0
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      },
+      {
+        "item": "net_income_parent",
+        "label": "Neto dobit matici",
+        "values": {
+          "2025": 7606938.0
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      },
+      {
+        "item": "eps",
+        "label": "EPS (dobit matici / dionica)",
+        "values": {
+          "2025": 2.682112592527821
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur_per_share"
+      },
+      {
+        "item": "operating_cf",
+        "label": "Operativni novčani tok",
+        "values": {
+          "2025": 14802757.0
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      }
+    ],
+    "note": "konsolidirano, godišnje (v_financials_current); EPS uz kanonski današnji broj dionica bez trezorskih; prazno = nema u bazi, ne procjenjuje se"
+  },
+  "trend": {
+    "series": [
+      {
+        "year": 2025,
+        "revenue": 24692148.0,
+        "ebitda": 17858415.0,
+        "ebitda_margin": 0.7232426680740777
+      }
+    ],
+    "revenue_label": "Prihodi",
+    "narration": "Prihodi: samo 2025. u bazi (24,7 M€) — trend se ne računa iz jedne godine. EBITDA marža: 72,3% (2025.) — jedna godina u bazi.",
+    "note": "naracija je izvedena isključivo iz brojki u bazi (bez ocjena); smjer = usporedba ruba razdoblja uz prag ±1%"
+  },
+  "news": {
+    "items": [],
+    "note": "službene objave izdavatelja s EHO-a (zse.hr) — bez medijskih napisa i bez komentara platforme; prazno = nema objava u bazi"
+  },
+  "business_profile": null,
+  "risks": {
+    "cards": [
+      {
+        "l": "KONCENTRACIJA I LIKVIDNOST",
+        "txt": "DLPR: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski."
+      },
+      {
+        "l": "PRETPOSTAVKE PROCJENE",
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 1,0; peer multipli (P/E 12, P/B 1,5)."
+      },
+      {
+        "l": "RASKORAK METODA",
+        "txt": "Sve metode zajedno raspinju 25–83 € (raspon 69%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+      }
+    ],
+    "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
+  },
+  "balance": {
+    "fiscal_year": 2025,
+    "is_financial": false,
+    "total_assets": 172374864.0,
+    "total_equity": 108266301.0,
+    "equity_parent": 108266301.0,
+    "bvps": 38.17336348193023,
+    "leverage": {
+      "net_debt": 44856075.99,
+      "net_debt_to_ebitda": 2.511761317563737,
+      "current_ratio": null,
+      "current_ratio_note": "tekući omjer: kratkoročne stavke nisu u bazi",
+      "components_note": "net_debt = debt_short + debt_long − novac (izračun iz ekstrakcije)"
     }
-  ],
-  "metrics": {
-    "eps": null,
-    "bvps": null,
-    "roe": null,
-    "dps": null,
-    "shares_ex_treasury": null,
-    "market_cap_eur": null,
-    "ebitda_eur": null,
-    "per_class": [
-      {
-        "class_ticker": "DLPR",
-        "price": null,
-        "pe": null,
-        "pb": null,
-        "div_yield": null,
-        "basis": "samo tržišni podaci — P/E i P/B čekaju validirana izvješća"
-      }
-    ],
-    "basis_note": "trž.kap = Σ zadnji close klase × uvrštene dionice"
   },
-  "fundamentals": [],
-  "price_summary": {
-    "as_of": "2026-07-13",
-    "classes": [
-      {
-        "class_ticker": "DLPR",
-        "last": null,
-        "note": "nema cijena u bazi"
-      }
-    ],
-    "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
-  },
-  "dividend_calendar": {
-    "as_of": "2026-07-13",
-    "events": [],
-    "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
-  },
-  "prices": [],
   "liquidity": {
     "as_of": "2026-07-13",
     "thresholds": {
@@ -85,10 +145,434 @@
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
   },
-  "news": {
-    "items": [],
-    "note": "službene objave izdavatelja s EHO-a (zse.hr) — bez medijskih napisa i bez komentara platforme; prazno = nema objava u bazi"
+  "segments": null,
+  "ownership": {
+    "holders": [],
+    "known_pct": null,
+    "free_float_pct_approx": null,
+    "note": "u bazi nema zabilježenih većinskih imatelja za ovu firmu — free float nepoznat (ne procjenjuje se)",
+    "liquidity_link": null
   },
-  "valuation": null,
-  "mar_note": "Informativni prikaz javnih tržišnih podataka; nije investicijski savjet ni preporuka."
+  "bank_kpi": null,
+  "share_classes": [
+    {
+      "ticker": "DLPR",
+      "class_type": "ordinary",
+      "isin": "HRDLPRRA0007",
+      "shares_issued": 2836174.0,
+      "treasury_shares": 0.0,
+      "shares_ex_treasury": 2836174.0,
+      "is_primary": true,
+      "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 7022); trezorske NEPOZNATE (0 uz ogradu)",
+      "last_price": null
+    }
+  ],
+  "metrics": {
+    "eps": 2.682112592527821,
+    "bvps": 38.17336348193023,
+    "roe": 0.0702613641524522,
+    "dps": null,
+    "shares_ex_treasury": 2836174.0,
+    "market_cap_eur": null,
+    "ebitda_eur": 17858415.0,
+    "per_class": [
+      {
+        "class_ticker": "DLPR",
+        "price": null,
+        "pe": null,
+        "pb": null,
+        "div_yield": null,
+        "basis": "izvedeno: zadnji close / per-share iz FY financija"
+      }
+    ],
+    "basis_note": "per-share: FY konsolidirane financije / dionice bez trezorskih; trž.kap = Σ zadnji close klase × dionice klase"
+  },
+  "fundamentals": [
+    {
+      "item": "revenue",
+      "label": "Poslovni prihodi",
+      "unit": "eur",
+      "value_eur": 24692148.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, RDG: poslovni prihodi (kumulativ) — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "ebitda",
+      "label": "EBITDA",
+      "unit": "eur",
+      "value_eur": 17858415.0,
+      "confidence": null,
+      "source_page": "computed",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "ebit",
+      "label": "EBIT",
+      "unit": "eur",
+      "value_eur": 7838388.0,
+      "confidence": 0.85,
+      "source_page": "TFI 4Q 2025 XLSX, RDG: poslovni prihodi − poslovni rashodi (izračun) — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "net_income",
+      "label": "Neto dobit (ukupno)",
+      "unit": "eur",
+      "value_eur": 7606938.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, RDG: dobit ili gubitak razdoblja — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "net_income_parent",
+      "label": "Neto dobit matici",
+      "unit": "eur",
+      "value_eur": 7606938.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, RDG: solo obrazac — cijela dobit izdavatelju — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "net_income_minority",
+      "label": "Manjinski interesi (dobit)",
+      "unit": "eur",
+      "value_eur": 0.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, RDG: solo obrazac — nema manjinskih — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "total_assets",
+      "label": "Ukupna imovina",
+      "unit": "eur",
+      "value_eur": 172374864.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, Bilanca: UKUPNO AKTIVA — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "total_equity",
+      "label": "Ukupni kapital",
+      "unit": "eur",
+      "value_eur": 108266301.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, Bilanca: KAPITAL I REZERVE — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "equity_parent",
+      "label": "Kapital matici",
+      "unit": "eur",
+      "value_eur": 108266301.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, Bilanca: solo obrazac — sav kapital izdavatelju — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "net_debt",
+      "label": "Neto dug",
+      "unit": "eur",
+      "value_eur": 44856075.99,
+      "confidence": null,
+      "source_page": "computed",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "cash_and_equivalents",
+      "label": "Novac i ekvivalenti",
+      "unit": "eur",
+      "value_eur": 10793740.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, Bilanca: novac u banci i blagajni — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "operating_cf",
+      "label": "Operativni novčani tok",
+      "unit": "eur",
+      "value_eur": 14802757.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, NT_I: neto novčani tokovi od poslovnih aktivnosti — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "capex",
+      "label": "Capex",
+      "unit": "eur",
+      "value_eur": 479180.0,
+      "confidence": 0.9,
+      "source_page": "TFI 4Q 2025 XLSX, NT_I: izdaci za kupnju dugotrajne imovine — strojno parsirano (AOP obrazac), nerevidirani kumulativ",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/DLPR/FI-DLPR-925f637782b7e4ef4a4ab2b188cc3461.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "dps",
+      "label": "Dividenda po dionici",
+      "unit": "eur_per_share",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    }
+  ],
+  "price_summary": {
+    "as_of": "2026-07-13",
+    "classes": [
+      {
+        "class_ticker": "DLPR",
+        "last": null,
+        "note": "nema cijena u bazi"
+      }
+    ],
+    "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
+  },
+  "dividend_calendar": {
+    "as_of": "2026-07-13",
+    "events": [
+      {
+        "class_ticker": "DLPR",
+        "fiscal_year": null,
+        "amount_eur": 1.5,
+        "div_type": "cash",
+        "ex_date": "2024-06-21",
+        "record_date": "2024-06-24",
+        "payment_date": "2024-09-09",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://zse.hr/hr/papir/310?isin=HRDLPRRA0007 (zse.hr stranica papira, blok 'Dividenda')"
+      }
+    ],
+    "upcoming_count": 0,
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+  },
+  "prices": [],
+  "share_class_explainer": null,
+  "valuation": {
+    "params": {
+      "r": 0.0931,
+      "g": 0.025,
+      "g_terminal": 0.04,
+      "beta": 1.0,
+      "beta_calibrated": false,
+      "holding_discount_low": 0.15,
+      "holding_discount_high": 0.25,
+      "holding_discount_reason": null,
+      "peer_pe": 12.0,
+      "peer_pb": 1.5,
+      "rates_calibrated": true,
+      "peers_calibrated": false,
+      "peers_narrow": false,
+      "sources": {
+        "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); vidi src/calibrate.py",
+        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
+        "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
+        "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
+        "peers": "DLPR: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+      }
+    },
+    "assumption_flags": [
+      {
+        "key": "beta",
+        "label": "β = 1,0",
+        "status": "pretpostavka",
+        "why": "beta nije kalibrirana za ovu firmu (serija prekratka/nelikvidna) — vidi src/calibrate.py"
+      },
+      {
+        "key": "peer_multiples",
+        "label": "peer multipli (P/E 12, P/B 1,5)",
+        "status": "pretpostavka",
+        "why": "nema usporedivog osiguratelja na ZSE (docs/peers.md)"
+      }
+    ],
+    "ran": [
+      {
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
+        "low": 48.67103843946104,
+        "base": 57.26004522289535,
+        "high": 65.84905200632964,
+        "confidence": 0.3,
+        "no_value": false,
+        "assumptions": {
+          "placeholder": true,
+          "lenses": {
+            "pe": {
+              "mult": 12.0,
+              "per_share": 32.19
+            },
+            "ev_ebitda": {
+              "mult": 7.0,
+              "per_share": 28.26
+            },
+            "pb": {
+              "mult": 1.5,
+              "per_share": 57.26
+            }
+          },
+          "ev_ebitda_carrier_ban": "EV/EBITDA ne smije biti nositelj: neto dug/EBITDA=2.51, D&A/EBITDA=0.56 — multipl laska firmama s visokim D&A/dugom (v2 §2)",
+          "carrier": "pb",
+          "carrier_reason": "nositelj po arhetipu 'cyclical' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
+          "intra_spread": {
+            "spread_pct": 103.0,
+            "rule": "leće razmaknute 103% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst (v2 §3)",
+            "anomaly": "poluga (neto dug/EBITDA 2.5); visok D&A (56% EBITDA-e)"
+          },
+          "sources": {
+            "peers": "DLPR: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+          },
+          "low_confidence": "peer multipli su placeholder (nema peer skupa na ZSE) -> niska pouzdanost"
+        }
+      },
+      {
+        "key": "dcf_fcf",
+        "label": "DCF (FCF)",
+        "low": 67.42248421700498,
+        "base": 83.09822504834591,
+        "high": 106.04809155548308,
+        "confidence": 0.6,
+        "no_value": false,
+        "assumptions": {
+          "wacc": 0.0931,
+          "g_terminal": 0.04,
+          "g1_explicit": null,
+          "model": "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)",
+          "growth_source": null,
+          "placeholder": true,
+          "sources": {
+            "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
+          }
+        }
+      },
+      {
+        "key": "justified_pb_roe",
+        "label": "Opravdani P/B (ROE)",
+        "low": 22.12264411625563,
+        "base": 25.371196849920185,
+        "high": 29.738012142505415,
+        "confidence": 0.7,
+        "no_value": false,
+        "assumptions": {
+          "roe": 0.0703,
+          "r": 0.0931,
+          "g": 0.025,
+          "bvps": 38.17,
+          "placeholder": true,
+          "sources": {
+            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); vidi src/calibrate.py",
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
+          }
+        }
+      }
+    ],
+    "skipped": [
+      {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
+      },
+      {
+        "key": "residual_income",
+        "label": "Rezidualni dohodak (RI)",
+        "reason": "RI predložak je za financijske firme (banka/osiguranje), ne None"
+      },
+      {
+        "key": "sotp_nav",
+        "label": "Sum-of-the-parts / NAV",
+        "reason": "nije grupa"
+      }
+    ],
+    "reconciliation": {
+      "zone_low": 67.42248421700498,
+      "zone_high": 106.04809155548308,
+      "dispersion": 0.36422727436136515,
+      "divergent": true,
+      "archetype": "cyclical",
+      "anchor_methods": [
+        "dcf_fcf",
+        "justified_pb_roe"
+      ],
+      "method_roles": {
+        "comps": {
+          "role": "anchor_excluded",
+          "note": "sidrena metoda ISKLJUČENA iz zone — placeholder ulazi (conf < 0,5) — red rule v2 §8: ne smije sidriti",
+          "vs_zone_pct": null
+        },
+        "dcf_fcf": {
+          "role": "anchor",
+          "note": null,
+          "vs_zone_pct": null
+        },
+        "justified_pb_roe": {
+          "role": "anchor_alt",
+          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
+          "vs_zone_pct": -0.707487027849665
+        }
+      },
+      "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): comps",
+      "all_methods_low": 25.371196849920185,
+      "all_methods_high": 83.09822504834591,
+      "dispersion_all": 0.6946842506544585,
+      "method_bases": {
+        "comps": 57.26004522289535,
+        "dcf_fcf": 83.09822504834591,
+        "justified_pb_roe": 25.371196849920185
+      },
+      "qa_flags": [
+        "ULAZI NEKONZISTENTNI: justified_pb_roe -71% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "metode se međusobno razilaze 69% (sve metode) — provjeri ulaze/pretpostavke"
+      ],
+      "vs_market_pct": null,
+      "anchor_inconsistency": [
+        "justified_pb_roe -71% vs primarno sidro"
+      ],
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 72 € operativne zarade (EBITDA marža 72.3%). Firma je lani stvorila 14.3 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 9.3%, bez faze rasta (samo dugoročni rast 4%) — tako izlazi 83.10 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) -71% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "red_rules": [],
+      "market_implied": null
+    },
+    "sotp": null
+  },
+  "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }
