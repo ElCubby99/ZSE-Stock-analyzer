@@ -4634,8 +4634,8 @@
       "beta_calibrated": true,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
-      "peer_pe": 13.26,
-      "peer_pb": 1.52,
+      "peer_pe": 13.43,
+      "peer_pb": 1.76,
       "rates_calibrated": true,
       "peers_calibrated": true,
       "sources": {
@@ -4643,7 +4643,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.26 (n=2), P/B=1.52 (n=2), EV/EBITDA=9.32 (n=2). Skup ['PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda. Po peeru: PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.26 (n=3). Skup ['PLAG', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
       }
     },
     "assumption_flags": [],
@@ -4651,19 +4651,18 @@
       {
         "key": "multiples_relative",
         "label": "Relativni multiplikatori",
-        "low": 3.9484945041695725,
-        "base": 4.645287651964203,
-        "high": 5.3420807997588335,
-        "confidence": 0.6,
+        "low": 3.9991162285820034,
+        "base": 4.7048426218611805,
+        "high": 5.410569015140357,
+        "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
-          "peer_pe": 13.26,
+          "peer_pe": 13.43,
           "pb_lens": "P/B leća izostavljena: operativna firma se multiplira na zaradu (P/E) i EBITDA; peer P/B nije prenosiv bez ROE konteksta",
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.26 (n=2), P/B=1.52 (n=2), EV/EBITDA=9.32 (n=2). Skup ['PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda. Po peeru: PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
-          },
-          "narrow_peers": "uski peer skup (n=2) -> snižena pouzdanost"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.26 (n=3). Skup ['PLAG', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
+          }
         }
       },
       {
@@ -4748,9 +4747,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 3.9484945041695725,
-      "zone_high": 5.3420807997588335,
-      "dispersion": 0.26086956521739135,
+      "zone_low": 3.9991162285820034,
+      "zone_high": 5.410569015140357,
+      "dispersion": 0.26086956521739124,
       "divergent": false,
       "archetype": "operating",
       "anchor_methods": [
@@ -4770,12 +4769,12 @@
         "ddm_gordon": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 0.5029389691284498
+          "vs_zone_pct": 0.4839144252154315
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 0.07423569919097228
+          "vs_zone_pct": 0.06063777894804856
         }
       },
       "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
@@ -4783,18 +4782,18 @@
       "all_methods_high": 8.028821410190426,
       "dispersion_all": 2.5010933299595757,
       "method_bases": {
-        "multiples_relative": 4.645287651964203,
+        "multiples_relative": 4.7048426218611805,
         "dcf_fcf": -12.052010266273482,
         "ddm_gordon": 8.028821410190426,
         "justified_pb_roe": 5.738653903063599
       },
       "qa_flags": [
         "metode se međusobno razilaze 250% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +80% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +77% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 79.5,
+      "vs_market_pct": 77.3,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 4.65 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke."
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 4.70 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke."
     },
     "sotp": null
   },

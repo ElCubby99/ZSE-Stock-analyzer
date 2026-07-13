@@ -354,7 +354,7 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri +29.5% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri +55.8% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
@@ -366,7 +366,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 40–69 € (raspon 42%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 40–68 € (raspon 42%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -7758,9 +7758,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 64.34458975667256,
-        "base": 68.63422907378407,
-        "high": 72.92386839089556,
+        "low": 53.498801756412135,
+        "base": 57.065388540172954,
+        "high": 60.63197532393376,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -7784,10 +7784,10 @@
             },
             {
               "name": "Maistra",
-              "value_eur": 670545423.0,
+              "value_eur": 440928450.0,
               "value_market_eur": 670545423.0,
-              "fair_basis": "market_fallback",
-              "basis": "market: trž.kap 716,854,204 × 0.9354 — kći nije analizirana u sustavu, tržišna vrijednost",
+              "fair_basis": "our_estimate",
+              "basis": "fer-procjena: fer-procjena MAIS: sidro operating (multiples_relative, ev_ebitda) sredina zone 37–50 €/dionici × 10,944,339 dionica × 0.9354",
               "pct": 0.9354,
               "placeholder": false
             },
@@ -7824,11 +7824,11 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 1532934028.0,
-          "nav_total_eur": 1362244028.0,
+          "nav_gross_eur": 1303317055.0,
+          "nav_total_eur": 1132627055.0,
           "sotp_fair": {
-            "nav_eur": 1362244028.0,
-            "base_per_share": 68.63422907378407,
+            "nav_eur": 1132627055.0,
+            "base_per_share": 57.065388540172954,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
@@ -7836,18 +7836,18 @@
             "base_per_share": 88.90191071035856,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": 29.5,
+          "market_vs_fair_pct": 55.8,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
             "holding_discount": "holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija (M10, 2024-07-17..2026-07-10, n=489 d) mjeri cijenu prema KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: medijan -12.1%, p25 -16.4%, p75 -5.3%, zadnje -25.5% (2026-07-10) — negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove na placeholder multiplama i grupni neto dug konstantnim pa NE mjeri čisti holding diskont; raspon se zato NE zamjenjuje opaženim (docs/calibration.md)"
           },
           "market_check": {
             "own_market_cap_eur": 2213953141.0,
-            "nav_pre_discount_eur": 1362244028.0,
-            "price_vs_nav_pct": 62.5,
+            "nav_pre_discount_eur": 1132627055.0,
+            "price_vs_nav_pct": 95.5,
             "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana (M10) — vidi izvor holding diskonta i docs/calibration.md"
           },
-          "market_based_share_of_gross": 0.8
+          "market_based_share_of_gross": 0.77
         }
       }
     ],
@@ -7869,9 +7869,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 64.34458975667256,
-      "zone_high": 72.92386839089556,
-      "dispersion": 0.11764705882352933,
+      "zone_low": 53.498801756412135,
+      "zone_high": 60.63197532393376,
+      "dispersion": 0.1176470588235295,
       "divergent": false,
       "archetype": "holding",
       "anchor_methods": [
@@ -7881,17 +7881,17 @@
         "multiples_relative": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": 0.0
+          "vs_zone_pct": 0.11746827356376732
         },
         "ddm_gordon": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": 0.0
+          "vs_zone_pct": 0.11064418406177445
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": -0.3858543866199934
+          "vs_zone_pct": -0.2613489228464779
         },
         "sotp_nav": {
           "role": "anchor",
@@ -7901,20 +7901,20 @@
       },
       "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 39.51694754379656,
-      "all_methods_high": 68.63422907378407,
-      "dispersion_all": 0.4242384874562438,
+      "all_methods_high": 67.7543087879972,
+      "dispersion_all": 0.4167611145226965,
       "method_bases": {
         "multiples_relative": 67.7543087879972,
         "ddm_gordon": 67.34055076170405,
         "justified_pb_roe": 39.51694754379656,
-        "sotp_nav": 68.63422907378407
+        "sotp_nav": 57.065388540172954
       },
       "qa_flags": [
-        "fer-zona odstupa +140% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +189% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 140.4,
+      "vs_market_pct": 189.1,
       "anchor_inconsistency": [],
-      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća; forward procjena iz backloga/guidance-a još nije izvedena). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,362 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 68.63 € po dionici. Tržište te iste kćeri trenutačno vrednuje 29.5% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu."
+      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća; forward procjena iz backloga/guidance-a još nije izvedena). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,133 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 57.07 € po dionici. Tržište te iste kćeri trenutačno vrednuje 55.8% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu."
     },
     "sotp": {
       "parts": [
@@ -7929,10 +7929,10 @@
         },
         {
           "name": "Maistra",
-          "value_eur": 670545423.0,
+          "value_eur": 440928450.0,
           "value_market_eur": 670545423.0,
-          "fair_basis": "market_fallback",
-          "basis": "market: trž.kap 716,854,204 × 0.9354 — kći nije analizirana u sustavu, tržišna vrijednost",
+          "fair_basis": "our_estimate",
+          "basis": "fer-procjena: fer-procjena MAIS: sidro operating (multiples_relative, ev_ebitda) sredina zone 37–50 €/dionici × 10,944,339 dionica × 0.9354",
           "pct": 0.9354,
           "placeholder": false
         },
@@ -7969,8 +7969,8 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 1532934028.0,
-      "nav_total_eur": 1362244028.0,
+      "nav_gross_eur": 1303317055.0,
+      "nav_total_eur": 1132627055.0,
       "holding_discount_range": [
         0.15,
         0.25
@@ -7978,13 +7978,13 @@
       "holding_discount_reason": "empirijski raspon konglomeratskog/holding diskonta za europske holdinge (nelikvidnost, dvostruko oporezivanje dividendi, trošak centra); PLACEHOLDER dok se ne kalibrira na ZSE povijest",
       "market_check": {
         "own_market_cap_eur": 2213953141.0,
-        "nav_pre_discount_eur": 1362244028.0,
-        "price_vs_nav_pct": 62.5,
+        "nav_pre_discount_eur": 1132627055.0,
+        "price_vs_nav_pct": 95.5,
         "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana (M10) — vidi izvor holding diskonta i docs/calibration.md"
       },
       "sotp_fair": {
-        "nav_eur": 1362244028.0,
-        "base_per_share": 68.63422907378407,
+        "nav_eur": 1132627055.0,
+        "base_per_share": 57.065388540172954,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
@@ -7992,7 +7992,7 @@
         "base_per_share": 88.90191071035856,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": 29.5,
+      "market_vs_fair_pct": 55.8,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
       "missing": null
     }

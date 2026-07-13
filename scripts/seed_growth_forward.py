@@ -8,6 +8,7 @@ stranica + citat) — ekstrahirano ručno iz lokalnih PDF-ova (API kredit
 nedostupan), po istoj verified-seed politici kao holdings/TOK minority.
 
 PRAVILA IZVOĐENJA (transparentna, konzervativna):
+  R0  BROJČANI guidance uprave: g1 = guidance (cap 20%) — najjači signal.
   R1  kvantificiran backlog + book-to-bill > 1:
         g1 = min(ostvareni rast prodaje FY, rast backloga g/g, cap 20%)
       — ograničenje je KAPACITET (ostvareni rast), backlog potvrđuje potražnju.
@@ -123,6 +124,44 @@ SEEDS = [
             ]},
         "confidence": 0.6,
         "source": "Dalekovod kons. GI 2025 (data/reports/auto/dlkv_2025.pdf), str. 4, 6–8",
+    },
+    {
+        "ticker": "ADPL", "fy": 2025, "g1": 0.05, "rule": "R0",
+        "drivers": ("BROJČANI guidance uprave: rast prihoda 5% godišnje kroz "
+                    "3 g, EBITDA marža 13%, CAPEX 8 M€/g"),
+        "basis": (
+            "g1=5% = izravni guidance uprave (R0): 'U narednom trogodišnjem "
+            "razdoblju očekuje se godišnji rast prihoda od 5%, te ostvarivanje "
+            "EBITDA marže od 13%, uz CAPEX od 8 milijuna eura godišnje' "
+            "(GI 2025, str. 62 — Plan poslovanja 2026)."),
+        "signals": {
+            "guidance_revenue_growth": 0.05, "guidance_ebitda_margin": 0.13,
+            "guidance_capex_eur": 8_000_000,
+            "quotes": ["'očekuje se godišnji rast prihoda od 5%, te ostvarivanje "
+                       "EBITDA marže od 13%, uz CAPEX od 8 milijuna eura godišnje' "
+                       "(str. 62)"]},
+        "confidence": 0.85,
+        "source": "AD Plastik GI 2025 (data/reports/auto/adpl_2025.pdf), str. 62",
+    },
+    {
+        "ticker": "ARNT", "fy": 2025, "g1": 0.0, "rule": "R2",
+        "drivers": ("uprava: operativni pokazatelji 'na razinama sličnim onima "
+                    "iz 2025.' — bez faze rasta"),
+        "basis": (
+            "g1=0% (R2, konzervativno): 'Trenutni operativni pokazatelji ostaju "
+            "na razinama sličnim onima iz 2025. godine' (GI 2025, str. 13); "
+            "optimizam je kvalitativan ('Ostajemo optimistični u pogledu naših "
+            "izgleda za rast', str. 10) bez brojki, uz puni godišnji učinak "
+            "investicija u kampove Stupice i Indije (str. 10). Bez brojčanog "
+            "signala eksplicitna faza se ne napuhuje."),
+        "signals": {
+            "quotes": [
+                "'Trenutni operativni pokazatelji ostaju na razinama sličnim "
+                "onima iz 2025. godine' (str. 13)",
+                "'u 2026. godini očekujemo puni godišnji učinak' investicija u "
+                "kampove (str. 10)"]},
+        "confidence": 0.7,
+        "source": "Arena Hospitality GI 2025 (data/reports/arnt_2025_consolidated.pdf), str. 10, 13",
     },
     {
         "ticker": "PODR", "fy": 2025, "g1": 0.08, "rule": "R2",

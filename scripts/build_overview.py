@@ -18,6 +18,8 @@ DATA_DIR = ROOT / "frontend" / "public" / "data"
 TICKERS = [
     "ADRS", "CROS", "ZABA", "ADPL", "ARNT", "ATGR", "DLKV", "HPB", "HT",
     "IG", "KODT", "KOEI", "PODR", "RIVP", "SPAN", "TOK", "ZITO",
+    # M14: promovirane ručnom (in-session) ekstrakcijom + market_only linije
+    "MAIS", "PLAG", "ULPL", "VLEN", "CTKS", "KTJV",
 ]
 
 INDICES = [

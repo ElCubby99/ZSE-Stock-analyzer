@@ -96,10 +96,11 @@ PEER_SETS = {
     "ADPL": ["KODT", "DLKV", "IG"],
     "DLKV": ["KODT", "ADPL", "IG"],
     "IG": ["KODT", "ADPL", "DLKV"],
-    # turizam (n=2 -> uski skup, snižena pouzdanost)
-    "RIVP": ["PLAG", "ARNT"],
-    "PLAG": ["RIVP", "ARNT"],
-    "ARNT": ["RIVP", "PLAG"],
+    # turizam (MAIS uključen otkad ima validirane financije, M14)
+    "RIVP": ["PLAG", "ARNT", "MAIS"],
+    "PLAG": ["RIVP", "ARNT", "MAIS"],
+    "ARNT": ["RIVP", "PLAG", "MAIS"],
+    "MAIS": ["RIVP", "PLAG", "ARNT"],
 }
 
 
