@@ -279,7 +279,7 @@
     "cards": [
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -12–5 € (raspon 363%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -12–5 € (raspon 343%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -4636,7 +4636,7 @@
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
-      "peer_pe": 13.43,
+      "peer_pe": 15.6,
       "peer_pb": 1.76,
       "rates_calibrated": true,
       "peers_calibrated": true,
@@ -4646,7 +4646,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.26 (n=3). Skup ['PLAG', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.6 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.47 (n=3). Skup ['PLAG', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PLAG P/E=15.6 P/B=2.49; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
       }
     },
     "assumption_flags": [],
@@ -4654,17 +4654,17 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 3.9006707908200733,
-        "base": 4.589024459788321,
-        "high": 5.2773781287565695,
+        "low": 4.223756502511173,
+        "base": 4.969125297071969,
+        "high": 5.714494091632764,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "lenses": {
             "pe": {
-              "mult": 13.43,
-              "per_share": 4.7
+              "mult": 15.6,
+              "per_share": 5.47
             },
             "pb": {
               "mult": 1.76,
@@ -4675,11 +4675,11 @@
           "carrier": "pe",
           "carrier_reason": "nositelj po arhetipu 'tourism' (v2 §2)",
           "intra_spread": {
-            "spread_pct": 5.0,
+            "spread_pct": 22.0,
             "rule": "leće konzistentne (<40%) -> prosjek"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.26 (n=3). Skup ['PLAG', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.6 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.47 (n=3). Skup ['PLAG', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PLAG P/E=15.6 P/B=2.49; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
           }
         }
       },
@@ -4728,9 +4728,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 3.9006707908200733,
-      "zone_high": 5.2773781287565695,
-      "dispersion": 0.2608695652173913,
+      "zone_low": 4.223756502511173,
+      "zone_high": 5.714494091632764,
+      "dispersion": 0.26086956521739135,
       "divergent": false,
       "archetype": "tourism",
       "anchor_methods": [
@@ -4750,24 +4750,24 @@
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
       "all_methods_low": -12.052010266273482,
-      "all_methods_high": 4.589024459788321,
-      "dispersion_all": 3.626268474243305,
+      "all_methods_high": 4.969125297071969,
+      "dispersion_all": 3.4253786221440357,
       "method_bases": {
-        "comps": 4.589024459788321,
+        "comps": 4.969125297071969,
         "dcf_fcf": -12.052010266273482
       },
       "qa_flags": [
-        "metode se međusobno razilaze 363% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +82% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 343% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +68% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 81.7,
+      "vs_market_pct": 67.8,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 4.59 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira multipl P/E 23.8×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 4.97 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira multipl P/E 23.8×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_pe": 23.8,
-        "peer_pe": 13.43,
-        "implied_pe_note": "cijena implicira P/E 23.8× vs peer medijan 13.43×",
+        "peer_pe": 15.6,
+        "implied_pe_note": "cijena implicira P/E 23.8× vs peer medijan 15.6×",
         "narrative": "Tržišna cijena implicira multipl P/E 23.8×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       }
     },

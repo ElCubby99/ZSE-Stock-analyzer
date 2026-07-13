@@ -106,7 +106,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -4–43 € (raspon 109%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -4–50 € (raspon 108%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -2669,8 +2669,8 @@
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
-      "peer_pe": 13.43,
-      "peer_pb": 2.09,
+      "peer_pe": 15.6,
+      "peer_pb": 2.49,
       "rates_calibrated": true,
       "peers_calibrated": true,
       "peers_narrow": false,
@@ -2679,7 +2679,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=3), P/B=2.09 (n=3), EV/EBITDA=9.32 (n=2). Skup ['RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.6 (n=3), P/B=2.49 (n=3), EV/EBITDA=10.08 (n=2). Skup ['RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=15.6 P/B=2.49; ARNT P/E=13.43 P/B=0.95"
       }
     },
     "assumption_flags": [
@@ -2694,29 +2694,29 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 36.61003506013474,
-        "base": 43.070629482511464,
-        "high": 49.53122390488818,
+        "low": 42.525431640960676,
+        "base": 50.0299195776008,
+        "high": 57.53440751424092,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "lenses": {
             "pe": {
-              "mult": 13.43,
-              "per_share": 43.07
+              "mult": 15.6,
+              "per_share": 50.03
             },
             "ev_ebitda": {
-              "mult": 9.32,
-              "per_share": 66.02
+              "mult": 10.08,
+              "per_share": 72.16
             },
             "ev_ebit": {
-              "mult": 16.32,
-              "per_share": 61.19
+              "mult": 17.57,
+              "per_share": 66.59
             },
             "pb": {
-              "mult": 1.31,
-              "per_share": 48.64
+              "mult": 1.56,
+              "per_share": 57.95
             }
           },
           "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 8.6% / peer medijan 13.8% -> faktor 0.62 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
@@ -2724,12 +2724,12 @@
           "carrier": "pe",
           "carrier_reason": "nositelj po arhetipu 'tourism' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
           "intra_spread": {
-            "spread_pct": 53.0,
-            "rule": "leće razmaknute 53% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
+            "spread_pct": 44.0,
+            "rule": "leće razmaknute 44% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
             "anomaly": "visok D&A (47% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=3), P/B=2.09 (n=3), EV/EBITDA=9.32 (n=2). Skup ['RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.6 (n=3), P/B=2.49 (n=3), EV/EBITDA=10.08 (n=2). Skup ['RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=15.6 P/B=2.49; ARNT P/E=13.43 P/B=0.95"
           }
         }
       },
@@ -2778,9 +2778,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 36.61003506013474,
-      "zone_high": 49.53122390488818,
-      "dispersion": 0.2608695652173913,
+      "zone_low": 42.525431640960676,
+      "zone_high": 57.53440751424092,
+      "dispersion": 0.26086956521739135,
       "divergent": false,
       "archetype": "tourism",
       "anchor_methods": [
@@ -2800,28 +2800,20 @@
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
       "all_methods_low": -3.9136092449273394,
-      "all_methods_high": 43.070629482511464,
-      "dispersion_all": 1.0908649186684498,
+      "all_methods_high": 50.0299195776008,
+      "dispersion_all": 1.0782253754946973,
       "method_bases": {
-        "comps": 43.070629482511464,
+        "comps": 50.0299195776008,
         "dcf_fcf": -3.9136092449273394
       },
       "qa_flags": [
-        "metode se međusobno razilaze 109% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +52% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 108% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": 52.1,
+      "vs_market_pct": 30.9,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 34 € operativne zarade (EBITDA marža 33.9%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 43.07 € po dionici. Leće se razilaze (53%) pa se ne prosječe; razlog: visok D&A (47% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+8.9% trajnog rasta godišnje / multipl P/E 20.4×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 34 € operativne zarade (EBITDA marža 33.9%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 50.03 € po dionici. Leće se razilaze (44%) pa se ne prosječe; razlog: visok D&A (47% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
-      "market_implied": {
-        "implied_g_pct": 8.9,
-        "implied_g_note": "uz naš r=9.3% cijena implicira trajni rast FCF-a ~+8.9% godišnje",
-        "implied_pe": 20.4,
-        "peer_pe": 13.43,
-        "implied_pe_note": "cijena implicira P/E 20.4× vs peer medijan 13.43×",
-        "narrative": "Tržišna cijena implicira ~+8.9% trajnog rasta godišnje / multipl P/E 20.4×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      "market_implied": null
     },
     "sotp": null
   },

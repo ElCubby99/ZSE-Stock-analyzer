@@ -3800,7 +3800,7 @@
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
       "peer_pe": 20.42,
-      "peer_pb": 2.09,
+      "peer_pb": 2.49,
       "rates_calibrated": true,
       "peers_calibrated": true,
       "peers_narrow": false,
@@ -3809,7 +3809,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=2.09 (n=3), EV/EBITDA=9.21 (n=2). Skup ['RIVP', 'PLAG', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; MAIS P/E=20.42 P/B=1.76"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=2.49 (n=3), EV/EBITDA=9.97 (n=2). Skup ['RIVP', 'PLAG', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=15.6 P/B=2.49; MAIS P/E=20.42 P/B=1.76"
       }
     },
     "assumption_flags": [],
@@ -3830,16 +3830,16 @@
               "per_share": 62.34
             },
             "ev_ebitda": {
-              "mult": 9.21,
-              "per_share": 39.18
+              "mult": 9.97,
+              "per_share": 44.44
             },
             "ev_ebit": {
-              "mult": 16.16,
-              "per_share": 35.54
+              "mult": 17.41,
+              "per_share": 40.18
             },
             "pb": {
-              "mult": 1.07,
-              "per_share": 46.3
+              "mult": 1.27,
+              "per_share": 55.16
             }
           },
           "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 7.0% / peer medijan 13.8% -> faktor 0.51 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
@@ -3847,12 +3847,12 @@
           "carrier": "pe",
           "carrier_reason": "nositelj po arhetipu 'tourism' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
           "intra_spread": {
-            "spread_pct": 75.0,
-            "rule": "leće razmaknute 75% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
+            "spread_pct": 55.0,
+            "rule": "leće razmaknute 55% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
             "anomaly": "poluga (neto dug/EBITDA 3.5); visok D&A (46% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=2.09 (n=3), EV/EBITDA=9.21 (n=2). Skup ['RIVP', 'PLAG', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; MAIS P/E=20.42 P/B=1.76"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=2.49 (n=3), EV/EBITDA=9.97 (n=2). Skup ['RIVP', 'PLAG', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; PLAG P/E=15.6 P/B=2.49; MAIS P/E=20.42 P/B=1.76"
           }
         }
       },
@@ -3933,7 +3933,7 @@
       "qa_flags": [],
       "vs_market_pct": -34.2,
       "anchor_inconsistency": [],
-      "reasoning": "Očekivani rast +0.0% godišnje procijenjen je iz zadnjeg izvješća — uprava: operativni pokazatelji 'na razinama sličnim onima iz 2025.' — bez faze rasta. Od svakih 100 € prihoda firmi ostaje 25 € operativne zarade (EBITDA marža 24.6%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 62.34 € po dionici. Leće se razilaze (75%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 3.5); visok D&A (46% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: DCF (FCF) +23% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
+      "reasoning": "Očekivani rast +0.0% godišnje procijenjen je iz zadnjeg izvješća — uprava: operativni pokazatelji 'na razinama sličnim onima iz 2025.' — bez faze rasta. Od svakih 100 € prihoda firmi ostaje 25 € operativne zarade (EBITDA marža 24.6%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 62.34 € po dionici. Leće se razilaze (55%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 3.5); visok D&A (46% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: DCF (FCF) +23% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
       "red_rules": [],
       "market_implied": null
     },

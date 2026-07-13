@@ -57,7 +57,7 @@
         "item": "eps",
         "label": "EPS (dobit matici / dionica)",
         "values": {
-          "2025": 25.97126935729102
+          "2025": 21.800655036693833
         },
         "yoy_pct": null,
         "cagr_pct": null,
@@ -98,7 +98,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "PLAG: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski."
+        "txt": "PLAG: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski; PLAG2: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -106,7 +106,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -6–348 € (raspon 102%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -5–292 € (raspon 102%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -117,7 +117,7 @@
     "total_assets": 600719000.0,
     "total_equity": 356917000.0,
     "equity_parent": 356917000.0,
-    "bvps": 162.57300405479393,
+    "bvps": 136.46610533045094,
     "leverage": {
       "net_debt": 110775000.0,
       "net_debt_to_ebitda": 1.1843160314320842,
@@ -137,6 +137,13 @@
     "classes": [
       {
         "class_ticker": "PLAG",
+        "last_trade": null,
+        "days_since_trade": null,
+        "flag": "very_low",
+        "note": "u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski"
+      },
+      {
+        "class_ticker": "PLAG2",
         "last_trade": null,
         "days_since_trade": null,
         "flag": "very_low",
@@ -165,19 +172,38 @@
       "is_primary": true,
       "note": "redovne; povlaštene (420.000, PLAG2) namjerno ISKLJUČENE iz trž.kap — nema cijene, fiksna div 0,03 EUR (AR2025 str 148/203/216)",
       "last_price": null
+    },
+    {
+      "ticker": "PLAG2",
+      "class_type": "preferred",
+      "isin": "HRPLAGPA0005",
+      "shares_issued": 420000.0,
+      "treasury_shares": 0.0,
+      "shares_ex_treasury": 420000.0,
+      "is_primary": false,
+      "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 5510); trezorske NEPOZNATE (0 uz ogradu)",
+      "last_price": null
     }
   ],
   "metrics": {
-    "eps": 25.97126935729102,
-    "bvps": 162.57300405479393,
+    "eps": 21.800655036693833,
+    "bvps": 136.46610533045094,
     "roe": 0.15975142680230978,
     "dps": null,
-    "shares_ex_treasury": 2195426.0,
-    "market_cap_eur": 746444840.0,
+    "shares_ex_treasury": 2615426.0,
+    "market_cap_eur": 889244840.0,
     "ebitda_eur": 93535000.0,
     "per_class": [
       {
         "class_ticker": "PLAG",
+        "price": null,
+        "pe": null,
+        "pb": null,
+        "div_yield": null,
+        "basis": "izvedeno: zadnji close / per-share iz FY financija"
+      },
+      {
+        "class_ticker": "PLAG2",
         "price": null,
         "pe": null,
         "pb": null,
@@ -364,6 +390,11 @@
         "class_ticker": "PLAG",
         "last": null,
         "note": "nema cijena u bazi"
+      },
+      {
+        "class_ticker": "PLAG2",
+        "last": null,
+        "note": "nema cijena u bazi"
       }
     ],
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
@@ -384,7 +415,21 @@
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
-  "share_class_explainer": null,
+  "share_class_explainer": {
+    "rows": [
+      {
+        "ticker": "PLAG",
+        "type": "redovna",
+        "rights": "pravo glasa na glavnoj skupštini; dividenda nakon povlaštenih"
+      },
+      {
+        "ticker": "PLAG2",
+        "type": "povlaštena",
+        "rights": "bez prava glasa (u pravilu); prioritetna dividenda — uvjeti u statutu/odluci o izdanju"
+      }
+    ],
+    "note": "Fer vrijednost po dionici je KLASNO-AGNOSTIČNA (firma / sve dionice ex-trezor). Tržišne cijene klasa se ipak razlikuju: glasačka premija redovne, razlika u likvidnosti i članstvo u indeksu. Ta premija je tržišna struktura — prikazuje se i objašnjava, ali se NE ugrađuje u fer (v2 §7)."
+  },
   "valuation": {
     "params": {
       "r": 0.0931,
@@ -420,9 +465,9 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 296.0727029742747,
-        "base": 348.3208270285585,
-        "high": 400.5689510828422,
+        "low": 248.5276624152241,
+        "base": 292.3854851943813,
+        "high": 336.2433079735385,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
@@ -430,19 +475,19 @@
           "lenses": {
             "pe": {
               "mult": 20.42,
-              "per_share": 530.33
+              "per_share": 445.17
             },
             "ev_ebitda": {
               "mult": 9.36,
-              "per_share": 348.32
+              "per_share": 292.39
             },
             "ev_ebit": {
               "mult": 17.47,
-              "per_share": 404.1
+              "per_share": 339.2
             },
             "pb": {
               "mult": 1.76,
-              "per_share": 286.13
+              "per_share": 240.18
             }
           },
           "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 16.0% / peer medijan 8.6% -> faktor 1.00 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
@@ -461,9 +506,9 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -13.168297984897139,
-        "base": -6.145910074913962,
-        "high": 4.1351265171959835,
+        "low": -11.053657710747995,
+        "base": -5.158964838664164,
+        "high": 3.4710843545722607,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -503,9 +548,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 296.0727029742747,
-      "zone_high": 400.5689510828422,
-      "dispersion": 0.26086956521739124,
+      "zone_low": 248.5276624152241,
+      "zone_high": 336.2433079735385,
+      "dispersion": 0.2608695652173913,
       "divergent": false,
       "archetype": "tourism",
       "anchor_methods": [
@@ -524,19 +569,19 @@
         }
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
-      "all_methods_low": -6.145910074913962,
-      "all_methods_high": 348.3208270285585,
+      "all_methods_low": -5.158964838664164,
+      "all_methods_high": 292.3854851943813,
       "dispersion_all": 1.0176443944720253,
       "method_bases": {
-        "comps": 348.3208270285585,
-        "dcf_fcf": -6.145910074913962
+        "comps": 292.3854851943813,
+        "dcf_fcf": -5.158964838664164
       },
       "qa_flags": [
         "metode se međusobno razilaze 102% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": -2.4,
+      "vs_market_pct": 16.3,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 37 € operativne zarade (EBITDA marža 37.1%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBITDA kao sektorski primjerena — sidro je 348.32 € po dionici. Leće se razilaze (85%) pa se ne prosječe; razlog: visok D&A (39% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 37 € operativne zarade (EBITDA marža 37.1%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBITDA kao sektorski primjerena — sidro je 292.39 € po dionici. Leće se razilaze (85%) pa se ne prosječe; razlog: visok D&A (39% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
       "market_implied": null
     },

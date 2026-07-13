@@ -15,12 +15,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "frontend" / "public" / "data"
 
-TICKERS = [
-    "ADRS", "CROS", "ZABA", "ADPL", "ARNT", "ATGR", "DLKV", "HPB", "HT",
-    "IG", "KODT", "KOEI", "PODR", "RIVP", "SPAN", "TOK", "ZITO",
-    # M14: promovirane ručnom (in-session) ekstrakcijom + market_only linije
-    "MAIS", "PLAG", "ULPL", "VLEN", "CTKS", "KTJV",
-]
+def _tickers() -> list[str]:
+    """M15: dinamički — svi <TICKER>.json exporti u data direktoriju."""
+    skip = {"overview"}
+    return sorted(p.stem for p in DATA_DIR.glob("*.json")
+                  if p.stem not in skip and p.stem == p.stem.upper())
+
+
+TICKERS = _tickers()
 
 INDICES = [
     ("CROBEX", "HRZB00ICBEX6"),
