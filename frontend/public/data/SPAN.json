@@ -341,11 +341,11 @@
       "ticker": "SPAN",
       "class_type": "ordinary",
       "isin": "HRSPANRA0007",
-      "shares_issued": null,
+      "shares_issued": 1960000.0,
       "treasury_shares": 0.0,
-      "shares_ex_treasury": null,
+      "shares_ex_treasury": 1960000.0,
       "is_primary": true,
-      "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS)",
+      "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRSPANRA0007); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 57.0,
         "trade_date": "2026-07-10",
@@ -4639,7 +4639,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "SPAN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+        "peers": "SPAN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       }
     },
     "assumption_flags": [
@@ -4657,15 +4657,16 @@
         "low": 27.24271683673469,
         "base": 32.050255102040815,
         "high": 36.857793367346936,
-        "confidence": 0.5,
+        "confidence": 0.3,
         "no_value": false,
         "assumptions": {
           "placeholder": true,
           "peer_pe": 12.0,
           "peer_pb": 1.5,
           "sources": {
-            "peers": "SPAN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
-          }
+            "peers": "SPAN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+          },
+          "low_confidence": "peer multipli su placeholder (nema peer skupa na ZSE) -> niska pouzdanost"
         }
       },
       {

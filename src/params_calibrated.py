@@ -78,6 +78,30 @@ DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holding
 
 ADRS_PEERS = ["ATGR", "PODR", "RIVP", "PLAG", "ARNT"]
 
+# Korak 1 audita (M13): sektorski peer skupovi UNUTAR praćenog univerzuma
+# (kriteriji i obrazloženje: docs/peers.md — bez cirkularnosti: društva pod
+# kontrolom subjekta vrednovanja nisu peeri; KODT i DLKV su obje KOEI-jeve
+# kćeri ali NE kontroliraju jedna drugu pa su međusobno dopuštene).
+# Tickeri BEZ skupa (CROS, HT, SPAN, ZABA, KOEI...) ostaju placeholder,
+# a multipl-metode tada nose NISKU pouzdanost (vidi _peer_confidence).
+PEER_SETS = {
+    "ADRS": ADRS_PEERS,
+    # konzumeri
+    "ATGR": ["PODR", "ZITO", "TOK"],
+    "PODR": ["ATGR", "ZITO", "TOK"],
+    "ZITO": ["ATGR", "PODR", "TOK"],
+    "TOK": ["ATGR", "PODR", "ZITO"],
+    # industrija
+    "KODT": ["ADPL", "DLKV", "IG"],
+    "ADPL": ["KODT", "DLKV", "IG"],
+    "DLKV": ["KODT", "ADPL", "IG"],
+    "IG": ["KODT", "ADPL", "DLKV"],
+    # turizam (n=2 -> uski skup, snižena pouzdanost)
+    "RIVP": ["PLAG", "ARNT"],
+    "PLAG": ["RIVP", "ARNT"],
+    "ARNT": ["RIVP", "PLAG"],
+}
+
 
 def build_params(ticker: str) -> Params:
     """Params s kalibriranim r/g za sve; beta IZ SERIJE gdje je kalibrirana
@@ -122,36 +146,47 @@ def build_params(ticker: str) -> Params:
     p.beta = beta  # numerički, samo za prikaz (for-dummies kartica pretpostavki)
     p.sources = sources
 
-    if ticker == "ADRS":
+    p.peers_narrow = False
+    peer_set = PEER_SETS.get(ticker)
+    if peer_set:
         from .peer_multiples import derive  # medijan IZ BAZE, ne prepisan
-        res = derive(ADRS_PEERS)
+        res = derive(peer_set)
         m = res["median"]
         rows = "; ".join(
             f"{x['ticker']} P/E={x.get('pe') and round(x['pe'], 2)} "
             f"P/B={x.get('pb') and round(x['pb'], 2)}"
             for x in res["rows"] if not x.get("skip"))
-        if m["pe"] and m["pe_n"] >= 3 and m["pb"] and m["pb_n"] >= 3:
+        if m["pe"] and m["pe_n"] >= 2 and m["pb"] and m["pb_n"] >= 2:
             p.peer_pe = round(m["pe"], 2)
             p.peer_pb = round(m["pb"], 2)
-            if m["ev_ebitda"] and m["ev_ebitda_n"] >= 3:
+            if m["ev_ebitda"] and m["ev_ebitda_n"] >= 2:
                 p.peer_ev_ebitda = round(m["ev_ebitda"], 2)
             p.peers_calibrated = True
+            p.peers_narrow = min(m["pe_n"], m["pb_n"]) < 3
+            # ROE peera: P/B leća se skalira omjerom ROE (P/B je funkcija ROE)
+            if m.get("roe"):
+                p.peer_roe = round(m["roe"], 4)
+            narrow_note = (" USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda."
+                           if p.peers_narrow else "")
             sources["peers"] = (
-                f"peer multipli = MEDIJAN iz baze (zadnje cijene + FY2025 kons. "
-                f"financije): P/E={p.peer_pe} (n={m['pe_n']}), P/B={p.peer_pb} "
+                f"peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje "
+                f"kons. financije): P/E={p.peer_pe} (n={m['pe_n']}), P/B={p.peer_pb} "
                 f"(n={m['pb_n']}), EV/EBITDA={p.peer_ev_ebitda} "
-                f"(n={m['ev_ebitda_n']}). Skup {ADRS_PEERS} (docs/peers.md; "
-                f"nijedan isključen — profitabilni, konzumeri+turizam). "
-                f"Po peeru: {rows}")
+                f"(n={m['ev_ebitda_n']}). Skup {peer_set} (docs/peers.md; sektorski "
+                f"skup unutar praćenog univerzuma, bez cirkularnosti)."
+                f"{narrow_note} Po peeru: {rows}")
         else:
-            sources["peers"] = ("peer skup nedovoljno pokriven (n<3) -> "
-                                "multipli OSTAJU placeholder")
+            sources["peers"] = (f"peer skup {peer_set} nedovoljno pokriven "
+                                f"(P/E n={m['pe_n']}, P/B n={m['pb_n']}; treba n>=2) "
+                                "-> multipli OSTAJU placeholder, multipl-metode "
+                                "NISKE pouzdanosti")
     else:
         sources["peers"] = (f"{ticker}: peer skup nije kalibriran — na ZSE nema "
                             "dovoljno usporedivih firmi u sektoru (odluke i kandidati "
                             "u docs/peers.md; regionalni peeri nedostupni mrežnom "
                             "politikom) -> peer multipli OSTAJU placeholder "
-                            "(P/E 12, P/B 1,5) + needs_review")
+                            "(P/E 12, P/B 1,5), a multipl-metode nose NISKU "
+                            "pouzdanost (0,3)")
 
     # master flag: placeholder samo ako su i stope i peeri placeholder
     p.placeholder = not (p.rates_calibrated and p.peers_calibrated)

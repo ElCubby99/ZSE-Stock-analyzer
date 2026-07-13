@@ -366,7 +366,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 40–107 € (raspon 63%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 40–69 € (raspon 42%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -7678,7 +7678,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: OSTAJE PRETPOSTAVKA. Povijesna serija (M10, 2024-07-17..2026-07-10, n=489 d) mjeri cijenu prema KONZERVATIVNOM NAV proxyju i pokazuje PREMIJU, ne diskont: medijan -12.1%, p25 -16.4%, p75 -5.3%, zadnje -25.5% (2026-07-10) — negativno = cijena IZNAD proxyja. Proxy drži neuvrštene dijelove na placeholder multiplama i grupni neto dug konstantnim pa NE mjeri čisti holding diskont; raspon se zato NE zamjenjuje opaženim (docs/calibration.md)",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + FY2025 kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; nijedan isključen — profitabilni, konzumeri+turizam). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
       }
     },
     "assumption_flags": [
@@ -7699,17 +7699,18 @@
       {
         "key": "multiples_relative",
         "label": "Relativni multiplikatori",
-        "low": 90.62961348834149,
-        "base": 106.62307469216645,
-        "high": 122.61653589599142,
+        "low": 53.37987324796021,
+        "base": 62.79985087995319,
+        "high": 72.21982851194616,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "peer_pe": 13.43,
-          "peer_pb": 1.58,
+          "pb_roe_scale": "P/B leća skalirana omjerom ROE: vlastiti 5.5% / peer medijan 13.8% = 0.40 (klampano na [0,3–3,0] -> 0.40); peer P/B bez ROE konteksta nije prenosiv",
+          "peer_pb": 0.63,
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + FY2025 kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; nijedan isključen — profitabilni, konzumeri+turizam). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.43 (n=5), P/B=1.58 (n=5), EV/EBITDA=8.45 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; RIVP P/E=23.81 P/B=3.28; PLAG P/E=13.09 P/B=2.09; ARNT P/E=13.43 P/B=0.95"
           }
         }
       },
@@ -7881,7 +7882,7 @@
         "multiples_relative": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": 0.4621149020870947
+          "vs_zone_pct": -0.024007284568306364
         },
         "ddm_gordon": {
           "role": "secondary",
@@ -7901,21 +7902,20 @@
       },
       "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 39.51694754379656,
-      "all_methods_high": 106.62307469216645,
-      "dispersion_all": 0.6293771525733365,
+      "all_methods_high": 68.63422907378407,
+      "dispersion_all": 0.4242384874562438,
       "method_bases": {
-        "multiples_relative": 106.62307469216645,
+        "multiples_relative": 62.79985087995319,
         "ddm_gordon": 67.34055076170405,
         "justified_pb_roe": 39.51694754379656,
         "sotp_nav": 68.63422907378407
       },
       "qa_flags": [
-        "metode se međusobno razilaze 63% (sve metode) — provjeri ulaze/pretpostavke",
         "fer-zona odstupa +140% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
       "vs_market_pct": 140.4,
       "anchor_inconsistency": [],
-      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,362 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 68.63 € po dionici. Tržište te iste kćeri trenutačno vrednuje 29.5% više nego mi. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke."
+      "reasoning": "Prihodi su zadnje tri godine rasli u prosjeku +9.4% godišnje (izračun iz objavljenih izvješća). Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 40.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,362 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 68.63 € po dionici. Tržište te iste kćeri trenutačno vrednuje 29.5% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu."
     },
     "sotp": {
       "parts": [

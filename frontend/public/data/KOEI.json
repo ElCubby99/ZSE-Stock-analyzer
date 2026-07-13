@@ -279,7 +279,7 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri +22.3% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri +36.4% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
@@ -4672,7 +4672,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "KOEI: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+        "peers": "KOEI: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       }
     },
     "assumption_flags": [
@@ -4702,15 +4702,16 @@
         "low": 447.38185713802505,
         "base": 526.3315966329707,
         "high": 605.2813361279162,
-        "confidence": 0.5,
+        "confidence": 0.3,
         "no_value": false,
         "assumptions": {
           "placeholder": true,
           "peer_pe": 12.0,
           "peer_pb": 1.5,
           "sources": {
-            "peers": "KOEI: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
-          }
+            "peers": "KOEI: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+          },
+          "low_confidence": "peer multipli su placeholder (nema peer skupa na ZSE) -> niska pouzdanost"
         }
       },
       {
@@ -4719,15 +4720,16 @@
         "low": 626.9373423235861,
         "base": 725.7401387727396,
         "high": 824.5429352218928,
-        "confidence": 0.5,
+        "confidence": 0.3,
         "no_value": false,
         "assumptions": {
           "peer_ev_ebitda": 7.0,
           "net_debt": -172473000.0,
           "placeholder": true,
           "sources": {
-            "peers": "KOEI: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
-          }
+            "peers": "KOEI: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+          },
+          "low_confidence": "peer multipli su placeholder (nema peer skupa na ZSE) -> niska pouzdanost"
         }
       },
       {
@@ -4775,9 +4777,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 576.8866582770946,
-        "base": 615.3457688289009,
-        "high": 653.8048793807071,
+        "low": 576.8866582770944,
+        "base": 615.3457688289008,
+        "high": 653.804879380707,
         "confidence": 0.5,
         "no_value": false,
         "assumptions": {
@@ -4793,9 +4795,9 @@
             {
               "name": "KONČAR D&ST (KODT)",
               "value_eur": 898627403.0,
-              "value_market_eur": 931797525.0,
+              "value_market_eur": 1210359991.0,
               "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena KODT: sidro operating (dcf_fcf, multiples_relative, ev_ebitda) sredina zone 3,951–4,825 €/dionici × 388,376 dionica × 0.5273",
+              "basis": "fer-procjena: fer-procjena KODT: sidro operating (dcf_fcf, multiples_relative, ev_ebitda) sredina zone 3,001–3,666 €/dionici × 511,232 dionica × 0.5273",
               "pct": 0.5273,
               "placeholder": false
             },
@@ -4832,15 +4834,15 @@
           "nav_total_eur": 1978428179.0,
           "sotp_fair": {
             "nav_eur": 1978428179.0,
-            "base_per_share": 615.3457688289009,
+            "base_per_share": 615.3457688289008,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
-            "nav_eur": 2419800865.0,
-            "base_per_share": 752.6248558764194,
+            "nav_eur": 2698363330.0,
+            "base_per_share": 839.2654711325564,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": 22.3,
+          "market_vs_fair_pct": 36.4,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
             "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md"
@@ -4868,9 +4870,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 576.8866582770946,
-      "zone_high": 653.8048793807071,
-      "dispersion": 0.11764705882352924,
+      "zone_low": 576.8866582770944,
+      "zone_high": 653.804879380707,
+      "dispersion": 0.11764705882352944,
       "divergent": false,
       "archetype": "holding",
       "anchor_methods": [
@@ -4880,12 +4882,12 @@
         "multiples_relative": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": -0.08763430548924389
+          "vs_zone_pct": -0.08763430548924356
         },
         "ev_ebitda": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": 0.11002557744777075
+          "vs_zone_pct": 0.11002557744777097
         },
         "ddm_gordon": {
           "role": "secondary",
@@ -4895,7 +4897,7 @@
         "justified_pb_roe": {
           "role": "secondary",
           "note": "operativna leća — mjeri maticu kroz zaradu/knjigu/dividendu pa strukturno podcjenjuje holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": -0.2422681116414126
+          "vs_zone_pct": -0.24226811164141226
         },
         "sotp_nav": {
           "role": "anchor",
@@ -4912,7 +4914,7 @@
         "ev_ebitda": 725.7401387727396,
         "ddm_gordon": 40.942061078469,
         "justified_pb_roe": 437.125416945178,
-        "sotp_nav": 615.3457688289009
+        "sotp_nav": 615.3457688289008
       },
       "qa_flags": [
         "metode se međusobno razilaze 94% (sve metode) — provjeri ulaze/pretpostavke",
@@ -4920,16 +4922,16 @@
       ],
       "vs_market_pct": 62.3,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 18 € operativne zarade (EBITDA marža 18.3%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,978 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 615.35 € po dionici. Tržište te iste kćeri trenutačno vrednuje 22.3% više nego mi. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke."
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 18 € operativne zarade (EBITDA marža 18.3%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,978 M€. Burza holdinge obično vrednuje uz popust (15%–25%), pa je sidro 615.35 € po dionici. Tržište te iste kćeri trenutačno vrednuje 36.4% više nego mi. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke."
     },
     "sotp": {
       "parts": [
         {
           "name": "KONČAR D&ST (KODT)",
           "value_eur": 898627403.0,
-          "value_market_eur": 931797525.0,
+          "value_market_eur": 1210359991.0,
           "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena KODT: sidro operating (dcf_fcf, multiples_relative, ev_ebitda) sredina zone 3,951–4,825 €/dionici × 388,376 dionica × 0.5273",
+          "basis": "fer-procjena: fer-procjena KODT: sidro operating (dcf_fcf, multiples_relative, ev_ebitda) sredina zone 3,001–3,666 €/dionici × 511,232 dionica × 0.5273",
           "pct": 0.5273,
           "placeholder": false
         },
@@ -4972,15 +4974,15 @@
       },
       "sotp_fair": {
         "nav_eur": 1978428179.0,
-        "base_per_share": 615.3457688289009,
+        "base_per_share": 615.3457688289008,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
-        "nav_eur": 2419800865.0,
-        "base_per_share": 752.6248558764194,
+        "nav_eur": 2698363330.0,
+        "base_per_share": 839.2654711325564,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": 22.3,
+      "market_vs_fair_pct": 36.4,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
       "missing": [
         "KPT (Siemens JV, 49%): nema podataka u bazi (udjel 49%) — dio NIJE u NAV-u",

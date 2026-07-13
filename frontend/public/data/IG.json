@@ -276,16 +276,7 @@
   },
   "business_profile": null,
   "risks": {
-    "cards": [
-      {
-        "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: peer multipli (P/E 12, P/B 1,5)."
-      },
-      {
-        "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 29–75 € (raspon 61%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
-      }
-    ],
+    "cards": [],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
   },
   "balance": {
@@ -341,11 +332,11 @@
       "ticker": "IG",
       "class_type": "ordinary",
       "isin": "HRIG00RA0009",
-      "shares_issued": null,
+      "shares_issued": 3990000.0,
       "treasury_shares": 0.0,
-      "shares_ex_treasury": null,
+      "shares_ex_treasury": 3990000.0,
       "is_primary": true,
-      "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS)",
+      "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRIG00RA0009); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 71.6,
         "trade_date": "2026-07-10",
@@ -3198,41 +3189,35 @@
       "beta_calibrated": true,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
-      "peer_pe": 12.0,
-      "peer_pb": 1.5,
+      "peer_pe": 15.59,
+      "peer_pb": 6.45,
       "rates_calibrated": true,
-      "peers_calibrated": false,
+      "peers_calibrated": true,
       "sources": {
         "r": "r=0.0815 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.796: IZMJERENA — OLS tjednih log-prinosa klase IG vs CROBEX (2025-03-10..2026-07-10, n=69 tjedana, R²=0.241); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "IG: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.59 (n=3), P/B=6.45 (n=3), EV/EBITDA=12.0 (n=3). Skup ['KODT', 'ADPL', 'DLKV'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: KODT P/E=15.59 P/B=6.45; ADPL P/E=8.92 P/B=1.11; DLKV P/E=62.95 P/B=8.85"
       }
     },
-    "assumption_flags": [
-      {
-        "key": "peer_multiples",
-        "label": "peer multipli (P/E 12, P/B 1,5)",
-        "status": "pretpostavka",
-        "why": "nema usporedivog osiguratelja na ZSE (docs/peers.md)"
-      }
-    ],
+    "assumption_flags": [],
     "ran": [
       {
         "key": "multiples_relative",
         "label": "Relativni multiplikatori",
-        "low": 24.860548195488718,
-        "base": 29.247703759398494,
-        "high": 33.63485932330826,
-        "confidence": 0.5,
+        "low": 71.27786490068924,
+        "base": 83.85631164786969,
+        "high": 96.43475839505014,
+        "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "placeholder": true,
-          "peer_pe": 12.0,
-          "peer_pb": 1.5,
+          "placeholder": false,
+          "peer_pe": 15.59,
+          "pb_roe_scale": "P/B leća skalirana omjerom ROE: vlastiti 80.0% / peer medijan 14.1% = 5.69 (klampano na [0,3–3,0] -> 3.00); peer P/B bez ROE konteksta nije prenosiv",
+          "peer_pb": 19.35,
           "sources": {
-            "peers": "IG: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (odluke i kandidati u docs/peers.md; regionalni peeri nedostupni mrežnom politikom) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5) + needs_review"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.59 (n=3), P/B=6.45 (n=3), EV/EBITDA=12.0 (n=3). Skup ['KODT', 'ADPL', 'DLKV'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: KODT P/E=15.59 P/B=6.45; ADPL P/E=8.92 P/B=1.11; DLKV P/E=62.95 P/B=8.85"
           }
         }
       },
@@ -3251,7 +3236,7 @@
           "g1_explicit": null,
           "model": "jednofazni Gordon — RAST NIJE IZVEDEN",
           "growth_source": null,
-          "placeholder": true,
+          "placeholder": false,
           "sources": {
             "r": "r=0.0815 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.796: IZMJERENA — OLS tjednih log-prinosa klase IG vs CROBEX (2025-03-10..2026-07-10, n=69 tjedana, R²=0.241); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
@@ -3271,7 +3256,7 @@
           "r": 0.081472,
           "g": 0.025,
           "bvps": 5.27,
-          "placeholder": true,
+          "placeholder": false,
           "sources": {
             "r": "r=0.0815 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.796: IZMJERENA — OLS tjednih log-prinosa klase IG vs CROBEX (2025-03-10..2026-07-10, n=69 tjedana, R²=0.241); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
@@ -3302,8 +3287,8 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 24.860548195488718,
-      "zone_high": 33.63485932330826,
+      "zone_low": 71.27786490068924,
+      "zone_high": 96.43475839505014,
       "dispersion": 0.26086956521739124,
       "divergent": false,
       "archetype": "operating",
@@ -3319,30 +3304,27 @@
         "ddm_gordon": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 1.236711643665107
+          "vs_zone_pct": 0.0
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 1.1501251169728506
+          "vs_zone_pct": 0.0
         }
       },
       "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 29.247703759398494,
-      "all_methods_high": 75.23148148148148,
-      "dispersion_all": 0.6112305223366108,
+      "all_methods_low": 72.31915583689356,
+      "all_methods_high": 83.85631164786969,
+      "dispersion_all": 0.13758243815233703,
       "method_bases": {
-        "multiples_relative": 29.247703759398494,
+        "multiples_relative": 83.85631164786969,
         "ddm_gordon": 75.23148148148148,
         "justified_pb_roe": 72.31915583689356
       },
-      "qa_flags": [
-        "metode se međusobno razilaze 61% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +145% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
-      ],
-      "vs_market_pct": 144.8,
+      "qa_flags": [],
+      "vs_market_pct": -14.6,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda, pa računamo oprezno, bez faze rasta. Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 29.25 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke."
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda, pa računamo oprezno, bez faze rasta. Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 83.86 € po dionici. Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive."
     },
     "sotp": null
   },

@@ -202,8 +202,28 @@ def _missing(c: Ctx, *needed: str) -> ValueRange:
     return ValueRange(0, 0, 0, assumptions={"missing": list(needed)}, confidence=0.0)
 
 
+def _peer_confidence(p, assum: dict) -> float:
+    """Pouzdanost multipl-metoda ovisi o peer skupu (Korak 1 audita):
+    kalibriran (n>=3) 0,7; uski skup (n=2) 0,6; PLACEHOLDER 0,3 — placeholder
+    P/E 12 / P/B 1,5 nije podatak nego pretpostavka pa metoda ne smije nositi
+    srednju pouzdanost. Ne dira eligibility."""
+    if p.peers_calibrated and not getattr(p, "peers_narrow", False):
+        return 0.7
+    if p.peers_calibrated:
+        assum["narrow_peers"] = "uski peer skup (n=2) -> snižena pouzdanost"
+        return 0.6
+    assum["low_confidence"] = ("peer multipli su placeholder (nema peer skupa "
+                               "na ZSE) -> niska pouzdanost")
+    return 0.3
+
+
 def compute_multiples(c: Ctx) -> ValueRange:
-    """P/E i P/B leća: vrijednost/dionica = peer_multiple × (zarada matice | knjiga matice) / dionice."""
+    """P/E i P/B leća: vrijednost/dionica = peer_multiple × (zarada matice | knjiga matice) / dionice.
+
+    P/B leća: peer P/B je funkcija peer ROE-a (opravdani P/B), pa se na firmu
+    DRUGAČIJE profitabilnosti prenosi skaliran omjerom ROE (vlastiti/peer
+    medijan, klampan na [0,3, 3,0] protiv ekstrema). Bez peer ROE-a ili
+    vlastitog ROE-a leća ide sirovo (placeholder režim) — označeno."""
     p = c.params
     ni = c.val("net_income_parent")
     eq = c.val("equity_parent") or c.val("total_equity")
@@ -213,16 +233,27 @@ def compute_multiples(c: Ctx) -> ValueRange:
         if pe_ps is not None:
             lenses.append(pe_ps); assum["peer_pe"] = p.peer_pe
     if eq is not None:
-        pb_ps = _per_share(p.peer_pb * eq, c)
+        pb_mult = p.peer_pb
+        peer_roe = getattr(p, "peer_roe", None)
+        own_roe = (ni / eq) if (ni is not None and eq and ni > 0) else None
+        if peer_roe and own_roe:
+            scale = max(0.3, min(3.0, own_roe / peer_roe))
+            pb_mult = p.peer_pb * scale
+            assum["pb_roe_scale"] = (
+                f"P/B leća skalirana omjerom ROE: vlastiti {own_roe:.1%} / "
+                f"peer medijan {peer_roe:.1%} = {own_roe / peer_roe:.2f} "
+                f"(klampano na [0,3–3,0] -> {scale:.2f}); peer P/B bez ROE "
+                f"konteksta nije prenosiv")
+        pb_ps = _per_share(pb_mult * eq, c)
         if pb_ps is not None:
-            lenses.append(pb_ps); assum["peer_pb"] = p.peer_pb
+            lenses.append(pb_ps); assum["peer_pb"] = round(pb_mult, 2)
     if not lenses:
         return _missing(c, "net_income_parent|equity_parent", "shares_ex_treasury")
     if p.sources.get("peers"):
         assum["sources"] = {"peers": p.sources["peers"]}
     base = sum(lenses) / len(lenses)
     return ValueRange(base * (1 - p.band), base, base * (1 + p.band), assum,
-                      0.7 if p.peers_calibrated else 0.5)
+                      _peer_confidence(p, assum))
 
 
 def compute_ev_ebitda(c: Ctx) -> ValueRange:
@@ -247,7 +278,7 @@ def compute_ev_ebitda(c: Ctx) -> ValueRange:
     assum = {"peer_ev_ebitda": p.peer_ev_ebitda, "net_debt": net_debt, "placeholder": p.placeholder}
     if p.sources.get("peers"):
         assum["sources"] = {"peers": p.sources["peers"]}
-    return ValueRange(lo, base, hi, assum, 0.7 if p.peers_calibrated else 0.5)
+    return ValueRange(lo, base, hi, assum, _peer_confidence(p, assum))
 
 
 def compute_dcf(c: Ctx) -> ValueRange:
