@@ -362,7 +362,7 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: holding diskont 15–25%; SOTP multiple neuvrštenih (7,5 / 8,0 / 7,0×)."
+        "txt": "Procjena počiva na označenim pretpostavkama: holding diskont 0–5%; SOTP dijelovi na pretpostavljenim multiplama: Cromaris, Energetika, HUP-Zagreb."
       },
       {
         "l": "RASKORAK METODA",
@@ -7682,12 +7682,14 @@
       "g_terminal": 0.04,
       "beta": 1.023,
       "beta_calibrated": true,
-      "holding_discount_low": 0.15,
-      "holding_discount_high": 0.25,
+      "holding_discount_low": 0.0,
+      "holding_discount_high": 0.05,
+      "holding_discount_reason": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-10, n=489 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
       "peer_pe": 13.43,
       "peer_pb": 1.58,
       "rates_calibrated": true,
       "peers_calibrated": true,
+      "peers_narrow": false,
       "sources": {
         "r": "r=0.0944 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.023: IZMJERENA — OLS tjednih log-prinosa klase ADRS2 vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.376); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
@@ -7699,15 +7701,15 @@
     "assumption_flags": [
       {
         "key": "holding_discount",
-        "label": "holding diskont 15–25%",
-        "status": "pretpostavka",
-        "why": "povijesni diskont neizvediv iz baze (premalo dana cijena)"
+        "label": "holding diskont 0–5%",
+        "status": "izvor",
+        "why": "izmjereni vlastiti P/NAV (serija) — premija se klampa na 0; vidi izvor uz SOTP"
       },
       {
         "key": "sotp_multiples",
-        "label": "SOTP multiple neuvrštenih (7,5 / 8,0 / 7,0×)",
+        "label": "SOTP dijelovi na pretpostavljenim multiplama: Cromaris, Energetika, HUP-Zagreb",
         "status": "pretpostavka",
-        "why": "default multiple, nisu tržišno kalibrirane"
+        "why": "default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
       }
     ],
     "ran": [

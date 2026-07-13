@@ -929,13 +929,38 @@ def build_stock_json(conn, ticker: str) -> dict:
              "why": "beta nije kalibrirana za ovu firmu (serija prekratka/"
                     "nelikvidna) — vidi src/calibrate.py"})
     if sotp_breakdown is not None:  # samo gdje se SOTP primjenjuje
-        assumption_flags += [
-            {"key": "holding_discount", "label": "holding diskont 15–25%",
-             "status": "pretpostavka",
-             "why": "povijesni diskont neizvediv iz baze (premalo dana cijena)"},
-            {"key": "sotp_multiples", "label": "SOTP multiple neuvrštenih (7,5 / 8,0 / 7,0×)",
-             "status": "pretpostavka", "why": "default multiple, nisu tržišno kalibrirane"},
-        ]
+        # v2 §4: flag opisuje STVARNO primijenjeni diskont, ne default;
+        # 'pretpostavka' je samo kad je korišten default 15–25%
+        dr = sotp_breakdown.get("holding_discount_range") or [None, None]
+        dreason = sotp_breakdown.get("holding_discount_reason") or ""
+        if dr[0] is not None:
+            lbl = f"holding diskont {dr[0] * 100:.0f}–{dr[1] * 100:.0f}%"
+            if "integrirani operativni parent" in dreason:
+                assumption_flags.append(
+                    {"key": "holding_discount", "label": lbl, "status": "izvor",
+                     "why": ("taksonomija v2 §4: kontrola + konsolidacija iste "
+                             "djelatnosti — ne tretira se kao pasivni holding")})
+            elif "IZMJERENI" in dreason:
+                assumption_flags.append(
+                    {"key": "holding_discount", "label": lbl, "status": "izvor",
+                     "why": ("izmjereni vlastiti P/NAV (serija) — premija se "
+                             "klampa na 0; vidi izvor uz SOTP")})
+            else:
+                assumption_flags.append(
+                    {"key": "holding_discount", "label": lbl,
+                     "status": "pretpostavka",
+                     "why": "vlastiti P/NAV nemjerljiv — default raspon (v2 §4)"})
+        # flag samo ako SOTP stvarno sadrži placeholder dijelove (default
+        # multiple / nekalibrirani peer P/E) — ne prepisuje se tuđi flag
+        ph_parts = [x["name"] for x in (sotp_breakdown.get("parts") or [])
+                    if x.get("placeholder")]
+        if ph_parts:
+            assumption_flags.append(
+                {"key": "sotp_multiples",
+                 "label": f"SOTP dijelovi na pretpostavljenim multiplama: "
+                          f"{', '.join(ph_parts[:3])}",
+                 "status": "pretpostavka",
+                 "why": "default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"})
     if not params.peers_calibrated:
         assumption_flags.append(
             {"key": "peer_multiples", "label": "peer multipli (P/E 12, P/B 1,5)",
@@ -990,11 +1015,20 @@ def build_stock_json(conn, ticker: str) -> dict:
                 "g_terminal": _f(getattr(params, "terminal_growth", None)),
                 "beta": _f(getattr(params, "beta", None)),
                 "beta_calibrated": getattr(params, "beta_calibrated", False),
-                "holding_discount_low": _f(params.holding_discount_low),
-                "holding_discount_high": _f(params.holding_discount_high),
+                # v2 §4: STVARNO primijenjeni diskont (iz SOTP-a), ne default
+                "holding_discount_low": _f(
+                    (sotp_breakdown.get("holding_discount_range") or [None])[0]
+                    if sotp_breakdown else params.holding_discount_low),
+                "holding_discount_high": _f(
+                    (sotp_breakdown.get("holding_discount_range") or [None, None])[1]
+                    if sotp_breakdown else params.holding_discount_high),
+                "holding_discount_reason": (
+                    sotp_breakdown.get("holding_discount_reason")
+                    if sotp_breakdown else None),
                 "peer_pe": _f(params.peer_pe), "peer_pb": _f(params.peer_pb),
                 "rates_calibrated": params.rates_calibrated,
                 "peers_calibrated": params.peers_calibrated,
+                "peers_narrow": getattr(params, "peers_narrow", False),
                 "sources": params.sources,
             },
             "assumption_flags": assumption_flags,

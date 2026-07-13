@@ -420,18 +420,30 @@ function Assumptions({ valuation }) {
     })
   }
   if (valuation.sotp) {
+    /* v2 §4: prikaži STVARNO primijenjeni diskont s razlogom iz taksonomije */
+    const reason = p.holding_discount_reason || ''
+    const operating = reason.includes('integrirani operativni parent')
+    const measured = reason.includes('IZMJERENI')
     cards.push({
       name: 'Holding diskont',
       out: `${num(p.holding_discount_low * 100, 0)}–${num(p.holding_discount_high * 100, 0)}%`,
-      src: p.sources.holding_discount, sure: false,
-      plain: 'Holding popust — burza holdinge obično vrednuje ispod zbroja dijelova (trošak centrale, dvostruko oporezivanje, slabija likvidnost).',
+      src: reason || p.sources.holding_discount,
+      sure: operating || measured,
+      plain: operating
+        ? 'Bez holding popusta — integrirani operativni parent: kontrolira i konsolidira kćeri iste djelatnosti, pa se ne tretira kao pasivni holding (raspon 0–5% je samo osjetljivost).'
+        : measured
+          ? 'Popust izmjeren iz povijesti vlastite cijene prema vrijednosti dijelova (P/NAV) — tržište povijesno plaća premiju, pa se popust klampa na 0.'
+          : 'Holding popust — burza pasivne holdinge obično vrednuje ispod zbroja dijelova (trošak centrale, dvostruko oporezivanje, slabija likvidnost).',
     })
   }
   cards.push({
-    name: 'Peer multipli (P/E · P/B)',
+    name: p.peers_narrow ? 'Peer multipli (P/E · P/B) — uski skup (n=2)'
+      : 'Peer multipli (P/E · P/B)',
     out: `${num(p.peer_pe, 2)} · ${num(p.peer_pb, 2)}`,
-    src: p.sources.peers, sure: p.peers_calibrated,
-    plain: 'Usporedive firme — koliko tržište plaća po euru zarade (P/E) i knjige (P/B) kod sličnih firmi; to primjenjujemo na ovu firmu.',
+    src: p.sources.peers, sure: p.peers_calibrated && !p.peers_narrow,
+    plain: p.peers_narrow
+      ? 'Usporedive firme — medijan SAMO DVIJU firmi (uski skup), pa je pouzdanost snižena; koliko tržište plaća po euru zarade (P/E) i knjige (P/B).'
+      : 'Usporedive firme — koliko tržište plaća po euru zarade (P/E) i knjige (P/B) kod sličnih firmi; to primjenjujemo na ovu firmu.',
   })
   return (
     <section>
@@ -457,7 +469,9 @@ function Assumptions({ valuation }) {
       <ul className="flaglist">
         {valuation.assumption_flags.map((f) => (
           <li key={f.key}>
-            <span className="flag">pretpostavka</span> {f.label} — {f.why}
+            {f.status === 'izvor'
+              ? <span className="okflag">izvor</span>
+              : <span className="flag">pretpostavka</span>} {f.label} — {f.why}
           </li>
         ))}
       </ul>
