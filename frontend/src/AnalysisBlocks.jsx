@@ -1,5 +1,25 @@
 import React from 'react'
 import { dash, eur, num } from './format.js'
+import { Term } from './Legend.jsx'
+
+/* QA flag (tehnički) -> jedna rečenica običnim jezikom; tehnički original
+   ostaje dostupan iza klika (dvorazinski princip, ne mijenja izračun). */
+export function plainFlag(f) {
+  if (f.startsWith('ULAZI NEKONZISTENTNI')) {
+    return ('Neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu '
+      + 'podataka još fali kalibracija (npr. multiplikatori usporedivih firmi). '
+      + 'Razliku bilježimo, ne skrivamo je.')
+  }
+  if (f.startsWith('metode se međusobno razilaze')) {
+    return ('Različite metode daju vrlo različite brojke — to je signal za provjeru '
+      + 'ulaznih podataka, ne za izbor najljepše brojke.')
+  }
+  if (f.startsWith('fer-zona odstupa')) {
+    return ('Naša procjena je daleko od tržišne cijene — to je pitanje za provjeru '
+      + 'pretpostavki, ne zaključak da je tržište u krivu.')
+  }
+  return f
+}
 
 /* DIO 1 — blokovi zone "02 · Analiza vrijednosti" po dizajnu:
    SIDRO panel (fer-zona + pozicije klasa + dvije SOTP brojke za holdinge),
@@ -15,6 +35,12 @@ const METHOD_SHORT = {
   justified_pb_roe: 'OPRAVDANI P/B', dcf_fcf: 'DCF',
   multiples_relative: 'RELATIVNI MULTIPLI', ev_ebitda: 'EV/EBITDA',
   ddm_gordon: 'DIVIDENDNI DISKONT',
+}
+
+/* metoda -> pojam iz legende (tooltip na nazivu metode) */
+const METHOD_TERM = {
+  sotp_nav: 'SOTP', dcf_fcf: 'DCF', ev_ebitda: 'EV/EBITDA',
+  ddm_gordon: 'DDM', justified_pb_roe: 'P/B',
 }
 
 export function AnchorPanel({ data }) {
@@ -49,7 +75,7 @@ export function AnchorPanel({ data }) {
   return (
     <div className="anch">
       <div className="anch-head">
-        <span className="anch-tag">SIDRO · {anchorName || dash}</span>
+        <span className="anch-tag"><Term t="sidro">SIDRO</Term> · {anchorName || dash}</span>
         <span className="anch-sub">
           {alts.length
             ? `zona = sidro ± osjetljivost; potvrda: ${alts.map((k) => METHOD_SHORT[k] || k).join(', ')}`
@@ -57,6 +83,11 @@ export function AnchorPanel({ data }) {
         </span>
       </div>
       <div className="anch-zone">{num(lo, 2)}–{num(hi, 2)} €</div>
+      <p className="anch-plain">
+        <Term t="fer-zona">Fer-zona</Term> je naša procjena vrijednosti dionice.
+        Cijena iznad zone znači da tržište plaća više nego što fundamenti govore;
+        ispod zone — obrnuto. Zaključak je vaš.
+      </p>
       <div className="anch-band">
         <div className="anch-axis" />
         <div className="anch-fill" style={{ left: `${P(lo)}%`, width: `${P(hi) - P(lo)}%` }} />
@@ -89,7 +120,15 @@ export function AnchorPanel({ data }) {
       {(rec.qa_flags || []).length > 0 && (
         <div className="anch-qa">
           {rec.qa_flags.map((f, i) => (
-            <div className="anch-qa-row" key={i}><span className="flag">QA</span> {f}</div>
+            <div className="anch-qa-row" key={i}>
+              <span className="flag">QA</span> {plainFlag(f)}
+              {plainFlag(f) !== f && (
+                <details className="anch-qa-tech">
+                  <summary>tehnički zapis</summary>
+                  {f}
+                </details>
+              )}
+            </div>
           ))}
         </div>
       )}
@@ -143,7 +182,11 @@ export function SecondaryList({ data }) {
         const dev = r.vs_zone_pct
         return (
           <div className="sec-list-row" key={m.key}>
-            <span className="sec-list-name">{METHOD_SHORT[m.key] || m.label}</span>
+            <span className="sec-list-name">
+              {METHOD_TERM[m.key]
+                ? <Term t={METHOD_TERM[m.key]}>{METHOD_SHORT[m.key] || m.label}</Term>
+                : (METHOD_SHORT[m.key] || m.label)}
+            </span>
             <span className="sec-list-val">
               {num(m.base, 2)} €{dev ? ` (${dev > 0 ? '+' : ''}${num(dev * 100, 0)}%)` : ''}
             </span>
@@ -194,7 +237,7 @@ export function FinChart({ trend }) {
         <span className="prof-legend" style={{ fontSize: 10 }}>
           <i style={{ display: 'inline-block', width: 12, height: 8,
             background: 'rgba(47,93,134,0.28)', border: `1px solid ${STEEL}` }} /> {trend.revenue_label.toLowerCase()}
-          <i style={{ display: 'inline-block', width: 14, height: 2, background: PINE, marginLeft: 8 }} /> EBITDA
+          <i style={{ display: 'inline-block', width: 14, height: 2, background: PINE, marginLeft: 8 }} /> <Term t="EBITDA">EBITDA</Term>
         </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>

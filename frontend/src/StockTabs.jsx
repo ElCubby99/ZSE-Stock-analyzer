@@ -1,4 +1,5 @@
 import React from 'react'
+import { Term } from './Legend.jsx'
 import { GapCell, SECTOR_HR, useOverview } from './Shell.jsx'
 import { dash, num, pct } from './format.js'
 
@@ -40,9 +41,12 @@ export function KeyIndicators({ data }) {
     <section>
       <div className="sec-label">Omjeri po klasi — tržišni vs fer-zona</div>
       <table>
-        <thead><tr><th>Klasa</th><th className="num">Cijena €</th><th className="num">P/E</th>
-          <th className="num">fer P/E*</th><th className="num">P/B</th>
-          <th className="num">fer P/B*</th><th className="num">Div. prinos</th></tr></thead>
+        <thead><tr><th>Klasa</th><th className="num">Cijena €</th>
+          <th className="num"><Term t="P/E">P/E</Term></th>
+          <th className="num"><Term t="P/E">fer P/E*</Term></th>
+          <th className="num"><Term t="P/B">P/B</Term></th>
+          <th className="num"><Term t="P/B">fer P/B*</Term></th>
+          <th className="num">Div. prinos</th></tr></thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.t}>

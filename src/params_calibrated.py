@@ -119,6 +119,7 @@ def build_params(ticker: str) -> Params:
                terminal_growth=G_TERMINAL)
     p.rates_calibrated = True
     p.beta_calibrated = beta_cal
+    p.beta = beta  # numerički, samo za prikaz (for-dummies kartica pretpostavki)
     p.sources = sources
 
     if ticker == "ADRS":

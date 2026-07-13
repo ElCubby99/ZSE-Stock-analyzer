@@ -1621,6 +1621,9 @@
     "params": {
       "r": 0.0931,
       "g": 0.025,
+      "g_terminal": 0.04,
+      "beta": 1.0,
+      "beta_calibrated": false,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "peer_pe": 12.0,
@@ -1816,7 +1819,7 @@
       "anchor_inconsistency": [
         "ev_ebitda +39% vs primarno sidro"
       ],
-      "reasoning": "Rast prihoda NIJE izveden (nema 3g serije u bazi). EBITDA marža 7.0%. sidro multiples_relative: 16.53 €/dionici (peer multipli na zaradu/EBITDA). potvrdna sidra: ev_ebitda +39%. Glavni rizik za procjenu: ULAZI NEKONZISTENTNI: ev_ebitda +39% vs primarno sidro — uskladi pretpostavke, ne širi zonu."
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 7 € operativne zarade (EBITDA marža 7.0%). Gledali smo koliko tržište plaća slične firme po euru zarade i operativne dobiti te to primijenili na njezine brojke — sidro je 16.53 € po dionici. Kontrolne metode uz sidro: EV/EBITDA +39% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je."
     },
     "sotp": null
   },

@@ -668,63 +668,107 @@ def value_company(c: Ctx) -> dict:
         "reconciliation": rec,
     }
 
+def _plain_risk(flag: str) -> str:
+    """QA flag -> jedna rečenica OBIČNIM jezikom (tehnički tekst ostaje u
+    qa_flags; ovo je prezentacijski sloj za naraciju, ne mijenja izračun)."""
+    if flag.startswith("ULAZI NEKONZISTENTNI"):
+        return ("neke metode se ne slažu s glavnom procjenom — najčešće zato što "
+                "dijelu ulaza još fali kalibracija (npr. multiplikatori "
+                "usporedivih firmi); razliku bilježimo, ne skrivamo je")
+    if flag.startswith("metode se međusobno razilaze"):
+        return ("različite metode daju vrlo različite brojke — to je signal za "
+                "provjeru ulaznih podataka, ne za izbor najljepše brojke")
+    if flag.startswith("fer-zona odstupa"):
+        return ("naša procjena je daleko od tržišne cijene — to je pitanje za "
+                "provjeru pretpostavki, ne zaključak da je tržište u krivu")
+    return flag
+
+
 def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
-    """M12: ČINJENIČNI lanac zaključivanja do sidra — iz podataka, bez preporuke."""
+    """M12: ČINJENIČNI lanac zaključivanja do sidra — iz podataka, bez
+    preporuke. Pisan OBIČNIM jezikom (for-dummies); tehnički izvod ostaje u
+    assumptions/sources svake metode."""
     p = c.params
     gh = c.growth_hint or {}
     prim = (rec.get("anchor_methods") or [None])[0]
     parts = []
     if gh.get("rev_cagr_3y") is not None:
-        parts.append(f"Prihodi rastu {gh['rev_cagr_3y']:+.1%} godišnje (3g CAGR iz baze)")
+        parts.append(f"Prihodi su zadnje tri godine rasli u prosjeku "
+                     f"{gh['rev_cagr_3y']:+.1%} godišnje (izračun iz objavljenih "
+                     f"izvješća)")
     else:
-        parts.append("Rast prihoda NIJE izveden (nema 3g serije u bazi)")
+        parts.append("Stopu rasta ne možemo izračunati — u bazi još nije cijela "
+                     "trogodišnja serija prihoda, pa računamo oprezno, bez faze "
+                     "rasta")
     rev, ebd = c.val("revenue"), c.val("ebitda")
     if rev and ebd is not None:
-        parts.append(f"EBITDA marža {ebd / rev:.1%}")
+        parts.append(f"Od svakih 100 € prihoda firmi ostaje {ebd / rev * 100:,.0f} € "
+                     f"operativne zarade (EBITDA marža {ebd / rev:.1%})")
     if prim == "sotp_nav" and prim in results:
         a = results[prim]["range"].assumptions
-        sf, sm = a.get("sotp_fair"), a.get("sotp_market")
+        sf = a.get("sotp_fair")
         if sf:
-            parts.append(f"NAV = uvrštene kćeri po NAŠOJ fer-procjeni + neuvršteni "
-                         f"dijelovi po multiplama − neto dug = {sf['nav_eur'] / 1e6:,.0f} M€; "
-                         f"uz holding diskont {p.holding_discount_low:.0%}–"
-                         f"{p.holding_discount_high:.0%} sidro je "
-                         f"{results[prim]['range'].base:,.2f} €/dionici")
+            parts.append(f"Vrijednost smo složili po dijelovima: uvrštene "
+                         f"tvrtke-kćeri po našoj procjeni, neuvrštene usporedbom "
+                         f"sa sličnima, minus dug grupe — ukupno "
+                         f"{sf['nav_eur'] / 1e6:,.0f} M€. Burza holdinge obično "
+                         f"vrednuje uz popust ({p.holding_discount_low:.0%}–"
+                         f"{p.holding_discount_high:.0%}), pa je sidro "
+                         f"{results[prim]['range'].base:,.2f} € po dionici")
         if a.get("market_vs_fair_pct") is not None:
-            parts.append(f"tržište kćeri stoji {a['market_vs_fair_pct']:+.1f}% vs naša procjena")
-        risk = "holding diskont i multiple neuvrštenih su pretpostavke"
+            mv = a["market_vs_fair_pct"]
+            parts.append(f"Tržište te iste kćeri trenutačno vrednuje "
+                         f"{abs(mv):,.1f}% {'više' if mv > 0 else 'niže'} nego mi")
+        risk = ("koliki popust na holding vrijedi i koliko vrijede neuvršteni "
+                "dijelovi — oboje su pretpostavke")
     elif prim == "dcf_fcf" and prim in results:
         fcf = c.val("free_cash_flow")
         if fcf is None:
             ocf, capex = c.val("operating_cf"), c.val("capex")
             fcf = (ocf - capex) if (ocf is not None and capex is not None) else None
         if fcf is not None:
-            parts.append(f"FCF {fcf / 1e6:,.1f} M€ diskontiran uz r={p.wacc:.1%} "
-                         f"(β izmjerena)" + (f", eksplicitni rast g1={gh['g1']:.1%} "
-                         f"5 g pa terminal {p.terminal_growth:.0%}" if gh.get("g1") is not None else
-                         f", jednofazno uz terminal {p.terminal_growth:.0%}"))
-        parts.append(f"sadašnja vrijednost tokova = {results[prim]['range'].base:,.2f} €/dionici")
-        risk = ("jednogodišnji FCF ulaz (ciklus/investicije iskrivljuju)" if gh.get("g1") is None
-                else "održivost 3g stope rasta u eksplicitnoj fazi")
+            grow = (f", uz izračunati rast {gh['g1']:.1%} kroz pet godina i zatim "
+                    f"dugoročni rast {p.terminal_growth:.0%}"
+                    if gh.get("g1") is not None else
+                    f", bez faze rasta (samo dugoročni rast {p.terminal_growth:.0%})")
+            parts.append(f"Firma je lani stvorila {fcf / 1e6:,.1f} M€ slobodnog "
+                         f"novca (ono što ostane nakon ulaganja). Budući novac "
+                         f"vrijedi manje od današnjeg, pa ga svodimo na danas uz "
+                         f"zahtijevani prinos {p.wacc:.1%}{grow} — tako izlazi "
+                         f"{results[prim]['range'].base:,.2f} € po dionici")
+        risk = ("procjena stoji na jednoj godini novčanog toka — jedna netipična "
+                "godina može iskriviti sliku" if gh.get("g1") is None
+                else "hoće li se dosadašnji tempo rasta održati sljedećih pet godina")
     elif prim in ("justified_pb_roe", "residual_income") and prim in results:
         eq, ni = c.val("equity_parent") or c.val("total_equity"), c.val("net_income_parent")
         if eq and ni is not None:
-            parts.append(f"knjiga {eq / 1e6:,.0f} M€ uz ROE {ni / eq:.1%} vs r={p.cost_of_equity:.1%} "
-                         f"→ opravdani P/B multiplikator na knjigu = "
-                         f"{results[prim]['range'].base:,.2f} €/dionici")
-        risk = "održivost ROE-a i kapitalni g (2,5%) su pretpostavke"
+            roe, r_ = ni / eq, p.cost_of_equity
+            parts.append(f"Firma ima {eq / 1e6:,.0f} M€ vlastitog kapitala "
+                         f"('knjiga') i na njemu zarađuje {roe:.1%} godišnje — "
+                         f"{'više' if roe > r_ else 'manje'} od {r_:.1%} koliko "
+                         f"ulagač razumno traži za ovaj rizik. Kapital koji "
+                         f"zarađuje {'iznad' if roe > r_ else 'ispod'} zahtjeva "
+                         f"vrijedi {'više' if roe > r_ else 'manje'} od "
+                         f"knjigovodstvene brojke — sidro je "
+                         f"{results[prim]['range'].base:,.2f} € po dionici")
+        risk = "koliko je današnja zarada na kapital održiva"
     elif prim and prim in results:
-        parts.append(f"sidro {prim}: {results[prim]['range'].base:,.2f} €/dionici "
-                     f"(peer multipli na zaradu/EBITDA)")
-        risk = "reprezentativnost peer skupa"
+        parts.append(f"Gledali smo koliko tržište plaća slične firme po euru "
+                     f"zarade i operativne dobiti te to primijenili na njezine "
+                     f"brojke — sidro je {results[prim]['range'].base:,.2f} € "
+                     f"po dionici")
+        risk = "koliko su odabrane usporedive firme zaista usporedive"
     else:
         return "Sidro nije dostupno — vidi preskočene metode i razloge."
-    alt = [f"{k} {v['vs_zone_pct']:+.0%}" for k, v in (rec.get("method_roles") or {}).items()
+    alt = [f"{results[k]['label'] if k in results else k} "
+           f"{v['vs_zone_pct']:+.0%}"
+           for k, v in (rec.get("method_roles") or {}).items()
            if v.get("role") == "anchor_alt" and v.get("vs_zone_pct") is not None]
     if alt:
-        parts.append("potvrdna sidra: " + ", ".join(alt))
+        parts.append("Kontrolne metode uz sidro: " + ", ".join(alt) +
+                     " (razlog odstupanja naveden je uz svaku metodu)")
     if rec.get("qa_flags"):
-        risk = rec["qa_flags"][0]
+        risk = _plain_risk(rec["qa_flags"][0])
     return ". ".join(parts) + f". Glavni rizik za procjenu: {risk}."
 
 

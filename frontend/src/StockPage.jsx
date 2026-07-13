@@ -6,6 +6,7 @@ import {
   SectionRule, StatsStrip,
 } from './MarketProfile.jsx'
 import { AnchorPanel, FinChart, Risks, SecondaryList } from './AnalysisBlocks.jsx'
+import { Legend } from './Legend.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import { Comparison, KeyIndicators, NewsTab, TabBar } from './StockTabs.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
@@ -399,25 +400,42 @@ function Metrics({ data }) {
 
 function Assumptions({ valuation }) {
   const p = valuation.params
+  /* dvorazinski princip: jedna rečenica OBIČNIM jezikom vidljiva,
+     tehnički izvod (CAPM, izvori, citati) iza klika — izračun se ne mijenja */
   const cards = [
-    { name: 'Trošak kapitala r', out: pct(p.r, 2), src: p.sources.r, sure: p.rates_calibrated },
-    { name: 'Perpetualni rast g', out: pct(p.g, 1), src: p.sources.g, sure: p.rates_calibrated },
+    {
+      name: 'Trošak kapitala r', out: pct(p.r, 2), src: p.sources.r, sure: p.rates_calibrated,
+      plain: `Trošak kapitala ${pct(p.r, 2)} — prinos koji ulagač razumno traži za rizik ove dionice. Veći = stroža (niža) procjena.`,
+    },
+    {
+      name: 'Dugoročni rast g', src: p.sources.g, sure: p.rates_calibrated,
+      out: p.g_terminal ? `${pct(p.g, 1)} · ${pct(p.g_terminal, 1)}` : pct(p.g, 1),
+      plain: `Dugoročni rast — koliko firma raste "zauvijek" nakon razdoblja projekcije; vezan uz rast gospodarstva i inflaciju (${pct(p.g, 1)} za kapitalne metode, ${p.g_terminal ? pct(p.g_terminal, 1) : dash} terminal za DCF).`,
+    },
   ]
+  if (p.beta !== null && p.beta !== undefined) {
+    cards.push({
+      name: 'Beta (β)', out: num(p.beta, 2), src: p.sources.r, sure: p.beta_calibrated,
+      plain: `Beta ${num(p.beta, 2)} — koliko dionica njiše u odnosu na tržište: 1 = kao tržište, više = jače njihanje (rizičnije).`,
+    })
+  }
   if (valuation.sotp) {
     cards.push({
       name: 'Holding diskont',
       out: `${num(p.holding_discount_low * 100, 0)}–${num(p.holding_discount_high * 100, 0)}%`,
       src: p.sources.holding_discount, sure: false,
+      plain: 'Holding popust — burza holdinge obično vrednuje ispod zbroja dijelova (trošak centrale, dvostruko oporezivanje, slabija likvidnost).',
     })
   }
   cards.push({
     name: 'Peer multipli (P/E · P/B)',
     out: `${num(p.peer_pe, 2)} · ${num(p.peer_pb, 2)}`,
     src: p.sources.peers, sure: p.peers_calibrated,
+    plain: 'Usporedive firme — koliko tržište plaća po euru zarade (P/E) i knjige (P/B) kod sličnih firmi; to primjenjujemo na ovu firmu.',
   })
   return (
     <section>
-      <div className="sec-label">Pretpostavke — vrijednosti s izvorom (samo za čitanje)</div>
+      <div className="sec-label">Pretpostavke — običnim jezikom, s izvorom iza klika</div>
       <div className="controls">
         {cards.map((c) => (
           <div className="ctrl" key={c.name}>
@@ -428,7 +446,11 @@ function Assumptions({ valuation }) {
               </span>
               <span className="out mono">{c.out}</span>
             </div>
-            <div className="src">{c.src || 'izvor nije zabilježen'}</div>
+            <div className="plain">{c.plain}</div>
+            <details className="src-details">
+              <summary>tehnički izvod i izvor</summary>
+              <div className="src">{c.src || 'izvor nije zabilježen'}</div>
+            </details>
           </div>
         ))}
       </div>
@@ -717,6 +739,7 @@ export default function StockPage() {
               </div>
             ))}
           </section>
+          <Legend />
           </>
           ))}
 
@@ -728,6 +751,7 @@ export default function StockPage() {
           <KeyIndicators data={data} />
           <Metrics data={data} />
           <Fundamentals data={data} />
+          <Legend />
           </>
           ))}
 

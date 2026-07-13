@@ -953,6 +953,9 @@ def build_stock_json(conn, ticker: str) -> dict:
         "valuation": {
             "params": {
                 "r": _f(params.cost_of_equity), "g": _f(params.perpetual_growth),
+                "g_terminal": _f(getattr(params, "terminal_growth", None)),
+                "beta": _f(getattr(params, "beta", None)),
+                "beta_calibrated": getattr(params, "beta_calibrated", False),
                 "holding_discount_low": _f(params.holding_discount_low),
                 "holding_discount_high": _f(params.holding_discount_high),
                 "peer_pe": _f(params.peer_pe), "peer_pb": _f(params.peer_pb),
