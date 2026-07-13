@@ -612,7 +612,7 @@ HIERARCHY = {
                            "udjeli imaju tržišnu cijenu"),
     },
     "capital": {
-        "anchor": ("residual_income", "justified_pb_roe"),
+        "anchor": ("justified_pb_roe", "residual_income"),
         "secondary_note": ("sekundarna leća uz kapitalno sidro (RI / opravdani "
                            "P/B) — multipli i DDM ovise o peer skupu i politici "
                            "isplate, ne o profitabilnosti kapitala"),
@@ -644,6 +644,9 @@ def value_company(c: Ctx) -> dict:
     # PRETPOSTAVKAMA (ne o tržištu); činjenica za reviziju, ne ocjena
     if rec.get("status") != "no_value":
         flags = []
+        for s in rec.get("anchor_inconsistency") or []:
+            flags.append(f"ULAZI NEKONZISTENTNI: {s} — uskladi pretpostavke, "
+                         "ne širi zonu")
         if rec.get("dispersion_all", 0) > 0.60:
             flags.append(f"metode se međusobno razilaze {rec['dispersion_all']:.0%} "
                          "(sve metode) — provjeri ulaze/pretpostavke")
@@ -658,11 +661,72 @@ def value_company(c: Ctx) -> dict:
                                  "jedinice) ili tržišni raskorak; tretiraj kao "
                                  "pitanje, ne zaključak")
         rec["qa_flags"] = flags
+        rec["reasoning"] = _reasoning(c, results, rec)
     return {
         "ran": results,
         "skipped": skipped,
         "reconciliation": rec,
     }
+
+def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
+    """M12: ČINJENIČNI lanac zaključivanja do sidra — iz podataka, bez preporuke."""
+    p = c.params
+    gh = c.growth_hint or {}
+    prim = (rec.get("anchor_methods") or [None])[0]
+    parts = []
+    if gh.get("rev_cagr_3y") is not None:
+        parts.append(f"Prihodi rastu {gh['rev_cagr_3y']:+.1%} godišnje (3g CAGR iz baze)")
+    else:
+        parts.append("Rast prihoda NIJE izveden (nema 3g serije u bazi)")
+    rev, ebd = c.val("revenue"), c.val("ebitda")
+    if rev and ebd is not None:
+        parts.append(f"EBITDA marža {ebd / rev:.1%}")
+    if prim == "sotp_nav" and prim in results:
+        a = results[prim]["range"].assumptions
+        sf, sm = a.get("sotp_fair"), a.get("sotp_market")
+        if sf:
+            parts.append(f"NAV = uvrštene kćeri po NAŠOJ fer-procjeni + neuvršteni "
+                         f"dijelovi po multiplama − neto dug = {sf['nav_eur'] / 1e6:,.0f} M€; "
+                         f"uz holding diskont {p.holding_discount_low:.0%}–"
+                         f"{p.holding_discount_high:.0%} sidro je "
+                         f"{results[prim]['range'].base:,.2f} €/dionici")
+        if a.get("market_vs_fair_pct") is not None:
+            parts.append(f"tržište kćeri stoji {a['market_vs_fair_pct']:+.1f}% vs naša procjena")
+        risk = "holding diskont i multiple neuvrštenih su pretpostavke"
+    elif prim == "dcf_fcf" and prim in results:
+        fcf = c.val("free_cash_flow")
+        if fcf is None:
+            ocf, capex = c.val("operating_cf"), c.val("capex")
+            fcf = (ocf - capex) if (ocf is not None and capex is not None) else None
+        if fcf is not None:
+            parts.append(f"FCF {fcf / 1e6:,.1f} M€ diskontiran uz r={p.wacc:.1%} "
+                         f"(β izmjerena)" + (f", eksplicitni rast g1={gh['g1']:.1%} "
+                         f"5 g pa terminal {p.terminal_growth:.0%}" if gh.get("g1") is not None else
+                         f", jednofazno uz terminal {p.terminal_growth:.0%}"))
+        parts.append(f"sadašnja vrijednost tokova = {results[prim]['range'].base:,.2f} €/dionici")
+        risk = ("jednogodišnji FCF ulaz (ciklus/investicije iskrivljuju)" if gh.get("g1") is None
+                else "održivost 3g stope rasta u eksplicitnoj fazi")
+    elif prim in ("justified_pb_roe", "residual_income") and prim in results:
+        eq, ni = c.val("equity_parent") or c.val("total_equity"), c.val("net_income_parent")
+        if eq and ni is not None:
+            parts.append(f"knjiga {eq / 1e6:,.0f} M€ uz ROE {ni / eq:.1%} vs r={p.cost_of_equity:.1%} "
+                         f"→ opravdani P/B multiplikator na knjigu = "
+                         f"{results[prim]['range'].base:,.2f} €/dionici")
+        risk = "održivost ROE-a i kapitalni g (2,5%) su pretpostavke"
+    elif prim and prim in results:
+        parts.append(f"sidro {prim}: {results[prim]['range'].base:,.2f} €/dionici "
+                     f"(peer multipli na zaradu/EBITDA)")
+        risk = "reprezentativnost peer skupa"
+    else:
+        return "Sidro nije dostupno — vidi preskočene metode i razloge."
+    alt = [f"{k} {v['vs_zone_pct']:+.0%}" for k, v in (rec.get("method_roles") or {}).items()
+           if v.get("role") == "anchor_alt" and v.get("vs_zone_pct") is not None]
+    if alt:
+        parts.append("potvrdna sidra: " + ", ".join(alt))
+    if rec.get("qa_flags"):
+        risk = rec["qa_flags"][0]
+    return ". ".join(parts) + f". Glavni rizik za procjenu: {risk}."
+
 
 def reconcile(results: dict, sector: Optional[str] = None) -> dict:
     """
@@ -683,11 +747,15 @@ def reconcile(results: dict, sector: Optional[str] = None) -> dict:
     anchors = [k for k in anchors_all if bases[k] > 0]
     dropped = [k for k in anchors_all if k not in anchors]
     if anchors:
-        zone_low = min((results[k]["range"].low or bases[k]) for k in anchors)
-        zone_high = max((results[k]["range"].high or bases[k]) for k in anchors)
-        zone_note = (f"sidrene metode s nepozitivnom bazom isključene iz zone: "
-                     f"{', '.join(dropped)} (jednogodišnji ulaz ispod nule)"
-                     if dropped else None)
+        prim = anchors[0]              # primarno sidro (redoslijed arhetipa)
+        vr = results[prim]["range"]
+        zone_low = vr.low or bases[prim]
+        zone_high = vr.high or bases[prim]
+        zone_note = (f"zona = {prim} ± osjetljivost na ključnu pretpostavku "
+                     f"(r/wacc ±1 p.b.); ostala sidra su potvrda")
+        if dropped:
+            zone_note += (f"; isključeno (nepozitivna baza): {', '.join(dropped)}")
+        anchors = [prim] + [k for k in anchors if k != prim]
     else:
         # sidro nije dostupno (npr. holding bez SOTP ulaza) -> pošten fallback
         zone_low, zone_high = min(bases.values()), max(bases.values())
@@ -702,9 +770,19 @@ def reconcile(results: dict, sector: Optional[str] = None) -> dict:
         if anchors else spread_all
 
     roles = {}
+    mid = (zone_low + zone_high) / 2 if anchors else None
+    inconsistent = []
     for k in results.keys():
-        if k in anchors:
+        if anchors and k == anchors[0]:
             roles[k] = {"role": "anchor", "note": None, "vs_zone_pct": None}
+            continue
+        if k in anchors:
+            dev = (bases[k] / mid - 1) if (mid and bases.get(k)) else None
+            roles[k] = {"role": "anchor_alt",
+                        "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
+                        "vs_zone_pct": dev}
+            if dev is not None and abs(dev) > 0.25:
+                inconsistent.append(f"{k} {dev:+.0%} vs primarno sidro")
             continue
         if k in dropped:
             roles[k] = {"role": "anchor_excluded",
@@ -734,6 +812,7 @@ def reconcile(results: dict, sector: Optional[str] = None) -> dict:
         "zone_low": zone_low, "zone_high": zone_high,
         "zone_note": zone_note,
         "all_methods_low": lo_all, "all_methods_high": hi_all,
+        "anchor_inconsistency": inconsistent or None,
         "dispersion": spread,                # širina sidrene zone (headline)
         "dispersion_all": spread_all,        # raspon SVIH metoda (info/signal)
         "divergent": spread > 0.30,          # >30% SIDRA -> naracija raskoraka
@@ -1083,6 +1162,8 @@ def _print_company(ticker: str, out: dict) -> None:
         print(f"  baze po metodi: { {k: round(v, 2) for k, v in rec['method_bases'].items() if v} }")
         for f in rec.get("qa_flags") or []:
             print(f"  QA RED-FLAG: {f}")
+        if rec.get("reasoning"):
+            print(f"  LANAC: {rec['reasoning']}")
 
 
 def _print_class_positions(cp: dict) -> None:

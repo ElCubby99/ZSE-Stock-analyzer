@@ -852,6 +852,11 @@ def build_stock_json(conn, ticker: str) -> dict:
         "all_methods_high": _f(rec.get("all_methods_high")),
         "dispersion_all": _f(rec.get("dispersion_all")),
         "method_bases": {k: _f(v) for k, v in (rec.get("method_bases") or {}).items()},
+        # M12: QA konvergencije ulaza + lanac zaključivanja do sidra
+        "qa_flags": rec.get("qa_flags") or [],
+        "vs_market_pct": _f(rec.get("vs_market_pct")),
+        "anchor_inconsistency": rec.get("anchor_inconsistency") or [],
+        "reasoning": rec.get("reasoning"),
     })
 
     shares = _f(ctx.shares_ex_treasury)

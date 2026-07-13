@@ -6,7 +6,7 @@
   "isin": "HRATGRRA0003",
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-12",
+  "generated_at": "2026-07-13",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -279,7 +279,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "ATGR: zadnja trgovina 2026-07-10: 41 kom / 2,098 € prometa (2 d)."
+        "txt": "ATGR: zadnja trgovina 2026-07-10: 41 kom / 2,098 € prometa (3 d)."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -308,7 +308,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -324,9 +324,9 @@
           "volume": 41.0,
           "turnover_eur": 2098.0
         },
-        "days_since_trade": 2,
+        "days_since_trade": 3,
         "flag": "low",
-        "note": "zadnja trgovina 2026-07-10: 41 kom / 2,098 € prometa (2 d)"
+        "note": "zadnja trgovina 2026-07-10: 41 kom / 2,098 € prometa (3 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -549,7 +549,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "classes": [
       {
         "class_ticker": "ATGR",
@@ -569,7 +569,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "events": [
       {
         "class_ticker": "ATGR",
@@ -4476,9 +4476,9 @@
     ],
     "reconciliation": {
       "zone_low": 34.858011542549626,
-      "zone_high": 52.97836228401667,
-      "dispersion": 0.34203304821549513,
-      "divergent": true,
+      "zone_high": 47.160839145802434,
+      "dispersion": 0.2608695652173913,
+      "divergent": false,
       "archetype": "operating",
       "anchor_methods": [
         "multiples_relative",
@@ -4491,9 +4491,9 @@
           "vs_zone_pct": null
         },
         "ev_ebitda": {
-          "role": "anchor",
-          "note": null,
-          "vs_zone_pct": null
+          "role": "anchor_alt",
+          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
+          "vs_zone_pct": 0.08704676986789162
         },
         "dcf_fcf": {
           "role": "anchor_excluded",
@@ -4511,7 +4511,7 @@
           "vs_zone_pct": -0.20066473773945814
         }
       },
-      "zone_note": "sidrene metode s nepozitivnom bazom isključene iz zone: dcf_fcf (jednogodišnji ulaz ispod nule)",
+      "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
       "all_methods_low": -8.894830398280547,
       "all_methods_high": 45.64148861470559,
       "dispersion_all": 1.1948847565724368,
@@ -4521,7 +4521,13 @@
         "dcf_fcf": -8.894830398280547,
         "ddm_gordon": 45.64148861470559,
         "justified_pb_roe": 27.8632377982449
-      }
+      },
+      "qa_flags": [
+        "metode se međusobno razilaze 119% (sve metode) — provjeri ulaze/pretpostavke"
+      ],
+      "vs_market_pct": 23.1,
+      "anchor_inconsistency": [],
+      "reasoning": "Rast prihoda NIJE izveden (nema 3g serije u bazi). EBITDA marža 8.8%. sidro multiples_relative: 41.01 €/dionici (peer multipli na zaradu/EBITDA). potvrdna sidra: ev_ebitda +9%. Glavni rizik za procjenu: metode se međusobno razilaze 119% (sve metode) — provjeri ulaze/pretpostavke."
     },
     "sotp": null
   },

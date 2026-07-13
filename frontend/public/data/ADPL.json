@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-12",
+  "generated_at": "2026-07-13",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -304,7 +304,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -320,9 +320,9 @@
           "volume": 2870.0,
           "turnover_eur": 86125.0
         },
-        "days_since_trade": 2,
+        "days_since_trade": 3,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 2870 kom / 86,125 € prometa (2 d)"
+        "note": "zadnja trgovina 2026-07-10: 2870 kom / 86,125 € prometa (3 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -545,7 +545,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "classes": [
       {
         "class_ticker": "ADPL",
@@ -565,7 +565,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "events": [
       {
         "class_ticker": "ADPL",
@@ -4586,10 +4586,10 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 20.888176066962824,
+      "zone_low": 34.66704083071085,
       "zone_high": 46.90246700625586,
-      "dispersion": 0.5546465377998826,
-      "divergent": true,
+      "dispersion": 0.2608695652173913,
+      "divergent": false,
       "archetype": "operating",
       "anchor_methods": [
         "multiples_relative",
@@ -4602,17 +4602,17 @@
           "vs_zone_pct": null
         },
         "ev_ebitda": {
-          "role": "anchor",
-          "note": null,
-          "vs_zone_pct": null
+          "role": "anchor_alt",
+          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
+          "vs_zone_pct": -0.3702205174014329
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": 0.0
+          "vs_zone_pct": -0.16718331336217063
         }
       },
-      "zone_note": null,
+      "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 25.685401220692334,
       "all_methods_high": 40.78475391848336,
       "dispersion_all": 0.37022051740143286,
@@ -4620,7 +4620,15 @@
         "multiples_relative": 40.78475391848336,
         "ev_ebitda": 25.685401220692334,
         "justified_pb_roe": 28.871290080170958
-      }
+      },
+      "qa_flags": [
+        "ULAZI NEKONZISTENTNI: ev_ebitda -37% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+      ],
+      "vs_market_pct": -25.7,
+      "anchor_inconsistency": [
+        "ev_ebitda -37% vs primarno sidro"
+      ],
+      "reasoning": "Rast prihoda NIJE izveden (nema 3g serije u bazi). EBITDA marža 12.2%. sidro multiples_relative: 40.78 €/dionici (peer multipli na zaradu/EBITDA). potvrdna sidra: ev_ebitda -37%. Glavni rizik za procjenu: ULAZI NEKONZISTENTNI: ev_ebitda -37% vs primarno sidro — uskladi pretpostavke, ne širi zonu."
     },
     "sotp": null
   },

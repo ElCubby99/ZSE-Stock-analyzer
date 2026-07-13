@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-12",
+  "generated_at": "2026-07-13",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -279,7 +279,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "SPAN: zadnja trgovina 2026-07-10: 31 kom / 1,767 € prometa (2 d)."
+        "txt": "SPAN: zadnja trgovina 2026-07-10: 31 kom / 1,767 € prometa (3 d)."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -304,7 +304,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -320,9 +320,9 @@
           "volume": 31.0,
           "turnover_eur": 1767.0
         },
-        "days_since_trade": 2,
+        "days_since_trade": 3,
         "flag": "low",
-        "note": "zadnja trgovina 2026-07-10: 31 kom / 1,767 € prometa (2 d)"
+        "note": "zadnja trgovina 2026-07-10: 31 kom / 1,767 € prometa (3 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -545,7 +545,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "classes": [
       {
         "class_ticker": "SPAN",
@@ -565,7 +565,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "events": [
       {
         "class_ticker": "SPAN",
@@ -4756,7 +4756,7 @@
           "vs_zone_pct": 0.0
         }
       },
-      "zone_note": null,
+      "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 26.844097740048188,
       "all_methods_high": 36.506556799415854,
       "dispersion_all": 0.2646773595345556,
@@ -4764,7 +4764,13 @@
         "multiples_relative": 32.050255102040815,
         "ddm_gordon": 26.844097740048188,
         "justified_pb_roe": 36.506556799415854
-      }
+      },
+      "qa_flags": [
+        "fer-zona odstupa +78% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+      ],
+      "vs_market_pct": 77.8,
+      "anchor_inconsistency": [],
+      "reasoning": "Rast prihoda NIJE izveden (nema 3g serije u bazi). sidro multiples_relative: 32.05 €/dionici (peer multipli na zaradu/EBITDA). Glavni rizik za procjenu: fer-zona odstupa +78% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak."
     },
     "sotp": null
   },

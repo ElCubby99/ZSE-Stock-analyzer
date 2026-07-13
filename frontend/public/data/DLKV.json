@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-12",
+  "generated_at": "2026-07-13",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -308,7 +308,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -324,9 +324,9 @@
           "volume": 28710.0,
           "turnover_eur": 514567.2
         },
-        "days_since_trade": 2,
+        "days_since_trade": 3,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 28710 kom / 514,567 € prometa (2 d)"
+        "note": "zadnja trgovina 2026-07-10: 28710 kom / 514,567 € prometa (3 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -556,7 +556,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "classes": [
       {
         "class_ticker": "DLKV",
@@ -576,7 +576,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "events": [
       {
         "class_ticker": "DLKV",
@@ -4718,10 +4718,10 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 2.7243272045203173,
+      "zone_low": 4.12991529972269,
       "zone_high": 5.079436291021937,
-      "dispersion": 0.4636556010485551,
-      "divergent": true,
+      "dispersion": 0.18693432438114344,
+      "divergent": false,
       "archetype": "operating",
       "anchor_methods": [
         "dcf_fcf",
@@ -4730,14 +4730,14 @@
       ],
       "method_roles": {
         "multiples_relative": {
-          "role": "anchor",
-          "note": null,
-          "vs_zone_pct": null
+          "role": "anchor_alt",
+          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
+          "vs_zone_pct": -0.3039486445346402
         },
         "ev_ebitda": {
-          "role": "anchor",
-          "note": null,
-          "vs_zone_pct": null
+          "role": "anchor_alt",
+          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
+          "vs_zone_pct": -0.3095507098912953
         },
         "dcf_fcf": {
           "role": "anchor",
@@ -4747,15 +4747,15 @@
         "ddm_gordon": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": -0.5423013635746576
+          "vs_zone_pct": -0.6980759274241918
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "sekundarna leća uz operativno sidro (DCF + multipli) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": -0.2005011199456067
+          "vs_zone_pct": -0.47260503161845435
         }
       },
-      "zone_note": null,
+      "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 1.2469208466854143,
       "all_methods_high": 4.552928526210757,
       "dispersion_all": 0.7261277352572053,
@@ -4765,7 +4765,19 @@
         "dcf_fcf": 4.552928526210757,
         "ddm_gordon": 1.2469208466854143,
         "justified_pb_roe": 2.17809654891571
-      }
+      },
+      "qa_flags": [
+        "ULAZI NEKONZISTENTNI: multiples_relative -30% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "ULAZI NEKONZISTENTNI: ev_ebitda -31% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "metode se međusobno razilaze 73% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +287% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+      ],
+      "vs_market_pct": 286.6,
+      "anchor_inconsistency": [
+        "multiples_relative -30% vs primarno sidro",
+        "ev_ebitda -31% vs primarno sidro"
+      ],
+      "reasoning": "Rast prihoda NIJE izveden (nema 3g serije u bazi). EBITDA marža 6.2%. FCF 15.7 M€ diskontiran uz r=13.2% (β izmjerena), jednofazno uz terminal 4%. sadašnja vrijednost tokova = 4.55 €/dionici. potvrdna sidra: multiples_relative -30%, ev_ebitda -31%. Glavni rizik za procjenu: ULAZI NEKONZISTENTNI: multiples_relative -30% vs primarno sidro — uskladi pretpostavke, ne širi zonu."
     },
     "sotp": null
   },

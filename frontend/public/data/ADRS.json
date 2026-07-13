@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-12",
+  "generated_at": "2026-07-13",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -388,7 +388,7 @@
     "leverage_note": "holding konsolidira osiguratelja — grupni net_debt/EBITDA uzeti s oprezom (miješa financijski i operativni dio)"
   },
   "liquidity": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -404,9 +404,9 @@
           "volume": 59.0,
           "turnover_eur": 9351.0
         },
-        "days_since_trade": 2,
+        "days_since_trade": 3,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 59 kom / 9,351 € prometa (2 d)"
+        "note": "zadnja trgovina 2026-07-10: 59 kom / 9,351 € prometa (3 d)"
       },
       {
         "class_ticker": "ADRS2",
@@ -416,9 +416,9 @@
           "volume": 3504.0,
           "turnover_eur": 359290.0
         },
-        "days_since_trade": 2,
+        "days_since_trade": 3,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 3504 kom / 359,290 € prometa (2 d)"
+        "note": "zadnja trgovina 2026-07-10: 3504 kom / 359,290 € prometa (3 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -722,7 +722,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "classes": [
       {
         "class_ticker": "ADRS",
@@ -756,7 +756,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "events": [
       {
         "class_ticker": "ADRS",
@@ -7775,7 +7775,7 @@
               "value_eur": 560488605.0,
               "value_market_eur": 962759144.0,
               "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena CROS: sidro capital (residual_income, justified_pb_roe) sredina zone 1,578–2,289 €/dionici × 429,697 dionica × 0.6747",
+              "basis": "fer-procjena: fer-procjena CROS: sidro capital (justified_pb_roe, residual_income) sredina zone 1,578–2,289 €/dionici × 429,697 dionica × 0.6747",
               "pct": 0.6747,
               "placeholder": false
             },
@@ -7896,7 +7896,7 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": null,
+      "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 39.51694754379656,
       "all_methods_high": 106.62307469216645,
       "dispersion_all": 0.6293771525733365,
@@ -7905,7 +7905,14 @@
         "ddm_gordon": 67.34055076170405,
         "justified_pb_roe": 39.51694754379656,
         "sotp_nav": 68.63422907378407
-      }
+      },
+      "qa_flags": [
+        "metode se međusobno razilaze 63% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +140% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+      ],
+      "vs_market_pct": 140.4,
+      "anchor_inconsistency": [],
+      "reasoning": "Prihodi rastu +9.4% godišnje (3g CAGR iz baze). EBITDA marža 40.7%. NAV = uvrštene kćeri po NAŠOJ fer-procjeni + neuvršteni dijelovi po multiplama − neto dug = 1,362 M€; uz holding diskont 15%–25% sidro je 68.63 €/dionici. tržište kćeri stoji +29.5% vs naša procjena. Glavni rizik za procjenu: metode se međusobno razilaze 63% (sve metode) — provjeri ulaze/pretpostavke."
     },
     "sotp": {
       "parts": [
@@ -7914,7 +7921,7 @@
           "value_eur": 560488605.0,
           "value_market_eur": 962759144.0,
           "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena CROS: sidro capital (residual_income, justified_pb_roe) sredina zone 1,578–2,289 €/dionici × 429,697 dionica × 0.6747",
+          "basis": "fer-procjena: fer-procjena CROS: sidro capital (justified_pb_roe, residual_income) sredina zone 1,578–2,289 €/dionici × 429,697 dionica × 0.6747",
           "pct": 0.6747,
           "placeholder": false
         },

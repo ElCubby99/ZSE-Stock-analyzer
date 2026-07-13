@@ -38,13 +38,23 @@ export function AnchorPanel({ data }) {
   const pos = (p) => (p > hi ? `${num((p / hi - 1) * 100, 1)}% iznad zone`
     : p < lo ? `${num((1 - p / lo) * 100, 1)}% ispod zone` : 'unutar zone')
   const sotp = data.valuation?.sotp
-  const anchorName = (rec.anchor_methods || []).map((k) => METHOD_SHORT[k] || k).join(' + ')
+  // M12: primarno sidro nosi zonu; ostala sidra istog arhetipa su potvrda
+  const roles = rec.method_roles || {}
+  const prim = Object.keys(roles).find((k) => roles[k].role === 'anchor')
+  const alts = Object.keys(roles).filter((k) => roles[k].role === 'anchor_alt')
+  const anchorName = prim
+    ? (METHOD_SHORT[prim] || prim)
+    : (rec.anchor_methods || []).map((k) => METHOD_SHORT[k] || k).join(' + ')
 
   return (
     <div className="anch">
       <div className="anch-head">
         <span className="anch-tag">SIDRO · {anchorName || dash}</span>
-        <span className="anch-sub">glavna fer-zona — sve metode se mjere prema njoj</span>
+        <span className="anch-sub">
+          {alts.length
+            ? `zona = sidro ± osjetljivost; potvrda: ${alts.map((k) => METHOD_SHORT[k] || k).join(', ')}`
+            : 'glavna fer-zona — sve metode se mjere prema njoj'}
+        </span>
       </div>
       <div className="anch-zone">{num(lo, 2)}–{num(hi, 2)} €</div>
       <div className="anch-band">
@@ -69,6 +79,20 @@ export function AnchorPanel({ data }) {
           </span>
         ))}
       </div>
+      {rec.reasoning && (
+        <div className="anch-chain">
+          <div className="prof-klabel">KAKO SMO DOŠLI DO SIDRA</div>
+          <p>{rec.reasoning}</p>
+          {rec.zone_note && <div className="anch-chain-note">{rec.zone_note}</div>}
+        </div>
+      )}
+      {(rec.qa_flags || []).length > 0 && (
+        <div className="anch-qa">
+          {rec.qa_flags.map((f, i) => (
+            <div className="anch-qa-row" key={i}><span className="flag">QA</span> {f}</div>
+          ))}
+        </div>
+      )}
       {sotp && sotp.sotp_fair && sotp.sotp_market && (
         <div className="anch-sotp2">
           <div>

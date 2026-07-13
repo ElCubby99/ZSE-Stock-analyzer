@@ -6,7 +6,7 @@
   "isin": "HRRIVPRA0000",
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-12",
+  "generated_at": "2026-07-13",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -304,7 +304,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -320,9 +320,9 @@
           "volume": 11338.0,
           "turnover_eur": 94142.88
         },
-        "days_since_trade": 2,
+        "days_since_trade": 3,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 11338 kom / 94,143 € prometa (2 d)"
+        "note": "zadnja trgovina 2026-07-10: 11338 kom / 94,143 € prometa (3 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -545,7 +545,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "classes": [
       {
         "class_ticker": "RIVP",
@@ -565,7 +565,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-12",
+    "as_of": "2026-07-13",
     "events": [
       {
         "class_ticker": "RIVP",
@@ -4785,7 +4785,7 @@
           "vs_zone_pct": 0.24500113126280598
         }
       },
-      "zone_note": "sidrene metode s nepozitivnom bazom isključene iz zone: dcf_fcf (jednogodišnji ulaz ispod nule)",
+      "zone_note": "zona = multiples_relative ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
       "all_methods_low": -12.052010266273482,
       "all_methods_high": 8.028821410190426,
       "dispersion_all": 2.5010933299595757,
@@ -4794,7 +4794,14 @@
         "dcf_fcf": -12.052010266273482,
         "ddm_gordon": 8.028821410190426,
         "justified_pb_roe": 5.738653903063599
-      }
+      },
+      "qa_flags": [
+        "metode se međusobno razilaze 250% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +108% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+      ],
+      "vs_market_pct": 108.1,
+      "anchor_inconsistency": [],
+      "reasoning": "Rast prihoda NIJE izveden (nema 3g serije u bazi). sidro multiples_relative: 4.01 €/dionici (peer multipli na zaradu/EBITDA). Glavni rizik za procjenu: metode se međusobno razilaze 250% (sve metode) — provjeri ulaze/pretpostavke."
     },
     "sotp": null
   },
