@@ -23,10 +23,17 @@ function Movers({ title, list, nav }) {
   )
 }
 
+// Stupci tablice 'Sve dionice' — svi sortabilni klikom na zaglavlje (kao Screener)
+const MK_COLS = [
+  ['ticker', 'DIONICA', 'l'], ['price', 'ZADNJA €', 'r'], ['change_pct', 'PROMJENA', 'r'],
+  ['turnover', 'PROMET €', 'r'], ['zone', 'FER-ZONA €', 'r'], ['gap', 'RASKORAK', 'l'],
+]
+
 export default function Trziste() {
   const ov = useOverview()
   const nav = useNavigate()
-  const [key, setKey] = useState('vol')
+  // default: PROMET silazno (kao dosad); klik na isto zaglavlje obrće smjer
+  const [sk, setSk] = useState('turnover'); const [dir, setDir] = useState(-1)
   useEffect(() => { document.title = 'Tržište · Burzovni list' }, [])
   if (!ov) return <div className="wrap"><SiteHeader /><div className="loading">učitavam…</div></div>
   // zadnji trgovinski dan na tržištu (max datum EOD zapisa) — dobitnici i
@@ -39,8 +46,22 @@ export default function Trziste() {
     && s.change_pct !== undefined && s.date === latestDate)
   const gainers = [...withChg].sort((a, b) => b.change_pct - a.change_pct).slice(0, 4)
   const losers = [...withChg].sort((a, b) => a.change_pct - b.change_pct).slice(0, 4)
-  const list = [...ov.stocks].sort((a, b) => key === 'vol' ? (b.turnover || 0) - (a.turnover || 0)
-    : key === 'chg' ? (b.change_pct || -9) - (a.change_pct || -9) : a.ticker.localeCompare(b.ticker))
+  // isti mehanizam kao Screener: string lokalno, null/n-p uvijek na kraj
+  const gap = (s) => (s.zone_low === null || s.zone_low === undefined || !s.price ? null
+    : s.price > s.zone_high ? s.price / s.zone_high - 1
+      : s.price < s.zone_low ? s.price / s.zone_low - 1 : 0)
+  const sortVal = (s) => (sk === 'gap' ? gap(s)
+    : sk === 'zone' ? (s.zone_low === null || s.zone_low === undefined
+      ? null : (s.zone_low + s.zone_high) / 2)
+      : s[sk])
+  const list = [...ov.stocks].sort((a, b) => {
+    const av = sortVal(a); const bv = sortVal(b)
+    if (typeof av === 'string' || typeof bv === 'string') return String(av).localeCompare(String(bv)) * dir
+    const an = av === null || av === undefined ? Infinity * dir : av
+    const bn = bv === null || bv === undefined ? Infinity * dir : bv
+    return (an - bn) * dir
+  })
+  const sort = (k) => () => { setDir(sk === k ? -dir : k === 'ticker' ? 1 : -1); setSk(k) }
   return (
     <div className="shellpg">
       <SiteHeader />
@@ -73,18 +94,16 @@ export default function Trziste() {
         </div>
         <div className="mk-title2">
           <h2 className="mk-h2">Sve dionice</h2>
-          <div className="prof-chips">
-            <span className="prof-klabel" style={{ margin: 0 }}>SORTIRAJ:</span>
-            {[['vol', 'PROMET'], ['chg', 'PROMJENA'], ['name', 'TICKER']].map(([k, l]) => (
-              <button key={k} className={`prof-chip ${key === k ? 'on' : ''}`} onClick={() => setKey(k)}>{l}</button>
-            ))}
-          </div>
+          <span className="subnote" style={{ margin: 0 }}>klik na zaglavlje sortira (ponovni klik obrće smjer)</span>
         </div>
         <div className="mk-scroll">
           <div className="mk-table">
             <div className="mk-hd">
-              <span>DIONICA</span><span className="r">ZADNJA €</span><span className="r">PROMJENA</span>
-              <span className="r">PROMET €</span><span className="r">FER-ZONA €</span><span>RASKORAK</span>
+              {MK_COLS.map(([k, l, ta]) => (
+                <button key={k} className={ta} onClick={sort(k)}>
+                  {l}{sk === k ? (dir === 1 ? ' ↑' : ' ↓') : ''}
+                </button>
+              ))}
             </div>
             {list.map((s) => (
               <div className="mk-row" key={s.ticker} onClick={() => nav(`/dionica/${s.company}`)}>
