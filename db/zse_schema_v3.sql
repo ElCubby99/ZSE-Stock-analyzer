@@ -92,3 +92,20 @@ CREATE TABLE IF NOT EXISTS api_usage (
 );
 CREATE INDEX IF NOT EXISTS api_usage_ts_idx ON api_usage (ts);
 CREATE INDEX IF NOT EXISTS api_usage_ticker_idx ON api_usage (ticker);
+
+-- M23: top 10 dioničara — snapshoti kroz vrijeme (promjene = diff zadnja dva).
+-- Imena se čuvaju ISKLJUČIVO kako su javno objavljena (SKDD/izvješće).
+CREATE TABLE IF NOT EXISTS shareholders (
+    id            SERIAL PRIMARY KEY,
+    company_id    INTEGER NOT NULL REFERENCES companies(id),
+    snapshot_date DATE NOT NULL,
+    source        TEXT NOT NULL,        -- 'zse_skdd' | 'annual_report'
+    source_detail TEXT,                 -- URL papira / PDF + stranica
+    rank          INTEGER NOT NULL,
+    holder_name   TEXT NOT NULL,        -- kako je objavljeno, bez dopuna
+    shares        NUMERIC,              -- NULL kad izvor daje samo postotak
+    pct           NUMERIC NOT NULL,     -- udio u % (0-100)
+    is_custody    BOOLEAN NOT NULL DEFAULT FALSE,  -- skrbnički/zbirni račun
+    UNIQUE (company_id, snapshot_date, source, rank)
+);
+CREATE INDEX IF NOT EXISTS shareholders_lookup ON shareholders (company_id, snapshot_date DESC);

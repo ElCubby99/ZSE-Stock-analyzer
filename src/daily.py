@@ -223,6 +223,16 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
         log("regen", None, "ok", "dividende.json regeneriran")
     except Exception as e:  # noqa: BLE001
         log("regen", None, "failed", f"dividende.json: {type(e).__name__}: {e}")
+    # M23: MJESEČNI snapshot top 10 dioničara (ZSE/SKDD) — 1. u mjesecu;
+    # povijest snapshota se gradi ubuduće (promjene = diff zadnja dva)
+    if date.today().day == 1:
+        try:
+            import subprocess
+            subprocess.run([os.sys.executable, "-m", "scripts.scrape_shareholders_zse"],
+                           check=True, capture_output=True, text=True, timeout=1800)
+            log("regen", None, "ok", "mjesečni snapshot dioničara (ZSE/SKDD)")
+        except Exception as e:  # noqa: BLE001
+            log("regen", None, "failed", f"snapshot dioničara: {type(e).__name__}: {e}")
     if not changed:
         log("regen", None, "skipped", "ništa se nije promijenilo")
         return

@@ -312,12 +312,89 @@ function BankKpi({ bk }) {
   )
 }
 
+const hrDate = (iso) => {
+  if (!iso) return dash
+  const [y, m, d] = iso.split('-')
+  return `${Number(d)}.${Number(m)}.${y}.`
+}
+
+function ChangeCell({ r, hasPrev }) {
+  if (!hasPrev) return <span>{dash}</span>
+  if (r.entered) return <span className="okflag">ušao u top 10</span>
+  if (r.change_pp === null || r.change_pp === undefined) return <span>{dash}</span>
+  const v = r.change_pp
+  const sign = v > 0 ? '+' : v < 0 ? '−' : '±'
+  const col = v > 0 ? '#1F6E5A' : v < 0 ? '#9E2B25' : 'rgba(38,46,51,0.55)'
+  return <span style={{ color: col }}>{sign}{num(Math.abs(v), 2)} p.p.</span>
+}
+
+function Top10({ t10 }) {
+  if (!t10) return null
+  const hasPrev = !!t10.prev_snapshot_date
+  return (
+    <section>
+      <div className="sec-label">Top 10 dioničara</div>
+      <div className="subnote" style={{ marginBottom: 8 }}>
+        Snapshot {hrDate(t10.snapshot_date)} — {t10.source_label}.
+        {hasPrev
+          ? <> Promjene vs snapshot {hrDate(t10.prev_snapshot_date)} ({t10.prev_source_label}).</>
+          : <> {t10.note}.</>}
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Imatelj (kako je objavljen)</th>
+            <th className="num">Udjel</th>
+            <th className="num">Promjena{hasPrev ? ' (p.p.)' : ''}</th>
+            <th>Izvor</th>
+          </tr>
+        </thead>
+        <tbody>
+          {t10.rows.map((r) => (
+            <tr key={r.rank}>
+              <td>{r.rank}.</td>
+              <td>
+                {r.name}
+                {r.is_custody && <> <span className="ph">skrbnički / zbirni račun</span></>}
+                {r.prev_name && (
+                  <div className="fund-src">uspoređeno s: {r.prev_name}</div>
+                )}
+              </td>
+              <td className="num">{num(r.pct, 2)} %</td>
+              <td className="num"><ChangeCell r={r} hasPrev={hasPrev} /></td>
+              <td className="fund-src">{r.source_detail}</td>
+            </tr>
+          ))}
+          {t10.free_float_from_top10_pct !== null && t10.free_float_from_top10_pct !== undefined && (
+            <tr className="sotp-total">
+              <td /><td>Free float ≈ 100 % − Σ top 10 (aproksimacija)</td>
+              <td className="num">{num(t10.free_float_from_top10_pct, 2)} %</td>
+              <td /><td />
+            </tr>
+          )}
+        </tbody>
+      </table>
+      {hasPrev && !!(t10.left || []).length && (
+        <div className="subnote">
+          Izašli iz top 10 od {hrDate(t10.prev_snapshot_date)}: {t10.left.join(' · ')}.
+        </div>
+      )}
+      <div className="subnote">
+        {t10.custody_note}. Imena su prikazana točno kako su javno objavljena
+        (SKDD / godišnje izvješće) — ne dopunjavaju se.
+      </div>
+    </section>
+  )
+}
+
 function Ownership({ own, liquidity }) {
   if (!own) return null
   const anyFlag = (liquidity?.classes || []).some((c) => c.flag !== 'ok')
   return (
+    <>
+    <Top10 t10={own.top10} />
     <section>
-      <div className="sec-label">Vlasništvo i free float</div>
+      <div className="sec-label">Vlasnički graf i free float</div>
       {own.holders.length ? (
         <>
           <table>
@@ -342,10 +419,16 @@ function Ownership({ own, liquidity }) {
             {own.liquidity_link && anyFlag && <> <b>{own.liquidity_link}.</b></>}
           </div>
         </>
+      ) : own.top10 ? (
+        <div className="subnote">
+          Vlasnički graf (povezana uvrštena društva) nema unosa za ovu firmu —
+          free float je izveden iz tablice top 10 iznad.
+        </div>
       ) : (
         <div className="subnote"><span className="flag">nema u bazi</span> {own.note}.</div>
       )}
     </section>
+    </>
   )
 }
 

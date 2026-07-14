@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
+import unicodedata
 from decimal import Decimal
 
 from .db import get_conn
@@ -535,8 +537,154 @@ def _segments(cur, company_id: int, fiscal_year: int | None) -> dict | None:
     }
 
 
+def _norm_holder(name: str) -> str:
+    """Normalizacija za sparivanje imena preko izvora (ZSE uppercase vs
+    izvješće mixed-case; dijakritici/ligature iz PDF-a; kratice fondova).
+    Prikaz UVIJEK ostaje točno kako je objavljeno — ovo služi samo za
+    usporedbu snapshota."""
+    s = unicodedata.normalize("NFKD", name)
+    s = "".join(ch for ch in s if not unicodedata.combining(ch)).lower()
+    s = re.sub(r"[.,*()\"']", " ", s)
+    s = re.sub(r"\s*/\s*", "/", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    toks = []
+    for t in s.split(" "):
+        if t == "omf":
+            toks += ["obvezni", "mirovinski", "fond"]
+        elif t == "dmf":
+            toks += ["dobrovoljni", "mirovinski", "fond"]
+        elif t == "co":  # 'PBZ CO OMF' = PBZ Croatia Osiguranje OMF
+            toks += ["croatia", "osiguranje"]
+        elif re.fullmatch(r"kategorij\w*", t):
+            toks.append("kategorije")
+        elif t in ("-", "–"):
+            continue
+        else:
+            toks.append(t)
+    return " ".join(toks)
+
+
+def _client_key(norm: str) -> str:
+    """Za skrbnički zapis 'BANKA/KLIJENT' vrati klijentski dio — godišnja
+    izvješća često imenuju krajnjeg imatelja izravno, ZSE preko skrbnika."""
+    if "/" in norm:
+        tail = norm.rsplit("/", 1)[1].strip()
+        if len(tail) >= 4:
+            return tail
+    return norm
+
+
+def _match_snapshots(cur_rows: list[dict], prev_rows: list[dict]) -> None:
+    """1:1 sparivanje redova dva snapshota: (1) točno normalizirano ime,
+    (2) klijentski dio skrbničkog zapisa, (3) podskup tokena (npr.
+    'REPUBLIKA HRVATSKA' unutar 'CERP - Republika Hrvatska'). Nespareno =
+    ušao/izašao. Upisuje prev_pct/change_pp/prev_name/entered u cur_rows."""
+    for r in cur_rows:
+        r["prev_pct"] = r["change_pp"] = r["prev_name"] = None
+        r["entered"] = True
+    free_prev = {id(p): p for p in prev_rows}
+
+    def _pair(r, p):
+        r["prev_pct"] = p["pct"]
+        r["prev_name"] = p["name"] if _norm_holder(p["name"]) != _norm_holder(r["name"]) else None
+        if r["pct"] is not None and p["pct"] is not None:
+            r["change_pp"] = round(r["pct"] - p["pct"], 2)
+        r["entered"] = False
+        free_prev.pop(id(p), None)
+
+    for match_fn in (
+        lambda r, p: _norm_holder(r["name"]) == _norm_holder(p["name"]),
+        lambda r, p: _client_key(_norm_holder(r["name"])) == _client_key(_norm_holder(p["name"])),
+        lambda r, p: (lambda a, b: (set(a.split()) <= set(b.split())
+                                    or set(b.split()) <= set(a.split()))
+                      and min(len(a.split()), len(b.split())) >= 2)(
+            _client_key(_norm_holder(r["name"])), _client_key(_norm_holder(p["name"]))),
+    ):
+        for r in cur_rows:
+            if not r["entered"]:
+                continue
+            for p in list(free_prev.values()):
+                if match_fn(r, p):
+                    _pair(r, p)
+                    break
+    for p in prev_rows:
+        p["_left"] = id(p) in free_prev
+
+
+def _top10_block(cur, company_id: int) -> dict | None:
+    """M23: top 10 dioničara iz tablice shareholders + PROMJENE između zadnja
+    dva snapshota. Jedan snapshot -> stanje s datumom, BEZ izmišljenih
+    promjena. Imena točno kako su objavljena (SKDD/izvješće)."""
+    cur.execute(
+        """SELECT DISTINCT snapshot_date, source FROM shareholders
+           WHERE company_id = %s ORDER BY snapshot_date DESC""",
+        (company_id,))
+    snaps = cur.fetchall()
+    if not snaps:
+        return None
+
+    def _rows(snap_date, source):
+        cur.execute(
+            """SELECT rank, holder_name, shares, pct, is_custody, source_detail
+               FROM shareholders
+               WHERE company_id = %s AND snapshot_date = %s AND source = %s
+               ORDER BY rank""",
+            (company_id, snap_date, source))
+        return [{"rank": rk, "name": nm, "shares": _f(sh), "pct": _f(p),
+                 "is_custody": cu, "source_detail": det}
+                for rk, nm, sh, p, cu, det in cur.fetchall()]
+
+    cur_date, cur_src = snaps[0]
+    rows = _rows(cur_date, cur_src)
+    prev = None
+    for d, s in snaps[1:]:
+        if d < cur_date:
+            prev = (d, s)
+            break
+
+    src_label = {"zse_skdd": "ZSE stranica papira (izvor SKDD)",
+                 "annual_report": "godišnje izvješće"}
+    entered = left = None
+    prev_date = prev_src = None
+    if prev:
+        prev_date, prev_src = prev
+        prev_rows = _rows(prev_date, prev_src)
+        _match_snapshots(rows, prev_rows)
+        entered = [r["name"] for r in rows if r.get("entered")]
+        left = [p["name"] for p in prev_rows if p.get("_left")]
+    else:
+        for r in rows:
+            r["prev_pct"] = r["change_pp"] = r["prev_name"] = None
+            r["entered"] = False
+
+    # free float iz top 10: samo kad je lista puna (10 redova) — inače bi
+    # "100 − suma" precijenio free float
+    ff_top10 = None
+    if len(rows) >= 10 and all(r["pct"] is not None for r in rows):
+        ff_top10 = round(max(0.0, 100.0 - sum(r["pct"] for r in rows)), 2)
+
+    return {
+        "snapshot_date": str(cur_date),
+        "source": cur_src,
+        "source_label": src_label.get(cur_src, cur_src),
+        "rows": rows,
+        "prev_snapshot_date": str(prev_date) if prev_date else None,
+        "prev_source": prev_src,
+        "prev_source_label": src_label.get(prev_src, prev_src) if prev_src else None,
+        "entered": entered, "left": left,
+        "free_float_from_top10_pct": ff_top10,
+        "note": ("promjene = usporedba zadnja dva snapshota; udjeli u p.p."
+                 if prev else
+                 "samo jedan snapshot u bazi — prikazuje se stanje s datumom, "
+                 "bez promjena (povijest se gradi mjesečnim snapshotima)"),
+        "custody_note": ("skrbnički/zbirni računi (oznaka) nisu stvarni "
+                         "krajnji vlasnici — dionice drže za klijente"),
+    }
+
+
 def _ownership(cur, company_id: int, ticker: str) -> dict:
-    """DIO 5: obrnuti holdings graf — tko drži OVU firmu + približni free float."""
+    """DIO 5: top 10 dioničara (M23) + obrnuti holdings graf + free float."""
+    top10 = _top10_block(cur, company_id)
     cur.execute(
         """SELECT p.name, p.ticker, h.ownership_pct, h.source_page
            FROM holdings h JOIN companies p ON p.id = h.parent_company_id
@@ -545,7 +693,17 @@ def _ownership(cur, company_id: int, ticker: str) -> dict:
     )
     holders = [{"name": n, "ticker": t, "pct": _f(pct), "source": src}
                for n, t, pct, src in cur.fetchall()]
-    if holders:
+    ff_t10 = top10["free_float_from_top10_pct"] if top10 else None
+    if ff_t10 is not None:
+        known = round(100.0 - ff_t10, 2) / 100.0
+        ff = ff_t10 / 100.0
+        note = ("free float ≈ 100% − Σ top 10 dioničara "
+                f"(snapshot {top10['snapshot_date']}, {top10['source_label']}); "
+                "aproksimacija — imatelji izvan top 10 nisu obuhvaćeni")
+        liq_link = (f"manjinski free float (~{ff * 100:.1f}%) znači plitku "
+                    "knjigu naloga — vidi oznaku likvidnosti uz cijenu"
+                    if ff < 0.40 else None)
+    elif holders:
         known = sum(h["pct"] for h in holders)
         ff = max(0.0, 1.0 - known)
         note = ("free float ≈ 100% − poznati većinski udjeli iz vlasničkog grafa; "
@@ -558,7 +716,7 @@ def _ownership(cur, company_id: int, ticker: str) -> dict:
         note = ("u bazi nema zabilježenih većinskih imatelja za ovu firmu — "
                 "free float nepoznat (ne procjenjuje se)")
         liq_link = None
-    return {"holders": holders, "known_pct": known,
+    return {"top10": top10, "holders": holders, "known_pct": known,
             "free_float_pct_approx": ff, "note": note, "liquidity_link": liq_link}
 
 

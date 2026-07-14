@@ -122,6 +122,39 @@ Nismo nepogrešivi ni sada — zato svaka dionica ima vidljivu povijest
 promjena svoje zone s razlogom, a distribuciju naših zona prema tržištu
 mjerimo kontinuirano (alarm ako >70% završi na istoj strani).
 
+## Odakle podaci
+
+Sažetak izvora — svaki tip podatka na webu ima poznato porijeklo i deklarirani
+zaostatak (provjereno 14.07.2026.):
+
+- **Cijene**: službena ZSE tečajnica (EOD JSON), s danom zaostatka; povijest
+  po papiru iz ZSE arhive. Nelikvidne dionice nose oznaku uz cijenu.
+- **Financijska izvješća**: EHO registar propisanih informacija (službene
+  objave izdavatelja, PDF/XLSX). Standardizirane obrasce (TFI-POD, nadzorni
+  obrazac banaka, FINREP, ISD osiguranja) čitaju deterministički parseri s
+  provjerom AOP oznake i naziva retka; što ne prođe validaciju, ne ulazi u
+  analizu. Svaka brojka nosi dokument i stranicu.
+- **Dividende**: ZSE stranica papira (iznos, ex-datum, record, isplata) +
+  službene objave prijedloga. Prijedlog nije isplata — status je uvijek
+  vidljiv.
+- **Broj dionica / ISIN**: ZSE stranica papira (uvrštena količina, klase);
+  trezorske dionice iz bilješki godišnjih izvješća.
+- **Dioničari (top 10)**: ZSE stranica papira (izvor SKDD; lista bez
+  objavljenog as-of datuma — vodimo je s datumom dohvata) + tablice
+  najvećih dioničara iz godišnjih izvješća (s citatom stranice). Skrbnički
+  i zbirni računi su označeni — nisu stvarni krajnji vlasnici. Promjene
+  prikazujemo samo kad postoje dva snapshota; imena isključivo kako su
+  javno objavljena.
+- **Nerizična stopa i premija rizika**: prinos HR 10-godišnje državne
+  obveznice + Damodaranova premija za Hrvatsku; ručno kalibrirano s citatom
+  u svakoj valuaciji, revidira se pri svakoj rekalibraciji.
+- **Peer multipli**: izračun iz vlastite baze (ZSE firme s validiranim
+  financijama), kriteriji peer skupova javno u dokumentaciji; sektor bez
+  usporedivog peera ne dobiva peer-metodu.
+
+Detaljni registar (način čitanja, poznate slabosti svakog izvora, datumi
+provjere) vodi se u projektnoj dokumentaciji (`docs/data_sources.md`).
+
 ## Automatizacija
 
 Analize generira automatizirani sustav uz ljudski nadzor: podaci dolaze iz
