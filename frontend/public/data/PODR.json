@@ -6,7 +6,7 @@
   "isin": "HRPODRRA0004",
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-13",
+  "generated_at": "2026-07-14",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -300,7 +300,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -316,9 +316,9 @@
           "volume": 155.0,
           "turnover_eur": 25153.5
         },
-        "days_since_trade": 3,
+        "days_since_trade": 4,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 155 kom / 25,154 € prometa (3 d)"
+        "note": "zadnja trgovina 2026-07-10: 155 kom / 25,154 € prometa (4 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -541,7 +541,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "classes": [
       {
         "class_ticker": "PODR",
@@ -561,7 +561,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "events": [
       {
         "class_ticker": "PODR",
@@ -4731,6 +4731,64 @@
       }
     },
     "sotp": null
+  },
+  "methodology": {
+    "story": "Podravka d.d. ima kvantificirani signal budućeg posla (završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a), pa je sidro DCF s rastom izvedenim iz tog signala. Peer usporedba je kontrola.",
+    "parameters": [
+      {
+        "k": "Trošak kapitala r",
+        "v": "7,29%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 0.645 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+      },
+      {
+        "k": "Dugoročni rast g",
+        "v": "2,5% / 4,0%",
+        "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
+      },
+      {
+        "k": "Rast eksplicitne faze",
+        "v": "8,0%",
+        "why": "iz zadnjeg izvješća: završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a (pravilo R2)"
+      },
+      {
+        "k": "Peer multipli",
+        "v": "P/E 14.96",
+        "why": "medijan iz baze (ZSE peeri istog sektora)"
+      }
+    ],
+    "limitations": [
+      "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
+      "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
+      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu"
+    ],
+    "changelog": [
+      {
+        "date": "2026-07-13",
+        "old_low": -8.41666747533935,
+        "old_high": 232.14015180771435,
+        "new_low": 23.251670408540324,
+        "new_high": 81.7723343662482,
+        "reason": "Doktrina v2: tri pristupa umjesto zasebnih multipl-metoda (comps s internom triangulacijom), sidro po arhetipu iz podataka, taksonomija holding diskonta (integrirani parent 0–5%; izmjereni P/NAV), confidence gate rekurzivnog SOTP-a, market-implied provjera i red rules.",
+        "kind": "methodology"
+      },
+      {
+        "date": "2026-07-12",
+        "old_low": -8.41666747533935,
+        "old_high": 232.14015180771435,
+        "new_low": null,
+        "new_high": null,
+        "reason": "Metodologija v2 (M11–M13): rast se izvodi iz forward signala zadnjeg izvješća (backlog, book-to-bill, guidance) umjesto povijesnog prosjeka; peer multipli kalibrirani iz baze umjesto placeholdera; zona = sidro ± osjetljivost umjesto min–max svih metoda. v1 je sustavno podcjenjivao rast — ovo je izravni popravak.",
+        "kind": "methodology"
+      }
+    ],
+    "notes": [
+      "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
+      "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",
+      "Svaka brojka nosi izvor (dokument + stranica) — vidljivo uz metode i pretpostavke.",
+      "Analize generira automatizirani sustav uz ljudski nadzor."
+    ],
+    "link": "/metodologija",
+    "mar": "Informativna analiza, ne investicijski savjet ni preporuka — zaključak je čitateljev."
   },
   "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }

@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": false,
-  "generated_at": "2026-07-13",
+  "generated_at": "2026-07-14",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -98,7 +98,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "ACI: zadnja trgovina 2026-06-30: 1 kom / 800 € prometa (13 d)."
+        "txt": "ACI: zadnja trgovina 2026-06-30: 1 kom / 800 € prometa (14 d)."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -127,7 +127,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -143,9 +143,9 @@
           "volume": 1.0,
           "turnover_eur": 800.0
         },
-        "days_since_trade": 13,
+        "days_since_trade": 14,
         "flag": "very_low",
-        "note": "zadnja trgovina 2026-06-30: 1 kom / 800 € prometa (13 d)"
+        "note": "zadnja trgovina 2026-06-30: 1 kom / 800 € prometa (14 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -368,7 +368,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "classes": [
       {
         "class_ticker": "ACI",
@@ -388,7 +388,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "events": [
       {
         "class_ticker": "ACI",
@@ -755,6 +755,51 @@
       }
     },
     "sotp": null
+  },
+  "methodology": {
+    "story": "ACI d.d. je ciklična firma (niža profitabilnost kapitala ili poluga): zarada zna varirati kroz ciklus, pa je sidro DCF (novčani tokovi) — guidance-DCF kad uprava daje brojke, inače knjiga kapitala; peer usporedba je kontrola, a EV/EBITDA se izbjegava jer laska zaduženima.",
+    "parameters": [
+      {
+        "k": "Trošak kapitala r",
+        "v": "9,31%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.0 × premija rizika 5.70% (Damodaran, HR). Beta je pretpostavka 1,0 (serija prekratka/nelikvidna). Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+      },
+      {
+        "k": "Dugoročni rast g",
+        "v": "2,5% / 4,0%",
+        "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
+      },
+      {
+        "k": "Peer multipli",
+        "v": "placeholder",
+        "why": "na ZSE nema dovoljno usporedivih firmi ovog sektora — metoda peer usporedbe nosi NISKU pouzdanost i ne sidri zonu"
+      }
+    ],
+    "limitations": [
+      "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
+      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
+      "β = 1,0 — beta nije kalibrirana za ovu firmu (serija prekratka/nelikvidna) — vidi src/calibrate.py",
+      "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (docs/peers.md)"
+    ],
+    "changelog": [
+      {
+        "date": "2026-07-14",
+        "old_low": null,
+        "old_high": null,
+        "new_low": 11.274626328110932,
+        "new_high": 11.274626328110932,
+        "reason": "Prva analiza: financije iz standardiziranog TFI obrasca (4Q kumulativ FY2025, nerevidirano) + doktrina v2 sidro po arhetipu.",
+        "kind": "backfill"
+      }
+    ],
+    "notes": [
+      "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
+      "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",
+      "Svaka brojka nosi izvor (dokument + stranica) — vidljivo uz metode i pretpostavke.",
+      "Analize generira automatizirani sustav uz ljudski nadzor."
+    ],
+    "link": "/metodologija",
+    "mar": "Informativna analiza, ne investicijski savjet ni preporuka — zaključak je čitateljev."
   },
   "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }

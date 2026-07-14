@@ -92,7 +92,41 @@ def stage_recompute(conn, run_id, log, company_ids: list[int]) -> None:
             ctx = build_ctx(conn, ticker, params=build_params(ticker))
             out = value_company(ctx)
             today = date.today().isoformat()
+            rec = out["reconciliation"]
             with conn.cursor() as cur:
+                # M17 changelog: pomak sredine zone > 10% vs zadnji snapshot
+                # -> red s razlogom IZVEDENIM iz promjene ključnih ulaza
+                if rec.get("zone_low") is not None:
+                    cur.execute(
+                        """SELECT (assumptions->'reconciliation'->>'zone_low')::numeric,
+                                  (assumptions->'reconciliation'->>'zone_high')::numeric,
+                                  assumptions->'reconciliation'->>'anchor'
+                           FROM valuations
+                           WHERE company_id=%s AND method='_reconciliation'
+                                 AND as_of_date < %s
+                           ORDER BY as_of_date DESC LIMIT 1""", (cid, today))
+                    prev = cur.fetchone()
+                    if prev and prev[0]:
+                        old_mid = (float(prev[0]) + float(prev[1])) / 2
+                        new_mid = (rec["zone_low"] + rec["zone_high"]) / 2
+                        if old_mid and abs(new_mid / old_mid - 1) > 0.10:
+                            prim = (rec.get("anchor_methods") or ["?"])[0]
+                            why = []
+                            if prev[2] and prev[2] != prim:
+                                why.append(f"sidro promijenjeno ({prev[2]} -> {prim})")
+                            gh = ctx.growth_hint or {}
+                            if gh.get("forward"):
+                                why.append(f"forward rast {gh['g1']:.1%} ({gh.get('rule')})")
+                            why.append("novi ulazi iz zadnjeg izvješća/kalibracije")
+                            cur.execute(
+                                """INSERT INTO valuation_changelog
+                                   (company_id, changed_on, old_low, old_high,
+                                    new_low, new_high, reason, kind)
+                                   VALUES (%s,%s,%s,%s,%s,%s,%s,'recompute')
+                                   ON CONFLICT DO NOTHING""",
+                                (cid, today, prev[0], prev[1],
+                                 rec["zone_low"], rec["zone_high"],
+                                 "; ".join(why)))
                 cur.execute("DELETE FROM valuations WHERE company_id=%s AND as_of_date=%s",
                             (cid, today))
                 for key, r in out["ran"].items():
@@ -104,6 +138,17 @@ def stage_recompute(conn, run_id, log, company_ids: list[int]) -> None:
                         (cid, today, key, vr.low, vr.base, vr.high,
                          json.dumps({**vr.assumptions, "confidence": vr.confidence},
                                     default=str)))
+                # _reconciliation snapshot (zona + sidro) — osnova za changelog
+                cur.execute(
+                    """INSERT INTO valuations (company_id, as_of_date, method,
+                         value_low, value_base, value_high, assumptions)
+                       VALUES (%s,%s,'_reconciliation',NULL,NULL,NULL,%s)""",
+                    (cid, today, json.dumps({"reconciliation": {
+                        "zone_low": rec.get("zone_low"),
+                        "zone_high": rec.get("zone_high"),
+                        "anchor": (rec.get("anchor_methods") or [None])[0],
+                        "archetype": rec.get("archetype"),
+                    }, "skipped": out["skipped"]}, default=str)))
             log("value", cid, "ok", f"{ticker}: revaloriziran ({len(out['ran'])} metoda)")
             conn.commit()
         except Exception as e:  # noqa: BLE001

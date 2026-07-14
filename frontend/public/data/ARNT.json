@@ -6,7 +6,7 @@
   "isin": "HRARNTRA0004",
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-13",
+  "generated_at": "2026-07-14",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -295,7 +295,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -311,9 +311,9 @@
           "volume": 290.0,
           "turnover_eur": 11852.0
         },
-        "days_since_trade": 4,
+        "days_since_trade": 5,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-09: 290 kom / 11,852 € prometa (4 d)"
+        "note": "zadnja trgovina 2026-07-09: 290 kom / 11,852 € prometa (5 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -536,7 +536,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "classes": [
       {
         "class_ticker": "ARNT",
@@ -556,7 +556,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "events": [
       {
         "class_ticker": "ARNT",
@@ -3938,6 +3938,60 @@
       "market_implied": null
     },
     "sotp": null
+  },
+  "methodology": {
+    "story": "Arena Hospitality Group d.d. je turistička firma: sektor se uspoređuje po EV/EBITDA (vrijednost poslovanja prema operativnoj zaradi, uz napomenu o najmovima), pa je sidro peer usporedba uz DCF kao drugu kotvu.",
+    "parameters": [
+      {
+        "k": "Trošak kapitala r",
+        "v": "6,73%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 0.548 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+      },
+      {
+        "k": "Dugoročni rast g",
+        "v": "2,5% / 4,0%",
+        "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
+      },
+      {
+        "k": "Rast eksplicitne faze",
+        "v": "0,0%",
+        "why": "iz zadnjeg izvješća: uprava: operativni pokazatelji 'na razinama sličnim onima iz 2025.' — bez faze rasta (pravilo R2)"
+      },
+      {
+        "k": "Peer multipli",
+        "v": "P/E 20.42",
+        "why": "medijan iz baze (ZSE peeri istog sektora)"
+      }
+    ],
+    "limitations": [],
+    "changelog": [
+      {
+        "date": "2026-07-13",
+        "old_low": 16.196326893286866,
+        "old_high": 50.826853322690006,
+        "new_low": 52.987586768709,
+        "new_high": 71.68908798119453,
+        "reason": "Doktrina v2: tri pristupa umjesto zasebnih multipl-metoda (comps s internom triangulacijom), sidro po arhetipu iz podataka, taksonomija holding diskonta (integrirani parent 0–5%; izmjereni P/NAV), confidence gate rekurzivnog SOTP-a, market-implied provjera i red rules.",
+        "kind": "methodology"
+      },
+      {
+        "date": "2026-07-12",
+        "old_low": 16.196326893286866,
+        "old_high": 50.826853322690006,
+        "new_low": null,
+        "new_high": null,
+        "reason": "Metodologija v2 (M11–M13): rast se izvodi iz forward signala zadnjeg izvješća (backlog, book-to-bill, guidance) umjesto povijesnog prosjeka; peer multipli kalibrirani iz baze umjesto placeholdera; zona = sidro ± osjetljivost umjesto min–max svih metoda. v1 je sustavno podcjenjivao rast — ovo je izravni popravak.",
+        "kind": "methodology"
+      }
+    ],
+    "notes": [
+      "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
+      "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",
+      "Svaka brojka nosi izvor (dokument + stranica) — vidljivo uz metode i pretpostavke.",
+      "Analize generira automatizirani sustav uz ljudski nadzor."
+    ],
+    "link": "/metodologija",
+    "mar": "Informativna analiza, ne investicijski savjet ni preporuka — zaključak je čitateljev."
   },
   "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }

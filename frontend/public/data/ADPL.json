@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-13",
+  "generated_at": "2026-07-14",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -300,7 +300,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -316,9 +316,9 @@
           "volume": 2870.0,
           "turnover_eur": 86125.0
         },
-        "days_since_trade": 3,
+        "days_since_trade": 4,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 2870 kom / 86,125 € prometa (3 d)"
+        "note": "zadnja trgovina 2026-07-10: 2870 kom / 86,125 € prometa (4 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -541,7 +541,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "classes": [
       {
         "class_ticker": "ADPL",
@@ -561,7 +561,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-13",
+    "as_of": "2026-07-14",
     "events": [
       {
         "class_ticker": "ADPL",
@@ -4632,6 +4632,62 @@
       "market_implied": null
     },
     "sotp": null
+  },
+  "methodology": {
+    "story": "AD PLASTIK d.d. ima kvantificirani signal budućeg posla (BROJČANI guidance uprave: rast prihoda 5% godišnje kroz 3 g, EBITDA marža 13%, CAPEX 8 M€/g), pa je sidro DCF s rastom izvedenim iz tog signala. Peer usporedba je kontrola.",
+    "parameters": [
+      {
+        "k": "Trošak kapitala r",
+        "v": "11,90%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.455 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+      },
+      {
+        "k": "Dugoročni rast g",
+        "v": "2,5% / 4,0%",
+        "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
+      },
+      {
+        "k": "Rast eksplicitne faze",
+        "v": "5,0%",
+        "why": "iz zadnjeg izvješća: BROJČANI guidance uprave: rast prihoda 5% godišnje kroz 3 g, EBITDA marža 13%, CAPEX 8 M€/g (pravilo R0)"
+      },
+      {
+        "k": "Peer multipli",
+        "v": "P/E 16.98",
+        "why": "medijan iz baze (ZSE peeri istog sektora)"
+      }
+    ],
+    "limitations": [
+      "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je"
+    ],
+    "changelog": [
+      {
+        "date": "2026-07-13",
+        "old_low": 25.685401220692334,
+        "old_high": 40.78475391848336,
+        "new_low": 18.811320326607554,
+        "new_high": 26.097104985916708,
+        "reason": "Doktrina v2: tri pristupa umjesto zasebnih multipl-metoda (comps s internom triangulacijom), sidro po arhetipu iz podataka, taksonomija holding diskonta (integrirani parent 0–5%; izmjereni P/NAV), confidence gate rekurzivnog SOTP-a, market-implied provjera i red rules.",
+        "kind": "methodology"
+      },
+      {
+        "date": "2026-07-12",
+        "old_low": 25.685401220692334,
+        "old_high": 40.78475391848336,
+        "new_low": null,
+        "new_high": null,
+        "reason": "Metodologija v2 (M11–M13): rast se izvodi iz forward signala zadnjeg izvješća (backlog, book-to-bill, guidance) umjesto povijesnog prosjeka; peer multipli kalibrirani iz baze umjesto placeholdera; zona = sidro ± osjetljivost umjesto min–max svih metoda. v1 je sustavno podcjenjivao rast — ovo je izravni popravak.",
+        "kind": "methodology"
+      }
+    ],
+    "notes": [
+      "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
+      "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",
+      "Svaka brojka nosi izvor (dokument + stranica) — vidljivo uz metode i pretpostavke.",
+      "Analize generira automatizirani sustav uz ljudski nadzor."
+    ],
+    "link": "/metodologija",
+    "mar": "Informativna analiza, ne investicijski savjet ni preporuka — zaključak je čitateljev."
   },
   "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }

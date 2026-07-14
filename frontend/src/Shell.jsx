@@ -102,7 +102,7 @@ export function SiteFooter() {
           predstavljaju investicijski savjet ni poticaj na trgovanje. Vrijednosti
           ilikvidnih dionica su indikativne. Zaključak je uvijek vaš.
         </span>
-        <span>Izvor: ZSE službeni EOD (dan zaostatka)</span>
+        <span><a href="/metodologija" style={{ color: 'inherit' }}>Kako procjenjujemo</a> · Izvor: ZSE službeni EOD (dan zaostatka)</span>
       </div>
     </footer>
   )

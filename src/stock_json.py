@@ -803,6 +803,139 @@ def _market_only_json(cur, company_id: int, ticker: str, name, sector, is_group,
     }
 
 
+ARCHETYPE_STORY = {
+    # v3 (M17): template po arhetipu — popunjava se STVARNIM podacima procjene
+    "holding_operating": (
+        "{name} je integrirani industrijski holding: vrijednost čine udjeli u "
+        "{parts} plus vlastiti biznis, pa je sidro zbroj dijelova (SOTP) — bez "
+        "holding popusta, jer matica kontrolira i konsolidira kćeri iste "
+        "djelatnosti. Konsolidirani DCF i peer usporedba služe kao kontrola."),
+    "holding_passive": (
+        "{name} je diversificirani holding: vrijednost čine udjeli u {parts}, "
+        "pa je sidro zbroj dijelova (SOTP). Popust na zbroj dijelova se MJERI "
+        "iz povijesti vlastite cijene prema vrijednosti dijelova, ne "
+        "pretpostavlja."),
+    "bank": (
+        "{name} je banka: vrijednost banke određuje koliko zarađuje na "
+        "vlastitom kapitalu u odnosu na zahtijevani prinos, pa je sidro "
+        "opravdani P/B / rezidualni dohodak. Dividendni model i peer "
+        "usporedba su potvrda."),
+    "insurance": (
+        "{name} je osiguratelj: kao i kod banke, vrijednost nosi povrat na "
+        "kapital -> sidro je opravdani P/B / rezidualni dohodak."),
+    "tourism": (
+        "{name} je turistička firma: sektor se uspoređuje po EV/EBITDA "
+        "(vrijednost poslovanja prema operativnoj zaradi, uz napomenu o "
+        "najmovima), pa je sidro peer usporedba uz DCF kao drugu kotvu."),
+    "cyclical": (
+        "{name} je ciklična firma (niža profitabilnost kapitala ili poluga): "
+        "zarada zna varirati kroz ciklus, pa je sidro {anchor_hr} — "
+        "guidance-DCF kad uprava daje brojke, inače knjiga kapitala; peer "
+        "usporedba je kontrola, a EV/EBITDA se izbjegava jer laska "
+        "zaduženima."),
+    "industrial_forward": (
+        "{name} ima kvantificirani signal budućeg posla ({drivers}), pa je "
+        "sidro DCF s rastom izvedenim iz tog signala. Peer usporedba je "
+        "kontrola."),
+    "industrial_noforward": (
+        "{name} nema kvantificirani forward signal (backlog/guidance) u "
+        "zadnjem izvješću, pa je sidro peer usporedba (što tržište plaća za "
+        "slične firme); opravdani P/B je potvrda."),
+}
+
+ANCHOR_HR = {
+    "sotp_nav": "zbroj dijelova (SOTP)", "dcf_fcf": "DCF (novčani tokovi)",
+    "comps": "peer usporedba", "justified_pb_roe": "opravdani P/B",
+    "residual_income": "rezidualni dohodak", "ddm_gordon": "dividendni model",
+}
+
+
+def _methodology_note(cur, company_id, name, rec, params, sotp, flags, ctxgh):
+    """DIO 2 (M17): 'Kako je nastala ova procjena' — generirano iz ISTIH
+    podataka koji su dali valuaciju; bez ručno pisanog teksta po firmi."""
+    from .params_calibrated import ERP, RF
+    from .valuation_methods import _plain_risk
+    arche = rec.get("archetype")
+    prim = (rec.get("anchor_methods") or [None])[0]
+    parts = ", ".join(x["item"] for x in ((sotp or {}).get("identity") or [])
+                      if x.get("basis") in ("our_estimate", "market_fallback"))
+    story = ARCHETYPE_STORY.get(arche, "Sidro je {anchor_hr}.").format(
+        name=name, parts=parts or "uvrštenim i neuvrštenim dijelovima",
+        anchor_hr=ANCHOR_HR.get(prim, prim or "n/p"),
+        drivers=(ctxgh or {}).get("drivers", "backlog/guidance"))
+    # parametri OVE procjene
+    pars = []
+    beta = params.get("beta")
+    pars.append({
+        "k": "Trošak kapitala r", "v": f"{params['r'] * 100:.2f}%".replace(".", ","),
+        "why": (f"CAPM: nerizična stopa {RF:.2%} (HR 10g obveznica) + beta "
+                f"{beta if beta is not None else 'n/p'} × premija rizika {ERP:.2%} "
+                f"(Damodaran, HR). Beta je "
+                + ("izmjerena iz burzovne serije ove dionice."
+                   if params.get("beta_calibrated") else
+                   "pretpostavka 1,0 (serija prekratka/nelikvidna).")
+                + " Ponderirani country-risk za izvoznike je planiran, još nije aktivan."),
+    })
+    pars.append({
+        "k": "Dugoročni rast g",
+        "v": (f"{params['g'] * 100:.1f}% / {params.get('g_terminal', 0) * 100:.1f}%"
+              ).replace(".", ","),
+        "why": ("kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% "
+                "(nominalni BDP proxy: realni rast + inflacija)"),
+    })
+    if ctxgh and ctxgh.get("forward"):
+        pars.append({"k": "Rast eksplicitne faze",
+                     "v": f"{ctxgh['g1'] * 100:.1f}%".replace(".", ","),
+                     "why": f"iz zadnjeg izvješća: {ctxgh.get('drivers')} "
+                            f"(pravilo {ctxgh.get('rule')})"})
+    if params.get("peers_calibrated"):
+        pars.append({"k": "Peer multipli",
+                     "v": f"P/E {params['peer_pe']}",
+                     "why": ("medijan iz baze (ZSE peeri istog sektora)"
+                             + ("; USKI SKUP (n=2) — snižena pouzdanost"
+                                if params.get("peers_narrow") else ""))})
+    else:
+        pars.append({"k": "Peer multipli", "v": "placeholder",
+                     "why": ("na ZSE nema dovoljno usporedivih firmi ovog "
+                             "sektora — metoda peer usporedbe nosi NISKU "
+                             "pouzdanost i ne sidri zonu")})
+    if sotp and sotp.get("holding_discount_range"):
+        dr = sotp["holding_discount_range"]
+        pars.append({"k": "Holding diskont",
+                     "v": f"{dr[0] * 100:.0f}–{dr[1] * 100:.0f}%",
+                     "why": sotp.get("holding_discount_reason", "")[:200]})
+    # ograničenja: QA flagovi laički + pretpostavke
+    lims = [_plain_risk(f) for f in (rec.get("qa_flags") or [])]
+    lims += [f"{f['label']} — {f['why']}" for f in flags
+             if f.get("status") == "pretpostavka"]
+    # povijest promjena
+    cur.execute("""SELECT changed_on, old_low, old_high, new_low, new_high,
+                          reason, kind FROM valuation_changelog
+                   WHERE company_id=%s ORDER BY changed_on DESC, id DESC LIMIT 12""",
+                (company_id,))
+    changelog = [{"date": str(r[0]), "old_low": _f(r[1]), "old_high": _f(r[2]),
+                  "new_low": _f(r[3]), "new_high": _f(r[4]),
+                  "reason": r[5], "kind": r[6]} for r in cur.fetchall()]
+    return {
+        "story": story,
+        "parameters": pars,
+        "limitations": lims,
+        "changelog": changelog,
+        "notes": [
+            "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) "
+            "— povijesni prosjek je samo kontekst.",
+            "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na "
+            "već konzervativne procjene).",
+            "Svaka brojka nosi izvor (dokument + stranica) — vidljivo uz metode "
+            "i pretpostavke.",
+            "Analize generira automatizirani sustav uz ljudski nadzor.",
+        ],
+        "link": "/metodologija",
+        "mar": ("Informativna analiza, ne investicijski savjet ni preporuka — "
+                "zaključak je čitateljev."),
+    }
+
+
 def build_stock_json(conn, ticker: str) -> dict:
     cur = conn.cursor()
     cur.execute("SELECT id, name, sector, is_group, isin, is_live FROM companies "
@@ -1035,6 +1168,18 @@ def build_stock_json(conn, ticker: str) -> dict:
             "ran": ran, "skipped": skipped, "reconciliation": reconciliation,
             "sotp": sotp_breakdown,
         },
+        # M17: 'Kako je nastala ova procjena' — generirano iz istih podataka
+        "methodology": (_methodology_note(
+            cur, company_id, name, reconciliation,
+            {"r": _f(params.cost_of_equity), "g": _f(params.perpetual_growth),
+             "g_terminal": _f(getattr(params, "terminal_growth", None)),
+             "beta": _f(getattr(params, "beta", None)),
+             "beta_calibrated": getattr(params, "beta_calibrated", False),
+             "peers_calibrated": params.peers_calibrated,
+             "peers_narrow": getattr(params, "peers_narrow", False),
+             "peer_pe": _f(params.peer_pe)},
+            sotp_breakdown, assumption_flags, ctx.growth_hint)
+            if reconciliation else None),
         "mar_note": ("Informativni prikaz metoda, raspona i pretpostavki iz javno "
                      "objavljenih izvješća; nije investicijski savjet ni preporuka."),
     }

@@ -7,6 +7,7 @@ import {
 } from './MarketProfile.jsx'
 import { AnchorPanel, FinChart, Risks, SecondaryList } from './AnalysisBlocks.jsx'
 import { Legend } from './Legend.jsx'
+import MethodologyNote from './MethodologyNote.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import { Comparison, KeyIndicators, NewsTab, TabBar } from './StockTabs.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
@@ -854,6 +855,8 @@ export default function StockPage() {
 
           {/* ============ NOVOSTI ============ */}
           {tab === 'novosti' && <NewsTab news={data.news} />}
+
+          <MethodologyNote m={data.methodology} />
 
           <div className="disc">
             <b>Informativno, nije investicijski savjet ni preporuka.</b>{' '}
