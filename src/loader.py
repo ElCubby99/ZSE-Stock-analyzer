@@ -99,7 +99,7 @@ def load_extraction(conn, extraction: dict[str, Any], *, source_url: str,
             statement = canonical.STATEMENT_OF[item]
             # Broj dionica je apsolutni count, a regulatorne stavke su OMJERI
             # (decimalni razlomci) — NE primjenjuj monetarnu skalu ni FX.
-            if statement in ("shares", "regulatory"):
+            if statement in ("shares", "regulatory", "counts"):
                 value_eur = float(value_raw)
             else:
                 value_eur = to_eur(value_raw, scale, currency)

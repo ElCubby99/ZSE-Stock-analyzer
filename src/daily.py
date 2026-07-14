@@ -43,12 +43,34 @@ def stage_extract_queue(conn, run_id, log) -> list[int]:
 
     cur = conn.cursor()
     cur.execute(
-        """SELECT f.id, f.company_id, c.ticker, c.sector, f.source_url, f.fiscal_year
+        """SELECT f.id, f.company_id, c.ticker, c.sector, f.source_url, f.fiscal_year,
+                  f.period_type, f.cumulative
            FROM filings f JOIN companies c ON c.id=f.company_id
            WHERE f.status='pending' ORDER BY f.id""")
     touched = []
-    for fid, cid, ticker, sector, url, year in cur.fetchall():
+    for fid, cid, ticker, sector, url, year, period_type, cumulative in cur.fetchall():
         try:
+            # KORAK 2d: TFI-POD XLSX (kvartal) -> deterministički parser, 0 kredita
+            if (url or "").lower().endswith(".xlsx"):
+                from scripts.parse_tfi_universe import ingest_tfi_xlsx
+                new_fid, parsed = ingest_tfi_xlsx(
+                    conn, ticker, url, year, period_type or "annual",
+                    cumulative=bool(cumulative))
+                if new_fid is None:
+                    log("extract", cid, "needs_review",
+                        f"{ticker}: XLSX nije TFI-POD (npr. bankovni nadzorni obrazac) "
+                        "-> zaseban parser")
+                    conn.rollback()
+                    continue
+                res = validate_filing(conn, new_fid)
+                log("extract", cid, "ok" if res["status"] == "validated" else "needs_review",
+                    f"{ticker}: {period_type} XLSX filing {new_fid} -> {res['status']}")
+                if new_fid != fid:
+                    with conn.cursor() as c2:
+                        c2.execute("DELETE FROM filings WHERE id=%s AND status='pending'", (fid,))
+                touched.append(cid)
+                conn.commit()
+                continue
             os.makedirs("data/reports/auto", exist_ok=True)
             path = f"data/reports/auto/{ticker.lower()}_{year}_q.pdf"
             r = requests.get(url, timeout=180,

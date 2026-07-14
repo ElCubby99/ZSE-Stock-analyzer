@@ -4677,5 +4677,504 @@
     "link": "/metodologija",
     "mar": "Informativna analiza, ne investicijski savjet ni preporuka — zaključak je čitateljev."
   },
+  "indicators": {
+    "groups": [
+      {
+        "key": "izvedba",
+        "title": "Izvedba dionice",
+        "items": [
+          {
+            "k": "Povrat 1M",
+            "v": 0.1283783783783783,
+            "unit": "%",
+            "basis": "EOD do 2026-07-10",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 3M",
+            "v": 0.15172413793103456,
+            "unit": "%",
+            "basis": "EOD do 2026-07-10",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 6M",
+            "v": 0.15172413793103456,
+            "unit": "%",
+            "basis": "EOD do 2026-07-10",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat YTD",
+            "v": 0.06369426751592355,
+            "unit": "%",
+            "basis": "EOD do 2026-07-10",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 1G",
+            "v": 0.23703703703703694,
+            "unit": "%",
+            "basis": "EOD do 2026-07-10",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 3G",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "serija cijena prekratka"
+          },
+          {
+            "k": "52-tj maks",
+            "v": 334.0,
+            "unit": "eur",
+            "basis": "2026-07-10",
+            "formula": "max close 365 d"
+          },
+          {
+            "k": "52-tj min",
+            "v": 270.0,
+            "unit": "eur",
+            "basis": "2025-07-10",
+            "formula": "min close 365 d"
+          }
+        ]
+      },
+      {
+        "key": "valuacija",
+        "title": "Valuacija",
+        "items": [
+          {
+            "k": "Tržišna kap.",
+            "v": 676224750.0,
+            "unit": "meur",
+            "basis": "zadnji EOD × dionice ex-trezor",
+            "formula": "Σ close klase × dionice klase"
+          },
+          {
+            "k": "EV",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "financijska firma — dug je posao, ne struktura"
+          },
+          {
+            "k": "EV/Prihod",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje"
+          },
+          {
+            "k": "EV/EBITDA",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje"
+          },
+          {
+            "k": "EV/EBIT",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje"
+          },
+          {
+            "k": "P/E",
+            "v": 11.506490787946607,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "trž.kap / neto dobit matici"
+          },
+          {
+            "k": "P/S",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "banka: prihod = operativni prihod (vidi P/TOI)"
+          },
+          {
+            "k": "P/CF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "P/FCF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "Earnings yield",
+            "v": 0.08690746974286286,
+            "unit": "%",
+            "basis": "FY2025",
+            "formula": "neto dobit / trž.kap"
+          },
+          {
+            "k": "P/B",
+            "v": 1.1745033941280496,
+            "unit": "x",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "trž.kap / knjiga (matici)"
+          }
+        ]
+      },
+      {
+        "key": "rast",
+        "title": "Rast",
+        "items": [
+          {
+            "k": "Prihod YoY (kvartal)",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "kvartali još nisu u bazi za usporedbu"
+          },
+          {
+            "k": "EPS YoY (kvartal)",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "kvartali nedostupni"
+          },
+          {
+            "k": "Prihod (TTM/FY)",
+            "v": 199058160.0,
+            "unit": "meur",
+            "basis": "FY2025",
+            "formula": "kumulativna derivacija"
+          },
+          {
+            "k": "EBITDA",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "financijska firma"
+          }
+        ]
+      },
+      {
+        "key": "profit",
+        "title": "Profitabilnost",
+        "items": [
+          {
+            "k": "EBITDA marža",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje"
+          },
+          {
+            "k": "EBIT marža",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje"
+          },
+          {
+            "k": "Neto marža",
+            "v": 0.29523523175337296,
+            "unit": "%",
+            "basis": "FY2025",
+            "formula": "Neto / prihod"
+          },
+          {
+            "k": "ROE",
+            "v": 0.10207311818807319,
+            "unit": "%",
+            "basis": "FY2025 / FY2025 (31.12.2025.)",
+            "formula": "neto dobit matici / knjiga matici"
+          },
+          {
+            "k": "ROA",
+            "v": 0.006863603152833448,
+            "unit": "%",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "neto dobit / ukupna imovina"
+          }
+        ]
+      },
+      {
+        "key": "bilanca",
+        "title": "Bilanca",
+        "items": [
+          {
+            "k": "Ukupna imovina",
+            "v": 8562409669.0,
+            "unit": "meur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "bilanca"
+          },
+          {
+            "k": "Novac",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "novac i ekvivalenti"
+          },
+          {
+            "k": "BVPS",
+            "v": 284.37550855096623,
+            "unit": "eur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "knjiga matici / dionice ex-trezor"
+          },
+          {
+            "k": "Ukupne obveze",
+            "v": 7986655905.0,
+            "unit": "meur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "imovina − kapital (izvedeno)"
+          },
+          {
+            "k": "Kratkoročni dug",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "kamatonosni"
+          },
+          {
+            "k": "Dugoročni dug",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "kamatonosni"
+          },
+          {
+            "k": "Kapital (ukupni)",
+            "v": 575753764.0,
+            "unit": "meur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "bilanca"
+          }
+        ]
+      },
+      {
+        "key": "cf",
+        "title": "Novčani tok",
+        "items": [
+          {
+            "k": "Operativni CF",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "NT izvještaj"
+          },
+          {
+            "k": "Capex",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "izdaci za dugotrajnu imovinu"
+          },
+          {
+            "k": "FCF",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "OCF − capex"
+          },
+          {
+            "k": "Investicijski CF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema u bazi"
+          },
+          {
+            "k": "Financijski CF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema u bazi"
+          }
+        ]
+      },
+      {
+        "key": "solvent",
+        "title": "Likvidnost i solventnost",
+        "items": [
+          {
+            "k": "Tekući omjer",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje — struktura bilance je posao"
+          },
+          {
+            "k": "Neto dug/EBITDA",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje — struktura bilance je posao"
+          },
+          {
+            "k": "Pokriće kamata",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje — struktura bilance je posao"
+          },
+          {
+            "k": "Altman Z'",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za banke/osiguranje — struktura bilance je posao"
+          },
+          {
+            "k": "Dug/kapital",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          }
+        ]
+      },
+      {
+        "key": "efik",
+        "title": "Učinkovitost",
+        "items": [
+          {
+            "k": "Obrtaj imovine",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za financijske firme"
+          },
+          {
+            "k": "DSO",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za financijske firme"
+          },
+          {
+            "k": "DIO",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za financijske firme"
+          },
+          {
+            "k": "DPO",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za financijske firme"
+          },
+          {
+            "k": "Novčani jaz",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "n/p za financijske firme"
+          }
+        ]
+      },
+      {
+        "key": "div",
+        "title": "Dividende",
+        "items": [
+          {
+            "k": "DPS (zadnja)",
+            "v": 21.83,
+            "unit": "eur",
+            "basis": "2026-01-05",
+            "formula": "dividends tablica"
+          },
+          {
+            "k": "Dividendni prinos",
+            "v": 0.06535928143712574,
+            "unit": "%",
+            "basis": "zadnja isplata / zadnja cijena",
+            "formula": "DPS / cijena"
+          },
+          {
+            "k": "Payout",
+            "v": 0.7520559697630972,
+            "unit": "%",
+            "basis": "FY2025",
+            "formula": "DPS × dionice / neto dobit"
+          },
+          {
+            "k": "Zadnja isplata",
+            "v": null,
+            "unit": "date",
+            "basis": "2026-01-08",
+            "formula": "dividends tablica",
+            "note": "2026-01-08"
+          },
+          {
+            "k": "Sljedeći ex-datum",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema najave"
+          }
+        ]
+      },
+      {
+        "key": "emp",
+        "title": "Po zaposlenom",
+        "items": [
+          {
+            "k": "Broj zaposlenih",
+            "v": 1787.0,
+            "unit": "count",
+            "basis": "Kvartalno (31.03.2026.)",
+            "formula": "TFI Opći podaci"
+          },
+          {
+            "k": "Prihod/zaposlenom",
+            "v": 111392.36709569111,
+            "unit": "eur",
+            "basis": "FY2025",
+            "formula": "prihod / broj zaposlenih"
+          },
+          {
+            "k": "Dobit/zaposlenom",
+            "v": 32886.951315053164,
+            "unit": "eur",
+            "basis": "FY2025",
+            "formula": "neto dobit matici / broj zaposlenih"
+          }
+        ]
+      }
+    ],
+    "review_flags": [],
+    "note": "TTM = zadnji FY + tekući YTD − lanjski isti YTD (samo tokovne stavke); bilanca = zadnje objavljeno stanje; FY se nikad ne prikazuje kao TTM. Formule: docs/indicators.md."
+  },
   "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }

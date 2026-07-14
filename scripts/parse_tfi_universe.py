@@ -30,9 +30,48 @@ from src.validator import validate_filing  # noqa: E402
 
 SCRATCH = "/tmp/tfi_xlsx"
 
+# EHO period oznaka <-> naš period_type. Interim (IFRS) je KUMULATIV (YTD).
+LABEL_TO_PT = {"1Y": "annual", "1Q": "q1", "2Q": "h1", "3Q": "9m", "4Q": "q4"}
+PT_TO_LABEL = {v: k for k, v in LABEL_TO_PT.items()}
+
 
 def _verify():
     return os.getenv("REQUESTS_CA_BUNDLE") or os.getenv("SSL_CERT_FILE") or True
+
+
+def ingest_tfi_xlsx(conn, ticker, url, year, period_type, *, consolidated=True,
+                    cumulative=True, published_at=None, path=None):
+    """Preuzmi + parsiraj TFI-POD XLSX i upiši kao filing (deterministički,
+    0 kredita). Vraća (fid, parsed) ili (None, None) ako nije TFI-POD obrazac
+    (npr. bankovni nadzorni — traži zaseban parser). Ne commita."""
+    import requests
+    if path is None:
+        os.makedirs(SCRATCH, exist_ok=True)
+        path = f"{SCRATCH}/{ticker}_{year}_{period_type}.xlsx"
+    r = requests.get(url, timeout=120, verify=_verify())
+    r.raise_for_status()
+    with open(path, "wb") as fh:
+        fh.write(r.content)
+    parsed = parse_tfi(path)
+    if not parsed or not parsed["items"]:
+        return None, None
+    solo = "" if consolidated else " | SOLO obrazac (izdavatelj bez konsolidiranog TFI-ja)"
+    label = PT_TO_LABEL.get(period_type, period_type)
+    kind = "kumulativ" if cumulative else "iznos"
+    extraction = {
+        "meta": {"company_ticker": ticker, "fiscal_year": year,
+                 "period_type": period_type, "basis": "consolidated",
+                 "audited": False, "cumulative": cumulative,
+                 "currency": "EUR", "reporting_scale": 1},
+        "items": [
+            {"item": k, "value_raw": v, "confidence": 0.9 if k != "ebit" else 0.85,
+             "source_page": (f"TFI {label} {year} XLSX ({kind}), {parsed['src'][k]}"
+                             f"{solo} — strojno parsirano (AOP obrazac), nerevidirano")}
+            for k, v in parsed["items"].items()],
+    }
+    fid = load_extraction(conn, extraction, source_url=url,
+                          doc_type="financial_report", published_at=published_at)
+    return fid, parsed
 
 
 def _num(v):
@@ -85,6 +124,25 @@ def _find(rows, pattern, aop=None):
     return None
 
 
+def _find_in_section(rows, start_rx, end_rx, item_rx, agg=False):
+    """Vrijednost (ili zbroj uz agg=True) retka unutar sekcije obrasca."""
+    inside = False
+    total, hit = 0.0, False
+    srx, erx, irx = re.compile(start_rx, re.I), re.compile(end_rx), re.compile(item_rx, re.I)
+    for label, a, prior, cur in rows:
+        if srx.search(label):
+            inside = True
+            continue
+        if inside and erx.match(label):
+            break
+        if inside and irx.search(label) and cur is not None:
+            if not agg:
+                return cur
+            total += cur
+            hit = True
+    return (total if hit else None) if agg else None
+
+
 def parse_tfi(path: str) -> dict | None:
     """XLSX -> {item: value_eur} (tekuće razdoblje/kumulativ) ili None."""
     import openpyxl
@@ -128,6 +186,24 @@ def parse_tfi(path: str) -> dict | None:
                 ds = (ds or 0) + cur
     put("debt_long", dl, "Bilanca: dugoročne obveze prema bankama/za zajmove/po vp")
     put("debt_short", ds, "Bilanca: kratkoročne obveze prema bankama/za zajmove/po vp")
+    # M18: proširena taksonomija (tekući omjer, EV, DSO/DIO/DPO, Altman)
+    put("current_assets", _find(bil, r"^C\)\s*KRATKOTRAJNA IMOVINA"),
+        "Bilanca: C) KRATKOTRAJNA IMOVINA")
+    put("current_liabilities", _find(bil, r"^D\)\s*KRATKOROČNE OBVEZE"),
+        "Bilanca: D) KRATKOROČNE OBVEZE")
+    put("short_term_fin_assets", _find(bil, r"^III\.\s*KRATKOTRAJNA FINANCIJSKA"),
+        "Bilanca: III. kratkotrajna financijska imovina")
+    put("retained_earnings", _find(bil, r"^\s*1?\.?\s*Zadržana dobit"),
+        "Bilanca: zadržana dobit")
+    put("inventories", _find(bil, r"^I\.\s*ZALIHE"), "Bilanca: I. zalihe")
+    put("trade_receivables",
+        _find_in_section(bil, r"^C\)\s*KRATKOTRAJNA IMOVINA", r"^[D-J]\)",
+                         r"Potraživanja od kupaca"),
+        "Bilanca: potraživanja od kupaca (kratkotrajna)")
+    put("trade_payables",
+        _find_in_section(bil, r"^D\)\s*KRATKOROČNE OBVEZE", r"^[E-J]\)",
+                         r"Obveze prema dobavljačima"),
+        "Bilanca: obveze prema dobavljačima (kratkoročne)")
 
     rev = _find(rdg, r"^I\.\s*POSLOVNI PRIHODI")
     opex = _find(rdg, r"^II\.\s*POSLOVNI RASHODI")
@@ -135,6 +211,12 @@ def parse_tfi(path: str) -> dict | None:
     put("operating_expenses", opex, "RDG: poslovni rashodi (kumulativ)")
     put("depreciation_amortization", _find(rdg, r"^\s*4?\.?\s*Amortizacija"),
         "RDG: amortizacija")
+    put("material_costs", _find(rdg, r"Materijalni troškovi"),
+        "RDG: materijalni troškovi (COGS proxy)")
+    put("interest_expense",
+        _find_in_section(rdg, r"^IV\.\s*FINANCIJSKI RASHODI", r"^(V|X)I*\.",
+                         r"kamat", agg=True),
+        "RDG: rashodi od kamata (unutar IV. financijski rashodi, zbroj)")
     if rev is not None and opex is not None:
         put("ebit", rev - opex, "RDG: poslovni prihodi − poslovni rashodi (izračun)")
     fp = _find(rdg, r"^III\.\s*FINANCIJSKI PRIHODI")
@@ -173,6 +255,19 @@ def parse_tfi(path: str) -> dict | None:
         capex = _find(nt, r"kupnju dugotrajne")
         if capex is not None:
             put("capex", abs(capex), "NT_I: izdaci za kupnju dugotrajne imovine")
+        put("investing_cf", _find(nt, r"NETO NOVČANI TOKOVI OD INVESTICIJSKIH"),
+            "NT_I: B) neto tokovi od investicijskih aktivnosti")
+        put("financing_cf", _find(nt, r"NETO NOVČANI TOKOVI OD FINANCIJSKIH"),
+            "NT_I: C) neto tokovi od financijskih aktivnosti")
+    # M18: broj zaposlenih iz 'Opći podaci' (count, bez skale)
+    if "Opći podaci" in wb.sheetnames:
+        for row in wb["Opći podaci"].iter_rows(max_col=10):
+            vals = [c.value for c in row]
+            if any(isinstance(v, str) and re.search(r"Broj zaposlenih", v) for v in vals):
+                n = next((v for v in vals if isinstance(v, (int, float)) and v > 0), None)
+                if n:
+                    put("employees", float(n), "Opći podaci: broj zaposlenih (kraj razdoblja)")
+                break
     return {"items": items, "src": src}
 
 

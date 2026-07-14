@@ -9,7 +9,7 @@ import { AnchorPanel, FinChart, Risks, SecondaryList } from './AnalysisBlocks.js
 import { Legend } from './Legend.jsx'
 import MethodologyNote from './MethodologyNote.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
-import { Comparison, KeyIndicators, NewsTab, TabBar } from './StockTabs.jsx'
+import { Comparison, IndicatorGroups, KeyIndicators, NewsTab, TabBar } from './StockTabs.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
 
 // live firme (orchestrator) + CROS/ZABA (M1–M5) + HPB/HT (samo tržišni profil)
@@ -823,6 +823,7 @@ export default function StockPage() {
             <AnalysisUnavailable note={data.data_note} />
           ) : (
           <>
+          <IndicatorGroups indicators={data.indicators} />
           <KeyIndicators data={data} />
           <Metrics data={data} />
           <Fundamentals data={data} />

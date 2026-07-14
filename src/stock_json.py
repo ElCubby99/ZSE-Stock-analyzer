@@ -1106,6 +1106,25 @@ def build_stock_json(conn, ticker: str) -> dict:
     from datetime import date
     today = date.today()
 
+    # M18: POKAZATELJI — deterministički derivacijski sloj (TTM gdje je izračunljivo,
+    # kvartalni sloj, sektorski guardovi). Sve izvedenice u kodu (src/indicators.py).
+    from .indicators import build_indicators
+    cur.execute("SELECT COALESCE(holding_type,'') FROM companies WHERE id=%s", (company_id,))
+    _ht = cur.fetchone()
+    is_holding = bool(_ht and _ht[0] == "passive")
+    cur.execute("""SELECT id FROM share_classes WHERE company_id=%s
+                   ORDER BY is_primary_line DESC, ticker LIMIT 1""", (company_id,))
+    _pc = cur.fetchone()
+    primary_class_id = _pc[0] if _pc else None
+    _liq = _liquidity(cur, classes, today)
+    _prim_tk = next((c["ticker"] for c in classes if c.get("is_primary")),
+                    classes[0]["ticker"] if classes else None)
+    _illiq = any(cl["flag"] in ("low", "very_low") for cl in _liq["classes"]
+                 if cl["class_ticker"] == _prim_tk)
+    indicators = build_indicators(cur, company_id, ticker, sector, is_holding,
+                                  shares, _f(ctx.own_market_cap), primary_class_id,
+                                  illiquid=_illiq)
+
     return {
         "ticker": ticker, "name": name, "sector": sector, "is_group": is_group,
         "isin": comp_isin, "fiscal_year": latest_fy, "audited": audited,
@@ -1180,6 +1199,8 @@ def build_stock_json(conn, ticker: str) -> dict:
              "peer_pe": _f(params.peer_pe)},
             sotp_breakdown, assumption_flags, ctx.growth_hint)
             if reconciliation else None),
+        # M18: puni set pokazatelja (≥ investiramo.com) s TTM/kvartalnim slojem
+        "indicators": indicators,
         "mar_note": ("Informativni prikaz metoda, raspona i pretpostavki iz javno "
                      "objavljenih izvješća; nije investicijski savjet ni preporuka."),
     }

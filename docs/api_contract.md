@@ -38,7 +38,32 @@ Opća pravila:
 | bank_kpi | obj\|null | **M5** — samo za sector='bank', inače null; vidi dolje |
 | trend | obj\|null | **M9** — {series[{year, revenue, ebitda, ebitda_margin}], revenue_label, narration, note}; naracija je ČINJENIČNA (brojke + smjer rast/pad/stabilno, bez epiteta); banka: revenue=ukupni operativni prihod; financijski sektor: ebitda=null + n/p u naraciji; godina koje nema → navedena u 'Nedostaje' |
 | business_profile | obj\|null | **M9** — {fiscal_year, activity (+activity_source_page), segments[{name, description, source_page}], markets[{market, source_page}], export_share {value, basis, source_page}\|null (samo ako IZRIJEKOM objavljen), issuer_claims[{claim, source_page}] (epiteti = TVRDNJE izdavatelja, citirane; platforma ih ne generira), source, note}; null → 'nema u bazi' |
+| indicators | obj | **M18** — puni set pokazatelja (≥ investiramo.com) s TTM/kvartalnim slojem; vidi dolje |
 | mar_note | str | disclaimer |
+
+## indicators (M18) — puni set pokazatelja
+`{groups[], review_flags[], note}`. Sve izvedenice = **deterministički kod**
+(`src/indicators.py`), NE LLM. Formule: `docs/indicators.md`.
+
+`groups[]` = 10 kartica (`key`/`title`): izvedba, valuacija, rast, profit,
+bilanca, cf, solvent, efik, div, emp. Svaka ima `items[]`.
+
+`items[]` stavka:
+| polje | značenje |
+|---|---|
+| k | naziv pokazatelja (npr. „EV/EBITDA”, „DIO”) |
+| v | vrijednost (number) ili `null` |
+| unit | `x`, `%` (v je RAZLOMAK — frontend množi ×100), `eur`, `meur`, `days`, `count`, `date` |
+| basis | osnovica: `TTM (do dd.mm.gggg.)` / `FYgggg` / `Kvartalno (dd.mm.gggg.)` / EOD datum |
+| formula | tekst formule (tooltip) |
+| np_reason | (kad `v=null`) razlog n/p (sektorski guard ili „nema u bazi”) |
+| note | (opcionalno) npr. datum zadnje isplate |
+
+`review_flags[]` — npr. negativan izvedeni kvartal (restatement) isključen.
+`note` — objašnjenje TTM/basis pravila.
+
+**Pravila (KORAK 4):** nazivnik-hijerarhija `TTM > FY-s-oznakom > —`; FY se
+NIKAD ne prikazuje kao TTM; sektorski guard (banka/holding) → `np_reason`, ne 0.
 
 ## share_classes[]
 `ticker, class_type ('ordinary'|'preferred'), isin, shares_issued,

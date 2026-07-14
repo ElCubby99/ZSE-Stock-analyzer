@@ -1,7 +1,7 @@
 import React from 'react'
 import { Term } from './Legend.jsx'
 import { GapCell, SECTOR_HR, useOverview } from './Shell.jsx'
-import { dash, num, pct } from './format.js'
+import { dash, eur, meur, num, pct } from './format.js'
 
 /* Tab-struktura stranice dionice (dizajn 4). Sve iz postojećih podataka;
    BEZ 'tehničke analize' i BEZ ratinga/ocjena (MAR). */
@@ -23,6 +23,93 @@ export function TabBar({ tab, setTab }) {
         <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>
       ))}
     </div>
+  )
+}
+
+/* M18: puni set pokazatelja (≥ investiramo.com) — 10 kartica, TTM/kvartalni
+   sloj. Sve izvedenice su DETERMINISTIČKI izračun (src/indicators.py), ne
+   procjena. Osnovica (basis) je uvijek vidljiva (TTM > FY-s-oznakom > n/p);
+   FY se NIKAD ne prikazuje kao TTM. Formula je u tooltipu; n/p nosi razlog. */
+function fmtIndVal(it) {
+  const { v, unit } = it
+  if (v === null || v === undefined) return unit === 'date' ? (it.note || null) : null
+  switch (unit) {
+    case '%': return pct(v, 1)
+    case 'x': return `${num(v, 2)}×`
+    case 'meur': return meur(v, 1)
+    case 'eur': return eur(v, 0)
+    case 'days': return `${num(v, 0)} d`
+    case 'count': return num(v, 0)
+    case 'date': return it.note || dash
+    default: return num(v, 2)
+  }
+}
+
+function shortBasis(b) {
+  if (!b) return ''
+  if (b.startsWith('TTM')) {
+    const m = b.match(/do (\d{2}\.\d{2}\.)(\d{4})/)
+    return m ? `TTM →${m[1]}${m[2].slice(2)}` : 'TTM'
+  }
+  if (b.startsWith('Kvartalno')) {
+    const m = b.match(/(\d{2}\.\d{2}\.)(\d{4})/)
+    return m ? `Q ${m[1]}${m[2].slice(2)}` : 'Q'
+  }
+  const fy = b.match(/FY(\d{4})/)
+  if (fy) return `FY${fy[1].slice(2)}`
+  const eod = b.match(/EOD do (\d{4})-(\d{2})-(\d{2})/)
+  if (eod) return `${eod[3]}.${eod[2]}.${eod[1].slice(2)}`
+  return b.length > 14 ? `${b.slice(0, 13)}…` : b
+}
+
+export function IndicatorGroups({ indicators }) {
+  if (!indicators || !indicators.groups) return null
+  return (
+    <section>
+      <div className="sec-label">Pokazatelji — TTM gdje je izračunljivo, inače FY (s oznakom)</div>
+      <div className="ind-grid">
+        {indicators.groups.map((g) => (
+          <div className="ind-card" key={g.key}>
+            <h4>{g.title}</h4>
+            <table className="ind-tbl"><tbody>
+              {g.items.map((it, i) => {
+                const val = fmtIndVal(it)
+                const np = val === null
+                return (
+                  <tr key={i}>
+                    <td className="ind-k">
+                      <span title={it.formula || ''} className={it.formula ? 'ind-hint' : ''}>{it.k}</span>
+                    </td>
+                    <td className="ind-v num">
+                      {np ? (
+                        <span className="np" title={it.np_reason || ''}>n/p</span>
+                      ) : (
+                        <>
+                          <b>{val}</b>
+                          {it.basis && (
+                            <span className="ind-basis" title={it.basis}>{shortBasis(it.basis)}</span>
+                          )}
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody></table>
+          </div>
+        ))}
+      </div>
+      {indicators.review_flags && indicators.review_flags.length > 0 && (
+        <div className="subnote"><span className="flag">za pregled</span>{' '}
+          {indicators.review_flags.join('; ')}.</div>
+      )}
+      <div className="subnote">
+        {indicators.note} Nazovi osnovice: <b>TTM →dd.mm.</b> = trailing 12 mj.,{' '}
+        <b>FYgg</b> = zadnja poslovna godina, <b>Q dd.mm.</b> = zadnje kvartalno stanje.
+        Sve izvedenice su izračun iz objavljenih izvješća (kod), ne procjena —
+        formula je u opisu svakog retka (hover). <span className="np">n/p</span> nosi razlog.
+      </div>
+    </section>
   )
 }
 

@@ -44,30 +44,48 @@ def _route(conn, run_id: str, cur, ann_id: int, cid, ticker, category: str,
         upsert_dps_financials(conn, ticker, verbose=False)
         return f"dividende: +{n} događaja, dps osvježen"
     if category == "financial_report" and ticker:
+        from scripts.parse_tfi_universe import LABEL_TO_PT
         d = eho.feed("financialReports", ticker=ticker,
                      date_from=(item.get("publishDate") or "")[:10] or date.today().isoformat(),
                      date_to=date.today().isoformat())
-        fr = [x for x in (d.get("items") or []) if x.get("documentType") == "PDF"]
-        if not fr:
-            cur.execute("UPDATE announcements SET needs_review=TRUE WHERE id=%s", (ann_id,))
-            return "FI objava bez para u financialReports feedu -> needs_review"
-        x = fr[0]
         cid2 = _company_id(cur, ticker)
         if cid2 is None:
             cur.execute("UPDATE announcements SET needs_review=TRUE WHERE id=%s", (ann_id,))
             return f"nepoznata firma {ticker} -> needs_review (onboarding je zaseban)"
+        # KORAK 2d: INTERIM (kvartal) -> TFI XLSX (deterministički, 0 kredita,
+        # period_type q1/h1/9m/q4 + cumulative=TRUE jer je IFRS interim YTD).
+        # GODIŠNJI (1Y) -> PDF ruta (LLM); valuacija se oslanja na 'annual'.
+        # Bankovni interim je nadzorni obrazac -> parse_tfi vrati prazno u
+        # ekstrakciji -> needs_review (zaseban parser je odobrena faza).
+        cands = []
+        for x in (d.get("items") or []):
+            pt = LABEL_TO_PT.get(str(x.get("period")))
+            if pt is None:
+                continue
+            is_interim = pt != "annual"
+            if x.get("documentType") != ("XLSX" if is_interim else "PDF"):
+                continue
+            cands.append(((x.get("publishDate") or ""), 0 if x.get("consolidated") else 1,
+                          x, pt, is_interim))
+        if not cands:
+            cur.execute("UPDATE announcements SET needs_review=TRUE WHERE id=%s", (ann_id,))
+            return "FI objava bez uparivog dokumenta (XLSX kvartal / PDF godišnji) -> needs_review"
+        cands.sort(key=lambda c: (c[0], c[1]))  # najbliži objavi, konsolidiran prvi
+        _pd, _co, x, pt, is_interim = cands[0]
         basis = "consolidated" if x.get("consolidated") else "standalone"
-        period = "annual" if x.get("period") == "1Y" else str(x.get("period"))
+        cumulative = True if is_interim else None
         cur.execute(
             """INSERT INTO filings (company_id, doc_type, fiscal_year, period_type,
-                 basis, currency, reporting_scale, source_url, published_at, status)
-               VALUES (%s,'financial_report',%s,%s,%s,'EUR',1,%s,%s,'pending')
+                 basis, currency, reporting_scale, cumulative, source_url,
+                 published_at, status)
+               VALUES (%s,'financial_report',%s,%s,%s,'EUR',1,%s,%s,%s,'pending')
                ON CONFLICT (company_id, doc_type, fiscal_year, period_type, basis)
                DO NOTHING""",
-            (cid2, x.get("year"), period, basis,
+            (cid2, x.get("year"), pt, basis, cumulative,
              (x.get("documentLink") or "").replace("\\/", "/"),
              (x.get("publishDate") or "")[:10] or None))
-        return (f"filing u queue: FY{x.get('year')} {period}/{basis}"
+        route = "TFI XLSX kvartal" if is_interim else "PDF godišnji"
+        return (f"filing u queue: FY{x.get('year')} {pt}/{basis} [{route}]"
                 if cur.rowcount else "filing već postoji (dedup)")
     if category in ("buyback", "capital_change"):
         cur.execute("UPDATE announcements SET needs_review=TRUE WHERE id=%s", (ann_id,))

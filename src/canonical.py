@@ -8,6 +8,8 @@ from __future__ import annotations
 # Reported stavke po statementu.
 INCOME = {
     "revenue",
+    "material_costs",        # M18: materijalni troškovi (COGS proxy za DIO/DPO)
+    "interest_expense",      # M18: rashodi od kamata (pokriće kamata)
     "other_operating_income",
     "operating_expenses",
     "depreciation_amortization",
@@ -23,6 +25,13 @@ INCOME = {
 
 BALANCE = {
     "total_assets",
+    "current_assets",        # M18: kratkotrajna imovina (tekući omjer, Altman)
+    "current_liabilities",   # M18: kratkoročne obveze
+    "short_term_fin_assets", # M18: kratkotrajna fin. imovina (točan EV)
+    "retained_earnings",     # M18: zadržana dobit (Altman)
+    "inventories",           # M18: zalihe (DIO)
+    "trade_receivables",     # M18: potraživanja od kupaca (DSO)
+    "trade_payables",        # M18: obveze prema dobavljačima (DPO)
     "total_equity",
     "equity_parent",
     "minority_interests",
@@ -34,11 +43,18 @@ BALANCE = {
 CASHFLOW = {
     "operating_cf",
     "capex",
+    "investing_cf",          # M18: neto CF iz investicijskih aktivnosti
+    "financing_cf",          # M18: neto CF iz financijskih aktivnosti
 }
 
 SHARES = {
     "shares_outstanding",
     "treasury_shares",
+}
+
+# M18: brojčane (nemonetarne) stavke — bez skale i FX konverzije u loaderu
+COUNTS = {
+    "employees",             # broj zaposlenih (TFI 'Opći podaci')
 }
 
 # --- BANKA (M5): zaseban skup stavki — bankovni FI se NE mapira na
@@ -74,6 +90,7 @@ for _stmt, _items in (
     ("cashflow", CASHFLOW),
     ("regulatory", REGULATORY),
     ("shares", SHARES),
+    ("counts", COUNTS),
 ):
     for _it in _items:
         STATEMENT_OF[_it] = _stmt
