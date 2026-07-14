@@ -166,10 +166,10 @@
       "is_primary": true,
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 4120); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
-        "close_eur": 29.8,
-        "trade_date": "2025-12-30",
-        "volume": 1109.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "close_eur": 15.6,
+        "trade_date": "2026-07-14",
+        "volume": 0.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -179,12 +179,12 @@
     "roe": 0.23746253621430524,
     "dps": null,
     "shares_ex_treasury": 189460.0,
-    "market_cap_eur": 5645908.0,
+    "market_cap_eur": 2955576.0,
     "ebitda_eur": -2939289.0,
     "per_class": [
       {
         "class_ticker": "THNK",
-        "price": 29.8,
+        "price": 15.6,
         "pe": null,
         "pb": null,
         "div_yield": null,
@@ -369,13 +369,13 @@
       {
         "class_ticker": "THNK",
         "last": {
-          "date": "2025-12-30",
-          "close_eur": 29.8
+          "date": "2026-07-14",
+          "close_eur": 15.6
         },
-        "prev_close_eur": 26.0,
-        "change_pct": 0.14615384615384608,
+        "prev_close_eur": 29.8,
+        "change_pct": -0.47651006711409394,
         "high_52w_eur": 29.8,
-        "low_52w_eur": 20.6,
+        "low_52w_eur": 15.6,
         "avg_turnover_20d_eur": 7687.38,
         "data_from": "2025-07-17",
         "note": "povijest dostupna od 2025-07-17 — 52-tjedni raspon pokriva kraće razdoblje"
@@ -733,6 +733,14 @@
       "volume": 1109.0,
       "turnover_eur": 30796.4,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "THNK",
+      "trade_date": "2026-07-14",
+      "close_eur": 15.6,
+      "volume": 0.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -843,98 +851,10 @@
         "reason": "nije grupa"
       }
     ],
-    "reconciliation": {
-      "zone_low": -64.54605485945484,
-      "zone_high": -64.54605485945484,
-      "dispersion": -0.0,
-      "divergent": false,
-      "archetype": "industrial_noforward",
-      "anchor_methods": [],
-      "method_roles": {
-        "comps": {
-          "role": "secondary",
-          "note": "bez forward signala sidro je peer usporedba; opravdani P/B je potvrda (v2 §2)",
-          "vs_zone_pct": null
-        },
-        "dcf_fcf": {
-          "role": "secondary",
-          "note": "bez forward signala sidro je peer usporedba; opravdani P/B je potvrda (v2 §2)",
-          "vs_zone_pct": 0.0
-        },
-        "justified_pb_roe": {
-          "role": "secondary",
-          "note": "bez forward signala sidro je peer usporedba; opravdani P/B je potvrda (v2 §2)",
-          "vs_zone_pct": null
-        }
-      },
-      "zone_note": "sidrena metoda nije dostupna — zona je min–max svih baza (fallback); vidi 'skipped' za razlog",
-      "all_methods_low": -64.54605485945484,
-      "all_methods_high": -64.54605485945484,
-      "dispersion_all": -0.0,
-      "method_bases": {
-        "comps": 0,
-        "dcf_fcf": -64.54605485945484,
-        "justified_pb_roe": 0
-      },
-      "qa_flags": [
-        "fer-zona odstupa -146% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
-      ],
-      "vs_market_pct": -146.2,
-      "anchor_inconsistency": [],
-      "reasoning": "Sidro nije dostupno — vidi preskočene metode i razloge.",
-      "red_rules": [],
-      "market_implied": {
-        "implied_g_pct": 9.2,
-        "implied_g_note": "uz naš r=9.3% cijena implicira trajni rast FCF-a ~+9.2% godišnje",
-        "narrative": "Tržišna cijena implicira ~+9.2% trajnog rasta godišnje; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
-    },
+    "reconciliation": null,
     "sotp": null
   },
-  "methodology": {
-    "story": "TEHNIKA d.d. nema kvantificirani forward signal (backlog/guidance) u zadnjem izvješću, pa je sidro peer usporedba (što tržište plaća za slične firme); opravdani P/B je potvrda.",
-    "parameters": [
-      {
-        "k": "Trošak kapitala r",
-        "v": "9,31%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.0 × premija rizika 5.70% (Damodaran, HR). Beta je pretpostavka 1,0 (serija prekratka/nelikvidna). Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
-      },
-      {
-        "k": "Dugoročni rast g",
-        "v": "2,5% / 4,0%",
-        "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
-      },
-      {
-        "k": "Peer multipli",
-        "v": "placeholder",
-        "why": "na ZSE nema dovoljno usporedivih firmi ovog sektora — metoda peer usporedbe nosi NISKU pouzdanost i ne sidri zonu"
-      }
-    ],
-    "limitations": [
-      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
-      "β = 1,0 — beta nije kalibrirana za ovu firmu (serija prekratka/nelikvidna) — vidi src/calibrate.py",
-      "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (docs/peers.md)"
-    ],
-    "changelog": [
-      {
-        "date": "2026-07-14",
-        "old_low": null,
-        "old_high": null,
-        "new_low": -64.54605485945484,
-        "new_high": -64.54605485945484,
-        "reason": "Prva analiza: financije iz standardiziranog TFI obrasca (4Q kumulativ FY2025, nerevidirano) + doktrina v2 sidro po arhetipu.",
-        "kind": "backfill"
-      }
-    ],
-    "notes": [
-      "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
-      "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",
-      "Svaka brojka nosi izvor (dokument + stranica) — vidljivo uz metode i pretpostavke.",
-      "Analize generira automatizirani sustav uz ljudski nadzor."
-    ],
-    "link": "/metodologija",
-    "mar": "Informativna analiza, ne investicijski savjet ni preporuka — zaključak je čitateljev."
-  },
+  "methodology": null,
   "indicators": {
     "groups": [
       {
@@ -943,33 +863,31 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.12030075187969924,
+            "v": -0.47651006711409394,
             "unit": "%",
-            "basis": "EOD do 2025-12-30 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.2416666666666667,
+            "v": -0.47651006711409394,
             "unit": "%",
-            "basis": "EOD do 2025-12-30 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema podataka"
+            "v": -0.47651006711409394,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema podataka"
+            "v": -0.47651006711409394,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
@@ -996,9 +914,9 @@
           },
           {
             "k": "52-tj min",
-            "v": 20.6,
+            "v": 15.6,
             "unit": "eur",
-            "basis": "2025-08-22",
+            "basis": "2026-07-14",
             "formula": "min close 365 d"
           }
         ]
@@ -1009,21 +927,21 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": 5645908.0,
+            "v": 2955576.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase"
           },
           {
             "k": "EV",
-            "v": 16259469.48,
+            "v": 13569137.48,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
             "formula": "EV formula dokumentirana u docs/indicators.md"
           },
           {
             "k": "EV/Prihod",
-            "v": 0.41940661924403044,
+            "v": 0.35001056360076654,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / Prihod"
@@ -1054,21 +972,21 @@
           },
           {
             "k": "P/S",
-            "v": 0.14563397592741295,
+            "v": 0.07623792028414905,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / prihod"
           },
           {
             "k": "P/CF",
-            "v": 2.2924165806526124,
+            "v": 1.2000570019523742,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / operativni CF"
           },
           {
             "k": "P/FCF",
-            "v": 6.301004398253091,
+            "v": 3.2985123695553096,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / slobodni novčani tok"

@@ -171,9 +171,9 @@
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 5510); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 0.87,
-        "trade_date": "2026-07-10",
-        "volume": 592.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "trade_date": "2026-07-14",
+        "volume": 0.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -373,11 +373,11 @@
       {
         "class_ticker": "VIS",
         "last": {
-          "date": "2026-07-10",
+          "date": "2026-07-14",
           "close_eur": 0.87
         },
-        "prev_close_eur": 0.94,
-        "change_pct": -0.07446808510638292,
+        "prev_close_eur": 0.87,
+        "change_pct": 0.0,
         "high_52w_eur": 0.98,
         "low_52w_eur": 0.75,
         "avg_turnover_20d_eur": 576.747,
@@ -1017,6 +1017,14 @@
       "volume": 592.0,
       "turnover_eur": 515.04,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "VIS",
+      "trade_date": "2026-07-14",
+      "close_eur": 0.87,
+      "volume": 0.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -1137,8 +1145,8 @@
       }
     ],
     "reconciliation": {
-      "zone_low": -0.9238933973364669,
-      "zone_high": 1.2508886629243956,
+      "zone_low": 1.2196164463512857,
+      "zone_high": 1.2821608794975055,
       "dispersion": 1.7385896320912675,
       "divergent": true,
       "archetype": "tourism",
@@ -1155,7 +1163,7 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "sidrena metoda nije dostupna — zona je min–max svih baza (fallback); vidi 'skipped' za razlog",
+      "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
       "all_methods_low": -0.9238933973364669,
       "all_methods_high": 1.2508886629243956,
       "dispersion_all": 1.7385896320912675,
@@ -1164,16 +1172,13 @@
         "dcf_fcf": -0.9238933973364669
       },
       "qa_flags": [
-        "metode se međusobno razilaze 174% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +432% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 174% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": 432.1,
+      "vs_market_pct": -30.4,
       "anchor_inconsistency": [],
       "reasoning": "Sidro nije dostupno — vidi preskočene metode i razloge.",
       "red_rules": [],
-      "market_implied": {
-        "narrative": "Tržišna cijena implicira ; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      "market_implied": null
     },
     "sotp": null
   },
@@ -1198,7 +1203,6 @@
     ],
     "limitations": [
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
-      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
       "β = 1,0 — beta nije kalibrirana za ovu firmu (serija prekratka/nelikvidna) — vidi src/calibrate.py",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (docs/peers.md)"
     ],
@@ -1230,37 +1234,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.15999999999999992,
+            "v": 0.0235294117647058,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
             "v": 0.08749999999999991,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
             "v": -0.11224489795918369,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": -0.11224489795918369,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
             "v": -0.12121212121212122,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {

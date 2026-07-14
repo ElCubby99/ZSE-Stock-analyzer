@@ -298,6 +298,24 @@ def parse_tfi(path: str) -> dict | None:
             if up is not None and dn is not None:
                 put("financing_cf", up - dn,
                     "NT_I: primici − izdaci od financijskih aktivnosti (izračun)")
+    # M20: firme koje NT izvještavaju DIREKTNOM metodom (NT_D) imaju NT_I list
+    # pun nula — nula na neto tokovima je parse-fail signatura, ne stvarna
+    # vrijednost. Tada se čita NT_D (isti NETO retci; izdaci s minusom).
+    if not items.get("operating_cf") and "NT_D" in wb.sheetnames:
+        ntd = _rows(wb["NT_D"])
+        ocf_d = _find(ntd, r"NETO NOVČANI TOKOVI OD POSLOVNIH")
+        if ocf_d:
+            put("operating_cf", ocf_d,
+                "NT_D (direktna metoda): neto novčani tokovi od poslovnih aktivnosti")
+            capex_d = _find(ntd, r"kupnju dugotrajne")
+            if capex_d:
+                put("capex", abs(capex_d), "NT_D: izdaci za kupnju dugotrajne imovine")
+            inv_d = _find(ntd, r"NETO NOVČANI TOKOVI OD INVESTICIJSKIH")
+            if inv_d is not None:
+                put("investing_cf", inv_d, "NT_D: B) neto tokovi od investicijskih")
+            fin_d = _find(ntd, r"NETO NOVČANI TOKOVI OD FINANCIJSKIH")
+            if fin_d is not None:
+                put("financing_cf", fin_d, "NT_D: C) neto tokovi od financijskih")
     # M18: broj zaposlenih iz 'Opći podaci' (count, bez skale)
     if "Opći podaci" in wb.sheetnames:
         for row in wb["Opći podaci"].iter_rows(max_col=10):

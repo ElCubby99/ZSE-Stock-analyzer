@@ -134,14 +134,14 @@
       {
         "class_ticker": "AUHR",
         "last_trade": {
-          "date": "2026-07-13",
-          "close_eur": 214.0,
-          "volume": 66.0,
-          "turnover_eur": 14124.0
+          "date": "2026-07-14",
+          "close_eur": 220.0,
+          "volume": 105.0,
+          "turnover_eur": 23100.0
         },
-        "days_since_trade": 1,
+        "days_since_trade": 0,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-13: 66 kom / 14,124 € prometa (1 d)"
+        "note": "zadnja trgovina 2026-07-14: 105 kom / 23,100 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -166,10 +166,10 @@
       "is_primary": true,
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 4511); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
-        "close_eur": 214.0,
-        "trade_date": "2026-07-13",
-        "volume": 66.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "close_eur": 220.0,
+        "trade_date": "2026-07-14",
+        "volume": 105.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -179,14 +179,14 @@
     "roe": 0.13426507436282573,
     "dps": null,
     "shares_ex_treasury": 600000.0,
-    "market_cap_eur": 128400000.0,
+    "market_cap_eur": 132000000.0,
     "ebitda_eur": 24795227.0,
     "per_class": [
       {
         "class_ticker": "AUHR",
-        "price": 214.0,
-        "pe": 10.057724602737503,
-        "pb": 1.3504011417073727,
+        "price": 220.0,
+        "pe": 10.339716881318928,
+        "pb": 1.3882628559608505,
         "div_yield": null,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
@@ -369,11 +369,11 @@
       {
         "class_ticker": "AUHR",
         "last": {
-          "date": "2026-07-13",
-          "close_eur": 214.0
+          "date": "2026-07-14",
+          "close_eur": 220.0
         },
-        "prev_close_eur": 216.0,
-        "change_pct": -0.0092592592592593,
+        "prev_close_eur": 214.0,
+        "change_pct": 0.028037383177569986,
         "high_52w_eur": 230.0,
         "low_52w_eur": 206.0,
         "avg_turnover_20d_eur": 4300.3,
@@ -2250,6 +2250,14 @@
       "volume": 66.0,
       "turnover_eur": 14124.0,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "AUHR",
+      "trade_date": "2026-07-14",
+      "close_eur": 220.0,
+      "volume": 105.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -2422,7 +2430,7 @@
         "justified_pb_roe": 254.2642082721488
       },
       "qa_flags": [],
-      "vs_market_pct": -17.7,
+      "vs_market_pct": -15.3,
       "anchor_inconsistency": [],
       "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 9 € operativne zarade (EBITDA marža 8.7%). Firma ima 95 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 13.4% godišnje — više od 9.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 254.26 € po dionici. Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva.",
       "red_rules": [],
@@ -2481,37 +2489,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": -0.01834862385321101,
+            "v": 0.00917431192660545,
             "unit": "%",
-            "basis": "EOD do 2026-07-13",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.0,
+            "v": 0.028037383177569986,
             "unit": "%",
-            "basis": "EOD do 2026-07-13",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": 0.028846153846153744,
+            "v": 0.05769230769230771,
             "unit": "%",
-            "basis": "EOD do 2026-07-13",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
-            "v": -0.0092592592592593,
+            "v": 0.0185185185185186,
             "unit": "%",
-            "basis": "EOD do 2026-07-13",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": -0.0092592592592593,
+            "v": 0.06796116504854366,
             "unit": "%",
-            "basis": "EOD do 2026-07-13",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
@@ -2544,77 +2552,77 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": 128400000.0,
+            "v": 132000000.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase"
           },
           {
             "k": "EV",
-            "v": 110766676.0,
+            "v": 114366676.0,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
             "formula": "EV formula dokumentirana u docs/indicators.md"
           },
           {
             "k": "EV/Prihod",
-            "v": 0.38092853775272945,
+            "v": 0.3933090007713166,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / Prihod"
           },
           {
             "k": "EV/EBITDA",
-            "v": 4.491862194113233,
+            "v": 4.637851082493414,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBITDA"
           },
           {
             "k": "EV/EBIT",
-            "v": 7.348745351664637,
+            "v": 7.58758508416679,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBIT"
           },
           {
             "k": "P/E",
-            "v": 10.485565810195743,
+            "v": 10.77955363664983,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / neto dobit matici"
           },
           {
             "k": "P/S",
-            "v": 0.44156984766294205,
+            "v": 0.45395031068152925,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / prihod"
           },
           {
             "k": "P/CF",
-            "v": 6.532753030848891,
+            "v": 6.715914330779234,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / operativni CF"
           },
           {
             "k": "P/FCF",
-            "v": 13.933313684901366,
+            "v": 14.323967339618227,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / slobodni novčani tok"
           },
           {
             "k": "Earnings yield",
-            "v": 0.09536919781931465,
+            "v": 0.0927682196969697,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "neto dobit / trž.kap"
           },
           {
             "k": "P/B",
-            "v": 1.3013998197013932,
+            "v": 1.3378876651135818,
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)"
@@ -2887,7 +2895,7 @@
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.04205607476635514,
+            "v": 0.04090909090909091,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"

@@ -288,6 +288,10 @@
   "risks": {
     "cards": [
       {
+        "l": "KONCENTRACIJA I LIKVIDNOST",
+        "txt": "HPB: zadnja trgovina 2026-07-14: 6 kom / 2,004 € prometa (0 d)."
+      },
+      {
         "l": "REGULATORNI POKAZATELJI",
         "txt": "U izvješću nisu objavljeni (nema u bazi): NPL omjer, NPL pokrivenost, CET1 stopa, Ukupna stopa kapitala."
       },
@@ -324,14 +328,14 @@
       {
         "class_ticker": "HPB",
         "last_trade": {
-          "date": "2026-07-10",
+          "date": "2026-07-14",
           "close_eur": 334.0,
-          "volume": 35.0,
-          "turnover_eur": 11690.0
+          "volume": 6.0,
+          "turnover_eur": 2004.0
         },
-        "days_since_trade": 4,
-        "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 35 kom / 11,690 € prometa (4 d)"
+        "days_since_trade": 0,
+        "flag": "low",
+        "note": "zadnja trgovina 2026-07-14: 6 kom / 2,004 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -458,9 +462,9 @@
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, listing); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 334.0,
-        "trade_date": "2026-07-10",
-        "volume": 35.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "trade_date": "2026-07-14",
+        "volume": 6.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -684,11 +688,11 @@
       {
         "class_ticker": "HPB",
         "last": {
-          "date": "2026-07-10",
+          "date": "2026-07-14",
           "close_eur": 334.0
         },
-        "prev_close_eur": 330.0,
-        "change_pct": 0.0121212121212122,
+        "prev_close_eur": 334.0,
+        "change_pct": 0.0,
         "high_52w_eur": 334.0,
         "low_52w_eur": 270.0,
         "avg_turnover_20d_eur": 60081.1,
@@ -4425,6 +4429,14 @@
       "volume": 35.0,
       "turnover_eur": 11690.0,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "HPB",
+      "trade_date": "2026-07-14",
+      "close_eur": 334.0,
+      "volume": 6.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -4444,7 +4456,7 @@
       "peers_calibrated": false,
       "peers_narrow": false,
       "sources": {
-        "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+        "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-14, n=106 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
@@ -4509,7 +4521,7 @@
           "growth_source": null,
           "placeholder": true,
           "sources": {
-            "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+            "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-14, n=106 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
@@ -4529,7 +4541,7 @@
           "bvps": 284.38,
           "placeholder": true,
           "sources": {
-            "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+            "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-14, n=106 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
@@ -4552,7 +4564,7 @@
           "equivalence_note": "jednostupanjski RI ≡ opravdani P/B ((ROE−g)/(COE−g)); razlika prema justified_pb_roe dolazi SAMO iz 5g fadea ROE→COE — konzistencijska provjera, prava dodana vrijednost traži eksplicitne ROE forecaste",
           "placeholder": true,
           "sources": {
-            "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+            "r": "r=0.0821 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.807: IZMJERENA — OLS tjednih log-prinosa klase HPB vs CROBEX (2024-07-01..2026-07-14, n=106 tjedana, R²=0.136); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
@@ -4685,37 +4697,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.1283783783783783,
+            "v": 0.0915032679738561,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.15172413793103456,
+            "v": 0.14383561643835607,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": 0.15172413793103456,
+            "v": 0.176056338028169,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": 0.06369426751592355,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": 0.23703703703703694,
+            "v": 0.2014388489208634,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
@@ -4737,7 +4749,7 @@
             "k": "52-tj min",
             "v": 270.0,
             "unit": "eur",
-            "basis": "2025-07-10",
+            "basis": "2025-08-26",
             "formula": "min close 365 d"
           }
         ]
@@ -4787,9 +4799,9 @@
           },
           {
             "k": "P/E",
-            "v": 11.506490787946607,
+            "v": 11.525406352853713,
             "unit": "x",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / neto dobit matici"
           },
           {
@@ -4818,16 +4830,16 @@
           },
           {
             "k": "Earnings yield",
-            "v": 0.08690746974286286,
+            "v": 0.08676483669075999,
             "unit": "%",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "neto dobit / trž.kap"
           },
           {
             "k": "P/B",
-            "v": 1.1745033941280496,
+            "v": 1.1462702272329817,
             "unit": "x",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)"
           }
         ]
@@ -4838,25 +4850,23 @@
         "items": [
           {
             "k": "Prihod YoY (kvartal)",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "kvartali još nisu u bazi za usporedbu"
+            "v": -0.06770817384215111,
+            "unit": "%",
+            "basis": "2026Q1 vs 2025Q1",
+            "formula": "diskretni kvartal vs isti lanjski (Q2=H1−Q1...)"
           },
           {
             "k": "EPS YoY (kvartal)",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "kvartali nedostupni"
+            "v": -0.006290713918286062,
+            "unit": "%",
+            "basis": "2026Q1 vs 2025Q1",
+            "formula": "neto dobit matici po kvartalu / dionice — isti-na-isti"
           },
           {
             "k": "Prihod (TTM/FY)",
-            "v": 199058160.0,
+            "v": 195602252.0,
             "unit": "meur",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "kumulativna derivacija"
           },
           {
@@ -4891,23 +4901,23 @@
           },
           {
             "k": "Neto marža",
-            "v": 0.29523523175337296,
+            "v": 0.29995835630767687,
             "unit": "%",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "Neto / prihod"
           },
           {
             "k": "ROE",
-            "v": 0.10207311818807319,
+            "v": 0.09945594906935,
             "unit": "%",
-            "basis": "FY2025 / FY2025 (31.12.2025.)",
+            "basis": "TTM (do 31.03.2026.) / Kvartalno (31.03.2026.)",
             "formula": "neto dobit matici / knjiga matici"
           },
           {
             "k": "ROA",
-            "v": 0.006863603152833448,
+            "v": 0.007394474902497183,
             "unit": "%",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "neto dobit / ukupna imovina"
           }
         ]
@@ -4918,30 +4928,30 @@
         "items": [
           {
             "k": "Ukupna imovina",
-            "v": 8562409669.0,
+            "v": 7934644552.0,
             "unit": "meur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "bilanca"
           },
           {
             "k": "Novac",
-            "v": null,
+            "v": 1781790430.0,
             "unit": "meur",
-            "basis": null,
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "novac i ekvivalenti"
           },
           {
             "k": "BVPS",
-            "v": 284.37550855096623,
+            "v": 291.3798091103293,
             "unit": "eur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "knjiga matici / dionice ex-trezor"
           },
           {
             "k": "Ukupne obveze",
-            "v": 7986655905.0,
+            "v": 7344709705.98,
             "unit": "meur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "imovina − kapital (izvedeno)"
           },
           {
@@ -4960,9 +4970,9 @@
           },
           {
             "k": "Kapital (ukupni)",
-            "v": 575753764.0,
+            "v": 589934846.0200005,
             "unit": "meur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "bilanca"
           }
         ]
@@ -5122,9 +5132,9 @@
           },
           {
             "k": "Payout",
-            "v": 0.7520559697630972,
+            "v": 0.7532922774934028,
             "unit": "%",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"
           },
           {
@@ -5150,12 +5160,25 @@
         "title": "Po zaposlenom",
         "items": [
           {
-            "k": "Po zaposlenom",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "broj zaposlenih još nije u bazi za ovu firmu"
+            "k": "Broj zaposlenih",
+            "v": 1787.0,
+            "unit": "count",
+            "basis": "Kvartalno (31.03.2026.)",
+            "formula": "TFI Opći podaci"
+          },
+          {
+            "k": "Prihod/zaposlenom",
+            "v": 109458.45103525462,
+            "unit": "eur",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "prihod / broj zaposlenih"
+          },
+          {
+            "k": "Dobit/zaposlenom",
+            "v": 32832.9770565193,
+            "unit": "eur",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "neto dobit matici / broj zaposlenih"
           }
         ]
       }

@@ -98,7 +98,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "CTKS: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski."
+        "txt": "CTKS: u dostupnim podacima (od 2026-07-14) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -140,7 +140,7 @@
         "last_trade": null,
         "days_since_trade": null,
         "flag": "very_low",
-        "note": "u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski"
+        "note": "u dostupnim podacima (od 2026-07-14) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -164,7 +164,12 @@
       "shares_ex_treasury": 190345.0,
       "is_primary": true,
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRCTKSRA0004); trezorske NEPOZNATE (0 uz ogradu)",
-      "last_price": null
+      "last_price": {
+        "close_eur": 105.0,
+        "trade_date": "2026-07-14",
+        "volume": 0.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+      }
     }
   ],
   "metrics": {
@@ -173,14 +178,14 @@
     "roe": 0.1989388620659549,
     "dps": null,
     "shares_ex_treasury": 190345.0,
-    "market_cap_eur": null,
+    "market_cap_eur": 19986225.0,
     "ebitda_eur": 3713101.0,
     "per_class": [
       {
         "class_ticker": "CTKS",
-        "price": null,
-        "pe": null,
-        "pb": null,
+        "price": 105.0,
+        "pe": 8.017683554987869,
+        "pb": 1.5950288428342063,
         "div_yield": null,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
@@ -362,8 +367,17 @@
     "classes": [
       {
         "class_ticker": "CTKS",
-        "last": null,
-        "note": "nema cijena u bazi"
+        "last": {
+          "date": "2026-07-14",
+          "close_eur": 105.0
+        },
+        "prev_close_eur": null,
+        "change_pct": null,
+        "high_52w_eur": 105.0,
+        "low_52w_eur": 105.0,
+        "avg_turnover_20d_eur": null,
+        "data_from": "2026-07-14",
+        "note": "povijest dostupna od 2026-07-14 — 52-tjedni raspon pokriva kraće razdoblje"
       }
     ],
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
@@ -374,7 +388,16 @@
     "upcoming_count": 0,
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
-  "prices": [],
+  "prices": [
+    {
+      "class_ticker": "CTKS",
+      "trade_date": "2026-07-14",
+      "close_eur": 105.0,
+      "volume": 0.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    }
+  ],
   "share_class_explainer": null,
   "valuation": {
     "params": {
@@ -548,7 +571,7 @@
       "qa_flags": [
         "metode se međusobno razilaze 295% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": null,
+      "vs_market_pct": -38.9,
       "anchor_inconsistency": [],
       "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 15 € operativne zarade (EBITDA marža 15.0%). Firma ima 13 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 19.9% godišnje — više od 9.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 168.14 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
@@ -595,7 +618,70 @@
       {
         "key": "izvedba",
         "title": "Izvedba dionice",
-        "items": []
+        "items": [
+          {
+            "k": "Povrat 1M",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 3M",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 6M",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat YTD",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 1G",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 3G",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "serija cijena prekratka"
+          },
+          {
+            "k": "52-tj maks",
+            "v": 105.0,
+            "unit": "eur",
+            "basis": "2026-07-14",
+            "formula": "max close 365 d"
+          },
+          {
+            "k": "52-tj min",
+            "v": 105.0,
+            "unit": "eur",
+            "basis": "2026-07-14",
+            "formula": "min close 365 d"
+          }
+        ]
       },
       {
         "key": "valuacija",
@@ -603,65 +689,59 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": null,
+            "v": 19986225.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase"
           },
           {
             "k": "EV",
-            "v": null,
+            "v": 26207781.0,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
             "formula": "EV formula dokumentirana u docs/indicators.md"
           },
           {
             "k": "EV/Prihod",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 1.0396697132771826,
+            "unit": "x",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "EV / Prihod"
           },
           {
             "k": "EV/EBITDA",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 6.936014939233935,
+            "unit": "x",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "EV / EBITDA"
           },
           {
             "k": "EV/EBIT",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 9.38209368353713,
+            "unit": "x",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "EV / EBIT"
           },
           {
             "k": "P/E",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 7.847096418551072,
+            "unit": "x",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "trž.kap / neto dobit matici"
           },
           {
             "k": "P/S",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 0.7928589152680748,
+            "unit": "x",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "trž.kap / prihod"
           },
           {
             "k": "P/CF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 9.130545318489625,
+            "unit": "x",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "trž.kap / operativni CF"
           },
           {
             "k": "P/FCF",
@@ -673,19 +753,17 @@
           },
           {
             "k": "Earnings yield",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 0.1274356713186207,
+            "unit": "%",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "neto dobit / trž.kap"
           },
           {
             "k": "P/B",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 1.5350917281100964,
+            "unit": "x",
+            "basis": "Kvartalno (31.03.2026.)",
+            "formula": "trž.kap / knjiga (matici)"
           }
         ]
       },

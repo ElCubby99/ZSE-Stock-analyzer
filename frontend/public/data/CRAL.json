@@ -106,7 +106,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -57–1 € (raspon 5219%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -28–1 € (raspon 2590%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -171,9 +171,9 @@
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 5110); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 3.94,
-        "trade_date": "2026-05-15",
-        "volume": 3.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "trade_date": "2026-07-14",
+        "volume": 0.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -373,7 +373,7 @@
       {
         "class_ticker": "CRAL",
         "last": {
-          "date": "2026-05-15",
+          "date": "2026-07-14",
           "close_eur": 3.94
         },
         "prev_close_eur": 3.94,
@@ -497,6 +497,14 @@
       "volume": 3.0,
       "turnover_eur": 11.82,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "CRAL",
+      "trade_date": "2026-07-14",
+      "close_eur": 3.94,
+      "volume": 0.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -591,21 +599,16 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": -50.09467600017839,
-        "base": -57.45072240255407,
-        "high": -67.33897066461157,
-        "confidence": 0.7,
-        "no_value": false,
+        "low": 0,
+        "base": 0,
+        "high": 0,
+        "confidence": 0.0,
+        "no_value": true,
         "assumptions": {
-          "roe": -5.2036,
-          "r": 0.0931,
-          "g": 0.025,
-          "bvps": 0.75,
-          "placeholder": true,
-          "sources": {
-            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); vidi src/calibrate.py",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
-          }
+          "missing": [
+            "roe>g"
+          ],
+          "note": "ROE -520.4% ≤ trajni rast g 2.5% — opravdani P/B nije definiran (multiplikator ≤ 0)"
         }
       }
     ],
@@ -627,9 +630,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": -57.45072240255407,
-      "zone_high": 1.1223974734728284,
-      "dispersion": 52.185719640649985,
+      "zone_low": 1.0943375366360075,
+      "zone_high": 1.150457410309649,
+      "dispersion": 25.90369057123471,
       "divergent": true,
       "archetype": "cyclical",
       "anchor_methods": [],
@@ -645,25 +648,25 @@
           "vs_zone_pct": null
         },
         "justified_pb_roe": {
-          "role": "anchor_excluded",
-          "note": "sidrena metoda ISKLJUČENA iz zone — nepozitivna baza (jednogodišnji ulaz)",
+          "role": "secondary",
+          "note": "ciklikal (niska ROE/poluga): guidance-DCF ako postoji, inače opravdani P/B; comps potvrda; EV/EBITDA nije nositelj (v2 §2)",
           "vs_zone_pct": null
         }
       },
-      "zone_note": "sidrena metoda nije dostupna — zona je min–max svih baza (fallback); vidi 'skipped' za razlog",
-      "all_methods_low": -57.45072240255407,
+      "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
+      "all_methods_low": -27.95183937730293,
       "all_methods_high": 1.1223974734728284,
-      "dispersion_all": 52.185719640649985,
+      "dispersion_all": 25.90369057123471,
       "method_bases": {
         "comps": 1.1223974734728284,
         "dcf_fcf": -27.95183937730293,
-        "justified_pb_roe": -57.45072240255407
+        "justified_pb_roe": 0
       },
       "qa_flags": [
-        "metode se međusobno razilaze 5219% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa -114% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 2590% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +251% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": -114.0,
+      "vs_market_pct": 251.0,
       "anchor_inconsistency": [],
       "reasoning": "Sidro nije dostupno — vidi preskočene metode i razloge.",
       "red_rules": [],
@@ -728,35 +731,35 @@
             "k": "Povrat 1M",
             "v": 0.0,
             "unit": "%",
-            "basis": "EOD do 2026-05-15 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
             "v": 0.0,
             "unit": "%",
-            "basis": "EOD do 2026-05-15 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
             "v": 0.0,
             "unit": "%",
-            "basis": "EOD do 2026-05-15 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": 0.0,
             "unit": "%",
-            "basis": "EOD do 2026-05-15 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": 0.01025641025641022,
+            "v": -0.015000000000000013,
             "unit": "%",
-            "basis": "EOD do 2026-05-15 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
@@ -771,14 +774,14 @@
             "k": "52-tj maks",
             "v": 4.0,
             "unit": "eur",
-            "basis": "2025-06-20",
+            "basis": "2025-08-14",
             "formula": "max close 365 d"
           },
           {
             "k": "52-tj min",
-            "v": 0.01,
+            "v": 3.94,
             "unit": "eur",
-            "basis": "2025-05-28",
+            "basis": "2025-10-30",
             "formula": "min close 365 d"
           }
         ]

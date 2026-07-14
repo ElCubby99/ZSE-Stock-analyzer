@@ -279,7 +279,7 @@
     "cards": [
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 22–52 € (raspon 58%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 22–50 € (raspon 56%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -311,14 +311,14 @@
       {
         "class_ticker": "ADPL",
         "last_trade": {
-          "date": "2026-07-10",
-          "close_eur": 30.3,
-          "volume": 2870.0,
-          "turnover_eur": 86125.0
+          "date": "2026-07-14",
+          "close_eur": 29.6,
+          "volume": 2111.0,
+          "turnover_eur": 62485.600000000006
         },
-        "days_since_trade": 4,
+        "days_since_trade": 0,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 2870 kom / 86,125 € prometa (4 d)"
+        "note": "zadnja trgovina 2026-07-14: 2111 kom / 62,486 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -343,10 +343,10 @@
       "is_primary": true,
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRADPLRA0006); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
-        "close_eur": 30.3,
-        "trade_date": "2026-07-10",
-        "volume": 2870.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "close_eur": 29.6,
+        "trade_date": "2026-07-14",
+        "volume": 2111.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -356,14 +356,14 @@
     "roe": 0.12475065616797901,
     "dps": null,
     "shares_ex_treasury": 4199584.0,
-    "market_cap_eur": 127247395.2,
+    "market_cap_eur": 124307686.4,
     "ebitda_eur": 19187000.0,
     "per_class": [
       {
         "class_ticker": "ADPL",
-        "price": 30.3,
-        "pe": 8.924005554386703,
-        "pb": 1.1132755485564305,
+        "price": 29.6,
+        "pe": 8.717840409565888,
+        "pb": 1.0875563114610673,
         "div_yield": null,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
@@ -546,11 +546,11 @@
       {
         "class_ticker": "ADPL",
         "last": {
-          "date": "2026-07-10",
-          "close_eur": 30.3
+          "date": "2026-07-14",
+          "close_eur": 29.6
         },
-        "prev_close_eur": 30.1,
-        "change_pct": 0.006644518272425293,
+        "prev_close_eur": 30.3,
+        "change_pct": -0.02310231023102305,
         "high_52w_eur": 31.3,
         "low_52w_eur": 10.6,
         "avg_turnover_20d_eur": 137964.18,
@@ -4475,30 +4475,38 @@
       "volume": 2870.0,
       "turnover_eur": 86125.0,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "ADPL",
+      "trade_date": "2026-07-14",
+      "close_eur": 29.6,
+      "volume": 2111.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.119035,
+      "r": 0.11932000000000001,
       "g": 0.025,
       "g_terminal": 0.04,
-      "beta": 1.455,
+      "beta": 1.46,
       "beta_calibrated": true,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
-      "peer_pe": 16.98,
-      "peer_pb": 8.85,
+      "peer_pe": 17.51,
+      "peer_pb": 8.45,
       "rates_calibrated": true,
       "peers_calibrated": true,
       "peers_narrow": false,
       "sources": {
-        "r": "r=0.1190 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.455: IZMJERENA — OLS tjednih log-prinosa klase ADPL vs CROBEX (2024-07-01..2026-07-10, n=105 tjedana, R²=0.144); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+        "r": "r=0.1193 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.46: IZMJERENA — OLS tjednih log-prinosa klase ADPL vs CROBEX (2024-07-01..2026-07-14, n=106 tjedana, R²=0.145); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=16.98 (n=3), P/B=8.85 (n=3), EV/EBITDA=26.96 (n=2). Skup ['KODT', 'DLKV', 'IG'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: KODT P/E=15.59 P/B=6.45; DLKV P/E=62.95 P/B=8.85; IG P/E=16.98 P/B=13.58"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=17.51 (n=3), P/B=8.45 (n=3), EV/EBITDA=26.01 (n=2). Skup ['KODT', 'DLKV', 'IG'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: KODT P/E=15.59 P/B=6.45; DLKV P/E=60.12 P/B=8.45; IG P/E=17.51 P/B=14.0"
       }
     },
     "assumption_flags": [],
@@ -4506,29 +4514,29 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 44.54121610616671,
-        "base": 52.4014307131373,
-        "high": 60.261645320107895,
+        "low": 42.67076369945213,
+        "base": 50.20089846994369,
+        "high": 57.73103324043524,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "lenses": {
             "pe": {
-              "mult": 16.98,
-              "per_share": 57.65
+              "mult": 17.51,
+              "per_share": 59.45
             },
             "ev_ebitda": {
-              "mult": 26.96,
-              "per_share": 116.88
+              "mult": 26.01,
+              "per_share": 112.54
             },
             "ev_ebit": {
-              "mult": 35.21,
-              "per_share": 52.4
+              "mult": 33.89,
+              "per_share": 50.2
             },
             "pb": {
-              "mult": 2.67,
-              "per_share": 72.63
+              "mult": 2.55,
+              "per_share": 69.35
             }
           },
           "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 12.5% / peer medijan 41.4% -> faktor 0.30 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
@@ -4536,25 +4544,25 @@
           "carrier": "ev_ebit",
           "carrier_reason": "nositelj po arhetipu 'industrial_forward' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
           "intra_spread": {
-            "spread_pct": 123.0,
-            "rule": "leće razmaknute 123% > 40% -> NE prosječi; bazu nosi 'ev_ebit', ostale su kontekst (v2 §3)",
+            "spread_pct": 124.0,
+            "rule": "leće razmaknute 124% > 40% -> NE prosječi; bazu nosi 'ev_ebit', ostale su kontekst (v2 §3)",
             "anomaly": "visok D&A (64% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=16.98 (n=3), P/B=8.85 (n=3), EV/EBITDA=26.96 (n=2). Skup ['KODT', 'DLKV', 'IG'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: KODT P/E=15.59 P/B=6.45; DLKV P/E=62.95 P/B=8.85; IG P/E=16.98 P/B=13.58"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=17.51 (n=3), P/B=8.45 (n=3), EV/EBITDA=26.01 (n=2). Skup ['KODT', 'DLKV', 'IG'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: KODT P/E=15.59 P/B=6.45; DLKV P/E=60.12 P/B=8.45; IG P/E=17.51 P/B=14.0"
           }
         }
       },
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 18.811320326607554,
-        "base": 21.993222169420335,
-        "high": 26.097104985916708,
+        "low": 18.731079956225845,
+        "base": 21.89142921411332,
+        "high": 25.963750388503936,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "wacc": 0.119035,
+          "wacc": 0.11932000000000001,
           "g_terminal": 0.04,
           "g1_explicit": 0.05,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
@@ -4591,9 +4599,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 18.811320326607554,
-      "zone_high": 26.097104985916708,
-      "dispersion": 0.2791798041675858,
+      "zone_low": 18.731079956225845,
+      "zone_high": 25.963750388503936,
+      "dispersion": 0.278568015947362,
       "divergent": false,
       "archetype": "industrial_forward",
       "anchor_methods": [
@@ -4604,7 +4612,7 @@
         "comps": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 1.333701542571049
+          "vs_zone_pct": 1.246385010648694
         },
         "dcf_fcf": {
           "role": "anchor",
@@ -4613,21 +4621,21 @@
         }
       },
       "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 21.993222169420335,
-      "all_methods_high": 52.4014307131373,
-      "dispersion_all": 0.580293479202534,
+      "all_methods_low": 21.89142921411332,
+      "all_methods_high": 50.20089846994369,
+      "dispersion_all": 0.5639235575191912,
       "method_bases": {
-        "comps": 52.4014307131373,
-        "dcf_fcf": 21.993222169420335
+        "comps": 50.20089846994369,
+        "dcf_fcf": 21.89142921411332
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: comps +133% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: comps +125% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
       ],
-      "vs_market_pct": 34.9,
+      "vs_market_pct": 32.5,
       "anchor_inconsistency": [
-        "comps +133% vs primarno sidro"
+        "comps +125% vs primarno sidro"
       ],
-      "reasoning": "Očekivani rast +5.0% godišnje procijenjen je iz zadnjeg izvješća — BROJČANI guidance uprave: rast prihoda 5% godišnje kroz 3 g, EBITDA marža 13%, CAPEX 8 M€/g. Od svakih 100 € prihoda firmi ostaje 12 € operativne zarade (EBITDA marža 12.2%). Novčani tok je izveden iz guidancea uprave — FCF PROXY iz guidancea: prihod 158 M€ × EBITDA marža 13% × (1−18% porez) − capex 8 M€ = 8.8 M€ — aproksimacija (zanemaruje kamate i obrtni kapital), guidance uprave citiran u growth_source. Diskontiran uz zahtijevani prinos 11.9% to daje 21.99 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +133% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Očekivani rast +5.0% godišnje procijenjen je iz zadnjeg izvješća — BROJČANI guidance uprave: rast prihoda 5% godišnje kroz 3 g, EBITDA marža 13%, CAPEX 8 M€/g. Od svakih 100 € prihoda firmi ostaje 12 € operativne zarade (EBITDA marža 12.2%). Novčani tok je izveden iz guidancea uprave — FCF PROXY iz guidancea: prihod 158 M€ × EBITDA marža 13% × (1−18% porez) − capex 8 M€ = 8.8 M€ — aproksimacija (zanemaruje kamate i obrtni kapital), guidance uprave citiran u growth_source. Diskontiran uz zahtijevani prinos 11.9% to daje 21.89 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +125% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null
     },
@@ -4638,8 +4646,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "11,90%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.455 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "11,93%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.46 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",
@@ -4653,7 +4661,7 @@
       },
       {
         "k": "Peer multipli",
-        "v": "P/E 16.98",
+        "v": "P/E 17.51",
         "why": "medijan iz baze (ZSE peeri istog sektora)"
       }
     ],
@@ -4697,37 +4705,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.11397058823529416,
+            "v": 0.06859205776173294,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.2572614107883817,
+            "v": 0.2333333333333334,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": 0.5264483627204029,
+            "v": 0.49118387909319905,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
-            "v": 0.4852941176470589,
+            "v": 0.4509803921568629,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": 1.8857142857142857,
+            "v": 1.7924528301886795,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
@@ -4747,9 +4755,9 @@
           },
           {
             "k": "52-tj min",
-            "v": 10.5,
+            "v": 10.6,
             "unit": "eur",
-            "basis": "2025-07-10",
+            "basis": "2025-07-14",
             "formula": "min close 365 d"
           }
         ]
@@ -4760,77 +4768,77 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": 127247395.2,
+            "v": 124307686.4,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase"
           },
           {
             "k": "EV",
-            "v": 151629668.2,
+            "v": 148689959.4,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
             "formula": "EV formula dokumentirana u docs/indicators.md"
           },
           {
             "k": "EV/Prihod",
-            "v": 0.9348522363329134,
+            "v": 0.9167278588382488,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / Prihod"
           },
           {
             "k": "EV/EBITDA",
-            "v": 7.237036996025992,
+            "v": 7.096729484997995,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBITDA"
           },
           {
             "k": "EV/EBIT",
-            "v": 17.939108430393787,
+            "v": 17.591315313499116,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBIT"
           },
           {
             "k": "P/E",
-            "v": 8.747552711185026,
+            "v": 8.545464034689003,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / neto dobit matici"
           },
           {
             "k": "P/S",
-            "v": 0.7845266258404834,
+            "v": 0.7664022483458187,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / prihod"
           },
           {
             "k": "P/CF",
-            "v": 6.619635953666906,
+            "v": 6.466707070248859,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / operativni CF"
           },
           {
             "k": "P/FCF",
-            "v": 9.431181406206445,
+            "v": 9.213299327515207,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / slobodni novčani tok"
           },
           {
             "k": "Earnings yield",
-            "v": 0.1143176878169998,
+            "v": 0.11702114665050993,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "neto dobit / trž.kap"
           },
           {
             "k": "P/B",
-            "v": 1.0711350977330825,
+            "v": 1.0463894024059155,
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)"
@@ -5103,7 +5111,7 @@
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.026402640264026403,
+            "v": 0.02702702702702703,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"

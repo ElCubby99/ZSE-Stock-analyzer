@@ -466,6 +466,15 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
     if bvps is None:
         return _missing(c, "shares_ex_treasury")
     roe = ni / eq
+    if roe <= p.perpetual_growth:
+        # (ROE−g)/(r−g) ≤ 0: fer P/B negativan/nula — metoda za going concern
+        # s pozitivnom knjigom NIJE definirana (M20: izvor negativnih zona)
+        return ValueRange(0, 0, 0,
+                          {"missing": ["roe>g"],
+                           "note": (f"ROE {roe:.1%} ≤ trajni rast g "
+                                    f"{p.perpetual_growth:.1%} — opravdani P/B "
+                                    "nije definiran (multiplikator ≤ 0)")},
+                          0.0)
     def v(r):
         if r <= p.perpetual_growth:
             return None
@@ -1140,10 +1149,27 @@ def reconcile(results: dict, sector: Optional[str] = None,
             zone_note += (f"; isključeno (nepozitivna baza): {', '.join(dropped)}")
         anchors = [prim] + [k for k in anchors if k != prim]
     else:
-        # sidro nije dostupno (npr. holding bez SOTP ulaza) -> pošten fallback
-        zone_low, zone_high = min(bases.values()), max(bases.values())
-        zone_note = ("sidrena metoda nije dostupna — zona je min–max svih "
+        # sidro nije dostupno (npr. holding bez SOTP ulaza) -> pošten fallback;
+        # M20: negativne baze (npr. DCF u godini negativnog FCF-a) NE definiraju
+        # zonu — vrijednost dionice ne može biti < 0 (ograničena odgovornost)
+        pos = [v for v in bases.values() if v > 0]
+        if not pos:
+            return {"status": "no_value"}
+        zone_low, zone_high = min(pos), max(pos)
+        zone_note = ("sidrena metoda nije dostupna — zona je min–max pozitivnih "
                      "baza (fallback); vidi 'skipped' za razlog")
+    # M20: donji rub zone ne može biti < 0 (ograničena odgovornost dioničara);
+    # negativna osjetljivost (npr. DCF pri r−1 p.b. blizu g) se REŽE, ne skriva
+    if zone_low < 0:
+        zone_low = 0.0
+        zone_note += "; donji rub ograničen na 0 (ograničena odgovornost)"
+    # M20: degenerirana točka-zona (osjetljivost kolabirala) -> minimalna
+    # širina ±2,5% oko sredine (isti duh kao 5pp floor kod SOTP diskonta)
+    if zone_high > 0 and (zone_high - zone_low) / zone_high < 0.05:
+        mid_z = (zone_low + zone_high) / 2
+        zone_low, zone_high = mid_z * 0.975, mid_z * 1.025
+        zone_note += "; minimalna širina zone ±2,5% (osjetljivost degenerirana)"
+
     lo_all, hi_all = min(bases.values()), max(bases.values())
     spread_all = (hi_all - lo_all) / hi_all if hi_all else 0
     # headline disperzija = širina SIDRENE zone (konsolidacija: sekundarne

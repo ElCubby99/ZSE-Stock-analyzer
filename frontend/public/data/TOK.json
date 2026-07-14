@@ -278,6 +278,10 @@
   "risks": {
     "cards": [
       {
+        "l": "KONCENTRACIJA I LIKVIDNOST",
+        "txt": "TOK: zadnja trgovina 2026-07-14: 100 kom / 1,700 € prometa (0 d)."
+      },
+      {
         "l": "PRETPOSTAVKE PROCJENE",
         "txt": "Procjena počiva na označenim pretpostavkama: β = 1,0."
       },
@@ -315,14 +319,14 @@
       {
         "class_ticker": "TOK",
         "last_trade": {
-          "date": "2026-07-10",
+          "date": "2026-07-14",
           "close_eur": 17.0,
-          "volume": 3370.0,
-          "turnover_eur": 57181.1
+          "volume": 100.0,
+          "turnover_eur": 1700.0
         },
-        "days_since_trade": 4,
-        "flag": "ok",
-        "note": "zadnja trgovina 2026-07-10: 3370 kom / 57,181 € prometa (4 d)"
+        "days_since_trade": 0,
+        "flag": "low",
+        "note": "zadnja trgovina 2026-07-14: 100 kom / 1,700 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -348,9 +352,9 @@
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRTOK0RA0001); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 17.0,
-        "trade_date": "2026-07-10",
-        "volume": 3370.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "trade_date": "2026-07-14",
+        "volume": 100.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -550,11 +554,11 @@
       {
         "class_ticker": "TOK",
         "last": {
-          "date": "2026-07-10",
+          "date": "2026-07-14",
           "close_eur": 17.0
         },
-        "prev_close_eur": 17.4,
-        "change_pct": -0.02298850574712641,
+        "prev_close_eur": 17.0,
+        "change_pct": 0.0,
         "high_52w_eur": 20.2,
         "low_52w_eur": 15.5,
         "avg_turnover_20d_eur": 14641.8,
@@ -1615,6 +1619,14 @@
       "volume": 3370.0,
       "turnover_eur": 57181.1,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "TOK",
+      "trade_date": "2026-07-14",
+      "close_eur": 17.0,
+      "volume": 100.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -1628,7 +1640,7 @@
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
-      "peer_pe": 13.38,
+      "peer_pe": 13.6,
       "peer_pb": 1.43,
       "rates_calibrated": true,
       "peers_calibrated": true,
@@ -1638,7 +1650,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.38 (n=3), P/B=1.43 (n=3), EV/EBITDA=7.08 (n=2). Skup ['ATGR', 'PODR', 'ZITO'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; ZITO P/E=13.38 P/B=1.28"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.6 (n=3), P/B=1.43 (n=3), EV/EBITDA=7.06 (n=2). Skup ['ATGR', 'PODR', 'ZITO'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.44 P/B=1.57; ZITO P/E=13.6 P/B=1.3"
       }
     },
     "assumption_flags": [
@@ -1662,16 +1674,16 @@
           "placeholder": false,
           "lenses": {
             "pe": {
-              "mult": 13.38,
-              "per_share": 15.21
+              "mult": 13.6,
+              "per_share": 15.46
             },
             "ev_ebitda": {
-              "mult": 7.08,
-              "per_share": 23.34
+              "mult": 7.06,
+              "per_share": 23.26
             },
             "ev_ebit": {
-              "mult": 12.11,
-              "per_share": 16.49
+              "mult": 12.08,
+              "per_share": 16.43
             },
             "pb": {
               "mult": 1.31,
@@ -1683,12 +1695,12 @@
           "carrier": "pb",
           "carrier_reason": "nositelj po arhetipu 'cyclical' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
           "intra_spread": {
-            "spread_pct": 53.0,
-            "rule": "leće razmaknute 53% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst (v2 §3)",
+            "spread_pct": 50.0,
+            "rule": "leće razmaknute 50% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst (v2 §3)",
             "anomaly": "poluga (neto dug/EBITDA 1.6); visok D&A (55% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.38 (n=3), P/B=1.43 (n=3), EV/EBITDA=7.08 (n=2). Skup ['ATGR', 'PODR', 'ZITO'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.52 P/B=1.58; ZITO P/E=13.38 P/B=1.28"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.6 (n=3), P/B=1.43 (n=3), EV/EBITDA=7.06 (n=2). Skup ['ATGR', 'PODR', 'ZITO'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.44 P/B=1.57; ZITO P/E=13.6 P/B=1.3"
           }
         }
       },
@@ -1816,7 +1828,7 @@
       },
       {
         "k": "Peer multipli",
-        "v": "P/E 13.38",
+        "v": "P/E 13.6",
         "why": "medijan iz baze (ZSE peeri istog sektora)"
       }
     ],
@@ -1862,30 +1874,30 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.05590062111801242,
+            "v": 0.03658536585365857,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
             "v": 0.011904761904761862,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": -0.08108108108108103,
+            "v": -0.06077348066298349,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": -0.0710382513661203,
             "unit": "%",
-            "basis": "EOD do 2026-07-10",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {

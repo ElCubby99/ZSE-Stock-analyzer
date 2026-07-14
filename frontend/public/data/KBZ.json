@@ -277,9 +277,9 @@
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 6419); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 39.8,
-        "trade_date": "2026-07-10",
-        "volume": 15.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "trade_date": "2026-07-14",
+        "volume": 0.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -503,11 +503,11 @@
       {
         "class_ticker": "KBZ",
         "last": {
-          "date": "2026-07-10",
+          "date": "2026-07-14",
           "close_eur": 39.8
         },
-        "prev_close_eur": 38.0,
-        "change_pct": 0.047368421052631504,
+        "prev_close_eur": 39.8,
+        "change_pct": 0.0,
         "high_52w_eur": 40.0,
         "low_52w_eur": 32.2,
         "avg_turnover_20d_eur": 3235.53,
@@ -1088,6 +1088,14 @@
       "volume": 15.0,
       "turnover_eur": 597.0,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "KBZ",
+      "trade_date": "2026-07-14",
+      "close_eur": 39.8,
+      "volume": 0.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -1308,37 +1316,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.07567567567567557,
+            "v": 0.047368421052631504,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
             "v": 0.1179775280898876,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
             "v": 0.06989247311827951,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": 0.06989247311827951,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
             "v": 0.14367816091954033,
             "unit": "%",
-            "basis": "EOD do 2026-07-10 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
@@ -1410,9 +1418,9 @@
           },
           {
             "k": "P/E",
-            "v": 10.915715533826058,
+            "v": 10.774836943252886,
             "unit": "x",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / neto dobit matici"
           },
           {
@@ -1441,16 +1449,16 @@
           },
           {
             "k": "Earnings yield",
-            "v": 0.09161103519976861,
+            "v": 0.09280882905854011,
             "unit": "%",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "neto dobit / trž.kap"
           },
           {
             "k": "P/B",
-            "v": 1.0584013579900884,
+            "v": 1.0393270136963966,
             "unit": "x",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)"
           }
         ]
@@ -1461,25 +1469,23 @@
         "items": [
           {
             "k": "Prihod YoY (kvartal)",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "kvartali još nisu u bazi za usporedbu"
+            "v": -0.03132961372911447,
+            "unit": "%",
+            "basis": "2026Q1 vs 2025Q1",
+            "formula": "diskretni kvartal vs isti lanjski (Q2=H1−Q1...)"
           },
           {
             "k": "EPS YoY (kvartal)",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "kvartali nedostupni"
+            "v": 0.058624183562345555,
+            "unit": "%",
+            "basis": "2026Q1 vs 2025Q1",
+            "formula": "neto dobit matici po kvartalu / dionice — isti-na-isti"
           },
           {
             "k": "Prihod (TTM/FY)",
-            "v": 23789773.15,
+            "v": 23610164.61,
             "unit": "meur",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "kumulativna derivacija"
           },
           {
@@ -1514,23 +1520,23 @@
           },
           {
             "k": "Neto marža",
-            "v": 0.29698805345691154,
+            "v": 0.3031599092269098,
             "unit": "%",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "Neto / prihod"
           },
           {
             "k": "ROE",
-            "v": 0.09696124406231289,
+            "v": 0.09645872315007184,
             "unit": "%",
-            "basis": "FY2025 / FY2025 (31.12.2025.)",
+            "basis": "TTM (do 31.03.2026.) / Kvartalno (31.03.2026.)",
             "formula": "neto dobit matici / knjiga matici"
           },
           {
             "k": "ROA",
-            "v": 0.011064248558504932,
+            "v": 0.011667949075788312,
             "unit": "%",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "neto dobit / ukupna imovina"
           }
         ]
@@ -1541,30 +1547,30 @@
         "items": [
           {
             "k": "Ukupna imovina",
-            "v": 638568302.4600002,
+            "v": 613445886.1200001,
             "unit": "meur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "bilanca"
           },
           {
             "k": "Novac",
-            "v": 101399082.98,
+            "v": 87218394.2,
             "unit": "meur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "novac i ekvivalenti"
           },
           {
             "k": "BVPS",
-            "v": 37.60388221305808,
+            "v": 38.294010908511034,
             "unit": "eur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "knjiga matici / dionice ex-trezor"
           },
           {
             "k": "Ukupne obveze",
-            "v": 565701266.8900002,
+            "v": 539241551.6000001,
             "unit": "meur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "imovina − kapital (izvedeno)"
           },
           {
@@ -1583,9 +1589,9 @@
           },
           {
             "k": "Kapital (ukupni)",
-            "v": 72867035.56999993,
+            "v": 74204334.51999998,
             "unit": "meur",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "bilanca"
           }
         ]
@@ -1745,9 +1751,9 @@
           },
           {
             "k": "Payout",
-            "v": 0.5896680501941212,
+            "v": 0.582057774572706,
             "unit": "%",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"
           },
           {
@@ -1774,23 +1780,23 @@
         "items": [
           {
             "k": "Broj zaposlenih",
-            "v": 190.0,
+            "v": 193.0,
             "unit": "count",
-            "basis": "FY2025 (31.12.2025.)",
+            "basis": "Kvartalno (31.03.2026.)",
             "formula": "TFI Opći podaci"
           },
           {
             "k": "Prihod/zaposlenom",
-            "v": 125209.33236842105,
+            "v": 122332.45911917098,
             "unit": "eur",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "prihod / broj zaposlenih"
           },
           {
             "k": "Dobit/zaposlenom",
-            "v": 37185.67589473683,
+            "v": 37086.29720207253,
             "unit": "eur",
-            "basis": "FY2025",
+            "basis": "TTM (do 31.03.2026.)",
             "formula": "neto dobit matici / broj zaposlenih"
           }
         ]

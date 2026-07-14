@@ -170,10 +170,10 @@
       "is_primary": true,
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 5510); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
-        "close_eur": 102.0,
-        "trade_date": "2025-01-02",
-        "volume": 3.0,
-        "source": "zse.hr securityHistory (web JSON)"
+        "close_eur": 130.0,
+        "trade_date": "2026-07-14",
+        "volume": 0.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
   ],
@@ -183,14 +183,14 @@
     "roe": 0.07966864915417839,
     "dps": null,
     "shares_ex_treasury": 2279473.0,
-    "market_cap_eur": 232506246.0,
+    "market_cap_eur": 296331490.0,
     "ebitda_eur": 40296793.0,
     "per_class": [
       {
         "class_ticker": "HIMR",
-        "price": 102.0,
-        "pe": 11.636907314448115,
-        "pb": 0.9270966860744592,
+        "price": 130.0,
+        "pe": 14.831352459590734,
+        "pb": 1.181593815585095,
         "div_yield": null,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
@@ -373,13 +373,13 @@
       {
         "class_ticker": "HIMR",
         "last": {
-          "date": "2025-01-02",
-          "close_eur": 102.0
+          "date": "2026-07-14",
+          "close_eur": 130.0
         },
         "prev_close_eur": 102.0,
-        "change_pct": 0.0,
-        "high_52w_eur": null,
-        "low_52w_eur": null,
+        "change_pct": 0.27450980392156854,
+        "high_52w_eur": 130.0,
+        "low_52w_eur": 130.0,
         "avg_turnover_20d_eur": 2201.923076923077,
         "data_from": "2024-07-18",
         "note": null
@@ -510,6 +510,14 @@
       "volume": 3.0,
       "turnover_eur": 306.0,
       "source": "zse.hr securityHistory (web JSON)"
+    },
+    {
+      "class_ticker": "HIMR",
+      "trade_date": "2026-07-14",
+      "close_eur": 130.0,
+      "volume": 0.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -634,8 +642,8 @@
       }
     ],
     "reconciliation": {
-      "zone_low": -243.7415365624005,
-      "zone_high": 105.18258562395782,
+      "zone_low": 102.55302098335888,
+      "zone_high": 107.81215026455676,
       "dispersion": 3.3173183575635794,
       "divergent": true,
       "archetype": "tourism",
@@ -652,7 +660,7 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "sidrena metoda nije dostupna — zona je min–max svih baza (fallback); vidi 'skipped' za razlog",
+      "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
       "all_methods_low": -243.7415365624005,
       "all_methods_high": 105.18258562395782,
       "dispersion_all": 3.3173183575635794,
@@ -661,19 +669,13 @@
         "dcf_fcf": -243.7415365624005
       },
       "qa_flags": [
-        "metode se međusobno razilaze 332% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa -247% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 332% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": -247.2,
+      "vs_market_pct": 23.6,
       "anchor_inconsistency": [],
       "reasoning": "Sidro nije dostupno — vidi preskočene metode i razloge.",
       "red_rules": [],
-      "market_implied": {
-        "implied_pe": 11.6,
-        "peer_pe": 12.0,
-        "implied_pe_note": "cijena implicira P/E 11.6× vs peer medijan 12.0× (placeholder)",
-        "narrative": "Tržišna cijena implicira multipl P/E 11.6×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      "market_implied": null
     },
     "sotp": null
   },
@@ -698,7 +700,6 @@
     ],
     "limitations": [
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
-      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
       "β = 1,0 — beta nije kalibrirana za ovu firmu (serija prekratka/nelikvidna) — vidi src/calibrate.py",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (docs/peers.md)"
     ],
@@ -730,40 +731,38 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.00990099009900991,
+            "v": 0.27450980392156854,
             "unit": "%",
-            "basis": "EOD do 2025-01-02 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.00990099009900991,
+            "v": 0.27450980392156854,
             "unit": "%",
-            "basis": "EOD do 2025-01-02 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema podataka"
+            "v": 0.27450980392156854,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
-            "v": 0.0,
+            "v": 0.27450980392156854,
             "unit": "%",
-            "basis": "EOD do 2025-01-02 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema podataka"
+            "v": 0.27450980392156854,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3G",
@@ -775,16 +774,16 @@
           },
           {
             "k": "52-tj maks",
-            "v": 104.0,
+            "v": 130.0,
             "unit": "eur",
-            "basis": "2024-11-11",
+            "basis": "2026-07-14",
             "formula": "max close 365 d"
           },
           {
             "k": "52-tj min",
-            "v": 100.0,
+            "v": 130.0,
             "unit": "eur",
-            "basis": "2024-11-21",
+            "basis": "2026-07-14",
             "formula": "min close 365 d"
           }
         ]
@@ -795,56 +794,56 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": 232506246.0,
+            "v": 296331490.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase"
           },
           {
             "k": "EV",
-            "v": 360272328.86,
+            "v": 424097572.86,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
             "formula": "EV formula dokumentirana u docs/indicators.md"
           },
           {
             "k": "EV/Prihod",
-            "v": 2.7314944761525943,
+            "v": 3.2154014749963453,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / Prihod"
           },
           {
             "k": "EV/EBITDA",
-            "v": 8.9941153099967,
+            "v": 10.587497754996377,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBITDA"
           },
           {
             "k": "EV/EBIT",
-            "v": 23.320529529879995,
+            "v": 27.45195558795007,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBIT"
           },
           {
             "k": "P/E",
-            "v": 13.837173529677516,
+            "v": 17.63561332213801,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / neto dobit matici"
           },
           {
             "k": "P/S",
-            "v": 1.7628040672165215,
+            "v": 2.2467110660602727,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / prihod"
           },
           {
             "k": "P/CF",
-            "v": 6.259317556573025,
+            "v": 7.977561591710718,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / operativni CF"
@@ -859,14 +858,14 @@
           },
           {
             "k": "Earnings yield",
-            "v": 0.0722690943967157,
+            "v": 0.05670344329588462,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "neto dobit / trž.kap"
           },
           {
             "k": "P/B",
-            "v": 0.9745387239871384,
+            "v": 1.2420591580228235,
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)"
@@ -1140,7 +1139,7 @@
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.045392156862745094,
+            "v": 0.03561538461538461,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"

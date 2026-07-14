@@ -15,7 +15,7 @@
 | CIAK | n/p | 2025 | 9 |  |
 | CKML | consumer | 2025 | 9 |  |
 | CRAL | n/p | 2025 | 9 |  |
-| CROS | insurance | 2025 | 0 | nadzorni obrazac — interim (FINREP layout) traži zaseban parser; TTM = n/p, FY s oznakom |
+| CROS | insurance | 2025 | 9 |  |
 | CTKS | industrial | 2025 | 7 |  |
 | DDJH | n/p | 2025 | 9 |  |
 | DLKV | industrial | 2025 | 9 |  |
@@ -25,18 +25,18 @@
 | GRNL | consumer | 2025 | 9 |  |
 | HEFA | tourism | 2025 | 9 |  |
 | HIMR | tourism | 2025 | 9 |  |
-| HPB | bank | 2025 | 0 | nadzorni obrazac — interim (FINREP layout) traži zaseban parser; TTM = n/p, FY s oznakom |
+| HPB | bank | 2025 | 9 |  |
 | HT | telecom | 2025 | 9 |  |
 | IG | industrial | 2025 | 5 |  |
 | IGH | n/p | 2025 | 8 |  |
-| IKBA | bank | 2025 | 0 | nadzorni obrazac — interim (FINREP layout) traži zaseban parser; TTM = n/p, FY s oznakom |
+| IKBA | bank | 2025 | 7 |  |
 | ILRA | tourism | 2025 | 9 |  |
 | INA | industrial | 2025 | 9 |  |
 | INGR | n/p | 2025 | 9 |  |
 | JDGT | industrial | 2025 | 9 |  |
 | JDPL | shipping | 2025 | 9 |  |
 | JDRN | tourism | 2025 | 9 |  |
-| KBZ | bank | 2025 | 0 | nadzorni obrazac — interim (FINREP layout) traži zaseban parser; TTM = n/p, FY s oznakom |
+| KBZ | bank | 2025 | 9 |  |
 | KODT | industrial | 2025 | 9 |  |
 | KOEI | holding | 2025 | 9 |  |
 | KRAS | consumer | 2025 | 9 |  |
@@ -49,12 +49,12 @@
 | MDSP | tourism | 2025 | 9 |  |
 | MONP | tourism | 2025 | 9 |  |
 | MRSK | consumer | 2025 | 9 |  |
-| PDBA | bank | 2025 | 0 | nadzorni obrazac — interim (FINREP layout) traži zaseban parser; TTM = n/p, FY s oznakom |
+| PDBA | bank | 2025 | 9 |  |
 | PLAG | tourism | 2025 | 9 |  |
 | PODR | consumer | 2025 | 8 |  |
 | QTLG | n/p | 2025 | 9 |  |
 | RIVP | tourism | 2025 | 9 |  |
-| SNBA | bank | 2025 | 0 | nadzorni obrazac — interim (FINREP layout) traži zaseban parser; TTM = n/p, FY s oznakom |
+| SNBA | bank | 2025 | 9 |  |
 | SPAN | technology | 2025 | 9 |  |
 | STJD | n/p | 2025 | 9 |  |
 | THNK | industrial | 2025 | 9 |  |
@@ -67,7 +67,7 @@
 | VIS | tourism | 2025 | 9 |  |
 | VJSN | n/p | 2025 | 9 |  |
 | VLEN | shipping | 2025 | 9 |  |
-| ZABA | bank | 2025 | 0 | nadzorni obrazac — interim (FINREP layout) traži zaseban parser; TTM = n/p, FY s oznakom |
+| ZABA | bank | 2025 | 9 |  |
 | ZB | other | 2025 | 9 |  |
 | ZITO | consumer | 2025 | 4 |  |
 | ZPKL | consumer | 2025 | 10 |  |

@@ -98,7 +98,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "PLAG: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski; PLAG2: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski."
+        "txt": "PLAG: u dostupnim podacima (od 2026-07-14) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski; PLAG2: u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -106,7 +106,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -5–292 € (raspon 102%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -5–294 € (raspon 102%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -140,7 +140,7 @@
         "last_trade": null,
         "days_since_trade": null,
         "flag": "very_low",
-        "note": "u dostupnim podacima (od —) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski"
+        "note": "u dostupnim podacima (od 2026-07-14) nema zabilježene trgovine — zadnji close je indikativan, ne transakcijski"
       },
       {
         "class_ticker": "PLAG2",
@@ -171,7 +171,12 @@
       "shares_ex_treasury": 2195426.0,
       "is_primary": true,
       "note": "redovne; povlaštene (420.000, PLAG2) namjerno ISKLJUČENE iz trž.kap — nema cijene, fiksna div 0,03 EUR (AR2025 str 148/203/216)",
-      "last_price": null
+      "last_price": {
+        "close_eur": 340.0,
+        "trade_date": "2026-07-14",
+        "volume": 0.0,
+        "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+      }
     },
     {
       "ticker": "PLAG2",
@@ -196,9 +201,9 @@
     "per_class": [
       {
         "class_ticker": "PLAG",
-        "price": null,
-        "pe": null,
-        "pb": null,
+        "price": 340.0,
+        "pe": 15.595861657722121,
+        "pb": 2.4914611520325454,
         "div_yield": null,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       },
@@ -388,8 +393,17 @@
     "classes": [
       {
         "class_ticker": "PLAG",
-        "last": null,
-        "note": "nema cijena u bazi"
+        "last": {
+          "date": "2026-07-14",
+          "close_eur": 340.0
+        },
+        "prev_close_eur": null,
+        "change_pct": null,
+        "high_52w_eur": 340.0,
+        "low_52w_eur": 340.0,
+        "avg_turnover_20d_eur": null,
+        "data_from": "2026-07-14",
+        "note": "povijest dostupna od 2026-07-14 — 52-tjedni raspon pokriva kraće razdoblje"
       },
       {
         "class_ticker": "PLAG2",
@@ -438,6 +452,14 @@
       "volume": 8.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "PLAG",
+      "trade_date": "2026-07-14",
+      "close_eur": 340.0,
+      "volume": 0.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": {
@@ -475,7 +497,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.36 (n=2). Skup ['RIVP', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.41 (n=2). Skup ['RIVP', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=24.15 P/B=3.33; ARNT P/E=13.63 P/B=0.96; MAIS P/E=20.42 P/B=1.76"
       }
     },
     "assumption_flags": [
@@ -490,9 +512,9 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 248.5276624152241,
-        "base": 292.3854851943813,
-        "high": 336.2433079735385,
+        "low": 250.04758211473003,
+        "base": 294.17362601732947,
+        "high": 338.2996699199289,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
@@ -503,12 +525,12 @@
               "per_share": 445.17
             },
             "ev_ebitda": {
-              "mult": 9.36,
-              "per_share": 292.39
+              "mult": 9.41,
+              "per_share": 294.17
             },
             "ev_ebit": {
-              "mult": 17.47,
-              "per_share": 339.2
+              "mult": 17.55,
+              "per_share": 340.95
             },
             "pb": {
               "mult": 1.76,
@@ -524,7 +546,7 @@
             "anomaly": "visok D&A (39% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.36 (n=2). Skup ['RIVP', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.81 P/B=3.28; ARNT P/E=13.43 P/B=0.95; MAIS P/E=20.42 P/B=1.76"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=1.76 (n=3), EV/EBITDA=9.41 (n=2). Skup ['RIVP', 'ARNT', 'MAIS'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=24.15 P/B=3.33; ARNT P/E=13.63 P/B=0.96; MAIS P/E=20.42 P/B=1.76"
           }
         }
       },
@@ -573,8 +595,8 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 248.5276624152241,
-      "zone_high": 336.2433079735385,
+      "zone_low": 250.04758211473003,
+      "zone_high": 338.2996699199289,
       "dispersion": 0.2608695652173913,
       "divergent": false,
       "archetype": "tourism",
@@ -595,18 +617,18 @@
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
       "all_methods_low": -5.158964838664164,
-      "all_methods_high": 292.3854851943813,
-      "dispersion_all": 1.0176443944720253,
+      "all_methods_high": 294.17362601732947,
+      "dispersion_all": 1.0175371426341269,
       "method_bases": {
-        "comps": 292.3854851943813,
+        "comps": 294.17362601732947,
         "dcf_fcf": -5.158964838664164
       },
       "qa_flags": [
         "metode se međusobno razilaze 102% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": 16.3,
+      "vs_market_pct": 15.6,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 37 € operativne zarade (EBITDA marža 37.1%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBITDA kao sektorski primjerena — sidro je 292.39 € po dionici. Leće se razilaze (85%) pa se ne prosječe; razlog: visok D&A (39% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 37 € operativne zarade (EBITDA marža 37.1%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBITDA kao sektorski primjerena — sidro je 294.17 € po dionici. Leće se razilaze (85%) pa se ne prosječe; razlog: visok D&A (39% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
       "market_implied": null
     },
@@ -660,7 +682,70 @@
       {
         "key": "izvedba",
         "title": "Izvedba dionice",
-        "items": []
+        "items": [
+          {
+            "k": "Povrat 1M",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 3M",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 6M",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat YTD",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 1G",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema podataka"
+          },
+          {
+            "k": "Povrat 3G",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "serija cijena prekratka"
+          },
+          {
+            "k": "52-tj maks",
+            "v": 340.0,
+            "unit": "eur",
+            "basis": "2026-07-14",
+            "formula": "max close 365 d"
+          },
+          {
+            "k": "52-tj min",
+            "v": 340.0,
+            "unit": "eur",
+            "basis": "2026-07-14",
+            "formula": "min close 365 d"
+          }
+        ]
       },
       {
         "key": "valuacija",
