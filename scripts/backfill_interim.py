@@ -44,7 +44,12 @@ def main(argv=None) -> int:
         if a.tickers:
             firms = a.tickers
         else:
-            cur.execute("SELECT ticker FROM companies WHERE is_live ORDER BY ticker")
+            # banke/osiguranje: kvartalni XLSX je FINREP nadzorni layout —
+            # industrijski parser bi djelomično (krivo) matchao -> preskok
+            # dok ne postoji zaseban FINREP parser (odobrena buduća faza)
+            cur.execute("""SELECT ticker FROM companies WHERE is_live
+                           AND COALESCE(sector,'') NOT IN ('bank','insurance')
+                           ORDER BY ticker""")
             firms = [r[0] for r in cur.fetchall()]
         for tick in firms:
             try:

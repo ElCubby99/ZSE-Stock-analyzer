@@ -52,6 +52,12 @@ def stage_extract_queue(conn, run_id, log) -> list[int]:
         try:
             # KORAK 2d: TFI-POD XLSX (kvartal) -> deterministički parser, 0 kredita
             if (url or "").lower().endswith(".xlsx"):
+                if sector in ("bank", "insurance"):
+                    # FINREP nadzorni layout — industrijski parser bi krivo
+                    # matchao; čeka zaseban parser (M19 nalaz)
+                    log("extract", cid, "needs_review",
+                        f"{ticker}: bankovni interim XLSX (FINREP) -> zaseban parser")
+                    continue
                 from scripts.parse_tfi_universe import ingest_tfi_xlsx
                 new_fid, parsed = ingest_tfi_xlsx(
                     conn, ticker, url, year, period_type or "annual",
