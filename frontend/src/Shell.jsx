@@ -99,10 +99,16 @@ export function SiteFooter() {
       <div className="ftr-in">
         <span className="ftr-main">
           Prikazani podaci, rasponi i fer-zone su informativni i analitički — ne
-          predstavljaju investicijski savjet ni poticaj na trgovanje. Vrijednosti
-          ilikvidnih dionica su indikativne. Zaključak je uvijek vaš.
+          predstavljaju investicijski savjet, preporuku ni poticaj na trgovanje.
+          Vrijednosti ilikvidnih dionica su indikativne. Zaključak je uvijek vaš.
         </span>
-        <span><a href="/metodologija" style={{ color: 'inherit' }}>Kako procjenjujemo</a> · Izvor: ZSE službeni EOD (dan zaostatka)</span>
+        <span className="ftr-links">
+          © 2026 Burzovni list ·{' '}
+          <a href="mailto:info@burzovnilist.com">info@burzovnilist.com</a> ·{' '}
+          <a href="/impressum">Impressum</a> ·{' '}
+          <a href="/metodologija">Metodologija</a> ·{' '}
+          Izvor: ZSE službeni EOD (dan zaostatka)
+        </span>
       </div>
     </footer>
   )

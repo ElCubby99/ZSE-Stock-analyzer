@@ -99,7 +99,7 @@ function Porez() {
   const porez = oslobodjen || dobit <= 0 ? 0 : dobit * 0.12
   return (
     <Card title="4 · Porez na kapitalni dobitak (HR)"
-      extra={'Pravila (provjereno 12.07.2026., Porezna uprava — "Dohodak od kapitala po osnovi kapitalnih dobitaka", porezna-uprava.gov.hr): stopa 12% na NETO dobitke (dobitci − gubitci iste godine) ako je imovina otuđena unutar 2 godine od stjecanja; nakon 2 godine držanja dobitak nije oporeziv; obračun i uplata do kraja veljače za prethodnu godinu. NIJE porezni savjet — provjerite s poreznim savjetnikom.'}>
+      extra={'Pravila (provjereno 14.07.2026., Porezna uprava — "Dohodak od kapitala po osnovi kapitalnih dobitaka" i "Oporezivanje kapitalnih dobitaka i izvješćivanje putem Obrasca JOPPD", porezna-uprava.gov.hr): stopa 12% na NETO dobitke (dobitci − gubitci iste godine) ako je imovina otuđena unutar 2 godine od stjecanja; nakon 2 godine držanja dobitak nije oporeziv i ne prijavljuje se; obračun, obustava i uplata (Obrazac JOPPD) do posljednjeg dana veljače za prethodnu godinu. NIJE porezni savjet — provjerite s poreznim savjetnikom.'}>
       <Num label="Prodajna vrijednost (€)" v={pr} set={setPr} />
       <Num label="Trošak stjecanja (€)" v={tr} set={setTr} />
       <Num label="Držanje (godine)" v={drz} set={setDrz} step={0.1} />

@@ -8,6 +8,7 @@ import Screener from './Screener.jsx'
 import Portfelj from './Portfelj.jsx'
 import { BlogIndex, BlogPost } from './Blog.jsx'
 import Metodologija from './Metodologija.jsx'
+import Impressum from './Impressum.jsx'
 import './styles.css'
 
 const router = createBrowserRouter([
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
   { path: '/blog/:slug', element: <BlogPost /> },
   { path: '/alati', element: <Alati /> },
   { path: '/metodologija', element: <Metodologija /> },
+  { path: '/impressum', element: <Impressum /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ])
 

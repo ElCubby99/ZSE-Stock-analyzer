@@ -2,7 +2,8 @@
 """Statični blog build: content/blog/*.md (frontmatter) -> frontend/public/blog/
 (index.json + <slug>.json s pre-renderiranim HTML-om). Bez backend poziva —
 frontend čita statične JSON-ove. Pokreće se ručno ili iz daily-ja (nightly).
-Markdown podskup: ## naslovi, odlomci, - liste, **bold**, *italic*."""
+Markdown podskup: ## naslovi, odlomci, - liste (i uvučeni nastavci stavke),
+1. numerirane liste, **bold**, *italic*, [tekst](url) linkovi."""
 import html
 import json
 import os
@@ -18,27 +19,39 @@ def md_to_html(md: str) -> str:
         s = html.escape(s)
         s = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
         s = re.sub(r"\*(.+?)\*", r"<em>\1</em>", s)
+        s = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", r'<a href="\2">\1</a>', s)
         return s
-    out, para, ul = [], [], []
+    out, para, ul, ol = [], [], [], []
 
     def flush():
         if ul:
             out.append("<ul>" + "".join(f"<li>{x}</li>" for x in ul) + "</ul>")
             ul.clear()
+        if ol:
+            out.append("<ol>" + "".join(f"<li>{x}</li>" for x in ol) + "</ol>")
+            ol.clear()
         if para:
             out.append("<p>" + " ".join(para) + "</p>")
             para.clear()
     for line in md.splitlines():
         s = line.strip()
+        m_ol = re.match(r"^(\d+)[.)]\s+(.*)", s)
         if s.startswith("## "):
             flush(); out.append(f"<h2>{inline(s[3:])}</h2>")
         elif s.startswith("- "):
-            if para: flush()
+            if para or ol: flush()
             ul.append(inline(s[2:]))
+        elif m_ol:
+            if para or ul: flush()
+            ol.append(inline(m_ol.group(2)))
         elif not s:
             flush()
+        elif (ul or ol) and line.startswith(("  ", "\t")):
+            # uvučeni nastavak višeretčane stavke liste — lijepi se na zadnju
+            tgt = ul if ul else ol
+            tgt[-1] += " " + inline(s)
         else:
-            if ul: flush()
+            if ul or ol: flush()
             para.append(inline(s))
     flush()
     return "\n".join(out)
