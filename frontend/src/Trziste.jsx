@@ -29,7 +29,14 @@ export default function Trziste() {
   const [key, setKey] = useState('vol')
   useEffect(() => { document.title = 'Tržište · Burzovni list' }, [])
   if (!ov) return <div className="wrap"><SiteHeader /><div className="loading">učitavam…</div></div>
-  const withChg = ov.stocks.filter((s) => s.change_pct !== null && s.change_pct !== undefined)
+  // zadnji trgovinski dan na tržištu (max datum EOD zapisa) — dobitnici i
+  // gubitnici DANA smiju biti samo dionice stvarno trgovane TAJ dan (ustajala
+  // promjena od prije nije "promjena dana")
+  const latestDate = ov.stocks.reduce((m, s) => (s.date && s.date > m ? s.date : m), '')
+  const fmtDate = latestDate
+    ? `${latestDate.slice(8, 10)}.${latestDate.slice(5, 7)}.${latestDate.slice(0, 4)}.` : null
+  const withChg = ov.stocks.filter((s) => s.change_pct !== null
+    && s.change_pct !== undefined && s.date === latestDate)
   const gainers = [...withChg].sort((a, b) => b.change_pct - a.change_pct).slice(0, 4)
   const losers = [...withChg].sort((a, b) => a.change_pct - b.change_pct).slice(0, 4)
   const list = [...ov.stocks].sort((a, b) => key === 'vol' ? (b.turnover || 0) - (a.turnover || 0)
@@ -40,7 +47,7 @@ export default function Trziste() {
       <main className="wrap-wide">
         <div className="mk-title">
           <h1>Tržište danas</h1>
-          <span>Zagrebačka burza · službeni EOD, dan zaostatka</span>
+          <span>Zagrebačka burza · službeni EOD{fmtDate ? ` za ${fmtDate}` : ''} (dan zaostatka)</span>
         </div>
         <div className="mk-idx">
           {ov.indices.length ? ov.indices.map((ix) => (
@@ -57,8 +64,12 @@ export default function Trziste() {
           </div>
         </div>
         <div className="mk-movers-grid">
-          <Movers title="Najveći dobitnici" list={gainers} nav={nav} />
-          <Movers title="Najveći gubitnici" list={losers} nav={nav} />
+          <Movers title={`Najveći dobitnici${fmtDate ? ` · ${fmtDate}` : ''}`} list={gainers} nav={nav} />
+          <Movers title={`Najveći gubitnici${fmtDate ? ` · ${fmtDate}` : ''}`} list={losers} nav={nav} />
+        </div>
+        <div className="subnote" style={{ marginTop: 6 }}>
+          Promjene se odnose na trgovinski dan {fmtDate || '—'}; dionice koje taj dan
+          nisu trgovane nisu u dobitnicima/gubitnicima (njihova zadnja cijena je starija).
         </div>
         <div className="mk-title2">
           <h2 className="mk-h2">Sve dionice</h2>
