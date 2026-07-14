@@ -25,7 +25,7 @@ from src.eho import feed  # noqa: E402
 from src.loader import load_extraction  # noqa: E402
 from src.validator import validate_filing  # noqa: E402
 
-PERIOD_MAP = {"1Q": "q1", "2Q": "h1", "3Q": "9m", "4Q": "q4"}
+PERIOD_MAP = {"1Q": "q1", "2Q": "h1", "1H": "h1", "3Q": "9m", "4Q": "q4"}
 SCRATCH = "/tmp/tfi_interim"
 
 

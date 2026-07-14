@@ -161,12 +161,16 @@ def parse_tfi(path: str) -> dict | None:
             src[item] = where
 
     put("total_assets", _find(bil, r"UKUPNO\s+AKTIVA"), "Bilanca: UKUPNO AKTIVA")
-    put("total_equity", _find(bil, r"^A\)\s*KAPITAL I REZERVE"), "Bilanca: KAPITAL I REZERVE")
+    put("total_equity",
+        _find(bil, r"^A\)\s*KAPITAL I REZERVE") or _find(bil, r"^A\s+KAPITAL I REZERVE"),
+        "Bilanca: KAPITAL I REZERVE")
     put("equity_parent", _find(bil, r"PRIPISANO IMATELJIMA KAPITALA MATICE"),
         "Bilanca: pripisano imateljima kapitala matice")
     put("minority_interests", _find(bil, r"MANJINSKI|NEKONTROLIRAJUĆI"),
         "Bilanca: manjinski interes")
-    put("cash_and_equivalents", _find(bil, r"NOVAC U BANCI I BLAGAJNI"),
+    put("cash_and_equivalents",
+        _find(bil, r"NOVAC U BANCI I BLAGAJNI")
+        or _find(bil, r"^III\s+NOVAC I NOVČANI EKVIVALENTI"),
         "Bilanca: novac u banci i blagajni")
     # kamatonosni dug: banke+krediti+obveznice u dugoročnim (C) i kratkoročnim (D)
     sec = None
@@ -207,25 +211,40 @@ def parse_tfi(path: str) -> dict | None:
 
     rev = _find(rdg, r"^I\.\s*POSLOVNI PRIHODI")
     opex = _find(rdg, r"^II\.\s*POSLOVNI RASHODI")
+    # Varijanta obrasca za financijske usluge (npr. ZB — burza): sekcije su
+    # slovima A–J umjesto rimskim brojevima; iste veličine, drugi anchori.
+    if rev is None:
+        rev = _find(rdg, r"^A\s+POSLOVNI PRIHODI")
+    if opex is None:
+        opex = _find(rdg, r"^B\s+POSLOVNI RASHODI")
     put("revenue", rev, "RDG: poslovni prihodi (kumulativ)")
     put("operating_expenses", opex, "RDG: poslovni rashodi (kumulativ)")
-    put("depreciation_amortization", _find(rdg, r"^\s*4?\.?\s*Amortizacija"),
+    put("depreciation_amortization",
+        _find(rdg, r"^\s*4?\.?\s*Amortizacija") or _find(rdg, r"^III\s+Amortizacija"),
         "RDG: amortizacija")
     put("material_costs", _find(rdg, r"Materijalni troškovi"),
         "RDG: materijalni troškovi (COGS proxy)")
     put("interest_expense",
         _find_in_section(rdg, r"^IV\.\s*FINANCIJSKI RASHODI", r"^(V|X)I*\.",
-                         r"kamat", agg=True),
-        "RDG: rashodi od kamata (unutar IV. financijski rashodi, zbroj)")
+                         r"kamat", agg=True)
+        or _find_in_section(rdg, r"^D\s+FINANCIJSKI RASHODI", r"^[E-J]\s+",
+                            r"kamat", agg=True),
+        "RDG: rashodi od kamata (unutar financijskih rashoda, zbroj)")
     if rev is not None and opex is not None:
         put("ebit", rev - opex, "RDG: poslovni prihodi − poslovni rashodi (izračun)")
     fp = _find(rdg, r"^III\.\s*FINANCIJSKI PRIHODI")
     fr_ = _find(rdg, r"^IV\.\s*FINANCIJSKI RASHODI")
+    if fp is None:
+        fp = _find(rdg, r"^C\s+FINANCIJSKI PRIHODI")
+    if fr_ is None:
+        fr_ = _find(rdg, r"^D\s+FINANCIJSKI RASHODI")
     if fp is not None and fr_ is not None:
         put("net_financial_result", fp - fr_, "RDG: fin. prihodi − fin. rashodi")
     put("pretax_income", _find(rdg, r"DOBIT ILI GUBITAK PRIJE OPOREZIVANJA"),
         "RDG: dobit prije oporezivanja")
-    put("income_tax", _find(rdg, r"^\s*XII?I?\.\s*POREZ NA DOBIT|^POREZ NA DOBIT"),
+    put("income_tax",
+        _find(rdg, r"^\s*XII?I?\.\s*POREZ NA DOBIT|^POREZ NA DOBIT")
+        or _find(rdg, r"^I\s+POREZ NA DOBIT"),
         "RDG: porez na dobit")
     put("net_income", _find(rdg, r"DOBIT ILI GUBITAK RAZDOBLJA(?!.*(matice|manjinsk))"),
         "RDG: dobit ili gubitak razdoblja")
@@ -259,6 +278,26 @@ def parse_tfi(path: str) -> dict | None:
             "NT_I: B) neto tokovi od investicijskih aktivnosti")
         put("financing_cf", _find(nt, r"NETO NOVČANI TOKOVI OD FINANCIJSKIH"),
             "NT_I: C) neto tokovi od financijskih aktivnosti")
+        # Starija NT varijanta (npr. ZB): nema NETO retke — neto tok = Ukupno
+        # povećanje − Ukupno smanjenje / primici − izdaci (objavljeni retci)
+        if items.get("operating_cf") is None:
+            up = _find(nt, r"Ukupno povećanje novčanog tijeka od poslovnih")
+            dn = _find(nt, r"Ukupno smanjenje novčanog tijeka od poslovnih")
+            if up is not None and dn is not None:
+                put("operating_cf", up - dn,
+                    "NT_I: povećanje − smanjenje od poslovnih aktivnosti (izračun)")
+        if items.get("investing_cf") is None:
+            up = _find(nt, r"Ukupno novčani primici od investicijskih")
+            dn = _find(nt, r"Ukupno novčani izdaci od investicijskih")
+            if up is not None and dn is not None:
+                put("investing_cf", up - dn,
+                    "NT_I: primici − izdaci od investicijskih aktivnosti (izračun)")
+        if items.get("financing_cf") is None:
+            up = _find(nt, r"Ukupno novčani primici od financijskih")
+            dn = _find(nt, r"Ukupno novčani izdaci od financijskih")
+            if up is not None and dn is not None:
+                put("financing_cf", up - dn,
+                    "NT_I: primici − izdaci od financijskih aktivnosti (izračun)")
     # M18: broj zaposlenih iz 'Opći podaci' (count, bez skale)
     if "Opći podaci" in wb.sheetnames:
         for row in wb["Opći podaci"].iter_rows(max_col=10):
