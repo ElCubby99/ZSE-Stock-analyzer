@@ -140,7 +140,7 @@ def stage_blog(log) -> None:
 
 
 def stage_regen(conn, run_id, log, changed: bool) -> None:
-stage_blog(log)
+    stage_blog(log)   # blog se regenerira svake noći, neovisno o promjenama
     if not changed:
         log("regen", None, "skipped", "ništa se nije promijenilo")
         return
