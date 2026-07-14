@@ -26,7 +26,8 @@ ANNOUNCEMENT_CATEGORIES = ["financial_report", "dividend", "gsa",
 MIN_CONFIDENCE = 0.85
 
 
-def _call(system: str, user: str, schema: dict) -> dict[str, Any]:
+def _call(system: str, user: str, schema: dict,
+          ticker: str | None = None) -> dict[str, Any]:
     import anthropic
 
     if not config.ANTHROPIC_API_KEY:
@@ -39,6 +40,10 @@ def _call(system: str, user: str, schema: dict) -> dict[str, Any]:
         output_config={"format": {"type": "json_schema", "schema": schema}},
         messages=[{"role": "user", "content": user}],
     )
+    # M19-A: trošak svakog poziva u api_usage (cijene u config/api_pricing.json)
+    from . import api_usage
+    api_usage.record("classification", resp.model or CLASSIFIER_MODEL,
+                     resp.usage, ticker=ticker)
     text = next((b.text for b in resp.content if getattr(b, "type", None) == "text"), None)
     if text is None:
         raise RuntimeError("klasifikator nije vratio JSON")
@@ -75,7 +80,7 @@ templatea (banka vs industrijski) i valuacijskih metoda.
 def classify_sector(ticker: str, name: str, evidence: str) -> dict[str, Any]:
     user = (f"Ticker: {ticker}\nSlužbeno ime: {name}\n"
             f"Dokazi (naslovi objava / opis):\n{evidence}\n")
-    return _call(SECTOR_SYSTEM, user, SECTOR_SCHEMA)
+    return _call(SECTOR_SYSTEM, user, SECTOR_SCHEMA, ticker=ticker)
 
 
 ANN_SCHEMA = {
@@ -99,4 +104,4 @@ broj dionica), other. Sudi samo iz naslova; nesigurno -> niži confidence.
 
 def classify_announcement(title: str, issuer: str | None = None) -> dict[str, Any]:
     user = f"Izdavatelj: {issuer or '—'}\nNaslov objave: {title}"
-    return _call(ANN_SYSTEM, user, ANN_SCHEMA)
+    return _call(ANN_SYSTEM, user, ANN_SCHEMA, ticker=issuer)

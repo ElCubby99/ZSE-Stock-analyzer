@@ -86,7 +86,7 @@ def stage_extract_queue(conn, run_id, log) -> list[int]:
                 from .extract import extract_bank_filing as _extract
             else:
                 from .extract import extract_filing as _extract
-            extraction = _extract(slice_text)
+            extraction = _extract(slice_text, ticker=ticker)
             new_fid = load_extraction(conn, extraction, source_url=url,
                                       doc_type="financial_report")
             res = validate_filing(conn, new_fid)
@@ -243,6 +243,15 @@ def build_digest(conn, run_id: str) -> str:
             "AND stage='watcher'", (run_id,))
         low_conf = cur.fetchone()[0]
     lines = [f"# Digest — {run_id}", ""]
+    # M19-A: dnevni + mjesečni API trošak s budžetom — bez ovoga trošak
+    # raste nevidljivo dok skaliramo
+    from . import api_usage
+    try:
+        lines.append(api_usage.digest_line(conn))
+        lines.append("")
+    except Exception as e:  # noqa: BLE001 — digest ne pada zbog troška
+        lines.append(f"API trošak: n/p ({type(e).__name__})")
+        lines.append("")
     lines.append("## Sažetak po koracima")
     for stage, status, n in counts:
         lines.append(f"- {stage}: {status} × {n}")

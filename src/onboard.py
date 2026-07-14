@@ -375,7 +375,7 @@ def stage_extract_validate(conn, run_id: str, cid: int, ticker: str, sector: str
         else:
             from .extract import extract_filing as _extract
         try:
-            extraction = _extract(slice_text)
+            extraction = _extract(slice_text, ticker=ticker)
         except RuntimeError as e:
             if "max_tokens" not in str(e):
                 raise
@@ -505,6 +505,17 @@ def process_company(conn, run_id: str, member: dict, tier: int,
         if is_live:
             result["state"] = "live"
             log(conn, run_id, "onboard:entity", cid, "skipped", f"{ticker}: već live")
+            return result
+
+        # M19-A: budžet gate — ne-hitne ekstrakcije (Tier >= 3) se pauziraju
+        # kad je mjesečni API budžet prekoračen; Tier 1 (hitne) uvijek prolaze
+        from . import api_usage
+        if tier >= 3 and not api_usage.allow_extraction(conn, urgent=False):
+            result["state"] = "skipped"
+            result["reasons"].append(
+                "mjesečni API budžet prekoračen — Tier 3 pauziran do kraja mjeseca")
+            log(conn, run_id, "onboard:budget", cid, "skipped",
+                f"{ticker}: API budžet prekoračen (Tier {tier})")
             return result
 
         manifest = stage_entity(conn, run_id, cid, ticker, member)

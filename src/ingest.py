@@ -49,7 +49,7 @@ def cmd_extract(a) -> None:
         from .extract import extract_filing as _extract
     with open(a.text, encoding="utf-8") as f:
         text = f.read()
-    extraction = _extract(text)
+    extraction = _extract(text, ticker=getattr(a, 'ticker', None))
     _ingest(extraction, a.source_url, a.published, a.doc_type)
 
 

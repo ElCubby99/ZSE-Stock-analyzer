@@ -183,7 +183,8 @@ BANK_EXTRACTION_SCHEMA = {
 
 
 def extract_bank_filing(report_text: str, *, model: str | None = None,
-                        max_tokens: int = 16000) -> dict[str, Any]:
+                        max_tokens: int = 16000,
+                        ticker: str | None = None) -> dict[str, Any]:
     """Bankovna varijanta extract_filinga (isti mehanizam, bankovni prompt/shema)."""
     import anthropic  # lazy import da testovi rade bez paketa
 
@@ -200,6 +201,11 @@ def extract_bank_filing(report_text: str, *, model: str | None = None,
         messages=[{"role": "user", "content": report_text}],
     ) as stream:
         resp = stream.get_final_message()
+
+    # M19-A: trošak se loguje i kad ekstrakcija dalje padne (poziv je plaćen)
+    from . import api_usage
+    api_usage.record("extraction", resp.model or model or config.ANTHROPIC_MODEL,
+                     resp.usage, ticker=ticker)
 
     if resp.stop_reason == "refusal":
         raise RuntimeError(f"Model je odbio zahtjev (refusal): {resp.stop_details}")
@@ -282,7 +288,8 @@ SEGMENT_SCHEMA = {
 
 
 def extract_segments(report_text: str, *, model: str | None = None,
-                     max_tokens: int = 8000) -> dict[str, Any]:
+                     max_tokens: int = 8000,
+                     ticker: str | None = None) -> dict[str, Any]:
     """IFRS 8 segmenti preko API-ja (isti mehanizam kao extract_filing)."""
     import anthropic  # lazy import da testovi rade bez paketa
 
@@ -299,6 +306,10 @@ def extract_segments(report_text: str, *, model: str | None = None,
         messages=[{"role": "user", "content": report_text}],
     ) as stream:
         resp = stream.get_final_message()
+
+    from . import api_usage
+    api_usage.record("segments", resp.model or model or config.ANTHROPIC_MODEL,
+                     resp.usage, ticker=ticker)
 
     if resp.stop_reason == "refusal":
         raise RuntimeError(f"Model je odbio zahtjev (refusal): {resp.stop_details}")
@@ -329,7 +340,8 @@ def parse_extraction(text: str) -> dict[str, Any]:
 
 
 def extract_filing(report_text: str, *, model: str | None = None,
-                   max_tokens: int = 16000) -> dict[str, Any]:
+                   max_tokens: int = 16000,
+                   ticker: str | None = None) -> dict[str, Any]:
     """Pozovi Anthropic API (Opus 4.8) i vrati validiran extraction dict.
 
     - Structured outputs (output_config.format): model je vezan na EXTRACTION_SCHEMA,
@@ -355,6 +367,10 @@ def extract_filing(report_text: str, *, model: str | None = None,
         messages=[{"role": "user", "content": report_text}],
     ) as stream:
         resp = stream.get_final_message()
+
+    from . import api_usage
+    api_usage.record("extraction", resp.model or model or config.ANTHROPIC_MODEL,
+                     resp.usage, ticker=ticker)
 
     if resp.stop_reason == "refusal":
         raise RuntimeError(f"Model je odbio zahtjev (refusal): {resp.stop_details}")

@@ -164,7 +164,7 @@ def main(argv=None) -> int:
         from .extract import extract_segments
         with open(a.text, encoding="utf-8") as f:
             text = f.read()
-        extraction = extract_segments(text)
+        extraction = extract_segments(text, ticker=getattr(a, 'ticker', None))
         if a.save_json:
             with open(a.save_json, "w", encoding="utf-8") as f:
                 json.dump(extraction, f, ensure_ascii=False, indent=2)

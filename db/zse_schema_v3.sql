@@ -74,3 +74,21 @@ CREATE TABLE IF NOT EXISTS business_profiles (
     source      TEXT,            -- dokument + metoda (API ekstrakcija / ručno s citatima)
     extracted_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- M19-A: praćenje troška API poziva (ekstrakcija/klasifikacija) + budžet alarm.
+-- Cijene po modelu drže se u config/api_pricing.json (NE hardkodirano).
+CREATE TABLE IF NOT EXISTS api_usage (
+    id            SERIAL PRIMARY KEY,
+    ts            TIMESTAMPTZ NOT NULL DEFAULT now(),
+    ticker        TEXT,                 -- firma (NULL = nije vezano uz firmu)
+    operation     TEXT NOT NULL,        -- extraction | segments | classification | ...
+    model         TEXT NOT NULL,
+    input_tokens  INTEGER NOT NULL DEFAULT 0,
+    output_tokens INTEGER NOT NULL DEFAULT 0,
+    cache_creation_input_tokens INTEGER NOT NULL DEFAULT 0,
+    cache_read_input_tokens     INTEGER NOT NULL DEFAULT 0,
+    batch         BOOLEAN NOT NULL DEFAULT FALSE,
+    est_cost_eur  NUMERIC NOT NULL     -- procjena iz config cijena u trenutku poziva
+);
+CREATE INDEX IF NOT EXISTS api_usage_ts_idx ON api_usage (ts);
+CREATE INDEX IF NOT EXISTS api_usage_ticker_idx ON api_usage (ticker);
