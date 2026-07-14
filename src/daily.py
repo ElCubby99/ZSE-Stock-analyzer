@@ -214,6 +214,15 @@ def stage_blog(log) -> None:
 
 def stage_regen(conn, run_id, log, changed: bool) -> None:
     stage_blog(log)   # blog se regenerira svake noći, neovisno o promjenama
+    # M22: dividendni kalendar — statusi ovise o DANAŠNJEM datumu (paid vs
+    # nadolazeća), pa se regenerira svake noći neovisno o promjenama podataka
+    try:
+        import subprocess
+        subprocess.run([os.sys.executable, "-m", "scripts.build_dividende"],
+                       check=True, capture_output=True, text=True)
+        log("regen", None, "ok", "dividende.json regeneriran")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"dividende.json: {type(e).__name__}: {e}")
     if not changed:
         log("regen", None, "skipped", "ništa se nije promijenilo")
         return

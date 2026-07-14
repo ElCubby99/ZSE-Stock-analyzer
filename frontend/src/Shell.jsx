@@ -64,6 +64,7 @@ export function SiteHeader() {
   const items = [
     { to: '/', label: 'TRŽIŠTE', end: true },
     { to: '/screener', label: 'SCREENER' },
+    { to: '/dividende', label: 'DIVIDENDE' },
     { to: '/portfelj', label: 'PORTFELJ' },
     { to: '/blog', label: 'BLOG' },
     { to: '/alati', label: 'ALATI' },
