@@ -102,3 +102,14 @@ create policy blog_media_update on storage.objects
 drop policy if exists blog_media_delete on storage.objects;
 create policy blog_media_delete on storage.objects
   for delete using (bucket_id = 'blog-media' and public.is_admin());
+
+-- M32.3 (nalaz s produkcije): kad se migracija izvršava kroz Management API
+-- (a ne SQL editor), Supabaseove default privilegije se NE primjenjuju pa
+-- service_role ostaje bez pristupa — Edge Functioni tada padaju s
+-- "permission denied". Grant je idempotentan i bezopasan u oba slučaja.
+do $$ begin
+  if exists (select 1 from pg_roles where rolname = 'service_role') then
+    grant all on public.blog_posts, public.blog_publish_log to service_role;
+    grant usage, select on all sequences in schema public to service_role;
+  end if;
+end $$;

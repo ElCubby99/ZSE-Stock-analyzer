@@ -158,3 +158,12 @@ begin
     drop table public.positions;
   end if;
 end $$;
+
+-- M32.3: service_role grant (Management API izvršavanje ne primjenjuje
+-- Supabase default privilegije; SQL editor ih primjenjuje — idempotentno).
+do $$ begin
+  if exists (select 1 from pg_roles where rolname = 'service_role') then
+    grant all on public.profiles, public.portfolios, public.portfolio_positions
+      to service_role;
+  end if;
+end $$;

@@ -46,3 +46,11 @@ revoke all on public.news_items from anon;
 revoke all on public.news_items from authenticated;
 grant select on public.news_items to anon;
 grant select, insert, update, delete on public.news_items to authenticated;
+
+-- M32.3: isti razlog kao u migration_blog.sql — service_role grant za
+-- Edge Functione kad se migracija izvršava kroz Management API.
+do $$ begin
+  if exists (select 1 from pg_roles where rolname = 'service_role') then
+    grant all on public.news_items to service_role;
+  end if;
+end $$;
