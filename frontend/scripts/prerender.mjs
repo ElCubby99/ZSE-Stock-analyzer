@@ -144,6 +144,47 @@ let posts = []
 try {
   posts = JSON.parse(await fs.readFile(path.join(DIST, 'blog/index.json'), 'utf8'))
 } catch { /* bez bloga */ }
+
+/* M27: CMS postovi iz Supabase (SAMO status=published — RLS to i garantira
+   za anon ključ). Markdown -> HTML uz ESCAPE sirovog HTML-a u izvoru
+   (nikad neprovjereni HTML u stranicu), pa marked. Bez env ključeva build
+   ostaje file-based (logirano). */
+const SB_URL = process.env.VITE_SUPABASE_URL
+const SB_KEY = process.env.VITE_SUPABASE_ANON_KEY
+if (SB_URL && SB_KEY) {
+  try {
+    const { marked } = await import('marked')
+    const r = await fetch(
+      `${SB_URL}/rest/v1/blog_posts?status=eq.published`
+      + `&select=slug,title,meta_description,content_md,tags,cover_image_url,published_at`
+      + `&order=published_at.desc`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } })
+    if (!r.ok) throw new Error(`REST ${r.status}`)
+    const cms = await r.json()
+    const seen = new Set(posts.map((p) => p.slug))
+    for (const c of cms) {
+      if (seen.has(c.slug)) continue // file-based post istog sluga ima prednost
+      const safeMd = String(c.content_md).replace(/</g, '&lt;')
+      const html = marked.parse(safeMd, { async: false })
+      const entry = {
+        slug: c.slug, title: c.title, category: 'Analize',
+        date: (c.published_at || '').slice(0, 10),
+        summary: c.meta_description || '',
+        cover_image_url: c.cover_image_url || null,
+      }
+      await fs.writeFile(path.join(DIST, `blog/${c.slug}.json`),
+        JSON.stringify({ ...entry, html }, null, 1))
+      posts.push(entry)
+    }
+    posts.sort((a, b) => String(b.date).localeCompare(String(a.date)))
+    await fs.writeFile(path.join(DIST, 'blog/index.json'), JSON.stringify(posts, null, 1))
+    console.log(`[prerender] CMS blog: ${cms.length} objavljenih postova iz Supabase`)
+  } catch (e) {
+    console.log(`[prerender] CMS blog preskočen (${e.message}) — file-based postovi ostaju`)
+  }
+} else {
+  console.log('[prerender] CMS blog preskočen — VITE_SUPABASE_URL/ANON_KEY nisu u build env')
+}
 for (const p of posts) {
   try {
     const post = JSON.parse(await fs.readFile(path.join(DIST, `blog/${p.slug}.json`), 'utf8'))

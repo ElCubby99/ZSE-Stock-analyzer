@@ -185,3 +185,30 @@ docs/    specifikacija ekstrakcije i validacije
 3. Deploy Edge Functiona: `supabase functions deploy delete-account`.
 4. Apple: tek nakon Apple Developer Programa —
    `VITE_AUTH_APPLE_ENABLED=true` u Vercelu + provider u Supabaseu.
+
+## Ručni koraci za Borisa (Blog CMS — M27)
+
+1. Supabase SQL Editor: pokreni `supabase/migration_blog.sql` (jednom).
+2. Postavi SEBE kao prvog admina (jednokratno, NE postoji kroz UI):
+   `update public.profiles set is_admin = true where id = '<tvoj auth.users id>';`
+   (id nađeš u Authentication → Users)
+3. Deploy Edge Functiona:
+   `supabase functions deploy blog-publish --no-verify-jwt`
+   `supabase functions deploy trigger-deploy`
+4. Secreti (Edge Functions → Secrets):
+   - `BLOG_API_KEY` = dug nasumični string (npr. `openssl rand -hex 32`);
+     ISTI ključ zalijepi u Cowork marketing skill STATE (lokalni Dropbox
+     fajl — NIKAD u javni repo ni SKILL.md plaintext)
+   - `VERCEL_DEPLOY_HOOK_URL` = postojeći hook (ili odvoji novi "content
+     deploy" hook na istom main branchu radi preglednosti u Vercel logovima)
+   (SUPABASE_URL/ANON_KEY/SERVICE_ROLE_KEY su automatski dostupni.)
+5. Provjera API-ja (agent flow):
+   ```
+   curl -X POST https://<ref>.supabase.co/functions/v1/blog-publish \
+     -H "x-api-key: $BLOG_API_KEY" -H "content-type: application/json" \
+     -d '{"slug":"probni-post","title":"Probni","content_md":"# Test","status":"published"}'
+   ```
+   → `{ ok: true, ..., deploy_triggered: true }`; bez ključa → 401.
+6. Vercel: provjeri da su `VITE_SUPABASE_URL` i `VITE_SUPABASE_ANON_KEY`
+   u build env (Production + Preview) — SSG build povlači objavljene
+   postove iz baze (anon ključ vidi SAMO published, RLS).

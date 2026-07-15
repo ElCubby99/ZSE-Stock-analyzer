@@ -1,0 +1,43 @@
+// M27: rebuild produkcije iz admin sučelja (na "Objavi"/"Ažuriraj").
+// Deploy: supabase functions deploy trigger-deploy
+// Autorizacija: JWT pozivatelja MORA pripadati adminu (profiles.is_admin);
+// deploy hook URL ostaje secret Edge Functiona — nikad u frontend.
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, content-type, apikey, x-client-info",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body),
+    { status, headers: { ...CORS, "Content-Type": "application/json" } });
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  if (req.method !== "POST") return json(405, { error: "POST only" });
+
+  const caller = createClient(
+    Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!,
+    { global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } } },
+  );
+  const { data: { user } } = await caller.auth.getUser();
+  if (!user) return json(401, { error: "neautoriziran" });
+  const { data: prof } = await caller.from("profiles")
+    .select("is_admin").eq("id", user.id).maybeSingle();
+  if (!prof?.is_admin) return json(403, { error: "nije admin" });
+
+  const admin = createClient(
+    Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    { auth: { autoRefreshToken: false, persistSession: false } },
+  );
+  let slug = "";
+  try { slug = String((await req.json())?.slug ?? ""); } catch { /* opcionalno */ }
+  await admin.from("blog_publish_log").insert(
+    { slug: slug || "(admin-ui)", status: "published", via: "admin_ui" });
+
+  const hook = Deno.env.get("VERCEL_DEPLOY_HOOK_URL");
+  if (!hook) return json(500, { error: "VERCEL_DEPLOY_HOOK_URL secret nije postavljen" });
+  const r = await fetch(hook, { method: "POST" });
+  return json(200, { ok: true, deploy_triggered: r.ok });
+});

@@ -76,7 +76,7 @@ function OAuthButtons({ setMsg }) {
 
 /* ---------- email+password (M9, zadržano) ---------- */
 
-function AuthForms({ onDemo }) {
+export function AuthForms({ onDemo }) {
   const [mode, setMode] = useState('login') // login | signup | reset
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
