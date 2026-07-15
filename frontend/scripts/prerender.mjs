@@ -173,9 +173,12 @@ const staticPages = [
     body: `<main><h1>Analiza dionica Zagrebačke burze</h1>
       <p>Fer vrijednost, CROBEX, dividende i pokazatelji za sve uvrštene dionice — službeni EOD podaci${eod ? ` (${esc(eod)})` : ''}.</p>
       <h2>Dionice</h2><ul>${[...byCompany.keys()].map((c) => `<li><a href="/dionica/${c.toLowerCase()}">${esc(c)}</a></li>`).join('')}</ul>
-      <p><a href="/dividende">Kalendar dividendi</a> · <a href="/metodologija">Metodologija</a> · <a href="/screener">Screener</a></p></main>` },
+      <p><a href="/usporedba">Usporedba dionica</a> · <a href="/dividende">Kalendar dividendi</a> · <a href="/metodologija">Metodologija</a> · <a href="/screener">Screener</a></p></main>` },
   { route: 'dividende', title: 'Kalendar dividendi ZSE — ex-datumi, isplate i prinosi | Burzovni list',
     description: 'Kalendar dividendi Zagrebačke burze: iznosi, ex-datumi, datumi isplate i dividendni prinosi svih firmi. Iz službenih objava, dnevno ažurirano.' },
+  { route: 'usporedba',
+    title: 'Usporedba dionica Zagrebačke burze — P/E, P/B, dividendni prinos | Burzovni list',
+    description: 'Usporedite sve dionice ZSE: P/E, P/B, EV/EBITDA, earnings yield, dividendni prinos, payout i raskorak od fer-zone — sortiranje, filtri i usporedba do 5 dionica.' },
   { route: 'screener', title: 'Screener dionica ZSE | Burzovni list',
     description: 'Screener svih dionica Zagrebačke burze: fer-zona, P/E, P/B, prinos, promet i sektor — sortiranje i filtriranje.' },
   { route: 'metodologija', title: 'Metodologija — kako procjenjujemo | Burzovni list',

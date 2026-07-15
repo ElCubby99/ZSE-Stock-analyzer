@@ -86,10 +86,26 @@ def build_stocks() -> list[dict]:
             for c in (d.get("metrics") or {}).get("per_class", [])
         }
 
+        # Z5: dodatni stupci za /usporedba (iz istih exporta — bez novih brojki)
+        mm = d.get("metrics") or {}
+        fin_sector = d.get("sector") in ("bank", "insurance", "fund")
+        ev_ebitda = None
+        if not fin_sector:
+            for g in (d.get("indicators") or {}).get("groups", []):
+                for it in g.get("items", []):
+                    if it.get("k") == "EV/EBITDA" and isinstance(it.get("v"), (int, float)):
+                        ev_ebitda = it["v"]
+        payout = None
+        for g in (d.get("indicators") or {}).get("groups", []):
+            for it in g.get("items", []):
+                if it.get("k") == "Payout" and isinstance(it.get("v"), (int, float)):
+                    payout = it["v"]
+
         for cls in (d.get("price_summary") or {}).get("classes", []):
             ct = cls.get("class_ticker")
             last = cls.get("last") or {}
             m = metrics.get(ct) or {}
+            pe = m.get("pe")
             stocks.append({
                 "ticker": ct,
                 "company": company,
@@ -101,10 +117,16 @@ def build_stocks() -> list[dict]:
                 "turnover": cls.get("avg_turnover_20d_eur"),
                 "zone_low": zone_low,
                 "zone_high": zone_high,
-                "pe": m.get("pe"),
+                "pe": pe,
                 "pb": m.get("pb"),
                 "div_yield": m.get("div_yield"),
                 "illiquid": liq_flags.get(ct) not in (None, "ok"),
+                # Z5 stupci
+                "market_cap": mm.get("market_cap_eur"),
+                "ev_ebitda": ev_ebitda,           # n/p za financijski sektor
+                "earnings_yield": (1.0 / pe) if pe and pe > 0 else None,
+                "payout": payout,
+                "is_financial": fin_sector,
             })
     return stocks
 

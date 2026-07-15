@@ -12,6 +12,7 @@ import { BlogIndex, BlogPost } from './Blog.jsx'
 import Metodologija from './Metodologija.jsx'
 import Impressum from './Impressum.jsx'
 import Dividende from './Dividende.jsx'
+import Usporedba from './Usporedba.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
 import { ConsentProvider, pushEvent } from './consent.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
@@ -71,6 +72,7 @@ const router = createBrowserRouter([
       { path: '/metodologija', element: <Metodologija /> },
       { path: '/impressum', element: <Impressum /> },
       { path: '/dividende', element: <Dividende /> },
+      { path: '/usporedba', element: <Usporedba /> },
       { path: '/auth/callback', element: <AuthCallback /> },
       { path: '/politika-kolacica', element: <PolitikaKolacica /> },
       { path: '/uvjeti-koristenja', element: <UvjetiKoristenja /> },
