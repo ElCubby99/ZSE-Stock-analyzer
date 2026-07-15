@@ -316,7 +316,8 @@
     "eps": 8.765215468663152,
     "bvps": 110.02088728403452,
     "roe": 0.07966864915417839,
-    "dps": null,
+    "dps": 4.63,
+    "dps_label": "zadnja isplata FY2025",
     "shares_ex_treasury": 2279473.0,
     "market_cap_eur": 296331490.0,
     "ebitda_eur": 40296793.0,
@@ -326,7 +327,7 @@
         "price": 130.0,
         "pe": 14.831352459590734,
         "pb": 1.181593815585095,
-        "div_yield": null,
+        "div_yield": 0.03561538461538461,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -527,7 +528,7 @@
     "events": [
       {
         "class_ticker": "HIMR",
-        "fiscal_year": null,
+        "fiscal_year": 2025,
         "amount_eur": 4.63,
         "div_type": "cash",
         "ex_date": "2026-04-24",
@@ -536,10 +537,75 @@
         "status": "paid",
         "status_hr": "isplaćena",
         "source_url": "https://zse.hr/hr/papir/310?isin=HRHIMRRA0001 (zse.hr stranica papira, blok 'Dividenda')"
+      },
+      {
+        "class_ticker": "HIMR",
+        "fiscal_year": 2024,
+        "amount_eur": 4.6299,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "HIMR_2025_4Q.xlsx: NT redak 'isplaćene dividende' 10,553,747 EUR u 2025. / 2,279,473 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
+      },
+      {
+        "class_ticker": "HIMR",
+        "fiscal_year": 2023,
+        "amount_eur": 4.6299,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "HIMR_2024_4Q.xlsx: NT redak 'isplaćene dividende' 10,553,747 EUR u 2024. / 2,279,473 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
+      },
+      {
+        "class_ticker": "HIMR",
+        "fiscal_year": 2022,
+        "amount_eur": 2.0704,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "HIMR_2024_4Q.xlsx: NT redak 'isplaćene dividende' 4,719,418 EUR u 2023. / 2,279,473 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
     "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "history": {
+      "per_year": [
+        {
+          "fiscal_year": 2025,
+          "amount_eur": 4.63
+        },
+        {
+          "fiscal_year": 2024,
+          "amount_eur": 4.6299
+        },
+        {
+          "fiscal_year": 2023,
+          "amount_eur": 4.6299
+        },
+        {
+          "fiscal_year": 2022,
+          "amount_eur": 2.0704
+        }
+      ],
+      "continuity": {
+        "paid_years": 4,
+        "window": 5,
+        "coverage_from": 2022,
+        "note": "isplata u 4 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2022"
+      },
+      "avg_amount_5y": 3.9901,
+      "growth_cagr": 0.3077,
+      "growth_note": "CAGR FY2022->FY2025"
+    },
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [
     {
@@ -1276,21 +1342,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 4.63,
+            "v": 2.0704,
             "unit": "eur",
-            "basis": "2026-04-24",
+            "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.03561538461538461,
+            "v": 0.015926153846153843,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.628099151396146,
+            "v": 0.28086749093965024,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"
@@ -1299,9 +1365,9 @@
             "k": "Zadnja isplata",
             "v": null,
             "unit": "date",
-            "basis": "2026-05-05",
+            "basis": "",
             "formula": "dividends tablica",
-            "note": "2026-05-05"
+            "note": "n/p"
           },
           {
             "k": "Sljedeći ex-datum",

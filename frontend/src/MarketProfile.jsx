@@ -284,9 +284,20 @@ export function Dividends({ data }) {
   // najbliža nadolazeća: izglasana ima prednost pred prijedlogom
   const next = pending.find((e) => e.status === 'upcoming') || pending[0] || null
 
+  const h = cal.history
   return (
     <>
       <h3 className="prof-h3">Dividende</h3>
+      {h && (
+        <div className="div-hist-strip">
+          <span><b>{h.continuity.paid_years} od 5</b> zadnjih fisk. godina s
+            isplatom <i className="fund-src">(podaci od FY{h.continuity.coverage_from})</i></span>
+          <span>prosjek (do 5 g.): <b>{num(h.avg_amount_5y, 2)} €</b>/dionici</span>
+          <span>rast dividende: <b>{h.growth_cagr !== null && h.growth_cagr !== undefined
+            ? `${h.growth_cagr > 0 ? '+' : ''}${num(h.growth_cagr * 100, 1)} %/g.` : 'n/p'}</b>
+            {' '}<i className="fund-src">({h.growth_note})</i></span>
+        </div>
+      )}
       <div className="prof-div-grid">
         <div>
           {paid.length ? (

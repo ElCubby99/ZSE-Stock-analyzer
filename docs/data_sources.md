@@ -57,7 +57,15 @@ Zadnja cjelovita provjera svih izvora: **14.07.2026.**
 - **Krhkost**: stranica papira je HTML bez verzioniranog API-ja — promjena
   predloška lomi scrape (gate: nevaljan red se preskače s razlogom).
   Prijedlog dividende NIJE isplata — vizualno razlikovano na /dividende.
-- **Zadnja provjera**: 14.07.2026.
+- **Povijest (Z2, 15.07.2026.)**: ZSE stranica papira nosi SAMO zadnju
+  dividendu. Povijesni zapisi izvode se deterministički iz NT obrazaca
+  (redak "isplaćene dividende", tekuća + prošla godina; ukupno / broj
+  dionica, samo firme s jednom klasom; označeno "izvedeno (NT obrazac)",
+  fiskalna godina = godina isplate − 1). POZNATI JAZ: EHO arhiva nema
+  per-issuer listing, a IR domene izdavatelja su blokirane mrežnom
+  politikom okruženja — za dublju povijest (>4 g.) treba whitelist
+  IR domena ili ručni unos s citatom.
+- **Zadnja provjera**: 15.07.2026.
 
 ## 4. Broj dionica / ISIN / klase
 

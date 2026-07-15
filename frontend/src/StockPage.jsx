@@ -470,6 +470,7 @@ function Metrics({ data }) {
       <div className="metric">
         <div className="k">Div. prinos</div><div className="v">{dash}</div>
         <div className="split"><Split perClass={m.per_class} field="div_yield" fmt={(v) => pct(v, 2)} /></div>
+        {m.dps_label && <div className="split">{m.dps_label}</div>}
       </div>
       <div className="metric">
         <div className="k">Tržišna kap.</div>

@@ -312,7 +312,8 @@
     "eps": 13.328153794165134,
     "bvps": 52.42188037397214,
     "roe": 0.25424791516602413,
-    "dps": null,
+    "dps": 13.52,
+    "dps_label": "zadnja isplata FY2025",
     "shares_ex_treasury": 1331650.0,
     "market_cap_eur": 267661650.0,
     "ebitda_eur": 26107167.0,
@@ -322,7 +323,7 @@
         "price": 201.0,
         "pe": 15.080858392254957,
         "pb": 3.8342768051448615,
-        "div_yield": null,
+        "div_yield": 0.0672636815920398,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -523,7 +524,7 @@
     "events": [
       {
         "class_ticker": "ERNT",
-        "fiscal_year": null,
+        "fiscal_year": 2025,
         "amount_eur": 13.52,
         "div_type": "cash",
         "ex_date": "2026-06-15",
@@ -532,10 +533,75 @@
         "status": "paid",
         "status_hr": "isplaćena",
         "source_url": "https://zse.hr/hr/papir/310?isin=HRERNTRA0000 (zse.hr stranica papira, blok 'Dividenda')"
+      },
+      {
+        "class_ticker": "ERNT",
+        "fiscal_year": 2024,
+        "amount_eur": 10.6163,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "ERNT_2025_4Q.xlsx: NT redak 'isplaćene dividende' 14,137,256 EUR u 2025. / 1,331,650 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
+      },
+      {
+        "class_ticker": "ERNT",
+        "fiscal_year": 2023,
+        "amount_eur": 14.9413,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "ERNT_2024_4Q.xlsx: NT redak 'isplaćene dividende' 19,896,567 EUR u 2024. / 1,331,650 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
+      },
+      {
+        "class_ticker": "ERNT",
+        "fiscal_year": 2022,
+        "amount_eur": 5.958,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "ERNT_2024_4Q.xlsx: NT redak 'isplaćene dividende' 7,934,021 EUR u 2023. / 1,331,650 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
     "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "history": {
+      "per_year": [
+        {
+          "fiscal_year": 2025,
+          "amount_eur": 13.52
+        },
+        {
+          "fiscal_year": 2024,
+          "amount_eur": 10.6163
+        },
+        {
+          "fiscal_year": 2023,
+          "amount_eur": 14.9413
+        },
+        {
+          "fiscal_year": 2022,
+          "amount_eur": 5.958
+        }
+      ],
+      "continuity": {
+        "paid_years": 4,
+        "window": 5,
+        "coverage_from": 2022,
+        "note": "isplata u 4 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2022"
+      },
+      "avg_amount_5y": 11.2589,
+      "growth_cagr": 0.3141,
+      "growth_note": "CAGR FY2022->FY2025"
+    },
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [
     {
@@ -4722,6 +4788,15 @@
     ],
     "changelog": [
       {
+        "date": "2026-07-15",
+        "old_low": 153.87460671979295,
+        "old_high": 206.84349027221737,
+        "new_low": 146.90552881628057,
+        "new_high": 194.4439250030876,
+        "reason": "Z1 (v2.2): disciplina bete — prag likvidnosti (sektorska beta za nelikvidne), Blume prilagodba, clamp [0,7, 1,8], premija nelikvidnosti na r",
+        "kind": "methodology"
+      },
+      {
         "date": "2026-07-14",
         "old_low": null,
         "old_high": null,
@@ -5147,21 +5222,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 13.52,
+            "v": 5.958,
             "unit": "eur",
-            "basis": "2026-06-15",
+            "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.0672636815920398,
+            "v": 0.02964179104477612,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.9945087266037443,
+            "v": 0.4382605764130998,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"
@@ -5170,9 +5245,9 @@
             "k": "Zadnja isplata",
             "v": null,
             "unit": "date",
-            "basis": "2026-07-07",
+            "basis": "",
             "formula": "dividends tablica",
-            "note": "2026-07-07"
+            "note": "n/p"
           },
           {
             "k": "Sljedeći ex-datum",

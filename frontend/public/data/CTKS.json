@@ -312,6 +312,7 @@
     "bvps": 65.82953058919331,
     "roe": 0.1989388620659549,
     "dps": null,
+    "dps_label": null,
     "shares_ex_treasury": 190345.0,
     "market_cap_eur": 19986225.0,
     "ebitda_eur": 3713101.0,
@@ -521,7 +522,8 @@
     "as_of": "2026-07-15",
     "events": [],
     "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "history": null,
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [
     {
@@ -747,7 +749,17 @@
       "β = 1.24 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
-    "changelog": [],
+    "changelog": [
+      {
+        "date": "2026-07-15",
+        "old_low": 146.61093010269212,
+        "old_high": 197.07940862341226,
+        "new_low": 102.59310307430631,
+        "new_high": 124.9911432394225,
+        "reason": "Z1 (v2.2): disciplina bete — prag likvidnosti (sektorska beta za nelikvidne), Blume prilagodba, clamp [0,7, 1,8], premija nelikvidnosti na r",
+        "kind": "methodology"
+      }
+    ],
     "notes": [
       "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
       "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",

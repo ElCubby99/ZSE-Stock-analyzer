@@ -498,6 +498,7 @@
     "bvps": 14.268651878782435,
     "roe": 0.09584905866930131,
     "dps": 0.61,
+    "dps_label": null,
     "shares_ex_treasury": 25607675.0,
     "market_cap_eur": 476302755.0,
     "ebitda_eur": null,
@@ -717,10 +718,59 @@
         "status": "paid",
         "status_hr": "isplaćena",
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67450"
+      },
+      {
+        "class_ticker": "ZITO",
+        "fiscal_year": 2024,
+        "amount_eur": 0.0462,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "ZITO_2025_4Q.xlsx: NT redak 'isplaćene dividende' 1,181,948 EUR u 2025. / 25,607,675 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
+      },
+      {
+        "class_ticker": "ZITO",
+        "fiscal_year": 2023,
+        "amount_eur": 0.9275,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "ZITO_2025_4Q.xlsx: NT redak 'isplaćene dividende' 23,750,000 EUR u 2024. / 25,607,675 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
     "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "history": {
+      "per_year": [
+        {
+          "fiscal_year": 2025,
+          "amount_eur": 0.61
+        },
+        {
+          "fiscal_year": 2024,
+          "amount_eur": 0.0462
+        },
+        {
+          "fiscal_year": 2023,
+          "amount_eur": 0.9275
+        }
+      ],
+      "continuity": {
+        "paid_years": 3,
+        "window": 5,
+        "coverage_from": 2023,
+        "note": "isplata u 3 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2023"
+      },
+      "avg_amount_5y": 0.5279,
+      "growth_cagr": -0.189,
+      "growth_note": "CAGR FY2023->FY2025"
+    },
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [
     {
@@ -3216,21 +3266,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 0.61,
+            "v": 0.9275,
             "unit": "eur",
-            "basis": "2026-06-25",
+            "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.03279569892473118,
+            "v": 0.049865591397849456,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.4460248343898121,
+            "v": 0.6781771047484438,
             "unit": "%",
             "basis": "FY2025",
             "formula": "DPS × dionice / neto dobit"
@@ -3239,9 +3289,9 @@
             "k": "Zadnja isplata",
             "v": null,
             "unit": "date",
-            "basis": "2026-07-03",
+            "basis": "",
             "formula": "dividends tablica",
-            "note": "2026-07-03"
+            "note": "n/p"
           },
           {
             "k": "Sljedeći ex-datum",

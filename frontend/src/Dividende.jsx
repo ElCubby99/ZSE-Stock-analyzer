@@ -15,8 +15,9 @@ const FILTERS = [
 
 const COLS = [
   ['company', 'DIONICA', 'l'], ['amount_eur', 'IZNOS €', 'r'],
-  ['yield_now', 'PRINOS', 'r'], ['ex_date', 'EX-DATUM', 'r'],
-  ['payment_date', 'ISPLATA', 'r'], ['status', 'STATUS', 'l'],
+  ['yield_now', 'PRINOS', 'r'], ['continuity', 'KONTINUITET', 'r'],
+  ['ex_date', 'EX-DATUM', 'r'], ['payment_date', 'ISPLATA', 'r'],
+  ['status', 'STATUS', 'l'],
 ]
 
 function StatusBadge({ s }) {
@@ -29,13 +30,16 @@ function StatusBadge({ s }) {
 
 const fmtD = (d) => (d ? `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}.` : '—')
 
-function Row({ r, nav }) {
+function Row({ r, nav, hist }) {
+  const h = hist?.[r.company]
   return (
     <div className="mk-row div-row" onClick={() => nav(`/dionica/${String(r.company).toLowerCase()}`)}>
       <span className="mk-name"><b>{r.class_ticker}</b><em>{r.name}</em></span>
       <span className="r mono">{num(r.amount_eur, 2)}</span>
       <span className="r mono">{r.yield_now === null || r.yield_now === undefined
         ? <i className="np">n/p</i> : `${num(r.yield_now * 100, 2)} %`}</span>
+      <span className="r mono" title={h ? `podaci od FY${h.coverage_from}; prosjek do 5 g.: ${num(h.avg_amount_5y, 2)} €` : undefined}>
+        {h ? `${h.paid_years_of_5}/5` : '—'}</span>
       <span className="r mono">{fmtD(r.ex_date)}</span>
       <span className="r mono dim">{fmtD(r.payment_date)}</span>
       <span>
@@ -110,7 +114,7 @@ export default function Dividende() {
                 <span>DIONICA</span><span className="r">IZNOS €</span><span className="r">PRINOS</span>
                 <span className="r">EX-DATUM</span><span className="r">ISPLATA</span><span>STATUS</span>
               </div>
-              {soon.map((r, i) => <Row r={r} nav={nav} key={i} />)}
+              {soon.map((r, i) => <Row r={r} nav={nav} hist={data.history} key={i} />)}
             </div></div>
             <div className="subnote">
               Tko drži dionicu na kraju dana prije ex-datuma ima pravo na isplatu;
@@ -138,7 +142,7 @@ export default function Dividende() {
                 </button>
               ))}
             </div>
-            {rows.length ? rows.map((r, i) => <Row r={r} nav={nav} key={i} />)
+            {rows.length ? rows.map((r, i) => <Row r={r} nav={nav} hist={data.history} key={i} />)
               : <div className="prof-empty-box">Nema zapisa za odabrani filter.</div>}
             <div className="mk-legend">
               <span>PRINOS = iznos / zadnja cijena te klase — informativan podatak, ne rang ni preporuka</span>

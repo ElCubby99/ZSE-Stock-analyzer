@@ -312,7 +312,8 @@
     "eps": 0.8798895131086142,
     "bvps": 8.0547354556804,
     "roe": 0.10923878480553875,
-    "dps": null,
+    "dps": 0.5,
+    "dps_label": "zadnja isplata FY2024",
     "shares_ex_treasury": 16020000.0,
     "market_cap_eur": 174618000.0,
     "ebitda_eur": 31067335.0,
@@ -322,7 +323,7 @@
         "price": 10.9,
         "pe": 12.387918980294174,
         "pb": 1.353241215676804,
-        "div_yield": null,
+        "div_yield": 0.04587155963302752,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -523,7 +524,7 @@
     "events": [
       {
         "class_ticker": "CKML",
-        "fiscal_year": null,
+        "fiscal_year": 2024,
         "amount_eur": 0.5,
         "div_type": "cash",
         "ex_date": "2025-08-26",
@@ -532,10 +533,43 @@
         "status": "paid",
         "status_hr": "isplaćena",
         "source_url": "https://zse.hr/hr/papir/310?isin=HRCKMLRA0008 (zse.hr stranica papira, blok 'Dividenda')"
+      },
+      {
+        "class_ticker": "CKML",
+        "fiscal_year": 2023,
+        "amount_eur": 0.0642,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
+        "status": "paid",
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "CKML_2024_4Q.xlsx: NT redak 'isplaćene dividende' 1,029,000 EUR u 2024. / 16,020,000 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
     "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "history": {
+      "per_year": [
+        {
+          "fiscal_year": 2024,
+          "amount_eur": 0.5
+        },
+        {
+          "fiscal_year": 2023,
+          "amount_eur": 0.0642
+        }
+      ],
+      "continuity": {
+        "paid_years": 2,
+        "window": 5,
+        "coverage_from": 2023,
+        "note": "isplata u 2 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2023"
+      },
+      "avg_amount_5y": 0.2821,
+      "growth_cagr": null,
+      "growth_note": "rast n/p (manje od 3 godine podataka)"
+    },
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [
     {
@@ -2832,6 +2866,15 @@
     ],
     "changelog": [
       {
+        "date": "2026-07-15",
+        "old_low": 8.687850534143461,
+        "old_high": 11.678504762764273,
+        "new_low": 8.993467204578167,
+        "new_high": 12.237512655856225,
+        "reason": "Z1 (v2.2): disciplina bete — prag likvidnosti (sektorska beta za nelikvidne), Blume prilagodba, clamp [0,7, 1,8], premija nelikvidnosti na r",
+        "kind": "methodology"
+      },
+      {
         "date": "2026-07-14",
         "old_low": null,
         "old_high": null,
@@ -3258,21 +3301,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 0.5,
+            "v": 0.0642,
             "unit": "eur",
-            "basis": "2025-08-26",
+            "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.04587155963302752,
+            "v": 0.005889908256880733,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.6396563456265274,
+            "v": 0.0821318747784461,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"
@@ -3281,9 +3324,9 @@
             "k": "Zadnja isplata",
             "v": null,
             "unit": "date",
-            "basis": "2025-09-18",
+            "basis": "",
             "formula": "dividends tablica",
-            "note": "2025-09-18"
+            "note": "n/p"
           },
           {
             "k": "Sljedeći ex-datum",

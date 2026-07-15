@@ -39,7 +39,9 @@ def main() -> int:
         for (tick, name, ct, fy, amt, dtyp, ex, rec, pay, src,
              close) in cur.fetchall():
             # status istom logikom kao profil (jedan izvor istine za oznake)
-            if pay is not None and pay <= today:
+            if dtyp and "izvedeno" in dtyp:
+                status = "paid"  # Z2: povijesni izvedeni zapis (NT) = isplaćen
+            elif pay is not None and pay <= today:
                 status = "paid"
             elif dtyp and "rijedlog" in (dtyp or ""):
                 status = "proposed"
@@ -64,9 +66,33 @@ def main() -> int:
                 "yield_now": (amt_f / close_f) if close_f else None,
                 "source_url": src,
             })
+        # Z2: povijest po firmi -> kontinuitet i prosjek za kalendar
+        cur.execute(
+            """SELECT c.ticker,
+                      COALESCE(d.fiscal_year,
+                        EXTRACT(YEAR FROM COALESCE(d.ex_date, d.payment_date))::int - 1) fy,
+                      MAX(d.amount_eur)
+               FROM dividends d JOIN companies c ON c.id=d.company_id
+               WHERE d.div_type NOT ILIKE '%%rijedlog%%' AND d.amount_eur IS NOT NULL
+               GROUP BY 1, 2""")
+        per_firm = {}
+        for tick, fy, amt in cur.fetchall():
+            if fy is not None:
+                per_firm.setdefault(tick, {})[int(fy)] = float(amt)
+        history = {}
+        for tick, byfy in per_firm.items():
+            years = sorted(byfy, reverse=True)
+            window = set(range(max(years) - 4, max(years) + 1))
+            last5 = years[:5]
+            history[tick] = {
+                "paid_years_of_5": len([y for y in years if y in window]),
+                "coverage_from": min(years),
+                "avg_amount_5y": round(sum(byfy[y] for y in last5) / len(last5), 4),
+            }
     out = {
         "as_of": str(today),
         "rows": rows,
+        "history": history,
         "note": ("Izvor: EHO objave izdavatelja (odluke glavnih skupština / "
                  "obavijesti o dividendi). Prinos = iznos / zadnja cijena te "
                  "klase (informativan podatak, ne preporuka). Prijedlozi NISU "

@@ -426,7 +426,8 @@
     "eps": -3.695464217516587,
     "bvps": 107.52370171768482,
     "roe": -0.03436883364766803,
-    "dps": null,
+    "dps": 5.0,
+    "dps_label": "zadnja isplata FY2024",
     "shares_ex_treasury": 668749.0,
     "market_cap_eur": 49821800.5,
     "ebitda_eur": null,
@@ -436,7 +437,7 @@
         "price": 74.5,
         "pe": null,
         "pb": 0.6928704909695897,
-        "div_yield": null,
+        "div_yield": 0.06711409395973154,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -661,7 +662,7 @@
     "events": [
       {
         "class_ticker": "PDBA",
-        "fiscal_year": null,
+        "fiscal_year": 2024,
         "amount_eur": 5.0,
         "div_type": "cash",
         "ex_date": "2025-05-16",
@@ -673,7 +674,24 @@
       }
     ],
     "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "history": {
+      "per_year": [
+        {
+          "fiscal_year": 2024,
+          "amount_eur": 5.0
+        }
+      ],
+      "continuity": {
+        "paid_years": 1,
+        "window": 5,
+        "coverage_from": 2024,
+        "note": "isplata u 1 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2024"
+      },
+      "avg_amount_5y": 5.0,
+      "growth_cagr": null,
+      "growth_note": "rast n/p (manje od 3 godine podataka)"
+    },
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [
     {
@@ -939,7 +957,17 @@
       "β = 1.05 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
-    "changelog": [],
+    "changelog": [
+      {
+        "date": "2026-07-15",
+        "old_low": 81.8873192979732,
+        "old_high": 86.08666900556157,
+        "new_low": 78.8252703452502,
+        "new_high": 82.86759190141687,
+        "reason": "Z1 (v2.2): disciplina bete — prag likvidnosti (sektorska beta za nelikvidne), Blume prilagodba, clamp [0,7, 1,8], premija nelikvidnosti na r",
+        "kind": "methodology"
+      }
+    ],
     "notes": [
       "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
       "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",

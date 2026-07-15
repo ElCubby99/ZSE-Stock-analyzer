@@ -860,18 +860,43 @@ def _price_summary(cur, classes: list[dict], as_of) -> dict:
     }
 
 
+def _last_dividend(cur, company_id: int):
+    """Z2: zadnja STVARNA dividenda (bez prijedloga) + fiskalna godina —
+    DIV. PRINOS se računa iz zadnje izglasane isplate, ne '—'."""
+    cur.execute(
+        """SELECT amount_eur,
+                  COALESCE(fiscal_year,
+                           EXTRACT(YEAR FROM COALESCE(ex_date, payment_date))::int - 1)
+           FROM dividends
+           WHERE company_id=%s AND div_type NOT ILIKE '%%rijedlog%%'
+             AND amount_eur IS NOT NULL
+           ORDER BY 2 DESC NULLS LAST,
+                    COALESCE(ex_date, payment_date) DESC NULLS LAST
+           LIMIT 1""", (company_id,))
+    r = cur.fetchone()
+    if not r:
+        return None, None
+    return _f(r[0]), (int(r[1]) if r[1] is not None else None)
+
+
 def _dividend_calendar(cur, company_id: int, as_of) -> dict:
     """Jedinstveni pogled: isplaćene (povijest) + izglasane/najavljene nadolazeće.
-    Statusi iz PODATAKA (datumi iz EHO objava) — datumi koji fale ostaju null."""
+    Statusi iz PODATAKA (datumi iz EHO objava) — datumi koji fale ostaju null.
+    Z2: + povijest po fiskalnim godinama i metrike (kontinuitet, rast, prosjek)."""
     cur.execute(
         """SELECT class_ticker, fiscal_year, amount_eur, div_type, ex_date,
                   record_date, payment_date, source_url
            FROM dividends WHERE company_id=%s
-           ORDER BY COALESCE(ex_date, payment_date) DESC NULLS LAST, class_ticker""",
+           ORDER BY COALESCE(fiscal_year,
+                    EXTRACT(YEAR FROM COALESCE(ex_date, payment_date))::int - 1)
+                    DESC NULLS LAST, class_ticker""",
         (company_id,))
     events, n_upcoming = [], 0
     for ct, fy, amt, dtyp, ex, rec, pay, src in cur.fetchall():
-        if pay is not None and pay <= as_of:
+        derived = bool(dtyp and "izvedeno" in dtyp)
+        if derived:
+            status, label = "paid", "isplaćena (izvedeno iz NT obrasca)"
+        elif pay is not None and pay <= as_of:
             status, label = "paid", "isplaćena"
         elif dtyp and "rijedlog" in dtyp:
             status, label = "proposed", "prijedlog (nije izglasana)"
@@ -880,17 +905,52 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
         if status != "paid":
             n_upcoming += 1
         events.append({
-            "class_ticker": ct, "fiscal_year": fy, "amount_eur": _f(amt),
+            "class_ticker": ct,
+            "fiscal_year": (fy if fy is not None
+                            else (int(str(ex)[:4]) - 1 if ex else None)),
+            "amount_eur": _f(amt),
             "div_type": dtyp, "ex_date": str(ex) if ex else None,
             "record_date": str(rec) if rec else None,
             "payment_date": str(pay) if pay else None,
             "status": status, "status_hr": label, "source_url": src,
         })
+    # Z2: povijest po fiskalnoj godini (bez prijedloga; jedan iznos po FY —
+    # primarna/prva klasa) + metrike
+    by_fy = {}
+    for e in events:
+        if e["status"] == "proposed" or e["fiscal_year"] is None or not e["amount_eur"]:
+            continue
+        by_fy.setdefault(e["fiscal_year"], e["amount_eur"])
+    history = None
+    if by_fy:
+        years = sorted(by_fy, reverse=True)
+        last5 = years[:5]
+        window_years = set(range(max(years) - 4, max(years) + 1))
+        cont = len([y for y in years if y in window_years])
+        cagr = None
+        if len(years) >= 3 and by_fy[years[-1]] > 0 and by_fy[years[0]] > 0:
+            span = years[0] - years[-1]
+            if span > 0:
+                cagr = (by_fy[years[0]] / by_fy[years[-1]]) ** (1 / span) - 1
+        history = {
+            "per_year": [{"fiscal_year": y, "amount_eur": by_fy[y]} for y in years],
+            "continuity": {"paid_years": cont, "window": 5,
+                           "coverage_from": min(years),
+                           "note": (f"isplata u {cont} od zadnjih 5 fiskalnih godina; "
+                                    f"podaci dostupni od FY{min(years)}")},
+            "avg_amount_5y": round(sum(by_fy[y] for y in last5) / len(last5), 4),
+            "growth_cagr": (_f(round(cagr, 4)) if cagr is not None else None),
+            "growth_note": (f"CAGR FY{years[-1]}->FY{years[0]}" if cagr is not None
+                            else "rast n/p (manje od 3 godine podataka)"),
+        }
     return {
         "as_of": str(as_of), "events": events, "upcoming_count": n_upcoming,
-        "note": ("izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); "
-                 "fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); "
-                 "prijedlozi su označeni i NISU izglasane isplate"),
+        "history": history,
+        "note": ("izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) "
+                 "i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj "
+                 "dionica, označeno); fiscal_year = godina dobiti iz koje se "
+                 "isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU "
+                 "izglasane isplate"),
     }
 
 
@@ -924,6 +984,11 @@ def _market_only_json(cur, company_id: int, ticker: str, name, sector, is_group,
                    ORDER BY fiscal_year DESC LIMIT 1""", (company_id,))
     r = cur.fetchone()
     dps = _f(r[0]) if r else None
+    dps_fy_label = None
+    if dps is None:  # Z2: zadnja izglasana/isplaćena iz dividends tablice
+        dps, dps_fy = _last_dividend(cur, company_id)
+        if dps is not None and dps_fy is not None:
+            dps_fy_label = f"zadnja isplata FY{dps_fy}"
     per_class = [{
         "class_ticker": c["ticker"],
         "price": c["last_price"]["close_eur"] if c["last_price"] else None,
@@ -946,6 +1011,7 @@ def _market_only_json(cur, company_id: int, ticker: str, name, sector, is_group,
         "ownership": None, "bank_kpi": None,
         "share_classes": classes,
         "metrics": {"eps": None, "bvps": None, "roe": None, "dps": dps,
+                    "dps_label": dps_fy_label,
                     "shares_ex_treasury": None, "market_cap_eur": _f(mcap),
                     "ebitda_eur": None, "per_class": per_class,
                     "basis_note": "trž.kap = Σ zadnji close klase × uvrštene dionice"},
@@ -1182,6 +1248,13 @@ def build_stock_json(conn, ticker: str) -> dict:
     ni_parent = _val(fund, "net_income_parent")
     eq_parent = _val(fund, "equity_parent") or _val(fund, "total_equity")
     dps = _val(fund, "dps")
+    dps_fy_label = None
+    if dps is None:
+        # Z2: DIV. PRINOS iz zadnje izglasane/isplaćene dividende (dividends
+        # tablica), s oznakom fiskalne godine — ne '—' dok povijest postoji
+        dps, dps_fy = _last_dividend(cur, company_id)
+        if dps is not None and dps_fy is not None:
+            dps_fy_label = f"zadnja isplata FY{dps_fy}"
     eps = (ni_parent / shares) if (ni_parent and shares) else None
     bvps = (eq_parent / shares) if (eq_parent and shares) else None
     roe = (ni_parent / eq_parent) if (ni_parent and eq_parent) else None
@@ -1321,6 +1394,7 @@ def build_stock_json(conn, ticker: str) -> dict:
         "share_classes": classes,
         "metrics": {
             "eps": eps, "bvps": bvps, "roe": roe, "dps": dps,
+            "dps_label": dps_fy_label,  # Z2: "zadnja isplata FY20XX" kad je fallback
             "shares_ex_treasury": shares,
             "market_cap_eur": _f(ctx.own_market_cap),
             "ebitda_eur": _val(fund, "ebitda"),

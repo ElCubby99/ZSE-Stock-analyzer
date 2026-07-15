@@ -643,6 +643,7 @@
     "bvps": 9.243011272523614,
     "roe": 0.1929054054054054,
     "dps": 1.27,
+    "dps_label": null,
     "shares_ex_treasury": 320241955.0,
     "market_cap_eur": 7237468183.0,
     "ebitda_eur": null,
@@ -903,6 +904,18 @@
         "class_ticker": "ZABA",
         "fiscal_year": 2023,
         "amount_eur": 1.4,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-04-16",
+        "record_date": "2024-04-18",
+        "payment_date": "2024-05-13",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/54393"
+      },
+      {
+        "class_ticker": "ZABA",
+        "fiscal_year": 2023,
+        "amount_eur": 1.4,
         "div_type": "Prijedlog dividende",
         "ex_date": "2024-04-17",
         "record_date": "2024-04-18",
@@ -913,19 +926,48 @@
       },
       {
         "class_ticker": "ZABA",
-        "fiscal_year": 2023,
-        "amount_eur": 1.4,
-        "div_type": "Izglasana dividenda",
-        "ex_date": "2024-04-16",
-        "record_date": "2024-04-18",
-        "payment_date": "2024-05-13",
+        "fiscal_year": 2022,
+        "amount_eur": 1.6878,
+        "div_type": "izvedeno (NT obrazac)",
+        "ex_date": null,
+        "record_date": null,
+        "payment_date": null,
         "status": "paid",
-        "status_hr": "isplaćena",
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/54393"
+        "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "source_url": "ZABA_2024_4Q.xlsx: NT redak 'isplaćene dividende' 540,519,450 EUR u 2023. / 320,241,955 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
     "upcoming_count": 0,
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi); fiscal_year = godina dobiti iz koje se isplaćuje (ex-godina − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "history": {
+      "per_year": [
+        {
+          "fiscal_year": 2025,
+          "amount_eur": 1.27
+        },
+        {
+          "fiscal_year": 2024,
+          "amount_eur": 1.4
+        },
+        {
+          "fiscal_year": 2023,
+          "amount_eur": 1.4
+        },
+        {
+          "fiscal_year": 2022,
+          "amount_eur": 1.6878
+        }
+      ],
+      "continuity": {
+        "paid_years": 4,
+        "window": 5,
+        "coverage_from": 2022,
+        "note": "isplata u 4 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2022"
+      },
+      "avg_amount_5y": 1.4395,
+      "growth_cagr": -0.0904,
+      "growth_note": "CAGR FY2022->FY2025"
+    },
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
   },
   "prices": [
     {
@@ -5177,6 +5219,15 @@
     ],
     "changelog": [
       {
+        "date": "2026-07-15",
+        "old_low": 19.171730140578255,
+        "old_high": 25.462699833959135,
+        "new_low": 19.390184098550808,
+        "new_high": 25.84948790565657,
+        "reason": "Z1 (v2.2): disciplina bete — prag likvidnosti (sektorska beta za nelikvidne), Blume prilagodba, clamp [0,7, 1,8], premija nelikvidnosti na r",
+        "kind": "methodology"
+      },
+      {
         "date": "2026-07-14",
         "old_low": null,
         "old_high": null,
@@ -5624,21 +5675,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 1.27,
+            "v": 1.6878,
             "unit": "eur",
-            "basis": "2026-04-15",
+            "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.05619469026548672,
+            "v": 0.07468141592920353,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.712271948949212,
+            "v": 0.946592594831874,
             "unit": "%",
             "basis": "FY2025",
             "formula": "DPS × dionice / neto dobit"
@@ -5647,9 +5698,9 @@
             "k": "Zadnja isplata",
             "v": null,
             "unit": "date",
-            "basis": "2026-04-29",
+            "basis": "",
             "formula": "dividends tablica",
-            "note": "2026-04-29"
+            "note": "n/p"
           },
           {
             "k": "Sljedeći ex-datum",
