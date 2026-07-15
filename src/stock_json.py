@@ -366,6 +366,38 @@ def _news(cur, company_id: int) -> dict:
                      "napisa i bez komentara platforme; prazno = nema objava u bazi")}
 
 
+def _global_peers(sector: str | None) -> dict | None:
+    """Z4: kurirani globalni peer set sektora (config/global_peers.json).
+    KONTEKST, ne sidro (v2 §8) — multipli se prikazuju samo iz ručnog
+    snapshotta s datumom; bez snapshotta ide lista peera + razlog."""
+    import os
+    try:
+        with open(os.path.join("config", "global_peers.json"), encoding="utf-8") as f:
+            cfg = json.load(f)
+    except Exception:  # noqa: BLE001
+        return None
+    sec = (cfg.get("sectors") or {}).get(sector)
+    if not sec:
+        return None
+    has_metrics = any(p.get("metrics") for p in sec["peers"])
+    return {
+        "as_of": cfg.get("as_of"),
+        "metrics_set": sec["metrics_set"],
+        "peers": sec["peers"],
+        "has_metrics": has_metrics,
+        "levels_hr": {"hr_region": "HR/regija", "eu": "EU", "global": "globalno"},
+        "note": ("globalni peerovi su KONTEKST — ne ulaze u sidro fer-zone "
+                 "(v2 §8); cross-market razlike (rast, likvidnost, veličina, "
+                 "trošak kapitala tržišta) objašnjavaju dio raskoraka u "
+                 "multiplima"),
+        "no_metrics_reason": (None if has_metrics else
+                              "multipli globalnih peera zahtijevaju ručni "
+                              "snapshot s izvorom i datumom — vanjski tržišni "
+                              "podaci nisu dostupni automatskim putem; do unosa "
+                              "snapshotta prikazuje se samo kurirana lista"),
+    }
+
+
 # Z3.2: generički jednorečenični opisi po sektoru — fallback kad profil iz
 # izvješća još nije ekstrahiran; JASNO označeni kao generički, ne tvrde ništa
 # specifično o firmi (samo sektorska činjenica iz registra/NACE)
@@ -1043,6 +1075,7 @@ def _market_only_json(cur, company_id: int, ticker: str, name, sector, is_group,
         "financials_3y": None, "balance": None, "segments": None,
         "ownership": None, "bank_kpi": None,
         "business_profile": _business_profile(cur, company_id, sector),
+        "global_peers": _global_peers(sector),
         "share_classes": classes,
         "metrics": {"eps": None, "bvps": None, "roe": None, "dps": dps,
                     "dps_label": dps_fy_label,
@@ -1414,6 +1447,7 @@ def build_stock_json(conn, ticker: str) -> dict:
         "trend": _trend(cur, company_id, sector),
         "news": _news(cur, company_id),
         "business_profile": _business_profile(cur, company_id, sector),
+        "global_peers": _global_peers(sector),
         "risks": _risks(sector, is_group, sotp_breakdown,
                         _liquidity(cur, classes, today),
                         _ownership(cur, company_id, ticker),

@@ -1,0 +1,99 @@
+{
+  "_doc": "Z4: kurirani sektorski peer setovi u 3 razine (hr_region / eu / global). METODOLOŠKA OGRADA (v2 §8): globalni peerovi su KONTEKST — ne ulaze u sidro fer-zone (osim gdje domaći peer skup već ulazi po postojećim pravilima, conf >= 0,5). 'metrics' po peeru je RUČNI SNAPSHOT — vanjski tržišni podaci nisu dostupni iz build okruženja (mrežna politika dopušta samo zse.hr/eho), pa se multipli prikazuju TEK kad se snapshot unese (postaviti as_of; UI prikazuje datum). Format metrics: {\"pe\": 9.1, \"pb\": 1.2, \"ev_ebitda\": 6.4, \"roe\": 0.14, \"cir\": 0.45, \"source\": \"url/opis\"}.",
+  "as_of": null,
+  "sectors": {
+    "bank": {
+      "metrics_set": ["pb", "roe", "cir"],
+      "peers": [
+        {"name": "Erste Group Bank", "ticker": "EBS.VI", "level": "eu", "market": "Beč", "metrics": null},
+        {"name": "Raiffeisen Bank International", "ticker": "RBI.VI", "level": "eu", "market": "Beč", "metrics": null},
+        {"name": "Intesa Sanpaolo", "ticker": "ISP.MI", "level": "eu", "market": "Milano", "metrics": null},
+        {"name": "KBC Group", "ticker": "KBC.BR", "level": "eu", "market": "Bruxelles", "metrics": null},
+        {"name": "PKO Bank Polski", "ticker": "PKO.WA", "level": "hr_region", "market": "Varšava", "metrics": null},
+        {"name": "OTP Bank", "ticker": "OTP.BU", "level": "hr_region", "market": "Budimpešta", "metrics": null},
+        {"name": "NLB Group", "ticker": "NLBR.LJ", "level": "hr_region", "market": "Ljubljana", "metrics": null}
+      ]
+    },
+    "insurance": {
+      "metrics_set": ["pb", "roe", "pe"],
+      "peers": [
+        {"name": "PZU", "ticker": "PZU.WA", "level": "hr_region", "market": "Varšava", "metrics": null},
+        {"name": "Vienna Insurance Group", "ticker": "VIG.VI", "level": "hr_region", "market": "Beč", "metrics": null},
+        {"name": "UNIQA Insurance Group", "ticker": "UQA.VI", "level": "hr_region", "market": "Beč", "metrics": null},
+        {"name": "Zavarovalnica Triglav", "ticker": "ZVTG.LJ", "level": "hr_region", "market": "Ljubljana", "metrics": null},
+        {"name": "Sava Re", "ticker": "POSR.LJ", "level": "hr_region", "market": "Ljubljana", "metrics": null},
+        {"name": "Allianz", "ticker": "ALV.DE", "level": "global", "market": "Frankfurt", "metrics": null}
+      ]
+    },
+    "tourism": {
+      "metrics_set": ["pe", "pb", "ev_ebitda"],
+      "peers": [
+        {"name": "Melia Hotels International", "ticker": "MEL.MC", "level": "eu", "market": "Madrid", "metrics": null},
+        {"name": "Minor Hotels Europe & Americas (ex NH)", "ticker": "NHH.MC", "level": "eu", "market": "Madrid", "metrics": null},
+        {"name": "Accor", "ticker": "AC.PA", "level": "eu", "market": "Pariz", "metrics": null},
+        {"name": "Whitbread", "ticker": "WTB.L", "level": "eu", "market": "London", "metrics": null},
+        {"name": "Marriott International", "ticker": "MAR", "level": "global", "market": "NYSE", "metrics": null}
+      ]
+    },
+    "consumer": {
+      "metrics_set": ["pe", "pb", "ev_ebitda"],
+      "peers": [
+        {"name": "Orkla", "ticker": "ORK.OL", "level": "eu", "market": "Oslo", "metrics": null},
+        {"name": "Danone", "ticker": "BN.PA", "level": "eu", "market": "Pariz", "metrics": null},
+        {"name": "Nestlé", "ticker": "NESN.SW", "level": "global", "market": "Zürich", "metrics": null},
+        {"name": "Unilever", "ticker": "ULVR.L", "level": "global", "market": "London", "metrics": null},
+        {"name": "Krka", "ticker": "KRKG.LJ", "level": "hr_region", "market": "Ljubljana", "metrics": null}
+      ]
+    },
+    "industrial": {
+      "metrics_set": ["pe", "pb", "ev_ebitda"],
+      "peers": [
+        {"name": "Siemens Energy", "ticker": "ENR.DE", "level": "eu", "market": "Frankfurt", "metrics": null},
+        {"name": "ABB", "ticker": "ABBN.SW", "level": "global", "market": "Zürich", "metrics": null},
+        {"name": "Schneider Electric", "ticker": "SU.PA", "level": "global", "market": "Pariz", "metrics": null},
+        {"name": "Legrand", "ticker": "LR.PA", "level": "eu", "market": "Pariz", "metrics": null},
+        {"name": "Prysmian", "ticker": "PRY.MI", "level": "eu", "market": "Milano", "metrics": null}
+      ]
+    },
+    "energy": {
+      "metrics_set": ["pe", "pb", "ev_ebitda"],
+      "peers": [
+        {"name": "Snam", "ticker": "SRG.MI", "level": "eu", "market": "Milano", "metrics": null},
+        {"name": "Enagas", "ticker": "ENG.MC", "level": "eu", "market": "Madrid", "metrics": null},
+        {"name": "Redeia (Red Eléctrica)", "ticker": "RED.MC", "level": "eu", "market": "Madrid", "metrics": null},
+        {"name": "MOL Group", "ticker": "MOL.BU", "level": "hr_region", "market": "Budimpešta", "metrics": null},
+        {"name": "Petrol", "ticker": "PETG.LJ", "level": "hr_region", "market": "Ljubljana", "metrics": null}
+      ]
+    },
+    "telecom": {
+      "metrics_set": ["pe", "pb", "ev_ebitda"],
+      "peers": [
+        {"name": "Deutsche Telekom", "ticker": "DTE.DE", "level": "eu", "market": "Frankfurt", "metrics": null},
+        {"name": "Magyar Telekom", "ticker": "MTEL.BU", "level": "hr_region", "market": "Budimpešta", "metrics": null},
+        {"name": "Telekom Slovenije", "ticker": "TLSG.LJ", "level": "hr_region", "market": "Ljubljana", "metrics": null},
+        {"name": "Orange", "ticker": "ORA.PA", "level": "eu", "market": "Pariz", "metrics": null},
+        {"name": "Vodafone", "ticker": "VOD.L", "level": "global", "market": "London", "metrics": null}
+      ]
+    },
+    "technology": {
+      "metrics_set": ["pe", "pb", "ev_ebitda"],
+      "peers": [
+        {"name": "Asseco Poland", "ticker": "ACP.WA", "level": "hr_region", "market": "Varšava", "metrics": null},
+        {"name": "Asseco SEE", "ticker": "ASE.WA", "level": "hr_region", "market": "Varšava", "metrics": null},
+        {"name": "Reply", "ticker": "REY.MI", "level": "eu", "market": "Milano", "metrics": null},
+        {"name": "Accenture", "ticker": "ACN", "level": "global", "market": "NYSE", "metrics": null},
+        {"name": "Endava", "ticker": "DAVA", "level": "global", "market": "NYSE", "metrics": null}
+      ]
+    },
+    "shipping": {
+      "metrics_set": ["pe", "pb", "ev_ebitda"],
+      "peers": [
+        {"name": "A.P. Møller-Maersk", "ticker": "MAERSK-B.CO", "level": "global", "market": "Kopenhagen", "metrics": null},
+        {"name": "Hafnia", "ticker": "HAFNI.OL", "level": "eu", "market": "Oslo", "metrics": null},
+        {"name": "d'Amico International Shipping", "ticker": "DIS.MI", "level": "eu", "market": "Milano", "metrics": null},
+        {"name": "Luka Koper", "ticker": "LKPG.LJ", "level": "hr_region", "market": "Ljubljana", "metrics": null},
+        {"name": "Stolt-Nielsen", "ticker": "SNI.OL", "level": "eu", "market": "Oslo", "metrics": null}
+      ]
+    }
+  }
+}

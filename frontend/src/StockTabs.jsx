@@ -160,13 +160,72 @@ export function KeyIndicators({ data }) {
 
 /* Usporedba: dionica vs klase ISTOG sektora (overview.json — stvarni podaci);
    valuacijski peer skup (docs/peers.md) citiran iz params.sources. */
+/* Z4: horizontalni multipl-graf — raspon sektora, medijan, pozicija naše
+   dionice; iz STVARNIH domaćih podataka (overview) */
+function MultipleBar({ label, rows, mine, field, fmt }) {
+  const vals = rows.map((s) => s[field]).filter((v) => v !== null && v !== undefined && v > 0)
+  if (vals.length < 3) return null
+  const sorted = [...vals].sort((a, b) => a - b)
+  const med = sorted[Math.floor(sorted.length / 2)]
+  const ours = rows.filter((s) => mine.has(s.ticker) && s[field] > 0).map((s) => s[field])
+  const lo = sorted[0]; const hi = sorted[sorted.length - 1]
+  const P = (v) => Math.max(1, Math.min(99, ((v - lo) / (hi - lo || 1)) * 100))
+  return (
+    <div className="cmp-mbar">
+      <span className="cmp-mbar-k">{label}</span>
+      <div className="mk-band" style={{ height: 14 }}>
+        <div className="mk-band-axis" />
+        <div className="mk-band-tick" style={{ left: `${P(med)}%`, background: '#1F6E5A' }}
+          title={`medijan sektora ${fmt(med)}`} />
+        {ours.map((v, i) => (
+          <div key={i} className="mk-band-tick" style={{ left: `${P(v)}%`, background: '#9E2B25' }}
+            title={`ova dionica ${fmt(v)}`} />
+        ))}
+      </div>
+      <span className="cmp-mbar-v mono">med {fmt(med)}{ours.length ? ` · mi ${fmt(ours[0])}` : ''}</span>
+    </div>
+  )
+}
+
+function GlobalPeers({ gp }) {
+  if (!gp) return null
+  return (
+    <section>
+      <div className="sec-label">Globalni peerovi — kontekst (nije sidro)</div>
+      <table>
+        <thead><tr><th>Peer</th><th>Razina</th><th>Burza</th>
+          {gp.has_metrics && gp.metrics_set.map((m) => <th key={m} className="num">{m.toUpperCase()}</th>)}
+        </tr></thead>
+        <tbody>
+          {gp.peers.map((p) => (
+            <tr key={p.name}>
+              <td><b>{p.name}</b>{p.ticker && <span className="fund-src"> {p.ticker}</span>}</td>
+              <td>{gp.levels_hr[p.level] || p.level}</td>
+              <td className="fund-src">{p.market}</td>
+              {gp.has_metrics && gp.metrics_set.map((m) => (
+                <td key={m} className="num">{p.metrics?.[m] ?? dash}</td>))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="subnote">
+        {gp.note}.
+        {gp.as_of ? ` Ručni snapshot multipla: ${gp.as_of}.` : ''}
+        {gp.no_metrics_reason ? ` ${gp.no_metrics_reason}.` : ''}
+      </div>
+    </section>
+  )
+}
+
 export function Comparison({ data }) {
   const ov = useOverview()
   if (!ov) return <div className="loading">učitavam…</div>
   const mine = new Set((data.share_classes || []).map((c) => c.ticker))
   const rows = ov.stocks.filter((s) => s.sector === data.sector)
   const peerSrc = data.valuation?.params?.sources?.peers
+  const isFin = ['bank', 'insurance', 'fund'].includes(data.sector)
   return (
+    <>
     <section>
       <div className="sec-label">
         Usporedba — sektor: {SECTOR_HR[data.sector] || data.sector || dash}
@@ -196,11 +255,23 @@ export function Comparison({ data }) {
           </table>
         </div>
       )}
+      {rows.length > mine.size && (
+        <div className="cmp-mbars">
+          <MultipleBar label="P/E" rows={rows} mine={mine} field="pe" fmt={(v) => num(v, 1)} />
+          <MultipleBar label="P/B" rows={rows} mine={mine} field="pb" fmt={(v) => num(v, 2)} />
+          {isFin && <div className="subnote">EV/EBITDA se za financijski sektor ne
+            primjenjuje (dug je posao, ne struktura) — usporedba ide kroz P/B
+            {data.sector === 'bank' ? ', ROE i CIR (vidi Ključni pokazatelji)' : ' i ROE'}.</div>}
+        </div>
+      )}
       <div className="subnote">
-        Usporedba po sektorskoj oznaci nad praćenim firmama (isti izvor kao Screener).
+        Usporedba po sektorskoj oznaci nad praćenim firmama (isti izvor kao Screener);
+        zeleno = medijan sektora, crveno = ova dionica.
         {peerSrc ? <> Valuacijski peer skup ove firme: {peerSrc}</> : null}
       </div>
     </section>
+    <GlobalPeers gp={data.global_peers} />
+    </>
   )
 }
 
