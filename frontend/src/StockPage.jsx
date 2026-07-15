@@ -114,10 +114,18 @@ function TrendBlock({ trend }) {
 function BusinessProfile({ bp }) {
   return (
     <section>
-      <div className="sec-label">Profil poslovanja — iz godišnjeg izvješća</div>
+      <div className="sec-label">
+        {bp?.generic ? 'Profil poslovanja' : 'Profil poslovanja — iz godišnjeg izvješća'}
+        {bp?.generic && <span className="flag" style={{ marginLeft: 8 }}>generički opis</span>}
+      </div>
       {!bp ? (
         <div className="subnote"><span className="flag">nema u bazi</span>{' '}
           profil poslovanja još nije ekstrahiran iz izvješća — ništa se ne generira.</div>
+      ) : bp.generic ? (
+        <>
+          <p className="bp-activity">{bp.activity}</p>
+          <div className="subnote">{bp.note}.</div>
+        </>
       ) : (
         <>
           <p className="bp-activity">{bp.activity}

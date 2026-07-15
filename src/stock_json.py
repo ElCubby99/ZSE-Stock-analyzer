@@ -366,17 +366,50 @@ def _news(cur, company_id: int) -> dict:
                      "napisa i bez komentara platforme; prazno = nema objava u bazi")}
 
 
-def _business_profile(cur, company_id: int) -> dict | None:
+# Z3.2: generički jednorečenični opisi po sektoru — fallback kad profil iz
+# izvješća još nije ekstrahiran; JASNO označeni kao generički, ne tvrde ništa
+# specifično o firmi (samo sektorska činjenica iz registra/NACE)
+GENERIC_ACTIVITY = {
+    "bank": "Kreditna institucija sa sjedištem u Republici Hrvatskoj (bankovni sektor).",
+    "insurance": "Društvo za osiguranje sa sjedištem u Republici Hrvatskoj.",
+    "fund": "Zatvoreni investicijski fond / investicijsko društvo uvršteno na Zagrebačkoj burzi.",
+    "tourism": "Društvo u djelatnosti turizma i ugostiteljstva (hoteli/marine/odmarališta).",
+    "consumer": "Društvo u potrošačkom sektoru (proizvodnja/distribucija robe široke potrošnje).",
+    "industrial": "Industrijsko društvo (proizvodnja i/ili industrijske usluge).",
+    "holding": "Društvo koje upravlja grupom povezanih društava (holding/uprava grupe).",
+    "telecom": "Telekomunikacijsko društvo.",
+    "technology": "Društvo u sektoru informacijskih tehnologija.",
+    "energy": "Društvo u energetskom sektoru (energetska infrastruktura/usluge).",
+    "shipping": "Brodarsko / pomorsko-prijevozničko društvo.",
+    "transport": "Prijevozničko društvo.",
+    "construction": "Društvo u graditeljstvu i inženjeringu.",
+    "real_estate": "Društvo za poslovanje nekretninama.",
+    "aquaculture": "Društvo u marikulturi/akvakulturi.",
+    "other": "Uvršteno dioničko društvo (djelatnost prema sudskom/NACE registru).",
+}
+
+
+def _business_profile(cur, company_id: int, sector: str | None = None) -> dict | None:
     """M9: profil poslovanja — činjenice iz izvješća s citatima; epiteti
-    izdavatelja ODVOJENO u issuer_claims. Nema profila -> null (frontend
-    prikazuje 'nema u bazi', ništa se ne generira)."""
+    izdavatelja ODVOJENO u issuer_claims. Z3.2: bez ekstrahiranog profila
+    vraća GENERIČKI sektorski opis (označen), ne null."""
     cur.execute(
         """SELECT fiscal_year, activity, activity_source_page, segments,
                   markets, export_share, issuer_claims, source
            FROM business_profiles WHERE company_id=%s""", (company_id,))
     r = cur.fetchone()
     if not r:
-        return None
+        generic = GENERIC_ACTIVITY.get(sector or "other", GENERIC_ACTIVITY["other"])
+        return {
+            "fiscal_year": None, "activity": generic,
+            "activity_source_page": None, "segments": [], "markets": [],
+            "export_share": None, "issuer_claims": [],
+            "generic": True,
+            "source": "generički opis iz sektorskog registra (NACE)",
+            "note": ("GENERIČKI OPIS — profil iz godišnjeg izvješća još nije "
+                     "ekstrahiran; opis navodi samo sektorsku činjenicu iz "
+                     "registra i ne tvrdi ništa specifično o firmi"),
+        }
     return {
         "fiscal_year": r[0], "activity": r[1], "activity_source_page": r[2],
         "segments": r[3] or [], "markets": r[4] or [],
@@ -1009,6 +1042,7 @@ def _market_only_json(cur, company_id: int, ticker: str, name, sector, is_group,
                       "vrednovanje se objavljuju tek nakon validacije"),
         "financials_3y": None, "balance": None, "segments": None,
         "ownership": None, "bank_kpi": None,
+        "business_profile": _business_profile(cur, company_id, sector),
         "share_classes": classes,
         "metrics": {"eps": None, "bvps": None, "roe": None, "dps": dps,
                     "dps_label": dps_fy_label,
@@ -1379,7 +1413,7 @@ def build_stock_json(conn, ticker: str) -> dict:
                                         BANK_THREE_Y_ROWS if is_bank else THREE_Y_ROWS),
         "trend": _trend(cur, company_id, sector),
         "news": _news(cur, company_id),
-        "business_profile": _business_profile(cur, company_id),
+        "business_profile": _business_profile(cur, company_id, sector),
         "risks": _risks(sector, is_group, sotp_breakdown,
                         _liquidity(cur, classes, today),
                         _ownership(cur, company_id, ticker),

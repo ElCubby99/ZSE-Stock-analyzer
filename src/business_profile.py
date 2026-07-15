@@ -96,7 +96,8 @@ STROGA PRAVILA:
 """
 
 
-def extract_profile(slice_text: str, max_tokens: int = 4000) -> dict:
+def extract_profile(slice_text: str, max_tokens: int = 4000,
+                    ticker: str | None = None) -> dict:
     import anthropic
 
     from . import config
@@ -110,6 +111,10 @@ def extract_profile(slice_text: str, max_tokens: int = 4000) -> dict:
         output_config={"format": {"type": "json_schema", "schema": PROFILE_SCHEMA}},
         messages=[{"role": "user", "content": slice_text}],
     )
+    # M19-A: svaka API potrošnja ide kroz api_usage (budžet/digest)
+    from . import api_usage
+    api_usage.record("business_profile", resp.model or config.ANTHROPIC_MODEL,
+                     resp.usage, ticker=ticker)
     text = next((b.text for b in resp.content
                  if getattr(b, "type", None) == "text"), None)
     if text is None:
@@ -172,7 +177,7 @@ def main(argv=None) -> int:
         if a.extract:
             if not a.pdf:
                 print("--extract traži --pdf put do izvješća"); return 1
-            p = extract_profile(build_profile_slice(a.pdf))
+            p = extract_profile(build_profile_slice(a.pdf), ticker=t)
             load_profile(conn, t, p,
                          source=f"API ekstrakcija ({a.pdf}, početak izvješća)")
             print(f"{t}: profil ekstrahiran i upisan")
