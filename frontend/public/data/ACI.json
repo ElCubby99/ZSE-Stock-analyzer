@@ -1,7 +1,7 @@
 {
   "ticker": "ACI",
   "name": "ACI d.d.",
-  "sector": null,
+  "sector": "tourism",
   "is_group": false,
   "isin": null,
   "fiscal_year": 2025,
@@ -106,7 +106,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 926–1,734 € (raspon 47%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 40–1,734 € (raspon 98%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -753,9 +753,9 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 786.8862601296596,
-        "base": 925.7485413290113,
-        "high": 1064.6108225283629,
+        "low": 34.22152350081037,
+        "base": 40.26061588330632,
+        "high": 46.299708265802266,
         "confidence": 0.3,
         "no_value": false,
         "assumptions": {
@@ -775,11 +775,11 @@
             }
           },
           "ev_ebitda_carrier_ban": "EV/EBITDA ne smije biti nositelj: neto dug/EBITDA=-0.13, D&A/EBITDA=0.96 — multipl laska firmama s visokim D&A/dugom (v2 §2)",
-          "carrier": "pb",
-          "carrier_reason": "nositelj po arhetipu 'cyclical' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
+          "carrier": "pe",
+          "carrier_reason": "nositelj po arhetipu 'tourism' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
           "intra_spread": {
             "spread_pct": 2199.0,
-            "rule": "leće razmaknute 2199% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst (v2 §3)",
+            "rule": "leće razmaknute 2199% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
             "anomaly": "visok D&A (96% EBITDA-e)"
           },
           "sources": {
@@ -808,21 +808,6 @@
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
-      },
-      {
-        "key": "justified_pb_roe",
-        "label": "Opravdani P/B (ROE)",
-        "low": 0,
-        "base": 0,
-        "high": 0,
-        "confidence": 0.0,
-        "no_value": true,
-        "assumptions": {
-          "missing": [
-            "roe>g"
-          ],
-          "note": "ROE 0.5% ≤ trajni rast g 2.5% — opravdani P/B nije definiran (multiplikator ≤ 0)"
-        }
       }
     ],
     "skipped": [
@@ -832,9 +817,14 @@
         "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
       },
       {
+        "key": "justified_pb_roe",
+        "label": "Opravdani P/B (ROE)",
+        "reason": "arhetip 'tourism': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
+      },
+      {
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
-        "reason": "RI predložak je za financijske firme (banka/osiguranje), ne None"
+        "reason": "RI predložak je za financijske firme (banka/osiguranje), ne tourism"
       },
       {
         "key": "sotp_nav",
@@ -847,7 +837,7 @@
       "zone_high": 2134.072336476635,
       "dispersion": 0.3152826779819322,
       "divergent": true,
-      "archetype": "cyclical",
+      "archetype": "tourism",
       "anchor_methods": [
         "dcf_fcf"
       ],
@@ -861,28 +851,23 @@
           "role": "anchor",
           "note": null,
           "vs_zone_pct": null
-        },
-        "justified_pb_roe": {
-          "role": "secondary",
-          "note": "ciklikal (niska ROE/poluga): guidance-DCF ako postoji, inače opravdani P/B; comps potvrda; EV/EBITDA nije nositelj (v2 §2)",
-          "vs_zone_pct": null
         }
       },
       "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): comps",
-      "all_methods_low": 925.7485413290113,
+      "all_methods_low": 40.26061588330632,
       "all_methods_high": 1734.2987564109999,
-      "dispersion_all": 0.4662116097893203,
+      "dispersion_all": 0.9767856514141643,
       "method_bases": {
-        "comps": 925.7485413290113,
-        "dcf_fcf": 1734.2987564109999,
-        "justified_pb_roe": 0
+        "comps": 40.26061588330632,
+        "dcf_fcf": 1734.2987564109999
       },
       "qa_flags": [
+        "metode se međusobno razilaze 98% (sve metode) — provjeri ulaze/pretpostavke",
         "fer-zona odstupa -56% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
       "vs_market_pct": -56.1,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 24 € operativne zarade (EBITDA marža 24.2%). Firma je lani stvorila 9.8 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 9.3%, bez faze rasta (samo dugoročni rast 4%) — tako izlazi 1,734.30 € po dionici. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~-1.8% trajnog rasta godišnje / multipl P/E 235.5×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 24 € operativne zarade (EBITDA marža 24.2%). Firma je lani stvorila 9.8 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 9.3%, bez faze rasta (samo dugoročni rast 4%) — tako izlazi 1,734.30 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~-1.8% trajnog rasta godišnje / multipl P/E 235.5×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": -1.8,
@@ -896,7 +881,7 @@
     "sotp": null
   },
   "methodology": {
-    "story": "ACI d.d. je ciklična firma (niža profitabilnost kapitala ili poluga): zarada zna varirati kroz ciklus, pa je sidro DCF (novčani tokovi) — guidance-DCF kad uprava daje brojke, inače knjiga kapitala; peer usporedba je kontrola, a EV/EBITDA se izbjegava jer laska zaduženima.",
+    "story": "ACI d.d. je turistička firma: sektor se uspoređuje po EV/EBITDA (vrijednost poslovanja prema operativnoj zaradi, uz napomenu o najmovima), pa je sidro peer usporedba uz DCF kao drugu kotvu.",
     "parameters": [
       {
         "k": "Trošak kapitala r",
@@ -915,6 +900,7 @@
       }
     ],
     "limitations": [
+      "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
       "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
       "β = 1,0 — beta nije kalibrirana za ovu firmu (serija cijena prekratka ili nelikvidna) — korištena je neutralna tržišna beta 1,0; postupak kalibracije je opisan u Metodologiji",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
