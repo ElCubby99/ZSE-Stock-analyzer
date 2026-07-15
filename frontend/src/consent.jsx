@@ -12,7 +12,9 @@ import React, {
    - pristanak je opoziv u svakom trenutku (footer "Postavke kolačića")
    - pristanak vrijedi max 12 mjeseci; bump CONSENT_VERSION -> banner ponovno */
 
-export const CONSENT_VERSION = 1 // mora odgovarati verziji na /politika-kolacica
+export const CONSENT_VERSION = 2 // mora odgovarati verziji na /politika-kolacica
+// v2 (15.07.2026.): uveden Google Tag Manager (analitička kategorija) —
+// promjena politike poništava stare pristanke i banner se prikazuje ponovno.
 const KEY = 'bl_consent'
 const MAX_AGE_MS = 365 * 24 * 3600 * 1000 // 12 mjeseci
 
@@ -54,21 +56,23 @@ function storeConsent(analytics, marketing) {
 }
 
 /* ---- analitika: učitava se ISKLJUČIVO odavde, nakon privole ---- */
+const GTM_ID = 'GTM-WP4FWCDZ'
 let analyticsLoaded = false
 
 export function loadAnalytics() {
   if (analyticsLoaded) return
   analyticsLoaded = true
-  // TODO(analitika): ovdje ubaciti konkretan snippet kad se analitika odabere.
-  // Preferirano: privacy-friendly self-hosted (npr. bez kolačića); radi i GA4:
-  //   const s = document.createElement('script')
-  //   s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXX'; s.async = true
-  //   document.head.appendChild(s)
-  //   window.dataLayer = window.dataLayer || []
-  //   function gtag(){ window.dataLayer.push(arguments) }
-  //   gtag('js', new Date()); gtag('config', 'G-XXXX')
-  // Marker za testiranje consent-flowa dok skripta nije odabrana:
-  window.__blAnalyticsLoaded = true
+  // Google Tag Manager — službeni snippet, ubačen dinamički NAKON privole
+  // (nikad statički u index.html; GDPR/ePrivacy opt-in). <noscript> varijanta
+  // se namjerno NE koristi: bez JavaScripta ni banner pristanka ne radi, pa
+  // bi noscript iframe pratio korisnika bez privole.
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
+  const s = document.createElement('script')
+  s.async = true
+  s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`
+  document.head.appendChild(s)
+  window.__blAnalyticsLoaded = true // marker za consent testove
 }
 
 /* Gašenje bez reloada nije pouzdano (skripta je već u DOM-u) — tražimo
@@ -132,9 +136,9 @@ function SettingsPanel({ current, onSave, onClose }) {
                 izbora o kolačićima. Bez njih stranica ne radi; ne mogu se
                 isključiti." />
         <CategoryRow title="Analitički" checked={analytics} onChange={setAnalytics}
-          desc="Anonimizirana web analitika posjeta (koje se stranice čitaju).
-                Učitava se tek nakon vašeg pristanka; možete ga povući u svakom
-                trenutku." />
+          desc="Web analitika posjeta (Google Tag Manager) — koje se stranice
+                čitaju. Učitava se tek nakon vašeg pristanka; možete ga povući
+                u svakom trenutku." />
         {MARKETING_ENABLED && (
           <CategoryRow title="Marketinški" checked={marketing} onChange={setMarketing}
             desc="Kolačići za oglašavanje. Trenutno ih ne koristimo." />

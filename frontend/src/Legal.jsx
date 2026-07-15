@@ -42,6 +42,16 @@ const COOKIES = [
     purpose: 'pamti zadnju otvorenu dionicu radi navigacijske prečice u zaglavlju',
     cat: 'nužni (funkcionalni)', dur: 'do brisanja iz preglednika', party: 'prva strana (localStorage)',
   },
+  {
+    name: '_ga',
+    purpose: 'Google analitika (učitava se kroz Google Tag Manager) — razlikovanje posjetitelja; postavlja se SAMO ako pristanete na analitičke kolačiće',
+    cat: 'analitički', dur: 'do 2 godine', party: 'treća strana (Google)',
+  },
+  {
+    name: '_ga_*',
+    purpose: 'Google analitika — stanje sesije po mjernom svojstvu; postavlja se SAMO ako pristanete na analitičke kolačiće',
+    cat: 'analitički', dur: 'do 2 godine', party: 'treća strana (Google)',
+  },
 ]
 
 export function PolitikaKolacica() {
@@ -77,11 +87,12 @@ export function PolitikaKolacica() {
           </tbody>
         </table>
         <p className="imp-p" style={{ marginTop: 10 }}>
-          <b>Analitički kolačići se trenutno ne koriste.</b> Uvedu li se,
-          učitavat će se isključivo nakon vašeg izričitog pristanka
-          (kategorija „Analitički" u postavkama), a ova tablica i verzija
-          politike bit će ažurirane prije uvođenja. Marketinške kolačiće ne
-          koristimo.
+          <b>Analitika (Google Tag Manager)</b> učitava se isključivo nakon
+          vašeg izričitog pristanka na kategoriju „Analitički" — prije
+          pristanka se ne učitava nijedna Googleova skripta niti se postavlja
+          ijedan analitički kolačić. Povučete li pristanak, skripta se više ne
+          učitava (uklanjanje iz tekuće sesije traži osvježavanje stranice, na
+          što vas sučelje upozori). Marketinške kolačiće ne koristimo.
         </p>
       </section>
 
@@ -246,10 +257,11 @@ export function PolitikaPrivatnosti() {
               <td>izvršenje ugovora (čl. 6. st. 1. t. (b) GDPR)</td>
             </tr>
             <tr>
-              <td>tehnički/analitički podaci o posjetu (kolačići)</td>
-              <td>web analitika — razumijevanje korištenja stranice;
-                trenutno se ne prikuplja</td>
-              <td>privola (čl. 6. st. 1. t. (a) GDPR) — isključivo opt-in</td>
+              <td>tehnički/analitički podaci o posjetu (kolačići — Google
+                Tag Manager / Google analitika)</td>
+              <td>web analitika — razumijevanje korištenja stranice</td>
+              <td>privola (čl. 6. st. 1. t. (a) GDPR) — isključivo opt-in;
+                bez pristanka se ništa ne učitava</td>
             </tr>
             <tr>
               <td>server logovi (IP adresa, user-agent, vrijeme zahtjeva)</td>
@@ -271,9 +283,12 @@ export function PolitikaPrivatnosti() {
         računa i baza portfelja; projekt je smješten u regiji{' '}
         <b>eu-central-1 (Frankfurt, EU)</b>. <b>Hostinger</b> — najam
         poslužitelja (VPS) na kojem se stranica poslužuje i na kojem nastaju
-        server logovi; obrada unutar EU/EEA. Podatke ne prenosimo u treće
-        zemlje niti ih prodajemo ili dijelimo s trećima u marketinške
-        svrhe.</p>
+        server logovi; obrada unutar EU/EEA. <b>Google</b> (Google Ireland
+        Ltd.) — web analitika kroz Google Tag Manager, isključivo uz vašu
+        privolu; Google može podatke obrađivati i izvan EU/EEA na temelju
+        EU–US okvira za privatnost podataka (Data Privacy Framework) i
+        standardnih ugovornih klauzula. Podatke ne prodajemo niti dijelimo s
+        trećima u marketinške svrhe.</p>
       </section>
 
       <section>
