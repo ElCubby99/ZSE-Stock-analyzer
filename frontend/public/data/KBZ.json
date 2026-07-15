@@ -1305,6 +1305,28 @@
         }
       },
       {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "low": 35.43581616481775,
+        "base": 42.10922787193973,
+        "high": 51.87935034802783,
+        "confidence": 0.7,
+        "no_value": false,
+        "assumptions": {
+          "dps": 2.15,
+          "r": 0.0931,
+          "g_terminal": 0.04,
+          "g1_explicit": null,
+          "model": "jednofazni Gordon — RAST NIJE IZVEDEN",
+          "growth_source": null,
+          "placeholder": true,
+          "sources": {
+            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); korištena je neutralna tržišna beta",
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
+          }
+        }
+      },
+      {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
         "low": 34.64817087867271,
@@ -1355,11 +1377,6 @@
         "reason": "financije — FCF loše definiran"
       },
       {
-        "key": "ddm_gordon",
-        "label": "Dividendni diskont",
-        "reason": "ne isplaćuje (ili nepoznata) dividenda"
-      },
-      {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
         "reason": "nije grupa"
@@ -1381,6 +1398,11 @@
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
           "vs_zone_pct": 0.07524113414605393
         },
+        "ddm_gordon": {
+          "role": "secondary",
+          "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
+          "vs_zone_pct": 0.0
+        },
         "justified_pb_roe": {
           "role": "anchor",
           "note": null,
@@ -1398,6 +1420,7 @@
       "dispersion_all": 0.2441336857634332,
       "method_bases": {
         "comps": 50.079626865498305,
+        "ddm_gordon": 42.10922787193973,
         "justified_pb_roe": 39.73600801210483,
         "residual_income": 37.853502977166755
       },
@@ -1568,19 +1591,17 @@
           },
           {
             "k": "P/CF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 1.0996021834006957,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "trž.kap / operativni CF"
           },
           {
             "k": "P/FCF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 1.1120273835856231,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "trž.kap / slobodni novčani tok"
           },
           {
             "k": "Earnings yield",
@@ -1737,40 +1758,38 @@
         "items": [
           {
             "k": "Operativni CF",
-            "v": null,
+            "v": 70136791.8,
             "unit": "meur",
-            "basis": null,
+            "basis": "FY2025",
             "formula": "NT izvještaj"
           },
           {
             "k": "Capex",
-            "v": null,
+            "v": 783671.06,
             "unit": "meur",
-            "basis": null,
+            "basis": "FY2025",
             "formula": "izdaci za dugotrajnu imovinu"
           },
           {
             "k": "FCF",
-            "v": null,
+            "v": 69353120.74,
             "unit": "meur",
-            "basis": null,
+            "basis": "FY2025",
             "formula": "OCF − capex"
           },
           {
             "k": "Investicijski CF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema u bazi"
+            "v": -719643.06,
+            "unit": "meur",
+            "basis": "FY2025",
+            "formula": "NT B)"
           },
           {
             "k": "Financijski CF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema u bazi"
+            "v": -77689628.38,
+            "unit": "meur",
+            "basis": "FY2025",
+            "formula": "NT C)"
           }
         ]
       },

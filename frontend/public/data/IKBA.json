@@ -120,7 +120,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 604–891 € (raspon 32%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 333–891 € (raspon 63%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -3261,6 +3261,28 @@
         }
       },
       {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "low": 280.190174326466,
+        "base": 332.9566854990584,
+        "high": 410.20881670533635,
+        "confidence": 0.7,
+        "no_value": false,
+        "assumptions": {
+          "dps": 17.0,
+          "r": 0.0931,
+          "g_terminal": 0.04,
+          "g1_explicit": null,
+          "model": "jednofazni Gordon — RAST NIJE IZVEDEN",
+          "growth_source": null,
+          "placeholder": true,
+          "sources": {
+            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); korištena je neutralna tržišna beta",
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
+          }
+        }
+      },
+      {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
         "low": 776.7346588746236,
@@ -3311,11 +3333,6 @@
         "reason": "financije — FCF loše definiran"
       },
       {
-        "key": "ddm_gordon",
-        "label": "Dividendni diskont",
-        "reason": "ne isplaćuje (ili nepoznata) dividenda"
-      },
-      {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
         "reason": "nije grupa"
@@ -3337,6 +3354,11 @@
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
           "vs_zone_pct": 0.0
         },
+        "ddm_gordon": {
+          "role": "secondary",
+          "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
+          "vs_zone_pct": -0.5713379315640883
+        },
         "justified_pb_roe": {
           "role": "anchor",
           "note": null,
@@ -3349,16 +3371,18 @@
         }
       },
       "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 603.729384363504,
+      "all_methods_low": 332.9566854990584,
       "all_methods_high": 890.7926117196492,
-      "dispersion_all": 0.3222559589958633,
+      "dispersion_all": 0.6262242399425663,
       "method_bases": {
         "comps": 873.0760996621622,
+        "ddm_gordon": 332.9566854990584,
         "justified_pb_roe": 890.7926117196492,
         "residual_income": 603.729384363504
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: residual_income -34% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: residual_income -34% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "metode se međusobno razilaze 63% (sve metode) — provjeri ulaze/pretpostavke"
       ],
       "vs_market_pct": -37.9,
       "anchor_inconsistency": [
@@ -3391,6 +3415,7 @@
     ],
     "limitations": [
       "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
+      "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
       "β = 1,0 — beta nije kalibrirana za ovu firmu (serija cijena prekratka ili nelikvidna) — korištena je neutralna tržišna beta 1,0; postupak kalibracije je opisan u Metodologiji",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
@@ -3529,19 +3554,17 @@
           },
           {
             "k": "P/CF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 14.614144296586387,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "trž.kap / operativni CF"
           },
           {
             "k": "P/FCF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema ulaza"
+            "v": 18.493224606206223,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "trž.kap / slobodni novčani tok"
           },
           {
             "k": "Earnings yield",
@@ -3698,40 +3721,38 @@
         "items": [
           {
             "k": "Operativni CF",
-            "v": null,
+            "v": 5721854.0,
             "unit": "meur",
-            "basis": null,
+            "basis": "FY2025",
             "formula": "NT izvještaj"
           },
           {
             "k": "Capex",
-            "v": null,
+            "v": 1200198.0,
             "unit": "meur",
-            "basis": null,
+            "basis": "FY2025",
             "formula": "izdaci za dugotrajnu imovinu"
           },
           {
             "k": "FCF",
-            "v": null,
+            "v": 4521656.0,
             "unit": "meur",
-            "basis": null,
+            "basis": "FY2025",
             "formula": "OCF − capex"
           },
           {
             "k": "Investicijski CF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema u bazi"
+            "v": -1200198.0,
+            "unit": "meur",
+            "basis": "FY2025",
+            "formula": "NT B)"
           },
           {
             "k": "Financijski CF",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema u bazi"
+            "v": -3317910.0,
+            "unit": "meur",
+            "basis": "FY2025",
+            "formula": "NT C)"
           }
         ]
       },

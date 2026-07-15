@@ -1336,8 +1336,28 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
             (company_id, item),
         )
         r = cur.fetchone()
-        return (float(r[0]) if r and r[0] is not None else None,
-                float(r[1]) if r and r[1] is not None else 0.0) if r else None
+        if r is not None and r[0] is not None:
+            return (float(r[0]), float(r[1]) if r[1] is not None else 0.0)
+        if item == "dps":
+            # fallback: STVARNA zadnja dividenda iz dividends tablice (ZSE
+            # stranica papira / EHO) — izvješća često ne nose dps kao stavku,
+            # a "ne isplaćuje" bi bila kriva tvrdnja za redovite isplatitelje
+            # (npr. IKBA). Prijedlozi se NE računaju (nisu izglasana isplata);
+            # kod više klasa uzima se primarna linija.
+            cur.execute(
+                """SELECT d.amount_eur FROM dividends d
+                   JOIN share_classes sc ON sc.id = d.share_class_id
+                   WHERE d.company_id = %s
+                     AND d.div_type NOT ILIKE '%%rijedlog%%'
+                     AND d.amount_eur IS NOT NULL
+                   ORDER BY sc.is_primary_line DESC NULLS LAST,
+                            COALESCE(d.ex_date, d.payment_date) DESC
+                   LIMIT 1""",
+                (company_id,))
+            d = cur.fetchone()
+            if d and d[0] is not None:
+                return (float(d[0]), 0.9)
+        return None if r is None else (None, 0.0)
 
     cur.execute("SELECT * FROM v_sotp_inputs WHERE parent_company_id = %s", (company_id,))
     cols = [d[0] for d in cur.description]
