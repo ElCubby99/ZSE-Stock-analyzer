@@ -15,7 +15,11 @@ import Dividende from './Dividende.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
 import { ConsentProvider, pushEvent } from './consent.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
+import AuthCallback from './AuthCallback.jsx'
+import { initAuthEvents } from './authEvents.js'
 import './styles.css'
+
+initAuthEvents() // globalni sign_up/login eventi (method po provideru)
 
 /* M25: SPA page_view — GA4 tag u GTM-u vidi samo prvi load; svaku promjenu
    rute pushamo kao 'spa_page_view' (GTM trigger + GA4 page_view tag je
@@ -67,6 +71,7 @@ const router = createBrowserRouter([
       { path: '/metodologija', element: <Metodologija /> },
       { path: '/impressum', element: <Impressum /> },
       { path: '/dividende', element: <Dividende /> },
+      { path: '/auth/callback', element: <AuthCallback /> },
       { path: '/politika-kolacica', element: <PolitikaKolacica /> },
       { path: '/uvjeti-koristenja', element: <UvjetiKoristenja /> },
       { path: '/politika-privatnosti', element: <PolitikaPrivatnosti /> },

@@ -67,3 +67,54 @@ varijable za Production (i Preview ako želiš) → **Redeploy**.
   isključivo u Supabaseu.
 - Bez ključeva u env-u stranica jasno kaže da prijava nije aktivna (i nudi
   lokalni demo prikaz bez spremanja).
+
+---
+
+## Auth v2 (M26): OAuth + portfelj v2 + GDPR — koraci za Borisa
+
+### 1. Migracija sheme (jednom)
+SQL Editor → New query → zalijepi CIJELI `supabase/migration_authv2.sql` →
+Run. Kreira `profiles` (+trigger na auth.users), `portfolios`,
+`portfolio_positions`, RLS + grantove, i seli postojeće `positions` retke u
+default portfelj po korisniku (stara tablica se briše). Postojeći
+email+password korisnici rade dalje bez ikakve promjene.
+
+### 2. OAuth provideri (Authentication → Providers)
+Zajedničko: Supabase callback URL je
+`https://<project-ref>.supabase.co/auth/v1/callback` — njega upisuješ kod
+providera. U **Authentication → URL Configuration**: Site URL =
+`https://burzovnilist.com`; Redirect URLs dodaj:
+`https://burzovnilist.com/auth/callback` i
+`https://*-<vercel-team>.vercel.app/auth/callback` (preview deployi).
+
+- **Google**: console.cloud.google.com → OAuth consent screen (External,
+  logo, privacy = burzovnilist.com/politika-privatnosti) → Credentials →
+  OAuth Client ID (Web) → Authorized redirect URI = Supabase callback →
+  Client ID + Secret u Supabase Google provider.
+- **Facebook**: developers.facebook.com → App (Consumer) → Facebook Login →
+  Valid OAuth Redirect URIs = Supabase callback → App ID + Secret u
+  Supabase; app prebaci u Live mode (traži Privacy Policy URL).
+- **Apple**: TEK kad je plaćen Apple Developer Program — Services ID,
+  key + team ID u Supabase, pa u Vercelu postavi
+  `VITE_AUTH_APPLE_ENABLED=true` (do tada je gumb skriven).
+- **Account linking**: Authentication → Settings → uključi
+  "Link accounts with the same email" ako opcija postoji na planu; u
+  suprotnom aplikacija već prikazuje poruku i ručno povezivanje u
+  postavkama računa radi preko `linkIdentity`.
+
+### 3. Edge Function za brisanje računa (GDPR)
+```
+supabase functions deploy delete-account
+```
+(`SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY` su
+automatski dostupni kao secreti Edge runtimea — service role NIKAD u
+frontend.) Funkcija briše isključivo pozivatelja (JWT), bez parametara.
+
+### 4. Provjera (acceptance)
+- Google/Facebook login end-to-end na produkciji I Vercel previewu
+  (redirect natrag na stranicu s koje je login krenuo).
+- Novi OAuth korisnik dobiva "Dovrši registraciju" i ne može do portfelja
+  dok ne prihvati uvjete (profiles.terms_accepted_at se popuni).
+- dataLayer: sign_up/login s method=google|facebook|email.
+- Brisanje računa: auth user + profil + portfelji nestaju; ponovna prijava
+  istim emailom = svjež račun.

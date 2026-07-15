@@ -21,3 +21,9 @@ export const supabase = (url && anon)
    s pozicijama u memoriji BEZ prijave — jasno označeno na stranici.
    U produkciji se NE postavlja. */
 export const DEMO = import.meta.env.VITE_PORTFELJ_DEMO === '1'
+
+/* M26: Apple provider iza feature flaga — aktivira se kad je Apple Developer
+   Program plaćen i provider konfiguriran u Supabaseu (default: isključen). */
+export const APPLE_ENABLED = import.meta.env.VITE_AUTH_APPLE_ENABLED === 'true'
+
+export const TERMS_VERSION = '15.07.2026.'

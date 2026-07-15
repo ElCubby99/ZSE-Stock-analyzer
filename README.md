@@ -176,3 +176,12 @@ docs/    specifikacija ekstrakcije i validacije
 2. Na stroju koji vrti noćni pipeline postavi env varijablu
    `VERCEL_DEPLOY_HOOK_URL=<hook url>` — `src/daily.py` ga okida nakon
    regeneracije exporta (bez env varijable korak se preskače i logira).
+
+## Ručni koraci za Borisa (Auth v2 — M26)
+
+1. Supabase SQL Editor: pokreni `supabase/migration_authv2.sql` (jednom).
+2. Konfiguriraj Google + Facebook OAuth providere i redirect URL-ove —
+   detaljne upute: `docs/supabase_setup.md` (sekcija Auth v2).
+3. Deploy Edge Functiona: `supabase functions deploy delete-account`.
+4. Apple: tek nakon Apple Developer Programa —
+   `VITE_AUTH_APPLE_ENABLED=true` u Vercelu + provider u Supabaseu.
