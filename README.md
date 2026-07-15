@@ -212,3 +212,37 @@ docs/    specifikacija ekstrakcije i validacije
 6. Vercel: provjeri da su `VITE_SUPABASE_URL` i `VITE_SUPABASE_ANON_KEY`
    u build env (Production + Preview) — SSG build povlači objavljene
    postove iz baze (anon ključ vidi SAMO published, RLS).
+
+## Ručni koraci za Borisa (Vijesti + X — M30)
+
+1. Supabase SQL Editor: pokreni `supabase/migration_news.sql` (jednom,
+   NAKON `migration_blog.sql` — koristi `public.is_admin()`).
+2. Deploy Edge Functiona (svi koriste postojeći `BLOG_API_KEY` secret):
+   `supabase functions deploy news-ingest --no-verify-jwt`
+   `supabase functions deploy news-list --no-verify-jwt`
+   `supabase functions deploy news-mark-tweeted --no-verify-jwt`
+3. Auto-vijesti iz noćnog pipelinea: u okolinu u kojoj se vrti
+   `scripts/daily_update.sh` (uz postojeći `.env`) dodaj:
+   - `SUPABASE_URL=https://<ref>.supabase.co`
+   - `BLOG_API_KEY=<isti ključ kao za blog-publish>`
+   Bez njih korak 5/5 samo ispiše upozorenje (pipeline ne pada). Pipeline
+   NEMA direktan pristup bazi — piše isključivo kroz `news-ingest`, i sve
+   ulazi kao DRAFT (objava je uvijek tvoja odluka u `/admin` → VIJESTI).
+4. Provjera API-ja za X agenta (Cowork):
+   ```
+   # popis objavljenih, još ne-tweetanih vijesti (bez ključa → 401)
+   curl https://<ref>.supabase.co/functions/v1/news-list \
+     -H "x-api-key: $BLOG_API_KEY"
+   # nakon pripreme/objave tweeta označi vijest (id iz news-list):
+   curl -X POST https://<ref>.supabase.co/functions/v1/news-mark-tweeted \
+     -H "x-api-key: $BLOG_API_KEY" -H "content-type: application/json" \
+     -d '{"id":"<uuid>"}'
+   ```
+   Cowork agent koristi SAMO ova dva endpointa — nikakav drugi pristup
+   bazi (ni anon ni service ključ mu se ne daju).
+5. X (Twitter) account: kreiraj NOVI račun za Burzovni list — odvojen od
+   Wealtharian (@TheWealtharian), različit brend, ne miješati. Handle
+   upiši u Vercel env `VITE_X_HANDLE` (Production + Preview) i redeployaj
+   — prazna varijabla znači da se X linkovi u footeru i na /vijesti
+   jednostavno ne prikazuju (promjena handlea = samo env update, bez
+   promjene koda).

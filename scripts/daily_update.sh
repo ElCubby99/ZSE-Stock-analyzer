@@ -11,6 +11,7 @@
 #   3. EOD CIJENE — službena ZSE tečajnica (JSON, javni web REST): src.prices zse-json.
 #      CLASSES env var = tickere KLASA (default: ADRS ADRS2 CROS CROS2 MAIS KOEI).
 #   4. VALUACIJA — ispis pokrenutih/preskočenih metoda + reconciliation.
+#   5. AUTO-VIJESTI — draftovi u Supabase news_items (generate_news.py, dedup).
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -21,7 +22,7 @@ CA="${EHO_CA_BUNDLE:-${REQUESTS_CA_BUNDLE:-/root/.ccr/ca-bundle.crt}}"
 FROM="$(date -d "-${LOOKBACK_DAYS} days" +%F 2>/dev/null || date -v-${LOOKBACK_DAYS}d +%F)"
 TODAY="$(date +%F)"
 
-echo "== 1/4 Nova financijska izvješća (EHO, od $FROM) =="
+echo "== 1/5 Nova financijska izvješća (EHO, od $FROM) =="
 for T in $TICKERS; do
   curl -sS --cacert "$CA" --max-time 60 \
     "https://eho.zse.hr/feed/json?variant=financialReports&ticker=${T}&dateFrom=${FROM}&dateTo=${TODAY}" \
@@ -38,13 +39,17 @@ else:
 " || echo "  $T: feed nedostupan"
 done
 
-echo "== 2/4 Dividende (EHO, od $FROM) =="
+echo "== 2/5 Dividende (EHO, od $FROM) =="
 (cd "$ROOT" && "$PY" -m src.dividends $TICKERS --from "$FROM") || echo "  dividende: greška (vidi iznad)"
 
-echo "== 3/4 EOD cijene =="
+echo "== 3/5 EOD cijene =="
 CLASSES="${CLASSES:-ADRS ADRS2 CROS CROS2 MAIS KOEI}"
 (cd "$ROOT" && "$PY" -m src.prices zse-json $CLASSES) \
   || echo "  zse-json nije uspio (mreža/allowlist?) — fallback: src.prices import-csv"
 
-echo "== 4/4 Valuacija =="
+echo "== 4/5 Valuacija =="
 (cd "$ROOT" && "$PY" -m src.valuation_methods $TICKERS)
+
+echo "== 5/5 Auto-vijesti (draftovi u Supabase, dedup po izvoru) =="
+(cd "$ROOT" && "$PY" scripts/generate_news.py --lookback-days "$LOOKBACK_DAYS") \
+  || echo "  vijesti: greška (vidi iznad) — pipeline nastavlja"

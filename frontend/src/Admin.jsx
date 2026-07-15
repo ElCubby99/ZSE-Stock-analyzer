@@ -201,11 +201,167 @@ function PostList({ posts, onEdit, onRefresh }) {
   )
 }
 
+/* ============ M30: Vijesti (news_items) ============ */
+
+const NEWS_CATS = ['novo_izvjesce', 'dividenda', 'promjena_cijene', 'opce']
+const NEWS_CAT_HR = {
+  novo_izvjesce: 'novo izvješće',
+  dividenda: 'dividenda',
+  promjena_cijene: 'promjena cijene',
+  opce: 'opće',
+}
+const NEWS_EMPTY = {
+  id: null, ticker: '', category: 'opce', headline: '', body: '',
+  link_path: '/', source_type: 'manual', status: 'draft', published_at: null,
+}
+
+function NewsEditor({ item, onDone }) {
+  const [n, setN] = useState({ ...NEWS_EMPTY, ...item })
+  const [msg, setMsg] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const set = (k, v) => setN((x) => ({ ...x, [k]: v }))
+
+  const save = async (status) => {
+    setMsg(null)
+    if (!n.headline.trim()) { setMsg({ t: 'err', s: 'Naslov je obavezan.' }); return }
+    if (n.headline.length > 120) { setMsg({ t: 'err', s: 'Naslov: najviše 120 znakova.' }); return }
+    if (!/^\//.test(n.link_path)) { setMsg({ t: 'err', s: 'Link mora biti interna ruta (počinje s /).' }); return }
+    setBusy(true)
+    const row = {
+      ticker: n.ticker.trim() ? n.ticker.trim().toUpperCase() : null,
+      category: n.category, headline: n.headline.trim(),
+      body: n.body.trim() || null, link_path: n.link_path.trim(), status,
+    }
+    if (status === 'published' && !n.published_at) row.published_at = new Date().toISOString()
+    const q = n.id
+      ? supabase.from('news_items').update(row).eq('id', n.id)
+      : supabase.from('news_items').insert(row)
+    const { error } = await q
+    setBusy(false)
+    if (error) { setMsg({ t: 'err', s: error.message }); return }
+    setMsg({ t: 'ok', s: status === 'published' ? 'Objavljeno (vidljivo nakon rebuilda).' : 'Spremljeno kao draft.' })
+    onDone()
+  }
+
+  return (
+    <section>
+      <div className="sec-label">{n.id ? 'Uređivanje vijesti' : 'Nova vijest'}
+        {n.source_type === 'auto' && <span className="flag" style={{ marginLeft: 8 }}>auto</span>}</div>
+      <div className="adm-form">
+        <label>Naslov (headline, ≤120)
+          <input value={n.headline} maxLength={140}
+            onChange={(e) => set('headline', e.target.value)} />
+          <span className={n.headline.length > 120 ? 'flag' : 'fund-src'}>{n.headline.length}/120</span>
+        </label>
+        <label>Kategorija
+          <select value={n.category} onChange={(e) => set('category', e.target.value)}>
+            {NEWS_CATS.map((c) => <option key={c} value={c}>{NEWS_CAT_HR[c]}</option>)}
+          </select>
+        </label>
+        <label>Ticker (opcionalno)
+          <input value={n.ticker || ''} placeholder="npr. KOEI"
+            onChange={(e) => set('ticker', e.target.value)} />
+        </label>
+        <label>Link (interna ruta na koju vijest upućuje)
+          <input value={n.link_path} placeholder="/dionica/koei"
+            onChange={(e) => set('link_path', e.target.value)} />
+        </label>
+        <label>Tekst (opcionalno — s tekstom vijest dobiva vlastitu stranicu)
+          <textarea rows={6} value={n.body || ''}
+            onChange={(e) => set('body', e.target.value)} />
+        </label>
+        <div className="cc-btns">
+          <button type="button" className="auth-submit" disabled={busy}
+            onClick={() => save('draft')}>Spremi kao draft</button>
+          <button type="button" className="auth-submit" disabled={busy}
+            onClick={() => save('published')}>
+            {n.status === 'published' ? 'Ažuriraj (objavljeno)' : 'Objavi'}
+          </button>
+          <button type="button" className="cc-btn acct-link-btn" onClick={onDone}>Natrag</button>
+        </div>
+        {msg && <div className={`auth-msg ${msg.t}`}>{msg.s}</div>}
+      </div>
+    </section>
+  )
+}
+
+function NewsList({ items, onEdit, onRefresh }) {
+  const [status, setStatus] = useState('svi')
+  const [cat, setCat] = useState('sve')
+  const rows = items
+    .filter((n) => status === 'svi' || n.status === status)
+    .filter((n) => cat === 'sve' || n.category === cat)
+
+  const publish = async (n) => {
+    await supabase.from('news_items')
+      .update({ status: 'published', published_at: n.published_at || new Date().toISOString() })
+      .eq('id', n.id)
+    onRefresh()
+  }
+  const unpublish = async (n) => {
+    await supabase.from('news_items').update({ status: 'draft' }).eq('id', n.id)
+    onRefresh()
+  }
+  const remove = async (n) => {
+    if (!window.confirm(`Obrisati vijest "${n.headline}"?`)) return
+    await supabase.from('news_items').delete().eq('id', n.id)
+    onRefresh()
+  }
+
+  return (
+    <section>
+      <div className="sec-label">Vijesti ({rows.length})</div>
+      <div className="prof-chips" style={{ marginBottom: 6 }}>
+        {['svi', 'draft', 'published'].map((f) => (
+          <button key={f} className={status === f ? 'on' : ''}
+            onClick={() => setStatus(f)}>{f.toUpperCase()}</button>
+        ))}
+      </div>
+      <div className="prof-chips" style={{ marginBottom: 10 }}>
+        {['sve', ...NEWS_CATS].map((f) => (
+          <button key={f} className={cat === f ? 'on' : ''}
+            onClick={() => setCat(f)}>{(NEWS_CAT_HR[f] || f).toUpperCase()}</button>
+        ))}
+      </div>
+      <table>
+        <thead><tr><th>Naslov</th><th>Kategorija</th><th>Status</th>
+          <th>Datum</th><th /></tr></thead>
+        <tbody>
+          {rows.map((n) => (
+            <tr key={n.id}>
+              <td><b>{n.headline}</b>{' '}
+                {n.source_type === 'auto' && <span className="flag">auto</span>}
+                {n.tweeted && <span className="okflag"> tweetano</span>}</td>
+              <td className="fund-src">{NEWS_CAT_HR[n.category] || n.category}
+                {n.ticker ? ` · ${n.ticker}` : ''}</td>
+              <td>{n.status === 'published'
+                ? <span className="okflag">objavljeno</span>
+                : <span className="flag">draft</span>}</td>
+              <td className="fund-src">{(n.published_at || n.created_at || '').slice(0, 10) || '—'}</td>
+              <td style={{ whiteSpace: 'nowrap' }}>
+                <button className="pf-logout" onClick={() => onEdit(n)}>uredi</button>{' '}
+                {n.status !== 'published'
+                  ? <button className="pf-logout" onClick={() => publish(n)}>objavi</button>
+                  : <button className="pf-logout" onClick={() => unpublish(n)}>skini u draft</button>}{' '}
+                <button className="pf-del" onClick={() => remove(n)}>obriši</button>
+              </td>
+            </tr>
+          ))}
+          {!rows.length && <tr><td colSpan={5} className="subnote">nema vijesti</td></tr>}
+        </tbody>
+      </table>
+    </section>
+  )
+}
+
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [isAdmin, setIsAdmin] = useState(undefined) // undefined = provjera traje
   const [posts, setPosts] = useState([])
   const [editing, setEditing] = useState(null) // null | {} (novi) | post
+  const [tab, setTab] = useState('blog') // 'blog' | 'vijesti'
+  const [news, setNews] = useState([])
+  const [editingNews, setEditingNews] = useState(null)
 
   useEffect(() => {
     document.title = 'Admin · Burzovni list'
@@ -233,7 +389,14 @@ export default function Admin() {
       .select('*').order('created_at', { ascending: false })
     setPosts(data || [])
   }, [])
-  useEffect(() => { if (session && isAdmin) load() }, [session, isAdmin, load])
+  const loadNews = useCallback(async () => {
+    const { data } = await supabase.from('news_items')
+      .select('*').order('created_at', { ascending: false })
+    setNews(data || [])
+  }, [])
+  useEffect(() => {
+    if (session && isAdmin) { load(); loadNews() }
+  }, [session, isAdmin, load, loadNews])
 
   let body
   if (!supabase) {
@@ -254,13 +417,24 @@ export default function Admin() {
   } else if (editing !== null) {
     body = <Editor post={editing.id ? editing : null}
       onDone={() => { setEditing(null); load() }} />
+  } else if (editingNews !== null) {
+    body = <NewsEditor item={editingNews.id ? editingNews : null}
+      onDone={() => { setEditingNews(null); loadNews() }} />
   } else {
     body = (
       <>
         <div className="prof-chips" style={{ margin: '8px 0' }}>
-          <button className="on" onClick={() => setEditing({})}>+ NOVI POST</button>
+          <button className={tab === 'blog' ? 'on' : ''}
+            onClick={() => setTab('blog')}>BLOG</button>
+          <button className={tab === 'vijesti' ? 'on' : ''}
+            onClick={() => setTab('vijesti')}>VIJESTI</button>
+          {tab === 'blog'
+            ? <button className="on" onClick={() => setEditing({})}>+ NOVI POST</button>
+            : <button className="on" onClick={() => setEditingNews({})}>+ NOVA VIJEST</button>}
         </div>
-        <PostList posts={posts} onEdit={(p) => setEditing(p)} onRefresh={load} />
+        {tab === 'blog'
+          ? <PostList posts={posts} onEdit={(p) => setEditing(p)} onRefresh={load} />
+          : <NewsList items={news} onEdit={(n) => setEditingNews(n)} onRefresh={loadNews} />}
       </>
     )
   }

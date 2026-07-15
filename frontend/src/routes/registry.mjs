@@ -11,8 +11,9 @@
    - indexable   true → ulazi u sitemap; false → noindex i NEMA ga u sitemapu
                  (nema zasebne exclude-liste — indexability živi samo ovdje)
    - seo         {title, description} za prerendane statičke stranice
-   - expand      'stocks' | 'blog' — dinamička ruta koju prerender širi po
-                 podacima (exporti dionica / objavljeni postovi)
+   - expand      'stocks' | 'blog' | 'news' — dinamička ruta koju prerender
+                 širi po podacima (exporti dionica / objavljeni postovi /
+                 objavljene vijesti s bodyjem)
    - prerender   false → stranica se NE prerendera (samo SPA fallback);
                  podrazumijevano true za statičke rute */
 
@@ -82,6 +83,21 @@ export const ROUTES = [
     component: 'BlogPost',
     indexable: true,
     expand: 'blog',
+  },
+  {
+    path: '/vijesti',
+    component: 'VijestiIndex',
+    indexable: true,
+    seo: {
+      title: 'Vijesti — nova izvješća, dividende i ažuriranja | Burzovni list',
+      description: 'Kratke vijesti sa Zagrebačke burze: nova financijska izvješća, najavljene dividende i ažuriranja analiza — svaka vodi na stranicu s podacima i izvorima.',
+    },
+  },
+  {
+    path: '/vijesti/:slug',
+    component: 'VijestDetail',
+    indexable: true,
+    expand: 'news', // detail stranica postoji SAMO za vijesti s bodyjem
   },
   {
     path: '/alati',

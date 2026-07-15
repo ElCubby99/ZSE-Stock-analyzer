@@ -209,6 +209,64 @@ for (const p of posts) {
 }
 }
 
+/* ---------- vijesti (M30) ---------- */
+/* SAMO status='published' (RLS za anon ključ to i garantira). Zadano je
+   vijest pokazivač na postojeću stranicu; detail /vijesti/<slug> se generira
+   ISKLJUČIVO kad vijest ima body (izbjegavamo duplicate content). */
+const kebab = (s) => String(s).toLowerCase().normalize('NFKD')
+  .replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd')
+  .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+
+let newsItems = []
+{
+  const nUrl = process.env.VITE_SUPABASE_URL
+  const nKey = process.env.VITE_SUPABASE_ANON_KEY
+  if (nUrl && nKey) {
+    try {
+      const r = await fetch(
+        `${nUrl}/rest/v1/news_items?status=eq.published`
+        + `&select=id,ticker,category,headline,body,link_path,published_at`
+        + `&order=published_at.desc`,
+        { headers: { apikey: nKey, Authorization: `Bearer ${nKey}` } })
+      if (!r.ok) throw new Error(`REST ${r.status}`)
+      const rows = await r.json()
+      const seen = new Set()
+      newsItems = rows.map((n) => {
+        let slug = null
+        if (n.body && String(n.body).trim()) {
+          slug = kebab(n.headline) || n.id.slice(0, 8)
+          if (seen.has(slug)) slug = `${slug}-${n.id.slice(0, 8)}`
+          seen.add(slug)
+        }
+        return { ...n, slug }
+      })
+      console.log(`[prerender] vijesti: ${newsItems.length} objavljenih iz Supabase`)
+    } catch (e) {
+      console.log(`[prerender] vijesti preskočene (${e.message})`)
+    }
+  } else {
+    console.log('[prerender] vijesti preskočene — VITE_SUPABASE_URL/ANON_KEY nisu u build env')
+  }
+}
+await fs.mkdir(path.join(DIST, 'data'), { recursive: true })
+await fs.writeFile(path.join(DIST, 'data/vijesti.json'), JSON.stringify(newsItems, null, 1))
+
+async function buildNewsPages() {
+  for (const n of newsItems.filter((x) => x.slug)) {
+    const canonical = `${SITE}/vijesti/${n.slug}`
+    const paras = String(n.body).split(/\n{2,}/).filter(Boolean)
+      .map((par) => `<p>${esc(par)}</p>`).join('')
+    await write(`vijesti/${n.slug}`, page({
+      title: `${n.headline} | Burzovni list`,
+      description: n.headline.slice(0, 155),
+      canonical,
+      body: `<main><h1>${esc(n.headline)}</h1>${paras}
+        <p><a href="${esc(n.link_path)}">Pogledaj stranicu s podacima</a> · <a href="/vijesti">Sve vijesti</a></p></main>`,
+    }))
+    urls.push({ loc: canonical, lastmod: (n.published_at || '').slice(0, 10) || null })
+  }
+}
+
 /* ---------- statičke stranice ---------- */
 const FAQ = [ // MORA odgovarati sekciji "Česta pitanja" na /metodologija
   ['Što je fer-zona?', 'Raspon vrijednosti po dionici koji proizlazi iz naših metoda vrednovanja (sidrena metoda po arhetipu firme ± osjetljivost na ključne pretpostavke). Nije ciljna cijena — činjenični je prikaz što fundamenti govore uz javno ispisane pretpostavke.'],
@@ -238,6 +296,16 @@ const BODY_BUILDERS = {
     }),
     body: `<main><h1>Kako procjenjujemo</h1>${FAQ.map(([q, a]) => `<h2>${esc(q)}</h2><p>${esc(a)}</p>`).join('')}</main>`,
   }),
+  '/vijesti': () => {
+    const xh = String(process.env.VITE_X_HANDLE || '').replace(/^@/, '')
+    return {
+      body: `<main><h1>Vijesti</h1>
+      <p>Kratke obavijesti o novim izvješćima, dividendama i ažuriranjima analiza.</p>
+      ${xh ? `<p><a href="https://x.com/${esc(xh)}" rel="noopener noreferrer">Prati nas na X — @${esc(xh)}</a></p>` : ''}
+      <ul>${newsItems.map((n) => `<li><a href="${n.slug ? `/vijesti/${n.slug}` : esc(n.link_path)}">${esc(n.headline)}</a>${n.published_at ? ` (${esc(n.published_at.slice(0, 10))})` : ''}</li>`).join('')}</ul>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+    }
+  },
 }
 
 /* ---------- driver: registry je JEDINI popis ruta ---------- */
@@ -246,6 +314,7 @@ for (const r of ROUTES) {
   if (r.prerender === false) continue // samo SPA fallback (admin, auth)
   if (r.expand === 'stocks') { await buildStockPages(); continue }
   if (r.expand === 'blog') { await buildBlogPages(); continue }
+  if (r.expand === 'news') { await buildNewsPages(); continue }
   const route = r.path.replace(/^\//, '')
   const canonical = route ? `${SITE}/${route}` : `${SITE}/`
   const extra = BODY_BUILDERS[r.path] ? BODY_BUILDERS[r.path]() : {}
@@ -268,4 +337,4 @@ ${urls.map((u) => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod
 `
 await fs.writeFile(path.join(DIST, 'sitemap.xml'), sm)
 
-console.log(`[prerender] dionice=${nStocks}, blog=${posts.length}, statične=${nStatic}, sitemap=${urls.length} URL-ova`)
+console.log(`[prerender] dionice=${nStocks}, blog=${posts.length}, vijesti=${newsItems.length}, statične=${nStatic}, sitemap=${urls.length} URL-ova`)

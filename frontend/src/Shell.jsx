@@ -70,6 +70,7 @@ export function SiteHeader() {
     { to: '/dividende', label: 'DIVIDENDE' },
     { to: '/usporedba', label: 'USPOREDBA' },
     { to: '/portfelj', label: 'PORTFELJ' },
+    { to: '/vijesti', label: 'VIJESTI' },
     { to: '/blog', label: 'BLOG' },
     { to: '/alati', label: 'ALATI' },
     { to: `/dionica/${String(last).toLowerCase()}`, label: `DIONICA · ${last}` },
@@ -119,6 +120,15 @@ export function SiteFooter() {
           <button type="button" className="cc-inline-link" onClick={openSettings}>
             Postavke kolačića
           </button> ·{' '}
+          {/* M30: X handle iz env-a (VITE_X_HANDLE) — prazan = bez linka */}
+          {(import.meta.env.VITE_X_HANDLE || '') && (
+            <>
+              <a href={`https://x.com/${String(import.meta.env.VITE_X_HANDLE).replace(/^@/, '')}`}
+                target="_blank" rel="noopener noreferrer">
+                X: @{String(import.meta.env.VITE_X_HANDLE).replace(/^@/, '')}
+              </a> ·{' '}
+            </>
+          )}
           Izvor: ZSE službeni EOD (dan zaostatka)
         </span>
       </div>

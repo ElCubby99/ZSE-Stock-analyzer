@@ -13,6 +13,7 @@ import Metodologija from './Metodologija.jsx'
 import Impressum from './Impressum.jsx'
 import Dividende from './Dividende.jsx'
 import Usporedba from './Usporedba.jsx'
+import { VijestDetail, VijestiIndex } from './Vijesti.jsx'
 import Admin from './Admin.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
 import { ConsentProvider, pushEvent } from './consent.jsx'
@@ -75,6 +76,8 @@ const COMPONENTS = {
   Impressum: <Impressum />,
   Dividende: <Dividende />,
   Usporedba: <Usporedba />,
+  VijestiIndex: <VijestiIndex />,
+  VijestDetail: <VijestDetail />,
   AuthCallback: <AuthCallback />,
   Admin: <Admin />,
   PolitikaKolacica: <PolitikaKolacica />,
