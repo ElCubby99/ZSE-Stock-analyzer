@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { num } from './format.js'
 import { useConsent } from './consent.jsx'
 
@@ -62,19 +62,103 @@ function Search() {
   )
 }
 
+/* M31: nav u 3 klikabilne grupe. Klik na naziv grupe NAVIGIRA na prvu
+   stavku (dropdown nije mrtav gumb); podmeni se na desktopu otvara hoverom
+   (dosljedno za obje grupe), na mobilnom (<=768px) hamburger + accordion.
+   Portfelj je namjerno samostalan — jedini login-gated dio.
+   Rute se NE mijenjaju (registry/sitemap netaknuti — čista prezentacija). */
+const NAV_GROUPS = [
+  {
+    label: 'TRŽIŠTE',
+    to: '/',
+    end: true,
+    items: [
+      { to: '/', label: 'Sve dionice', end: true },
+      { to: '/screener', label: 'Screener' },
+      { to: '/dividende', label: 'Dividende' },
+      { to: '/usporedba', label: 'Usporedba' },
+      { to: '/alati', label: 'Alati' },
+    ],
+  },
+  { label: 'PORTFELJ', to: '/portfelj' },
+  {
+    label: 'BLOG',
+    to: '/blog',
+    items: [
+      { to: '/blog', label: 'Blog', end: true },
+      { to: '/vijesti', label: 'Vijesti' },
+    ],
+  },
+]
+
+const groupActive = (g, pathname) => {
+  // '/' samo egzaktno; ostale rute i s podstranicama (/blog/<slug> -> BLOG)
+  const one = (it) => (it.to === '/' ? pathname === '/'
+    : pathname === it.to || pathname.startsWith(`${it.to}/`))
+  return g.items ? g.items.some(one) : one(g)
+}
+
+function NavGroup({ g }) {
+  const [open, setOpen] = useState(false)
+  const { pathname } = useLocation()
+  const active = groupActive(g, pathname)
+  if (!g.items) {
+    return <NavLink to={g.to} className={active ? 'on' : ''}>{g.label}</NavLink>
+  }
+  return (
+    <div className={`hdr-group${open ? ' open' : ''}`}
+      onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <NavLink to={g.to} end={g.end} className={active ? 'on' : ''}
+        aria-haspopup="true" aria-expanded={open}
+        onFocus={() => setOpen(true)}>
+        {g.label}<span className="hdr-caret" aria-hidden="true">▾</span>
+      </NavLink>
+      <div className="hdr-dd" role="menu">
+        {g.items.map((it) => (
+          <NavLink key={it.label} to={it.to} end={it.end} role="menuitem"
+            className={({ isActive }) => (isActive ? 'on' : '')}
+            onClick={() => setOpen(false)}>{it.label}</NavLink>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function MobileNav({ last, onClose }) {
+  const [expanded, setExpanded] = useState('TRŽIŠTE')
+  const { pathname } = useLocation()
+  return (
+    <nav className="hdr-mobile" aria-label="Glavni izbornik">
+      {NAV_GROUPS.map((g) => (g.items ? (
+        <div key={g.label} className="hdr-mob-group">
+          <button type="button" className={groupActive(g, pathname) ? 'on' : ''}
+            aria-expanded={expanded === g.label}
+            onClick={() => setExpanded(expanded === g.label ? null : g.label)}>
+            {g.label}<span className="hdr-caret">{expanded === g.label ? '▴' : '▾'}</span>
+          </button>
+          {expanded === g.label && g.items.map((it) => (
+            <NavLink key={it.label} to={it.to} end={it.end}
+              className={({ isActive }) => `hdr-mob-sub${isActive ? ' active' : ''}`}
+              onClick={onClose}>{it.label}</NavLink>
+          ))}
+        </div>
+      ) : (
+        <NavLink key={g.label} to={g.to}
+          className={({ isActive }) => `hdr-mob-top${isActive ? ' active' : ''}`}
+          onClick={onClose}>{g.label}</NavLink>
+      )))}
+      <NavLink to={`/dionica/${String(last).toLowerCase()}`}
+        className={({ isActive }) => `hdr-mob-top${isActive ? ' active' : ''}`}
+        onClick={onClose}>DIONICA · {last}</NavLink>
+    </nav>
+  )
+}
+
 export function SiteHeader() {
   const last = lastTicker()
-  const items = [
-    { to: '/', label: 'TRŽIŠTE', end: true },
-    { to: '/screener', label: 'SCREENER' },
-    { to: '/dividende', label: 'DIVIDENDE' },
-    { to: '/usporedba', label: 'USPOREDBA' },
-    { to: '/portfelj', label: 'PORTFELJ' },
-    { to: '/vijesti', label: 'VIJESTI' },
-    { to: '/blog', label: 'BLOG' },
-    { to: '/alati', label: 'ALATI' },
-    { to: `/dionica/${String(last).toLowerCase()}`, label: `DIONICA · ${last}` },
-  ]
+  const [mobOpen, setMobOpen] = useState(false)
+  const { pathname } = useLocation()
+  useEffect(() => { setMobOpen(false) }, [pathname]) // navigacija zatvara panel
   return (
     <header className="hdr">
       <div className="hdr-in">
@@ -88,13 +172,20 @@ export function SiteHeader() {
           </div>
         </NavLink>
         <nav className="hdr-nav">
-          {items.map((it) => (
-            <NavLink key={it.label} to={it.to} end={it.end}
-              className={({ isActive }) => (isActive ? 'on' : '')}>{it.label}</NavLink>
-          ))}
+          {NAV_GROUPS.map((g) => <NavGroup g={g} key={g.label} />)}
+          {/* kontekst trenutne dionice — nije dio glavnog menija */}
+          <NavLink to={`/dionica/${String(last).toLowerCase()}`}
+            className={({ isActive }) => (isActive ? 'on' : '')}>
+            DIONICA · {last}
+          </NavLink>
         </nav>
         <Search />
+        <button type="button" className="hdr-burger" aria-label="Izbornik"
+          aria-expanded={mobOpen} onClick={() => setMobOpen((v) => !v)}>
+          {mobOpen ? '✕' : '☰'}
+        </button>
       </div>
+      {mobOpen && <MobileNav last={last} onClose={() => setMobOpen(false)} />}
     </header>
   )
 }

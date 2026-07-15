@@ -345,6 +345,46 @@ td.pos{color:var(--zone)} td.neg{color:var(--ordinary)}
   border-bottom:2px solid transparent; border-top:2px solid transparent}
 .hdr-nav a:hover{color:var(--ink)}
 .hdr-nav a.on{color:var(--ink); border-bottom-color:#9E2B25}
+/* M31: nav grupe s dropdownom (hover na desktopu) — nastavak postojećeg
+   stila: monospace labeli, hairline rubovi, crvena aktivna linija */
+.hdr-group{position:relative; display:flex; align-items:stretch}
+.hdr-group>a{gap:5px}
+.hdr-caret{font-size:9px; opacity:.55; transform:translateY(1px)}
+.hdr-dd{display:none; position:absolute; top:100%; left:0; min-width:172px;
+  background:var(--paper); border:1px solid rgba(38,46,51,0.22); border-top:none;
+  box-shadow:0 8px 18px rgba(38,46,51,0.12); z-index:30; flex-direction:column}
+.hdr-group.open .hdr-dd{display:flex}
+.hdr-dd a{display:block; padding:9px 14px; min-height:0; font-family:"IBM Plex Mono",monospace;
+  font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; text-decoration:none;
+  color:rgba(38,46,51,0.72); border-bottom:1px solid var(--hair); border-left:2px solid transparent}
+.hdr-dd a:last-child{border-bottom:none}
+.hdr-dd a:hover{color:var(--ink); background:#EBEDE6}
+.hdr-dd a.on{color:var(--ink); border-left-color:#9E2B25}
+.hdr-burger{display:none; font-size:19px; line-height:1; padding:8px 10px; margin-left:4px;
+  border:1px solid rgba(38,46,51,0.35); background:none; color:var(--ink); cursor:pointer}
+.hdr-mobile{display:none}
+@media(max-width:768px){
+  .hdr-nav{display:none}
+  .hdr-burger{display:block}
+  .hdr-mobile{display:flex; flex-direction:column; width:100%;
+    border-top:1px solid rgba(38,46,51,0.22); background:var(--paper)}
+  .hdr-mob-group{display:flex; flex-direction:column}
+  .hdr-mob-group>button,.hdr-mob-top{display:flex; justify-content:space-between; align-items:center;
+    width:100%; padding:13px 20px; font-family:"IBM Plex Mono",monospace; font-size:12px;
+    letter-spacing:.1em; text-transform:uppercase; text-decoration:none; text-align:left;
+    color:rgba(38,46,51,0.78); background:none; border:none; cursor:pointer;
+    border-bottom:1px solid var(--hair)}
+  .hdr-mob-group>button.on,.hdr-mob-top.active{color:var(--ink); box-shadow:inset 3px 0 0 #9E2B25}
+  .hdr-mob-sub{display:block; padding:11px 20px 11px 36px; font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; text-decoration:none;
+    color:rgba(38,46,51,0.65); border-bottom:1px solid var(--hair)}
+  .hdr-mob-sub.active{color:var(--ink); box-shadow:inset 3px 0 0 #9E2B25}
+}
+@media(max-width:1000px){
+  .hdr-in{gap:12px; padding:0 16px}
+  .hdr-nav a{padding:0 9px}
+  .hdr-tag{display:none}
+}
 .hdr-search{position:relative; padding:10px 0}
 .hdr-search input{font-family:"IBM Plex Mono",monospace; font-size:12px; padding:7px 12px; width:190px;
   border:1px solid rgba(38,46,51,0.3); background:#F7F8F4; color:var(--ink)}
@@ -420,9 +460,10 @@ td.pos{color:var(--zone)} td.neg{color:var(--ordinary)}
 .scr-row .dim{color:rgba(38,46,51,0.7); font-size:12px}
 .scr-table{min-width:1080px}
 
-/* header: meniji se NE prelamaju i ne pomiču između stranica */
-.hdr-in{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none}
-.hdr-in::-webkit-scrollbar{display:none}
+/* header: meniji se NE prelamaju i ne pomiču između stranica.
+   M31: bez overflow-x:auto — rezao bi apsolutni dropdown; uske ekrane
+   rješava hamburger (<=768px), ne horizontalni scroll */
+.hdr-in{flex-wrap:nowrap}
 .hdr-nav{flex-wrap:nowrap; white-space:nowrap}
 .hdr-nav a{flex:none}
 .hdr-logo{flex:none}
