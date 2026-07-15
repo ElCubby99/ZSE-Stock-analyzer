@@ -55,30 +55,45 @@ function storeConsent(analytics, marketing) {
   return c
 }
 
-/* ---- analitika: učitava se ISKLJUČIVO odavde, nakon privole ---- */
-const GTM_ID = 'GTM-WP4FWCDZ'
-let analyticsLoaded = false
+/* ---- Google Consent Mode v2 ----
+   GTM je STATIČKI u index.html, ali s defaultovima 'denied' postavljenima
+   PRIJE snippeta (Consent Mode v2). Ovdje se šalju SAMO consent update
+   signali — Googleovi tagovi ne postavljaju kolačiće dok je storage denied
+   (zahtjevi nose gcs=G100), a nakon privole prelaze na granted (gcs=G111)
+   bez reloada. */
 
-export function loadAnalytics() {
-  if (analyticsLoaded) return
-  analyticsLoaded = true
-  // Google Tag Manager — službeni snippet, ubačen dinamički NAKON privole
-  // (nikad statički u index.html; GDPR/ePrivacy opt-in). <noscript> varijanta
-  // se namjerno NE koristi: bez JavaScripta ni banner pristanka ne radi, pa
-  // bi noscript iframe pratio korisnika bez privole.
+function gtag() { // eslint-disable-line func-style
   window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' })
-  const s = document.createElement('script')
-  s.async = true
-  s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`
-  document.head.appendChild(s)
-  window.__blAnalyticsLoaded = true // marker za consent testove
+  window.dataLayer.push(arguments) // eslint-disable-line prefer-rest-params
 }
 
-/* Gašenje bez reloada nije pouzdano (skripta je već u DOM-u) — tražimo
-   reload uz poruku; do reloada više ništa novo ne šaljemo. */
-export function unloadAnalyticsNeedsReload() {
-  return analyticsLoaded
+export function pushEvent(event, params = {}) {
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push({ event, ...params })
+}
+
+function deleteGaCookies() {
+  // povlačenje privole: _ga i _ga_* se brišu (path=/, apex i trenutna domena)
+  const doms = ['', '; domain=.burzovnilist.com', `; domain=${window.location.hostname}`]
+  document.cookie.split(';').forEach((c) => {
+    const name = c.split('=')[0].trim()
+    if (name === '_ga' || name.startsWith('_ga_')) {
+      doms.forEach((d) => {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${d}`
+      })
+    }
+  })
+}
+
+export function applyConsentToGoogle(analytics, marketing, prev) {
+  gtag('consent', 'update', {
+    analytics_storage: analytics ? 'granted' : 'denied',
+    ad_storage: marketing ? 'granted' : 'denied',
+    ad_user_data: marketing ? 'granted' : 'denied',
+    ad_personalization: marketing ? 'granted' : 'denied',
+  })
+  pushEvent('consent_updated') // custom event za GTM triggere
+  if (prev?.analytics && !analytics) deleteGaCookies()
 }
 
 const Ctx = createContext({
@@ -170,23 +185,18 @@ function SettingsPanel({ current, onSave, onClose }) {
 export function ConsentProvider({ children }) {
   const [consent, setConsent] = useState(() => readStoredConsent())
   const [panelOpen, setPanelOpen] = useState(false)
-  const [needsReload, setNeedsReload] = useState(false)
 
-  // učitaj analitiku na mount ako je pristanak već dan (povratni posjet)
-  useEffect(() => {
-    if (consent?.analytics) loadAnalytics()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  // povratni posjet: consent default u index.html već je vratio granted/denied
+  // PRIJE GTM-a; ovdje nema što učitavati (GTM je statički, Consent Mode).
 
   const decide = useCallback((analytics, marketing) => {
     const prev = readStoredConsent()
     const c = storeConsent(analytics, marketing)
     setConsent(c)
     setPanelOpen(false)
-    if (analytics) {
-      loadAnalytics() // pali se bez reloada
-    } else if (prev?.analytics && unloadAnalyticsNeedsReload()) {
-      setNeedsReload(true) // gašenje traži reload, uz poruku
-    }
+    // granted/denied ide Googleu odmah — bez reloada; na povlačenje se
+    // _ga/_ga_* kolačići brišu
+    applyConsentToGoogle(analytics, marketing, prev)
   }, [])
 
   const openSettings = useCallback(() => setPanelOpen(true), [])
@@ -206,22 +216,6 @@ export function ConsentProvider({ children }) {
       {panelOpen && (
         <SettingsPanel current={consent}
           onSave={decide} onClose={() => setPanelOpen(false)} />
-      )}
-      {needsReload && (
-        <div className="cc-bar" role="alert">
-          <div className="cc-in">
-            <p className="cc-txt">
-              Analitika je isključena za ubuduće. Da se već učitana skripta
-              ukloni i iz ove sesije, osvježite stranicu.
-            </p>
-            <div className="cc-btns">
-              <button type="button" className="cc-btn"
-                onClick={() => window.location.reload()}>Osvježi sada</button>
-              <button type="button" className="cc-btn"
-                onClick={() => setNeedsReload(false)}>Kasnije</button>
-            </div>
-          </div>
-        </div>
       )}
     </Ctx.Provider>
   )

@@ -129,3 +129,50 @@ tests/   testovi validatora
 data/    lokalni izvori izvješća (ne commitaju se)
 docs/    specifikacija ekstrakcije i validacije
 ```
+
+---
+
+## Ručni koraci za Borisa (GTM / SEO / deploy — M25)
+
+### Google Tag Manager (container GTM-WP4FWCDZ)
+1. **Google Tag (GA4, G-4JC3VCE07N)**: Tags → New → Google Tag; Tag ID
+   `G-4JC3VCE07N`; Triggering = **Initialization – All Pages**. U tag
+   postavkama uključi consent provjeru (Advanced → Consent Settings →
+   *Require additional consent: analytics_storage* nije potrebno — Consent
+   Mode v2 signali su već na stranici, tagovi ih poštuju automatski).
+   NE dodavati gtag.js snippet direktno na stranicu — Google Tag živi
+   ISKLJUČIVO u GTM-u (inače se page_view broji duplo).
+2. **SPA pageviews**: stranica je SPA — promjene rute šalju
+   `dataLayer` event **`spa_page_view`** (s `page_path` i `page_title`).
+   U GTM-u: Trigger → Custom Event `spa_page_view`; Tag → GA4 Event,
+   event name `page_view`, parametri `page_path`/`page_title` iz
+   dataLayer varijabli. (Alternativa: GA4 Enhanced measurement →
+   "Page changes based on browser history" — tada ovaj tag preskoči da
+   ne bude duplo.)
+3. **Konverzijski eventi** (već se pushaju u dataLayer): `sign_up`,
+   `login`, `portfolio_created`, `stock_view` (parametar `ticker`),
+   `engaged_reader` (3+ različite dionice u sesiji), `consent_updated`.
+   Za svaki napravi Custom Event trigger + GA4 Event tag po potrebi;
+   u GA4 Admin → Events označi `sign_up` i `portfolio_created` kao
+   key events (konverzije).
+4. **Publish** container i provjeri Preview modeom: prije pristanka
+   Google zahtjevi nose `gcs=G100`, nakon "Prihvati sve" `gcs=G111`.
+
+### Google Search Console
+1. Dodaj property `burzovnilist.com` (Domain — DNS TXT verifikacija na
+   Cloudflareu).
+2. Submitaj sitemap: `https://burzovnilist.com/sitemap.xml`
+   (generira se pri svakom buildu, lastmod = zadnji EOD).
+
+### GA4 / Google Ads
+- GA4 Admin → Product links → poveži budući Google Ads račun.
+- Konverzije mapiraj iz eventa (`sign_up`, `portfolio_created`).
+- Marketinška consent kategorija je pripremljena u kodu ali SKRIVENA —
+  prije uključivanja Ads/remarketing tagova javi da se aktivira
+  (nova verzija politike kolačića → ponovni pristanak).
+
+### Vercel deploy hook (dnevni SEO build)
+1. Vercel → Project → Settings → Git → Deploy Hooks → kreiraj hook.
+2. Na stroju koji vrti noćni pipeline postavi env varijablu
+   `VERCEL_DEPLOY_HOOK_URL=<hook url>` — `src/daily.py` ga okida nakon
+   regeneracije exporta (bez env varijable korak se preskače i logira).

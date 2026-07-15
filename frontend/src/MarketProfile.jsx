@@ -55,7 +55,7 @@ export function ProfileHeader({ data, zone }) {
     <div className="prof-head">
       <div>
         <div className="prof-title">
-          <h1>{data.name}</h1>
+          <h1>{data.name} ({data.ticker}) — analiza dionice</h1>
           <span className="prof-tk">{data.ticker}</span>
         </div>
         <div className="prof-subline">

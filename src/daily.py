@@ -249,6 +249,19 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
             log("regen", None, "ok", f"{t}.json regeneriran")
         except Exception as e:  # noqa: BLE001
             log("regen", None, "failed", f"{t}: {type(e).__name__}: {e}")
+    # M25: EOD update -> okini Vercel build (prerender po dionici čita svježe
+    # exporte). Hook URL NIJE u repou — env VERCEL_DEPLOY_HOOK_URL (README).
+    hook = os.environ.get("VERCEL_DEPLOY_HOOK_URL")
+    if hook:
+        try:
+            import requests
+            r = requests.post(hook, timeout=30)
+            r.raise_for_status()
+            log("regen", None, "ok", "Vercel deploy hook okinut (prerender/SEO build)")
+        except Exception as e:  # noqa: BLE001
+            log("regen", None, "failed", f"deploy hook: {type(e).__name__}: {e}")
+    else:
+        log("regen", None, "skipped", "VERCEL_DEPLOY_HOOK_URL nije postavljen — build se ne okida")
 
 
 def build_digest(conn, run_id: str) -> str:

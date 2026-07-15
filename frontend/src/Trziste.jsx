@@ -11,7 +11,7 @@ function Movers({ title, list, nav }) {
       <h2 className="mk-h2">{title}</h2>
       <div className="mk-movers">
         {list.map((s) => (
-          <div key={s.ticker} className="mk-mrow" onClick={() => nav(`/dionica/${s.company}`)}>
+          <div key={s.ticker} className="mk-mrow" onClick={() => nav(`/dionica/${String(s.company).toLowerCase()}`)}>
             <b>{s.ticker}</b>
             <span className="mk-nm">{s.name}</span>
             <span className="mono">{eur0(s.price)}</span>
@@ -67,8 +67,9 @@ export default function Trziste() {
       <SiteHeader />
       <main className="wrap-wide">
         <div className="mk-title">
-          <h1>Tržište danas</h1>
-          <span>Zagrebačka burza · službeni EOD{fmtDate ? ` za ${fmtDate}` : ''} (dan zaostatka)</span>
+          <h1>Analiza dionica Zagrebačke burze</h1>
+          <span>fer vrijednost, CROBEX, dividende i pokazatelji · službeni
+            EOD{fmtDate ? ` za ${fmtDate}` : ''} (dan zaostatka)</span>
         </div>
         <div className="mk-idx">
           {ov.indices.length ? ov.indices.map((ix) => (
@@ -106,7 +107,7 @@ export default function Trziste() {
               ))}
             </div>
             {list.map((s) => (
-              <div className="mk-row" key={s.ticker} onClick={() => nav(`/dionica/${s.company}`)}>
+              <div className="mk-row" key={s.ticker} onClick={() => nav(`/dionica/${String(s.company).toLowerCase()}`)}>
                 <span className="mk-name"><b>{s.ticker}</b><em>{s.name}</em>
                   {s.illiquid && <i className="mk-ill">ILIKV.</i>}</span>
                 <span className="r mono">{eur0(s.price)}</span>

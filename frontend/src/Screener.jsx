@@ -54,7 +54,7 @@ export default function Screener() {
               ))}
             </div>
             {list.map((s) => (
-              <div className="scr-row" key={s.ticker} onClick={() => nav(`/dionica/${s.company}`)}>
+              <div className="scr-row" key={s.ticker} onClick={() => nav(`/dionica/${String(s.company).toLowerCase()}`)}>
                 <span className="mk-name"><b>{s.ticker}</b><em>{s.name}</em>
                   {s.illiquid && <i className="mk-ill">ILIKV.</i>}</span>
                 <span className="dim">{SECTOR_HR[s.sector] || s.sector || '—'}</span>

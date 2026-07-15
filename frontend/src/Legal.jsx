@@ -87,12 +87,13 @@ export function PolitikaKolacica() {
           </tbody>
         </table>
         <p className="imp-p" style={{ marginTop: 10 }}>
-          <b>Analitika (Google Tag Manager)</b> učitava se isključivo nakon
-          vašeg izričitog pristanka na kategoriju „Analitički" — prije
-          pristanka se ne učitava nijedna Googleova skripta niti se postavlja
-          ijedan analitički kolačić. Povučete li pristanak, skripta se više ne
-          učitava (uklanjanje iz tekuće sesije traži osvježavanje stranice, na
-          što vas sučelje upozori). Marketinške kolačiće ne koristimo.
+          <b>Analitika (Google Tag Manager uz Google Consent Mode v2)</b>:
+          prije vašeg pristanka svi su načini pohrane postavljeni na
+          „denied" — analitički kolačići se NE postavljaju. Tek pristankom na
+          kategoriju „Analitički" pohrana prelazi u „granted" i kolačići iz
+          tablice se postavljaju. Povučete li pristanak, pohrana se odmah
+          vraća na „denied", a postojeći <code>_ga</code>/<code>_ga_*</code>{' '}
+          kolačići se brišu. Marketinške kolačiće ne koristimo.
         </p>
       </section>
 

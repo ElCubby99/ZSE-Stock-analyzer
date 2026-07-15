@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink, useNavigate, useParams } from 'react-router-dom'
+import { pushEvent } from './consent.jsx'
 import VerdictSpread from './VerdictSpread.jsx'
 import {
   AnalysisUnavailable, Dividends, IlliquidBanner, PriceChart, ProfileHeader,
@@ -767,11 +768,21 @@ function Fundamentals({ data }) {
 
 export default function StockPage() {
   const { ticker } = useParams()
+  const navigate = useNavigate()
   const [data, setData] = useState(null)
   const [err, setErr] = useState(null)
   const [tab, setTabRaw] = useState(() =>
     (typeof window !== 'undefined' && window.location.hash.slice(1)) || 'pregled')
   const setTab = (k) => { setTabRaw(k); try { window.history.replaceState(null, '', `#${k}`) } catch {} }
+
+  // SEO: kanonske rute su lowercase (/dionica/koei) — uppercase varijanta se
+  // preusmjerava (replace, bez unosa u povijest); server dodatno radi 301
+  useEffect(() => {
+    if (ticker !== String(ticker).toLowerCase()) {
+      navigate(`/dionica/${String(ticker).toLowerCase()}${window.location.hash}`,
+        { replace: true })
+    }
+  }, [ticker, navigate])
 
   useEffect(() => {
     setData(null); setErr(null)
@@ -789,8 +800,20 @@ export default function StockPage() {
 
   useEffect(() => {
     if (data) {
-      document.title = `${data.ticker} — ${data.name} · analiza`
+      document.title = `${data.ticker} dionica — ${data.name} | cijena, analiza vrijednosti, fer-zona | Burzovni list`
       try { localStorage.setItem('lastTicker', data.ticker) } catch {}
+      // GTM konverzijski eventi: stock_view + engaged_reader (3+ različite
+      // dionice u sesiji — brojimo u sessionStorage, pushamo jednom)
+      pushEvent('stock_view', { ticker: data.ticker })
+      try {
+        const seen = new Set(JSON.parse(sessionStorage.getItem('bl_viewed') || '[]'))
+        seen.add(data.ticker)
+        sessionStorage.setItem('bl_viewed', JSON.stringify([...seen]))
+        if (seen.size >= 3 && !sessionStorage.getItem('bl_engaged')) {
+          sessionStorage.setItem('bl_engaged', '1')
+          pushEvent('engaged_reader', { distinct_stocks: seen.size })
+        }
+      } catch { /* sessionStorage nedostupan -> preskoči */ }
     }
   }, [data])
 

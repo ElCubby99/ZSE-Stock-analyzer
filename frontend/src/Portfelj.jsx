@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { SiteFooter, SiteHeader, useOverview } from './Shell.jsx'
 import { dash, num, pct } from './format.js'
 import { DEMO, supabase } from './supabase.js'
+import { pushEvent } from './consent.jsx'
 
 /* Faza 3 (M9): portfelj iza prijave — Supabase Auth (email+password).
    Lozinke NIKAD ne prolaze kroz naš kod: sve forme zovu Supabase SDK.
@@ -18,11 +19,12 @@ function AuthForms({ onDemo }) {
   const [msg, setMsg] = useState(null)
   const [busy, setBusy] = useState(false)
 
-  const run = async (fn, okMsg) => {
+  const run = async (fn, okMsg, gtmEvent) => {
     setBusy(true); setMsg(null)
     const { error } = await fn()
     setBusy(false)
     setMsg(error ? { t: 'err', s: error.message } : { t: 'ok', s: okMsg })
+    if (!error && gtmEvent) pushEvent(gtmEvent) // GTM konverzijski event
   }
   const submit = (e) => {
     e.preventDefault()
@@ -41,10 +43,11 @@ function AuthForms({ onDemo }) {
             terms_version: '15.07.2026.',
           },
         },
-      }), 'Registracija zaprimljena — provjeri email i potvrdi adresu, pa se prijavi.')
+      }), 'Registracija zaprimljena — provjeri email i potvrdi adresu, pa se prijavi.',
+      'sign_up')
     } else if (mode === 'login') {
       run(() => supabase.auth.signInWithPassword({ email, password: pass }),
-        'Prijavljen.')
+        'Prijavljen.', 'login')
     } else {
       run(() => supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/portfelj`,
@@ -178,7 +181,7 @@ function PositionsView({ rows, ov, onAdd, onDelete, demo, email, onLogout }) {
           {enriched.map((r) => (
             <tr key={r.id}>
               <td>
-                <a href={`/dionica/${r.s?.company || r.ticker}`}><b>{r.ticker}</b></a>{' '}
+                <a href={`/dionica/${String(r.s?.company || r.ticker).toLowerCase()}`}><b>{r.ticker}</b></a>{' '}
                 <span className="fund-src">{r.s?.name || 'nije u sustavu'}</span>
                 {r.illiquid && <span className="flag" style={{ marginLeft: 6 }}
                   title="slabo likvidna dionica — zadnja cijena može biti stara">indikativna vrijednost</span>}
@@ -234,7 +237,14 @@ export default function Portfelj() {
   const [demo, setDemo] = useState(DEMO)
   const [err, setErr] = useState(null)
 
-  useEffect(() => { document.title = 'Portfelj · Burzovni list' }, [])
+  useEffect(() => {
+    document.title = 'Portfelj · Burzovni list'
+    // auth/portfelj rute se ne indeksiraju (SEO higijena)
+    const m = document.createElement('meta')
+    m.name = 'robots'; m.content = 'noindex'
+    document.head.appendChild(m)
+    return () => { document.head.removeChild(m) }
+  }, [])
   useEffect(() => {
     if (!supabase) return undefined
     supabase.auth.getSession().then(({ data }) => setSession(data.session))
@@ -256,8 +266,13 @@ export default function Portfelj() {
 
   const add = async (p) => {
     if (demo) { setRows((r) => [...r, { ...p, id: Date.now() }]); return }
+    const first = rows.length === 0
     const { error } = await supabase.from('positions').insert(p) // user_id = default auth.uid()
-    if (error) setErr(error.message); else load()
+    if (error) setErr(error.message)
+    else {
+      if (first) pushEvent('portfolio_created') // prva pozicija = kreiran portfelj
+      load()
+    }
   }
   const del = async (id) => {
     if (demo) { setRows((r) => r.filter((x) => x.id !== id)); return }

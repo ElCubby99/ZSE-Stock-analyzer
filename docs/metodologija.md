@@ -155,6 +155,32 @@ Detaljni registar izvora (način čitanja, poznate slabosti svakog izvora,
 datumi provjere) vodi se u internoj projektnoj dokumentaciji i redovito se
 revidira.
 
+## Česta pitanja
+
+**Što je fer-zona?** Raspon vrijednosti po dionici koji proizlazi iz naših
+metoda vrednovanja (sidrena metoda po arhetipu firme ± osjetljivost na ključne
+pretpostavke). Nije ciljna cijena — činjenični je prikaz što fundamenti govore
+uz javno ispisane pretpostavke.
+
+**Kako se fer-zona računa?** Svaka firma dobiva arhetip (banka, industrija,
+holding…) koji određuje sidrenu metodu (npr. rezidualni dohodak za banke,
+DCF za operativne firme, SOTP za holdinge). Zona = sidro ± osjetljivost na
+ključnu pretpostavku; ostale metode služe kao potvrda. Svi parametri (trošak
+kapitala, rast, peer multipli) imaju citiran izvor na samoj stranici dionice.
+
+**Jesu li ovo preporuke za kupnju ili prodaju?** Ne. Servis ne objavljuje
+preporuke, rejtinge ni ciljne cijene. Cijena iznad ili ispod zone je
+činjenica iz podataka, ne signal — zaključak je uvijek čitateljev. Za
+investicijske odluke potražite ovlaštenog savjetnika.
+
+**Zašto neka dionica nema fer-zonu?** Zona se objavljuje samo kad podaci
+prođu validaciju. Ako izvješća nedostaju ili ne prođu provjere, prikazujemo
+samo tržišni profil — polja ostaju prazna (n/p), ništa se ne procjenjuje.
+
+**Koliko su podaci ažurni?** Cijene su službeni EOD zaključci Zagrebačke
+burze s danom zaostatka; financije se ažuriraju kad izdavatelj objavi
+izvješće (EHO registar). Datum stoji uz svaku brojku.
+
 ## Automatizacija
 
 Analize generira automatizirani sustav uz ljudski nadzor: podaci dolaze iz

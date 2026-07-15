@@ -36,7 +36,7 @@ function Search() {
     .filter((s) => (s.ticker + ' ' + s.name).toLowerCase().includes(q.toLowerCase()))
     .filter((s, i, a) => a.findIndex((x) => x.company === s.company) === i)
     .slice(0, 8)
-  const go = (c) => { setQ(''); setOpen(false); nav(`/dionica/${c}`) }
+  const go = (c) => { setQ(''); setOpen(false); nav(`/dionica/${String(c).toLowerCase()}`) }
   return (
     <div className="hdr-search" ref={box}>
       <input value={q} placeholder="ticker ili ime…"
@@ -69,7 +69,7 @@ export function SiteHeader() {
     { to: '/portfelj', label: 'PORTFELJ' },
     { to: '/blog', label: 'BLOG' },
     { to: '/alati', label: 'ALATI' },
-    { to: `/dionica/${last}`, label: `DIONICA · ${last}` },
+    { to: `/dionica/${String(last).toLowerCase()}`, label: `DIONICA · ${last}` },
   ]
   return (
     <header className="hdr">

@@ -3,12 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ZSE analiza dionica</title>
+  <title>Burzovni list — analiza dionica Zagrebačke burze</title>
+  <meta name="description" content="Fundamentalna analiza dionica Zagrebačke burze: cijene, fer-zone vrijednosti, pokazatelji, dividende i izvještaji. Informativno, nije investicijski savjet." />
+
+  <!-- 1) PRVO: Google Consent Mode v2 defaultovi (denied) + povrat spremljenog
+       pristanka (bl_consent) — OBAVEZNO prije GTM snippeta -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    (function () {
+      var d = {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+      };
+      try {
+        var c = JSON.parse(localStorage.getItem('bl_consent') || 'null');
+        // stroga validacija verzije/isteka je u aplikaciji; ovdje samo vraćamo
+        // ranije dan pristanak da povratni posjet ne izgubi prvi page_view
+        if (c && c.version === 2 && c.timestamp &&
+            (Date.now() - Date.parse(c.timestamp)) < 365 * 864e5) {
+          if (c.analytics === true) d.analytics_storage = 'granted';
+          if (c.marketing === true) {
+            d.ad_storage = 'granted';
+            d.ad_user_data = 'granted';
+            d.ad_personalization = 'granted';
+          }
+        }
+      } catch (e) { /* bez valjane pohrane -> ostaje denied */ }
+      gtag('consent', 'default', d);
+    })();
+  </script>
+
+  <!-- 2) TEK ONDA: Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-WP4FWCDZ');</script>
+  <!-- End Google Tag Manager -->
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Burzovni list",
+    "url": "https://burzovnilist.com",
+    "logo": "https://burzovnilist.com/og-default.png",
+    "email": "info@burzovnilist.com",
+    "description": "Analitička platforma za dionice Zagrebačke burze — informativno, nije investicijski savjet."
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WP4FWCDZ"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

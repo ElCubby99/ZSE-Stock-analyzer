@@ -31,7 +31,7 @@ const fmtD = (d) => (d ? `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}.` 
 
 function Row({ r, nav }) {
   return (
-    <div className="mk-row div-row" onClick={() => nav(`/dionica/${r.company}`)}>
+    <div className="mk-row div-row" onClick={() => nav(`/dionica/${String(r.company).toLowerCase()}`)}>
       <span className="mk-name"><b>{r.class_ticker}</b><em>{r.name}</em></span>
       <span className="r mono">{num(r.amount_eur, 2)}</span>
       <span className="r mono">{r.yield_now === null || r.yield_now === undefined
