@@ -106,19 +106,24 @@ PEER_SETS = {
 
 
 def build_params(ticker: str) -> Params:
-    """Params s kalibriranim r/g za sve; beta IZ SERIJE gdje je kalibrirana
-    (M10, calibrations tablica); peer multipli iz baze samo gdje skup postoji."""
+    """Params s kalibriranim r/g za sve; beta kroz DISCIPLINU (Z1):
+    prag likvidnosti -> regresija+Blume ILI sektorska (relevered), clamp
+    [0,7, 1,8], premija nelikvidnosti kao zasebna komponenta r-a."""
     beta, beta_src, beta_cal = BETA, BETA_SRC, False
-    bc = _calibration(f"beta:{ticker}")
-    if bc and bc.get("calibrated"):
-        beta, beta_cal = float(bc["beta"]), True
-        beta_src = (
-            f"beta={bc['beta']}: IZMJERENA — OLS tjednih log-prinosa klase "
-            f"{bc['class_ticker']} vs CROBEX ({bc['period']}, n={bc['n_weeks']} "
-            f"tjedana, R²={bc['r2']}); izvor: zse.hr securityHistory + "
-            f"indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku "
-            f"pouzdanost nagiba — beta je procjena, ne konstanta")
-    r = RF + beta * ERP
+    beta_origin, illiq_premium, illiq_src = "pretpostavka", 0.0, None
+    try:
+        from .beta_discipline import resolve_beta
+        from .db import get_conn
+        with get_conn() as conn, conn.cursor() as cur:
+            cur.execute("SELECT sector FROM companies WHERE ticker=%s", (ticker,))
+            row = cur.fetchone()
+            bd = resolve_beta(conn, ticker, row[0] if row else None)
+        beta, beta_src, beta_origin = bd["beta"], bd["src"], bd["origin"]
+        beta_cal = bd["origin"] == "regresija"
+        illiq_premium, illiq_src = bd["illiq_premium"], bd["illiq_src"]
+    except Exception:  # noqa: BLE001 — bez baze: stari fallback (β=1, bez premije)
+        pass
+    r = RF + beta * ERP + illiq_premium
 
     disc_src = DISCOUNT_SRC
     dc = _calibration("holding_discount:ADRS") if ticker == "ADRS" else None
@@ -145,7 +150,11 @@ def build_params(ticker: str) -> Params:
             f"{pnav_measured['note']}")
 
     sources = {
-        "r": f"r={r:.4f} (CAPM: rf+beta×ERP). {RF_SRC}. {ERP_SRC}. {beta_src}",
+        "r": (f"r={r:.4f} (CAPM: rf + beta×ERP"
+              + (f" + premija nelikvidnosti {illiq_premium * 100:.1f} p.b."
+                 if illiq_premium else "")
+              + f"). {RF_SRC}. {ERP_SRC}. {beta_src}"
+              + (f" {illiq_src}" if illiq_src else "")),
         "g": G_SRC,
         "wacc": ("wacc≈r (pretpostavka strukture bez duga na razini metode; "
                  "DCF ionako gate-an za ADRS/CROS)"),
@@ -156,6 +165,9 @@ def build_params(ticker: str) -> Params:
     p.rates_calibrated = True
     p.beta_calibrated = beta_cal
     p.beta = beta  # numerički, samo za prikaz (for-dummies kartica pretpostavki)
+    p.beta_origin = beta_origin      # Z1: badge porijekla (regresija/sektorska/clamp)
+    p.illiq_premium = illiq_premium  # Z1: zasebna komponenta r-a
+    p.illiq_src = illiq_src
     if pnav_measured:
         p.pnav_measured = pnav_measured  # v2 §4: izmjereni P/NAV za SOTP diskont
     p.sources = sources

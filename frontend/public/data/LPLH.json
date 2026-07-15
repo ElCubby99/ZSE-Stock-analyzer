@@ -102,11 +102,11 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: β = 1,0; peer multipli (P/E 12, P/B 1,5)."
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 1.10 (sektorska (nema serije)); premija nelikvidnosti +2.0 p.b.; peer multipli (P/E 12, P/B 1,5)."
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 8–57 € (raspon 86%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 6–57 € (raspon 90%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -1746,11 +1746,14 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.0931,
+      "r": 0.11857200000000001,
       "g": 0.025,
       "g_terminal": 0.04,
-      "beta": 1.0,
+      "beta": 1.096,
       "beta_calibrated": false,
+      "beta_origin": "sektorska (nema serije)",
+      "illiq_premium": 0.02,
+      "illiq_src": "premija nelikvidnosti +2.0 p.b. na r: 39/246 trgovanih dana (16%), prosj. promet 300 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice.",
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -1760,7 +1763,7 @@
       "peers_calibrated": false,
       "peers_narrow": false,
       "sources": {
-        "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); korištena je neutralna tržišna beta",
+        "r": "r=0.1186 (CAPM: rf + beta×ERP + premija nelikvidnosti 2.0 p.b.). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.10: SEKTORSKA unlevered 0.9 (Shipbuilding & Marine) relevered s D/E=0.27 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 39/246 trgovanih dana (16%), prosj. promet 300 €/dan). sektorske unlevered/levered bete: Damodaran (pages.stern.nyu.edu, Europe, tablica siječanj 2026); TOČAN REDAK NEPROVJEREN (egress 403) — sector_beta_exact_unverified=true. premija nelikvidnosti +2.0 p.b. na r: 39/246 trgovanih dana (16%), prosj. promet 300 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice.",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
@@ -1770,9 +1773,15 @@
     "assumption_flags": [
       {
         "key": "beta",
-        "label": "β = 1,0",
+        "label": "β = 1.10 (sektorska (nema serije))",
         "status": "pretpostavka",
-        "why": "beta nije kalibrirana za ovu firmu (serija cijena prekratka ili nelikvidna) — korištena je neutralna tržišna beta 1,0; postupak kalibracije je opisan u Metodologiji"
+        "why": "vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji"
+      },
+      {
+        "key": "illiq",
+        "label": "premija nelikvidnosti +2.0 p.b.",
+        "status": "izvor",
+        "why": "premija nelikvidnosti +2.0 p.b. na r: 39/246 trgovanih dana (16%), prosj. promet 300 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice."
       },
       {
         "key": "peer_multiples",
@@ -1823,13 +1832,13 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 13.756225606511494,
-        "base": 16.34181498010979,
-        "high": 20.127213807814023,
+        "low": 9.80782990918038,
+        "base": 11.052686076323365,
+        "high": 12.660622266549524,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
-          "wacc": 0.0931,
+          "wacc": 0.11857200000000001,
           "g_terminal": 0.04,
           "g1_explicit": null,
           "model": "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)",
@@ -1844,19 +1853,19 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 7.071451531430468,
-        "base": 8.109843826794709,
-        "high": 9.505686137774862,
+        "low": 5.332332721244346,
+        "base": 5.902196860222283,
+        "high": 6.608437809370597,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "roe": 0.0396,
-          "r": 0.0931,
+          "r": 0.11857200000000001,
           "g": 0.025,
           "bvps": 37.89,
           "placeholder": true,
           "sources": {
-            "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); korištena je neutralna tržišna beta",
+            "r": "r=0.1186 (CAPM: rf + beta×ERP + premija nelikvidnosti 2.0 p.b.). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.10: SEKTORSKA unlevered 0.9 (Shipbuilding & Marine) relevered s D/E=0.27 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 39/246 trgovanih dana (16%), prosj. promet 300 €/dan). sektorske unlevered/levered bete: Damodaran (pages.stern.nyu.edu, Europe, tablica siječanj 2026); TOČAN REDAK NEPROVJEREN (egress 403) — sector_beta_exact_unverified=true. premija nelikvidnosti +2.0 p.b. na r: 39/246 trgovanih dana (16%), prosj. promet 300 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice.",
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
@@ -1880,10 +1889,10 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 13.756225606511494,
-      "zone_high": 20.127213807814023,
-      "dispersion": 0.31653602242895185,
-      "divergent": true,
+      "zone_low": 9.80782990918038,
+      "zone_high": 12.660622266549524,
+      "dispersion": 0.22532797340510435,
+      "divergent": false,
       "archetype": "cyclical",
       "anchor_methods": [
         "dcf_fcf",
@@ -1903,36 +1912,36 @@
         "justified_pb_roe": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": -0.521309290498652
+          "vs_zone_pct": -0.4746236354814196
         }
       },
       "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): comps",
-      "all_methods_low": 8.109843826794709,
+      "all_methods_low": 5.902196860222283,
       "all_methods_high": 56.83790699500012,
-      "dispersion_all": 0.8573162831715793,
+      "dispersion_all": 0.8961573855852665,
       "method_bases": {
         "comps": 56.83790699500012,
-        "dcf_fcf": 16.34181498010979,
-        "justified_pb_roe": 8.109843826794709
+        "dcf_fcf": 11.052686076323365,
+        "justified_pb_roe": 5.902196860222283
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: justified_pb_roe -52% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
-        "metode se međusobno razilaze 86% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +71% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "ULAZI NEKONZISTENTNI: justified_pb_roe -47% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "metode se međusobno razilaze 90% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa +158% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 71.2,
+      "vs_market_pct": 158.1,
       "anchor_inconsistency": [
-        "justified_pb_roe -52% vs primarno sidro"
+        "justified_pb_roe -47% vs primarno sidro"
       ],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 15 € operativne zarade (EBITDA marža 14.6%). Firma je lani stvorila 0.6 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 9.3%, bez faze rasta (samo dugoročni rast 4%) — tako izlazi 16.34 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) -52% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je. Tržišna cijena implicira ~+6.3% trajnog rasta godišnje / multipl P/E 19.3×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 15 € operativne zarade (EBITDA marža 14.6%). Firma je lani stvorila 0.6 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 11.9%, bez faze rasta (samo dugoročni rast 4%) — tako izlazi 11.05 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) -47% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je. Tržišna cijena implicira ~+8.7% trajnog rasta godišnje / multipl P/E 19.3×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
-        "implied_g_pct": 6.3,
-        "implied_g_note": "uz naš r=9.3% cijena implicira trajni rast FCF-a ~+6.3% godišnje",
+        "implied_g_pct": 8.7,
+        "implied_g_note": "uz naš r=11.9% cijena implicira trajni rast FCF-a ~+8.7% godišnje",
         "implied_pe": 19.3,
         "peer_pe": 12.0,
         "implied_pe_note": "cijena implicira P/E 19.3× vs peer medijan 12.0× (placeholder)",
-        "narrative": "Tržišna cijena implicira ~+6.3% trajnog rasta godišnje / multipl P/E 19.3×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~+8.7% trajnog rasta godišnje / multipl P/E 19.3×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       }
     },
     "sotp": null
@@ -1942,8 +1951,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "9,31%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.0 × premija rizika 5.70% (Damodaran, HR). Beta je pretpostavka 1,0 (serija prekratka/nelikvidna). Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "11,86%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.096 × premija rizika 5.70% (Damodaran, HR). Beta je pretpostavka 1,0 (serija prekratka/nelikvidna). Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",
@@ -1960,7 +1969,7 @@
       "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
       "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
-      "β = 1,0 — beta nije kalibrirana za ovu firmu (serija cijena prekratka ili nelikvidna) — korištena je neutralna tržišna beta 1,0; postupak kalibracije je opisan u Metodologiji",
+      "β = 1.10 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
     "changelog": [

@@ -102,7 +102,7 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: β = 1,0; peer multipli (P/E 12, P/B 1,5)."
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 1.80 (clamp); premija nelikvidnosti +2.0 p.b.; peer multipli (P/E 12, P/B 1,5)."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -881,11 +881,14 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.0931,
+      "r": 0.1587,
       "g": 0.025,
       "g_terminal": 0.04,
-      "beta": 1.0,
+      "beta": 1.8,
       "beta_calibrated": false,
+      "beta_origin": "clamp",
+      "illiq_premium": 0.02,
+      "illiq_src": "premija nelikvidnosti +2.0 p.b. na r: 43/246 trgovanih dana (17%), prosj. promet 773 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice.",
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -895,7 +898,7 @@
       "peers_calibrated": false,
       "peers_narrow": false,
       "sources": {
-        "r": "r=0.0931 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete (serija prekratka/nelikvidna ili kalibracija nije pokrenuta); korištena je neutralna tržišna beta",
+        "r": "r=0.1587 (CAPM: rf + beta×ERP + premija nelikvidnosti 2.0 p.b.). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=4.66: SEKTORSKA unlevered 1.0 (Machinery / Electrical Equipment) relevered s D/E=4.47 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 43/246 trgovanih dana (17%), prosj. promet 773 €/dan). sektorske unlevered/levered bete: Damodaran (pages.stern.nyu.edu, Europe, tablica siječanj 2026); TOČAN REDAK NEPROVJEREN (egress 403) — sector_beta_exact_unverified=true. CLAMP: izračunata beta 4.66 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8. premija nelikvidnosti +2.0 p.b. na r: 43/246 trgovanih dana (17%), prosj. promet 773 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice.",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
@@ -905,9 +908,15 @@
     "assumption_flags": [
       {
         "key": "beta",
-        "label": "β = 1,0",
+        "label": "β = 1.80 (clamp)",
         "status": "pretpostavka",
-        "why": "beta nije kalibrirana za ovu firmu (serija cijena prekratka ili nelikvidna) — korištena je neutralna tržišna beta 1,0; postupak kalibracije je opisan u Metodologiji"
+        "why": "vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); finalna vrijednost ograničena na raspon [0,7, 1,8]; postupak je opisan u Metodologiji"
+      },
+      {
+        "key": "illiq",
+        "label": "premija nelikvidnosti +2.0 p.b.",
+        "status": "izvor",
+        "why": "premija nelikvidnosti +2.0 p.b. na r: 43/246 trgovanih dana (17%), prosj. promet 773 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice."
       },
       {
         "key": "peer_multiples",
@@ -935,13 +944,13 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -64.7875230595321,
-        "base": -64.54605485945484,
-        "high": -64.19253645052504,
+        "low": -65.44107447322374,
+        "base": -65.38811367046733,
+        "high": -65.32540846977966,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
-          "wacc": 0.0931,
+          "wacc": 0.1587,
           "g_terminal": 0.04,
           "g1_explicit": null,
           "model": "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)",

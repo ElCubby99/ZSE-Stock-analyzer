@@ -280,6 +280,10 @@
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
         "txt": "free float približno 9%; ARNT: zadnja trgovina 2026-07-09: 290 kom / 11,852 € prometa (6 d)."
+      },
+      {
+        "l": "PRETPOSTAVKE PROCJENE",
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 0.70 (clamp)."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -3939,11 +3943,14 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.067108,
+      "r": 0.076,
       "g": 0.025,
       "g_terminal": 0.04,
-      "beta": 0.544,
-      "beta_calibrated": true,
+      "beta": 0.7,
+      "beta_calibrated": false,
+      "beta_origin": "clamp",
+      "illiq_premium": 0.0,
+      "illiq_src": null,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -3953,14 +3960,21 @@
       "peers_calibrated": true,
       "peers_narrow": false,
       "sources": {
-        "r": "r=0.0671 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.544: IZMJERENA — OLS tjednih log-prinosa klase ARNT vs CROBEX (2024-07-02..2026-07-14, n=104 tjedana, R²=0.108); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+        "r": "r=0.0760 (CAPM: rf + beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.69: IZMJERENA regresijom (OLS tjednih log-prinosa ARNT vs CROBEX, 2024-07-02..2026-07-14, n=104 tj., R²=0.108) uz Blume prilagodbu 0,67·0.544 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 179/246 trgovanih dana (73%), prosj. promet 17,758 €/dan. CLAMP: izračunata beta 0.69 izvan granica [0.7, 1.8] -> zamijenjena rubom 0.7.",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=2.49 (n=3), EV/EBITDA=9.97 (n=2). Skup ['RIVP', 'PLAG', 'MAIS'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=24.15 P/B=3.33; PLAG P/E=15.6 P/B=2.49; MAIS P/E=20.42 P/B=1.76"
       }
     },
-    "assumption_flags": [],
+    "assumption_flags": [
+      {
+        "key": "beta",
+        "label": "β = 0.70 (clamp)",
+        "status": "pretpostavka",
+        "why": "vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); finalna vrijednost ograničena na raspon [0,7, 1,8]; postupak je opisan u Metodologiji"
+      }
+    ],
     "ran": [
       {
         "key": "comps",
@@ -4007,13 +4021,13 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 49.931185064359134,
-        "base": 77.31761967590397,
-        "high": 136.71603004600803,
-        "confidence": 0.7,
+        "low": 35.579242535751504,
+        "base": 52.2161915630097,
+        "high": 81.64827428425264,
+        "confidence": 0.6,
         "no_value": false,
         "assumptions": {
-          "wacc": 0.067108,
+          "wacc": 0.076,
           "g_terminal": 0.04,
           "g1_explicit": 0.0,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
@@ -4067,21 +4081,21 @@
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.24029005154332284
+          "vs_zone_pct": -0.1623743307598905
         }
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 62.33833737495177,
-      "all_methods_high": 77.31761967590397,
-      "dispersion_all": 0.19373698212311224,
+      "all_methods_low": 52.2161915630097,
+      "all_methods_high": 62.33833737495177,
+      "dispersion_all": 0.1623743307598906,
       "method_bases": {
         "comps": 62.33833737495177,
-        "dcf_fcf": 77.31761967590397
+        "dcf_fcf": 52.2161915630097
       },
       "qa_flags": [],
       "vs_market_pct": -33.3,
       "anchor_inconsistency": [],
-      "reasoning": "Očekivani rast +0.0% godišnje procijenjen je iz zadnjeg izvješća — uprava: operativni pokazatelji 'na razinama sličnim onima iz 2025.' — bez faze rasta. Od svakih 100 € prihoda firmi ostaje 25 € operativne zarade (EBITDA marža 24.6%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 62.34 € po dionici. Leće se razilaze (55%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 3.5); visok D&A (46% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: DCF (FCF) +24% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
+      "reasoning": "Očekivani rast +0.0% godišnje procijenjen je iz zadnjeg izvješća — uprava: operativni pokazatelji 'na razinama sličnim onima iz 2025.' — bez faze rasta. Od svakih 100 € prihoda firmi ostaje 25 € operativne zarade (EBITDA marža 24.6%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 62.34 € po dionici. Leće se razilaze (55%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 3.5); visok D&A (46% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: DCF (FCF) -16% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
       "red_rules": [],
       "market_implied": null
     },
@@ -4092,8 +4106,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "6,71%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 0.544 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "7,60%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 0.7 × premija rizika 5.70% (Damodaran, HR). Beta je pretpostavka 1,0 (serija prekratka/nelikvidna). Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",
@@ -4111,7 +4125,9 @@
         "why": "medijan iz baze (ZSE peeri istog sektora)"
       }
     ],
-    "limitations": [],
+    "limitations": [
+      "β = 0.70 (clamp) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); finalna vrijednost ograničena na raspon [0,7, 1,8]; postupak je opisan u Metodologiji"
+    ],
     "changelog": [
       {
         "date": "2026-07-13",

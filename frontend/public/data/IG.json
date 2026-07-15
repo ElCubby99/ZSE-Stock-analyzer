@@ -3331,11 +3331,14 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.080959,
+      "r": 0.084949,
       "g": 0.025,
       "g_terminal": 0.04,
-      "beta": 0.787,
+      "beta": 0.857,
       "beta_calibrated": true,
+      "beta_origin": "regresija",
+      "illiq_premium": 0.0,
+      "illiq_src": null,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -3345,7 +3348,7 @@
       "peers_calibrated": true,
       "peers_narrow": false,
       "sources": {
-        "r": "r=0.0810 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.787: IZMJERENA — OLS tjednih log-prinosa klase IG vs CROBEX (2025-03-10..2026-07-14, n=70 tjedana, R²=0.232); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+        "r": "r=0.0849 (CAPM: rf + beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.86: IZMJERENA regresijom (OLS tjednih log-prinosa IG vs CROBEX, 2025-03-10..2026-07-14, n=70 tj., R²=0.232) uz Blume prilagodbu 0,67·0.787 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 67,314 €/dan.",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
@@ -3390,19 +3393,19 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 61.91736333815027,
-        "base": 72.98213635735186,
-        "high": 88.86197194066565,
+        "low": 58.385500413459155,
+        "base": 68.12469546482933,
+        "high": 81.7635461855303,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "roe": 0.7998,
-          "r": 0.080959,
+          "r": 0.084949,
           "g": 0.025,
           "bvps": 5.27,
           "placeholder": false,
           "sources": {
-            "r": "r=0.0810 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.787: IZMJERENA — OLS tjednih log-prinosa klase IG vs CROBEX (2025-03-10..2026-07-14, n=70 tjedana, R²=0.232); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+            "r": "r=0.0849 (CAPM: rf + beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.86: IZMJERENA regresijom (OLS tjednih log-prinosa IG vs CROBEX, 2025-03-10..2026-07-14, n=70 tj., R²=0.232) uz Blume prilagodbu 0,67·0.787 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 67,314 €/dan.",
             "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
           }
         }
@@ -3449,21 +3452,21 @@
         "justified_pb_roe": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.11043453925029989
+          "vs_zone_pct": 0.03652782168022051
         }
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 65.72394299498747,
-      "all_methods_high": 72.98213635735186,
-      "dispersion_all": 0.09945164289005141,
+      "all_methods_high": 68.12469546482933,
+      "dispersion_all": 0.0352405607608374,
       "method_bases": {
         "comps": 65.72394299498747,
-        "justified_pb_roe": 72.98213635735186
+        "justified_pb_roe": 68.12469546482933
       },
       "qa_flags": [],
       "vs_market_pct": 12.3,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 65.72 € po dionici. Leće se razilaze (93%) pa se ne prosječe; razlog: ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: Opravdani P/B (ROE) +11% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 65.72 € po dionici. Leće se razilaze (93%) pa se ne prosječe; razlog: ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: Opravdani P/B (ROE) +4% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
       "red_rules": [],
       "market_implied": null
     },
@@ -3474,8 +3477,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "8,10%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 0.787 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "8,49%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 0.857 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",

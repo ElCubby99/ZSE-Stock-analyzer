@@ -4718,11 +4718,14 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.13243,
+      "r": 0.11943400000000001,
       "g": 0.025,
       "g_terminal": 0.04,
-      "beta": 1.69,
+      "beta": 1.462,
       "beta_calibrated": true,
+      "beta_origin": "regresija",
+      "illiq_premium": 0.0,
+      "illiq_src": null,
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -4732,7 +4735,7 @@
       "peers_calibrated": true,
       "peers_narrow": false,
       "sources": {
-        "r": "r=0.1324 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.69: IZMJERENA — OLS tjednih log-prinosa klase DLKV vs CROBEX (2024-07-01..2026-07-14, n=106 tjedana, R²=0.24); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
+        "r": "r=0.1194 (CAPM: rf + beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.46: IZMJERENA regresijom (OLS tjednih log-prinosa DLKV vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.24) uz Blume prilagodbu 0,67·1.69 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 244/246 trgovanih dana (99%), prosj. promet 131,912 €/dan.",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
@@ -4784,13 +4787,13 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 4.453491157582519,
-        "base": 4.911602765839149,
-        "high": 5.480961807653971,
+        "low": 5.0688144010273835,
+        "base": 5.679469843058478,
+        "high": 6.466139798633781,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "wacc": 0.13243,
+          "wacc": 0.11943400000000001,
           "g_terminal": 0.04,
           "g1_explicit": 0.08,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
@@ -4826,9 +4829,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 4.453491157582519,
-      "zone_high": 5.480961807653971,
-      "dispersion": 0.1874617423235143,
+      "zone_low": 5.0688144010273835,
+      "zone_high": 6.466139798633781,
+      "dispersion": 0.21609885358520028,
       "divergent": false,
       "archetype": "industrial_forward",
       "anchor_methods": [
@@ -4839,7 +4842,7 @@
         "comps": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": -0.06277451272044243
+          "vs_zone_pct": -0.1928166891661246
         },
         "dcf_fcf": {
           "role": "anchor",
@@ -4849,26 +4852,26 @@
       },
       "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 4.6554112605998075,
-      "all_methods_high": 4.911602765839149,
-      "dispersion_all": 0.05216046929144746,
+      "all_methods_high": 5.679469843058478,
+      "dispersion_all": 0.18030883352788438,
       "method_bases": {
         "comps": 4.6554112605998075,
-        "dcf_fcf": 4.911602765839149
+        "dcf_fcf": 5.679469843058478
       },
       "qa_flags": [
-        "fer-zona odstupa +242% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +195% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 242.2,
+      "vs_market_pct": 194.8,
       "anchor_inconsistency": [],
-      "reasoning": "Očekivani rast +8.0% godišnje procijenjen je iz zadnjeg izvješća — bez brojčanog backloga; prihodi Grupe +43%, uprava očekuje 'značajnu konjunkturu' (zelena tranzicija). Od svakih 100 € prihoda firmi ostaje 6 € operativne zarade (EBITDA marža 6.2%). Firma je lani stvorila 15.7 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 13.2%, uz izračunati rast 8.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 4.91 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) -6% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~+10.7% trajnog rasta godišnje / multipl P/E 60.1×; naš forward signal (bez brojčanog backloga; prihodi Grupe +43%, uprava očekuje 'značajnu konjunkturu' (zelena tranzicija)) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Očekivani rast +8.0% godišnje procijenjen je iz zadnjeg izvješća — bez brojčanog backloga; prihodi Grupe +43%, uprava očekuje 'značajnu konjunkturu' (zelena tranzicija). Od svakih 100 € prihoda firmi ostaje 6 € operativne zarade (EBITDA marža 6.2%). Firma je lani stvorila 15.7 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 11.9%, uz izračunati rast 8.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 5.68 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) -19% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~+9.5% trajnog rasta godišnje / multipl P/E 60.1×; naš forward signal (bez brojčanog backloga; prihodi Grupe +43%, uprava očekuje 'značajnu konjunkturu' (zelena tranzicija)) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
-        "implied_g_pct": 10.7,
-        "implied_g_note": "uz naš r=13.2% cijena implicira trajni rast FCF-a ~+10.7% godišnje",
+        "implied_g_pct": 9.5,
+        "implied_g_note": "uz naš r=11.9% cijena implicira trajni rast FCF-a ~+9.5% godišnje",
         "implied_pe": 60.1,
         "peer_pe": 15.59,
         "implied_pe_note": "cijena implicira P/E 60.1× vs peer medijan 15.59×",
-        "narrative": "Tržišna cijena implicira ~+10.7% trajnog rasta godišnje / multipl P/E 60.1×; naš forward signal (bez brojčanog backloga; prihodi Grupe +43%, uprava očekuje 'značajnu konjunkturu' (zelena tranzicija)) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~+9.5% trajnog rasta godišnje / multipl P/E 60.1×; naš forward signal (bez brojčanog backloga; prihodi Grupe +43%, uprava očekuje 'značajnu konjunkturu' (zelena tranzicija)) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       }
     },
     "sotp": null
@@ -4878,8 +4881,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "13,24%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.69 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "11,94%",
+        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.462 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",

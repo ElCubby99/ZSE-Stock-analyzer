@@ -51,9 +51,19 @@ metoda razvukla zonu u beskorisno.
   tržišta (Damodaranova metodologija za Hrvatsku). *Planirano, još nije
   aktivno: izvoznicima koji većinu prihoda ostvaruju na razvijenim tržištima
   pripada niži country-risk — ponderirat ćemo premiju po geografiji prihoda.*
-- **Beta disciplina** — beta se **mjeri** iz burzovne serije svake dionice
-  (tjedni prinosi vs CROBEX, 2 godine); gdje je serija prekratka ili
-  nelikvidna, koristi se 1,0 i to je jasno označeno kao pretpostavka.
+- **Beta disciplina (v2.2)** — regresijska beta iz burzovne serije (tjedni
+  prinosi vs CROBEX) koristi se **samo iznad praga likvidnosti** (≥60%
+  trgovanih dana i ≥1.000 € prosječnog dnevnog prometa) jer rijetko
+  trgovanje statistički obara betu i umjetno uljepšava procjenu
+  (stale-price bias). Iznad praga primjenjuje se Blumeova prilagodba
+  (0,67·β + 0,33·1); ispod praga ili bez serije koristi se **sektorska
+  beta** (Damodaran, Europa), relevered s polugom firme gdje je dug
+  poznat. Finalna beta je ograničena na raspon **[0,7, 1,8]**. Porijeklo
+  bete (regresija / sektorska / clamp) je vidljivo uz svaku procjenu.
+- **Premija nelikvidnosti (v2.2)** — dionicama ispod praga likvidnosti na
+  trošak kapitala dodaje se +1,0 do +2,0 postotna boda (stupnjevano po
+  likvidnosti): izlazak iz slabo trgovane pozicije nosi stvaran trošak.
+  Prikazana je kao zasebna komponenta u pretpostavkama.
 - **Dugoročni rast (g)** — vezan uz gospodarstvo, ne uz želje: 4% nominalno
   za DCF terminal (realni rast + inflacija), konzervativnijih 2,5% za
   kapitalne metode. Nijedna firma ne može "zauvijek" rasti brže od
@@ -113,6 +123,13 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v2.2 (15.07.2026.)**: disciplina bete — priznata greška: regresijske
+  bete nelikvidnih dionica (npr. serija s ~40% trgovanih dana) statistički
+  su nepouzdane i umjetno su SNIŽAVALE trošak kapitala. Uvedeni prag
+  likvidnosti, sektorske bete (Damodaran), Blumeova prilagodba, granice
+  [0,7, 1,8] i premija nelikvidnosti. Učinak: 47 od 64 fer-zona pomaknuto
+  (prosječni pomak 20%, pretežno naniže — strože), svaka promjena
+  zabilježena u povijesti procjene te dionice.
 - **v2.1 (14.07.2026.)**: pokrivenost cijele burze standardiziranim
   obrascima, dividendni kalendar iz službenih stranica papira, ovaj sloj
   transparentnosti (povijest promjena procjene po dionici).

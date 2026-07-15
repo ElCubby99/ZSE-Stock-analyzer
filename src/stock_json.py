@@ -1214,13 +1214,24 @@ def build_stock_json(conn, ticker: str) -> dict:
 
     # pretpostavke s izvorima (read-only na stranici) + eksplicitne oznake nesigurnosti
     assumption_flags = []
-    if not params.beta_calibrated:
+    borigin = getattr(params, "beta_origin", None)
+    if borigin and borigin != "regresija":
+        bval = getattr(params, "beta", None)
         assumption_flags.append(
-            {"key": "beta", "label": "β = 1,0", "status": "pretpostavka",
-             "why": "beta nije kalibrirana za ovu firmu (serija cijena "
-                    "prekratka ili nelikvidna) — korištena je neutralna "
-                    "tržišna beta 1,0; postupak kalibracije je opisan u "
-                    "Metodologiji"})
+            {"key": "beta",
+             "label": f"β = {bval:.2f} ({borigin})" if bval else f"β ({borigin})",
+             "status": "pretpostavka",
+             "why": ("vlastita burzovna serija ove dionice ne daje pouzdanu "
+                     "betu (nelikvidnost/kratka serija) — korištena je "
+                     "sektorska beta (Damodaran, Europa)"
+                     + ("; finalna vrijednost ograničena na raspon [0,7, 1,8]"
+                        if borigin == "clamp" else "")
+                     + "; postupak je opisan u Metodologiji")})
+    if getattr(params, "illiq_premium", 0.0):
+        assumption_flags.append(
+            {"key": "illiq", "label": f"premija nelikvidnosti "
+             f"+{params.illiq_premium * 100:.1f} p.b.", "status": "izvor",
+             "why": getattr(params, "illiq_src", "") or ""})
     if sotp_breakdown is not None:  # samo gdje se SOTP primjenjuje
         # v2 §4: flag opisuje STVARNO primijenjeni diskont, ne default;
         # 'pretpostavka' je samo kad je korišten default 15–25%
@@ -1328,6 +1339,10 @@ def build_stock_json(conn, ticker: str) -> dict:
                 "g_terminal": _f(getattr(params, "terminal_growth", None)),
                 "beta": _f(getattr(params, "beta", None)),
                 "beta_calibrated": getattr(params, "beta_calibrated", False),
+                # Z1: badge porijekla bete + premija nelikvidnosti (komponenta r)
+                "beta_origin": getattr(params, "beta_origin", None),
+                "illiq_premium": _f(getattr(params, "illiq_premium", 0.0)),
+                "illiq_src": getattr(params, "illiq_src", None),
                 # v2 §4: STVARNO primijenjeni diskont (iz SOTP-a), ne default
                 "holding_discount_low": _f(
                     (sotp_breakdown.get("holding_discount_range") or [None])[0]

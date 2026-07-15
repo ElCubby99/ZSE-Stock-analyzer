@@ -503,7 +503,15 @@ function Assumptions({ valuation }) {
   if (p.beta !== null && p.beta !== undefined) {
     cards.push({
       name: 'Beta (β)', out: num(p.beta, 2), src: p.sources.r, sure: p.beta_calibrated,
+      badge: p.beta_origin || null, // Z1: regresija / sektorska / clamp
       plain: `Beta ${num(p.beta, 2)} — koliko dionica njiše u odnosu na tržište: 1 = kao tržište, više = jače njihanje (rizičnije).`,
+    })
+  }
+  if (p.illiq_premium) {
+    cards.push({
+      name: 'Premija nelikvidnosti', out: `+${num(p.illiq_premium * 100, 1)} p.b.`,
+      src: p.illiq_src || p.sources.r, sure: true,
+      plain: `Dodatak na trošak kapitala jer se dionicom slabo trguje — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga naloga). Strože (niže) sidri procjenu.`,
     })
   }
   if (valuation.sotp) {
@@ -542,6 +550,7 @@ function Assumptions({ valuation }) {
               <span className="name">
                 {c.name}{' '}
                 {c.sure ? <span className="okflag">izvor</span> : <span className="flag">pretpostavka</span>}
+                {c.badge && <span className="beta-badge">{c.badge}</span>}
               </span>
               <span className="out mono">{c.out}</span>
             </div>
