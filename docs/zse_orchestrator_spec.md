@@ -82,8 +82,9 @@ baze je besmisleno. Umjesto toga prati JEDAN feed objava.
 
 ---
 
-## DIO C — NOĆNI RASPORED (redoslijed je bitan)
-Cron/systemd timer na VPS-u (već vrtiš 08:00 brief) ili GitHub Action. Jedan `run_id` po prolazu.
+## DIO C — DNEVNI RASPORED (redoslijed je bitan)
+Od M32: GitHub Actions scheduled workflow (`.github/workflows/daily-eod.yml`,
+16:20 Europe/Zagreb radnim danima, nakon zatvaranja ZSE). Jedan `run_id` po prolazu.
 ```
 1. watcher          (feed -> klasifikacija -> rutanje; puni queue, primjenjuje proste update)
 2. extract_queue    (SAMO filings status='pending' -> ekstrakcija -> validate gate)

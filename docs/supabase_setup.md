@@ -63,8 +63,9 @@ varijable za Production (i Preview ako želiš) → **Redeploy**.
   RLS `with check` odbija svaki pokušaj upisa tuđeg ID-a (test 4).
 - Frontend ne logira tokene ni lozinke; session drži Supabase SDK
   (autoRefreshToken, verifikacijski/reset linkovi kroz `detectSessionInUrl`).
-- Analitička baza (VPS) ostaje odvojena i neizložena — korisnički podaci žive
-  isključivo u Supabaseu.
+- Analitičke pipeline tablice (M32: u Supabase Postgresu, bez grantova za
+  anon/authenticated pa nevidljive kroz API) odvojene su od korisničkih
+  podataka; pipeline im pristupa isključivo direktnom konekcijom (ZSE_DSN).
 - Bez ključeva u env-u stranica jasno kaže da prijava nije aktivna (i nudi
   lokalni demo prikaz bez spremanja).
 

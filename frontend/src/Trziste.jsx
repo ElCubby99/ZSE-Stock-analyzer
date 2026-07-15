@@ -68,8 +68,11 @@ export default function Trziste() {
       <main className="wrap-wide">
         <div className="mk-title">
           <h1>Analiza dionica Zagrebačke burze</h1>
+          {/* M32: svježina izvedena iz STVARNOG datuma exporta — ako pipeline
+              jedan dan ne uspije, datum pošteno ostaje na zadnjem podatku */}
           <span>fer vrijednost, CROBEX, dividende i pokazatelji · službeni
-            EOD{fmtDate ? ` za ${fmtDate}` : ''} (dan zaostatka)</span>
+            EOD{fmtDate ? ` za ${fmtDate}` : ''} · ažurira se nakon
+            zatvaranja trgovine (16:00)</span>
         </div>
         <div className="mk-idx">
           {ov.indices.length ? ov.indices.map((ix) => (

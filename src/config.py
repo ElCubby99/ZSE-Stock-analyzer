@@ -25,6 +25,11 @@ HRK_EUR_RATE = float(os.getenv("HRK_EUR_RATE", "7.53450"))
 
 
 def dsn() -> str:
+    # M32: puni connection string ima prednost (GitHub Actions -> Supabase
+    # Postgres iz secreta ZSE_DSN); bez njega lokalni Postgres iz dijelova.
+    full = os.getenv("ZSE_DSN") or os.getenv("DATABASE_URL")
+    if full:
+        return full
     return (
         f"host={PGHOST} port={PGPORT} dbname={ZSE_DB} "
         f"user={ZSE_USER} password={ZSE_PASS}"

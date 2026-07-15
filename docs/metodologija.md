@@ -140,11 +140,13 @@ mjerimo kontinuirano (alarm ako >70% završi na istoj strani).
 
 ## Odakle podaci
 
-Sažetak izvora — svaki tip podatka na webu ima poznato porijeklo i deklarirani
-zaostatak (provjereno 14.07.2026.):
+Sažetak izvora — svaki tip podatka na webu ima poznato porijeklo i deklariranu
+svježinu (provjereno 15.07.2026.):
 
-- **Cijene**: službena ZSE tečajnica (EOD JSON), s danom zaostatka; povijest
-  po papiru iz ZSE arhive. Nelikvidne dionice nose oznaku uz cijenu.
+- **Cijene**: službena ZSE tečajnica (EOD JSON); ažurira se radnim danom
+  nakon zatvaranja trgovine (16:00), a uz svaku cijenu stoji stvarni datum
+  podatka. Povijest po papiru iz ZSE arhive. Nelikvidne dionice nose oznaku
+  uz cijenu.
 - **Financijska izvješća**: EHO registar propisanih informacija (službene
   objave izdavatelja, PDF/XLSX). Standardizirane obrasce (TFI-POD, nadzorni
   obrazac banaka, FINREP, ISD osiguranja) čitaju deterministički parseri s
@@ -195,8 +197,9 @@ prođu validaciju. Ako izvješća nedostaju ili ne prođu provjere, prikazujemo
 samo tržišni profil — polja ostaju prazna (n/p), ništa se ne procjenjuje.
 
 **Koliko su podaci ažurni?** Cijene su službeni EOD zaključci Zagrebačke
-burze s danom zaostatka; financije se ažuriraju kad izdavatelj objavi
-izvješće (EHO registar). Datum stoji uz svaku brojku.
+burze; ažuriraju se radnim danom nakon zatvaranja trgovine (16:00), a uz
+svaku cijenu stoji stvarni datum podatka. Financije se ažuriraju kad
+izdavatelj objavi izvješće (EHO registar). Datum stoji uz svaku brojku.
 
 ## Automatizacija
 

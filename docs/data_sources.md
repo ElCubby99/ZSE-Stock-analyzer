@@ -15,15 +15,17 @@ Zadnja cjelovita provjera svih izvora: **14.07.2026.**
   za sve papire); povijesni backfill po papiru:
   `https://zse.hr/json/securityHistory/{isin}/{od}/{do}/hr`. Indeksi:
   `https://zse.hr/json/indexHistory/...` i `IndexComposition`.
-- **Način čitanja**: scrape javnog JSON-a, bez API ključa; noćni prolaz
+- **Način čitanja**: scrape javnog JSON-a, bez API ključa; dnevni prolaz
+  (GitHub Actions, 16:20 nakon zatvaranja burze)
   (`src/daily.py`) upisuje u `prices_eod` s izvorom po retku. Cijene su
-  službeni zaključci s **danom zaostatka** (piše na svakoj stranici weba).
+  službeni zaključci; ažuriraju se radnim danom **nakon zatvaranja trgovine
+  (16:00)**, a uz svaku cijenu na webu stoji stvarni datum podatka.
 - **Krhkost**: token u REST putanji nije dokumentiran i ZSE ga može
   rotirati; format JSON-a nije verzioniran. Fallback: mojedionice.com
   (koristi se samo ako ZSE ne odgovara, izvor se bilježi). Nelikvidni papiri
   danima nemaju trgovanja — zadnja cijena može biti stara (prikazuje se
   datum, likvidnost se označava uz cijenu).
-- **Zadnja provjera**: 14.07.2026. (noćni prolaz radi).
+- **Zadnja provjera**: 15.07.2026. (dnevni prolaz na GitHub Actions radi).
 
 ## 2. Financijska izvješća
 
@@ -136,7 +138,7 @@ Zadnja cjelovita provjera svih izvora: **14.07.2026.**
 
 - **Izvor**: EHO feed (`https://eho.zse.hr/feed`) — službene objave
   izdavatelja.
-- **Način čitanja**: noćni uvoz (`scripts/import_news.py`), klasifikacija
+- **Način čitanja**: dnevni uvoz (`scripts/import_news.py`), klasifikacija
   naslova; MAR-osjetljive objave samo se prenose, ne interpretiraju.
 - **Krhkost**: feed nema garantiran SLA; naslovi izdavatelja neujednačeni.
 - **Zadnja provjera**: 14.07.2026.
@@ -151,7 +153,7 @@ Zadnja cjelovita provjera svih izvora: **14.07.2026.**
    razlogom", nikad približnu tablicu.
 3. **n/p ≠ 0**: prazno polje je informacija („nema u bazi"), nula je
    tvrdnja.
-4. **Datumi zaostatka su deklarirani**: cijene EOD s danom zaostatka;
+4. **Svježina je deklarirana**: cijene EOD sa stvarnim datumom podatka;
    SKDD lista bez objavljenog as-of datuma nosi datum dohvata.
 5. **Krhki izvori imaju fallback ili alarm**: pad scrapea ide u dnevni
    digest, ne u tihu rupu.

@@ -165,7 +165,8 @@ export function UvjetiKoristenja() {
       <section>
         <div className="sec-label">3. Izvori podataka i točnost</div>
         <p className="imp-p">Podaci se temelje na službenim EOD zaključcima
-        Zagrebačke burze (s odmakom od jednog trgovinskog dana) i javno
+        Zagrebačke burze (objavljuju se nakon zatvaranja trgovine; mogući je
+        odmak, a uz svaku cijenu stoji stvarni datum podatka) i javno
         objavljenim izvješćima izdavatelja (EHO/ZSE). Operator ne jamči
         potpunost, točnost ni ažurnost podataka; podaci koji nedostaju
         prikazuju se prazni (n/p) i ne procjenjuju se. Mjerodavni su izvorni

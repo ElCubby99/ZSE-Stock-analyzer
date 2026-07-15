@@ -1,10 +1,19 @@
-"""Noćni prolaz (M6, Dio C) + digest (Dio D). Jedan run_id; redoslijed bitan:
+"""Dnevni prolaz (M6, Dio C; od M32 na GitHub Actions u 16:20 nakon
+zatvaranja ZSE) + digest (Dio D). Jedan run_id; redoslijed bitan:
   1. watcher  2. extract_queue  3. recompute  4. prices_eod  5. regen  6. digest
 
 Robusnost: izolacija greške po firmi/koraku (jedan pad ne ruši run),
 idempotentno (dedup po ID-evima, ON CONFLICT), validate gate uvijek.
 Detekcija promjene layouta: previše low-confidence klasifikacija u istom runu
 -> alert u digestu + pauza auto-akcija (auto-promocija ovdje ionako ne postoji).
+
+M32 readiness/retry: EOD tečajnica za danas se objavljuje nakon zatvaranja
+trgovine (16:00). Ako feed još nema današnje zapise, cijene se ponavljaju
+svakih EOD_RETRY_INTERVAL_MIN minuta do EOD_RETRY_DEADLINE (zadano 18:00
+Europe/Zagreb). Istek bez podataka NE dira postojeće stanje (exporti se ne
+prepisuju polovičnima, deploy se ne okida) i vraća exit kod 3 — workflow na
+to podiže notifikaciju. Runner je efemeran: sve trajno stanje živi u
+Postgresu (ZSE_DSN -> Supabase) i u exportima commitanima u repo.
 
 CLI:  python -m src.daily            # puni prolaz
       python -m src.daily --digest-only <run_id>
@@ -184,8 +193,22 @@ def stage_recompute(conn, run_id, log, company_ids: list[int]) -> None:
             log("value", cid, "failed", f"{type(e).__name__}: {e}")
 
 
-def stage_prices(conn, run_id, log) -> int:
+def _zagreb_now():
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    return datetime.now(ZoneInfo("Europe/Zagreb"))
+
+
+def stage_prices(conn, run_id, log) -> tuple[int, bool]:
+    """Dohvat današnjih EOD zapisa s readiness/retry logikom (M32).
+
+    Vraća (broj_zapisa, readiness_timeout). Tečajnica za danas izlazi nakon
+    zatvaranja trgovine (16:00); ako još nije objavljena, ponavljamo do
+    deadlinea (zadano 18:00 Europe/Zagreb). Istek bez podataka NIŠTA ne
+    prepisuje — postojeći podaci ostaju, deploy se ne okida."""
+    import time as _time
     from .prices import fetch_zse_json
+
     with conn.cursor() as cur:
         cur.execute(
             """SELECT COALESCE(sc.ticker, c.ticker)
@@ -194,18 +217,41 @@ def stage_prices(conn, run_id, log) -> int:
         tickers = [r[0] for r in cur.fetchall()]
     if not tickers:
         log("prices", None, "skipped", "nema live firmi — cijene se ne dohvaćaju")
-        return 0
-    try:
-        n = fetch_zse_json(tickers, [date.today().isoformat()])
-        log("prices", None, "ok", f"{n} EOD zapisa za {len(tickers)} live linija")
-        return n
-    except Exception as e:  # noqa: BLE001
-        log("prices", None, "failed", f"{type(e).__name__}: {e}")
-        return 0
+        return 0, False
+
+    deadline_txt = os.getenv("EOD_RETRY_DEADLINE", "18:00")
+    interval_min = int(os.getenv("EOD_RETRY_INTERVAL_MIN", "10"))
+    dl_h, dl_m = (int(x) for x in deadline_txt.split(":"))
+    today = date.today().isoformat()
+
+    attempt = 0
+    while True:
+        attempt += 1
+        try:
+            n = fetch_zse_json(tickers, [today])
+        except Exception as e:  # noqa: BLE001
+            n = 0
+            log("prices", None, "failed",
+                f"pokušaj {attempt}: {type(e).__name__}: {e}")
+        if n:
+            log("prices", None, "ok",
+                f"{n} EOD zapisa za {len(tickers)} live linija (pokušaj {attempt})")
+            return n, False
+        now = _zagreb_now()
+        deadline = now.replace(hour=dl_h, minute=dl_m, second=0, microsecond=0)
+        if now >= deadline:
+            log("prices", None, "failed",
+                f"readiness istekao ({deadline_txt} Europe/Zagreb) bez današnjih "
+                "zapisa — stari podaci ostaju netaknuti (praznik/kašnjenje ZSE?)")
+            return 0, True
+        log("prices", None, "skipped",
+            f"tečajnica za {today} još nije objavljena — retry za {interval_min} min "
+            f"(pokušaj {attempt}, deadline {deadline_txt})")
+        _time.sleep(interval_min * 60)
 
 
 def stage_blog(log) -> None:
-    """Nightly blog regen (DIO 2): content/blog/*.md -> statični JSON-ovi."""
+    """Blog regen (DIO 2): content/blog/*.md -> statični JSON-ovi."""
     import subprocess
     r = subprocess.run(["python", "scripts/build_blog.py"], capture_output=True, text=True)
     log("blog", None, "ok" if r.returncode == 0 else "failed",
@@ -213,9 +259,9 @@ def stage_blog(log) -> None:
 
 
 def stage_regen(conn, run_id, log, changed: bool) -> None:
-    stage_blog(log)   # blog se regenerira svake noći, neovisno o promjenama
+    stage_blog(log)   # blog se regenerira svaki run, neovisno o promjenama
     # M22: dividendni kalendar — statusi ovise o DANAŠNJEM datumu (paid vs
-    # nadolazeća), pa se regenerira svake noći neovisno o promjenama podataka
+    # nadolazeća), pa se regenerira svaki run neovisno o promjenama podataka
     try:
         import subprocess
         subprocess.run([os.sys.executable, "-m", "scripts.build_dividende"],
@@ -249,6 +295,16 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
             log("regen", None, "ok", f"{t}.json regeneriran")
         except Exception as e:  # noqa: BLE001
             log("regen", None, "failed", f"{t}: {type(e).__name__}: {e}")
+    # M32: overview.json (naslovnica/screener/usporedba + datum svježine u
+    # headeru i prerenderu) MORA pratiti nove cijene — bez ovoga bi datum
+    # na sajtu ostajao star iako su per-stock exporti svježi
+    try:
+        import subprocess
+        subprocess.run([os.sys.executable, "-m", "scripts.build_overview"],
+                       check=True, capture_output=True, text=True)
+        log("regen", None, "ok", "overview.json regeneriran")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"overview.json: {type(e).__name__}: {e}")
     # M25: EOD update -> okini Vercel build (prerender po dionici čita svježe
     # exporte). Hook URL NIJE u repou — env VERCEL_DEPLOY_HOOK_URL (README).
     hook = os.environ.get("VERCEL_DEPLOY_HOOK_URL")
@@ -306,7 +362,7 @@ def build_digest(conn, run_id: str) -> str:
 
 
 def main(argv=None) -> int:
-    p = argparse.ArgumentParser(description="noćni prolaz (M6)")
+    p = argparse.ArgumentParser(description="dnevni prolaz (M6/M32)")
     p.add_argument("--digest-only", default=None, help="samo digest za run_id")
     a = p.parse_args(argv)
 
@@ -326,7 +382,7 @@ def main(argv=None) -> int:
             log("watcher", None, "failed", f"{type(e).__name__}: {e}")
         touched = stage_extract_queue(conn, run_id, log)
         stage_recompute(conn, run_id, log, touched)
-        n_prices = stage_prices(conn, run_id, log)
+        n_prices, readiness_timeout = stage_prices(conn, run_id, log)
         stage_regen(conn, run_id, log, changed=bool(touched or n_prices))
         conn.commit()
         digest = build_digest(conn, run_id)
@@ -336,7 +392,9 @@ def main(argv=None) -> int:
             f.write(digest)
         print("\n" + digest)
         print(f"\n(digest spremljen u {path})")
-    return 0
+    # exit 3 = readiness istekao bez današnjih podataka (workflow na to
+    # podiže notifikaciju; stanje NIJE dirano, sljedeći uspješan run nadoknadi)
+    return 3 if (readiness_timeout and not touched) else 0
 
 
 if __name__ == "__main__":

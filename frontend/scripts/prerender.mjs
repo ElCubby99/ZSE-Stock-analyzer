@@ -119,7 +119,7 @@ for (const [company, s] of byCompany) {
       <nav><a href="/">Naslovnica</a> › <a href="/screener">Dionice</a> › ${esc(company)}</nav>
       <h1>${esc(name)} (${esc(company)}) — analiza dionice</h1>
       <h2>Cijena dionice</h2>
-      <p>${price ? `Zadnja cijena: <strong>${price} €</strong>${s.date ? ` (službeni EOD ${esc(s.date)}, dan zaostatka)` : ''}.` : 'Cijena trenutno nije dostupna.'}</p>
+      <p>${price ? `Zadnja cijena: <strong>${price} €</strong>${s.date ? ` (službeni EOD za ${esc(s.date)} · ažurira se nakon zatvaranja trgovine u 16:00)` : ''}.` : 'Cijena trenutno nije dostupna.'}</p>
       ${z ? `<h2>Fer vrijednost (fer-zona)</h2>
       <p>Naša procjena fer-zone: <strong>${z.lo}–${z.hi} €</strong>; tržišna cijena je ${z.pos}. Fer-zona je informativan, činjenični prikaz iz javno opisane <a href="/metodologija">metodologije</a> — nije preporuka.</p>` : ''}
       ${divRow ? `<h2>Dividenda</h2>
@@ -273,7 +273,7 @@ const FAQ = [ // MORA odgovarati sekciji "Česta pitanja" na /metodologija
   ['Kako se fer-zona računa?', 'Svaka firma dobiva arhetip (banka, industrija, holding…) koji određuje sidrenu metodu. Zona = sidro ± osjetljivost na ključnu pretpostavku; ostale metode služe kao potvrda. Svi parametri imaju citiran izvor na stranici dionice.'],
   ['Jesu li ovo preporuke za kupnju ili prodaju?', 'Ne. Servis ne objavljuje preporuke, rejtinge ni ciljne cijene. Cijena iznad ili ispod zone je činjenica iz podataka, ne signal — zaključak je uvijek čitateljev.'],
   ['Zašto neka dionica nema fer-zonu?', 'Zona se objavljuje samo kad podaci prođu validaciju. Ako izvješća nedostaju ili ne prođu provjere, prikazujemo samo tržišni profil — polja ostaju prazna (n/p).'],
-  ['Koliko su podaci ažurni?', 'Cijene su službeni EOD zaključci Zagrebačke burze s danom zaostatka; financije se ažuriraju kad izdavatelj objavi izvješće (EHO registar).'],
+  ['Koliko su podaci ažurni?', 'Cijene su službeni EOD zaključci Zagrebačke burze; ažuriraju se radnim danom nakon zatvaranja trgovine (16:00), a uz svaku cijenu stoji stvarni datum podatka. Financije se ažuriraju kad izdavatelj objavi izvješće (EHO registar).'],
 ]
 
 /* Dinamički body/extraHead za pojedine statičke rute — sve ostalo (naslov,

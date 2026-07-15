@@ -1,0 +1,142 @@
+# M32: dnevni EOD pipeline na GitHub Actions — 16:20 Europe/Zagreb, radnim
+# danima (ZSE zatvara u 16:00). Nema always-on stroja: trajno stanje živi u
+# Supabase Postgresu (secret ZSE_DSN), exporti se commitaju natrag u repo,
+# deploy hook se okida TEK nakon potvrđenih novih podataka i pusha.
+#
+# Secreti (Settings -> Secrets and variables -> Actions; upisuje Boris,
+# popis i upute u README):
+#   ZSE_DSN                 postgres connection string (Supabase, sslmode=require)
+#   ANTHROPIC_API_KEY       ekstrakcija novih izvješća (budžet-gated u kodu)
+#   VERCEL_DEPLOY_HOOK_URL  rebuild produkcije nakon novih podataka
+#   SUPABASE_URL            za auto-vijesti (news-ingest Edge Function)
+#   BLOG_API_KEY            za auto-vijesti (isti ključ kao blog-publish)
+name: daily-eod
+
+on:
+  schedule:
+    - cron: '20 14 * * 1-5'   # 16:20 CEST (ljetno računanje)
+    - cron: '20 15 * * 1-5'   # 16:20 CET (zimsko računanje)
+  workflow_dispatch: {}        # ručno pokretanje (test / nadoknada dana)
+
+concurrency:
+  group: daily-eod
+  cancel-in-progress: false    # run u tijeku se ne prekida; novi čeka
+
+permissions:
+  contents: write   # push exporta natrag u repo
+  issues: write     # notifikacija na neuspjeh (issue s labelom pipeline-fail)
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 130       # pokriva readiness retry do 18:00
+    steps:
+      # DST guard: dva crona postoje jer se UTC offset mijenja (CET/CEST);
+      # jedan od njih je uvijek "krivi" za sat. Izvrši se samo onaj koji
+      # padne u lokalni prozor 16:00-17:00. Ručni dispatch preskače guard.
+      - name: DST guard (prozor 16-17h Europe/Zagreb)
+        id: guard
+        run: |
+          H=$(TZ=Europe/Zagreb date +%H)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$H" = "16" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') — pokrećem"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') izvan prozora — preskačem"
+          fi
+
+      - name: Checkout
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        if: steps.guard.outputs.run == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Ovisnosti
+        if: steps.guard.outputs.run == 'true'
+        run: pip install -r requirements.txt
+
+      # daily.py: watcher -> extract -> recompute -> prices (retry do 18:00)
+      # -> regen exporta. VERCEL_DEPLOY_HOOK_URL se OVDJE NE postavlja:
+      # exporti su na runneru lokalni dok se ne pushaju, pa hook okida
+      # zaseban korak TEK nakon commita (deploy samo nakon potvrde).
+      - name: Dnevni prolaz (daily.py)
+        if: steps.guard.outputs.run == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m src.daily
+
+      - name: Auto-vijesti (draftovi u news_items, dedup)
+        if: steps.guard.outputs.run == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          BLOG_API_KEY: ${{ secrets.BLOG_API_KEY }}
+        run: python scripts/generate_news.py --lookback-days 3
+
+      - name: Digest artefakt
+        if: steps.guard.outputs.run == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest
+          path: data/digests/*.md
+          if-no-files-found: ignore
+          retention-days: 30
+
+      # Exporti natrag u repo: [skip ci] sprječava petlju workflowa; Vercel
+      # build svejedno okida deploy hook korak ispod (jedan, kontrolirani).
+      - name: Commit exporta (ako ima promjena)
+        if: steps.guard.outputs.run == 'true'
+        id: commit
+        run: |
+          git config user.name "daily-eod bot"
+          git config user.email "noreply@burzovnilist.com"
+          git add frontend/public/data
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "nema promjena u exportima — bez commita i bez deploya"
+          else
+            git commit -m "EOD $(TZ=Europe/Zagreb date +%F): osvježeni exporti [skip ci]"
+            for i in 1 2 3 4; do
+              git pull --rebase origin main && git push origin main && break
+              echo "push nije prošao — retry za $((2**i))s"; sleep $((2**i))
+            done
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy hook (samo nakon potvrđenih novih podataka)
+        if: steps.guard.outputs.run == 'true' && steps.commit.outputs.changed == 'true'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "VERCEL_DEPLOY_HOOK_URL nije postavljen"; exit 1; fi
+          curl -fsS -X POST "$HOOK" -o /dev/null
+          echo "Vercel build pokrenut"
+
+      # Notifikacija: GitHub ionako mailira vlasnika na failed run; issue
+      # ostavlja trajni trag (label pipeline-fail). Pokriva i pad joba i
+      # readiness istek (daily.py tada vraća exit 3 -> korak je "failed").
+      - name: Issue na neuspjeh
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const d = new Date().toLocaleDateString('hr-HR', { timeZone: 'Europe/Zagreb' })
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `daily-eod pao — ${d}`,
+              labels: ['pipeline-fail'],
+              body: `Dnevni EOD run nije uspio (pad ili readiness istekao bez podataka).\n\n` +
+                `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n` +
+                `Stanje na sajtu NIJE dirano (ostaje zadnji uspješan datum). ` +
+                `Nadoknada: Actions tab -> daily-eod -> Run workflow.`,
+            })

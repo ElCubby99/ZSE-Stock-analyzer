@@ -220,7 +220,7 @@ export function SiteFooter() {
               </a> ·{' '}
             </>
           )}
-          Izvor: ZSE službeni EOD (dan zaostatka)
+          Izvor: ZSE službeni EOD · podaci se ažuriraju nakon zatvaranja burze
         </span>
       </div>
     </footer>

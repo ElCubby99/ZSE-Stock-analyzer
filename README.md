@@ -173,9 +173,10 @@ docs/    specifikacija ekstrakcije i validacije
 
 ### Vercel deploy hook (dnevni SEO build)
 1. Vercel → Project → Settings → Git → Deploy Hooks → kreiraj hook.
-2. Na stroju koji vrti noćni pipeline postavi env varijablu
-   `VERCEL_DEPLOY_HOOK_URL=<hook url>` — `src/daily.py` ga okida nakon
-   regeneracije exporta (bez env varijable korak se preskače i logira).
+2. URL ide u GitHub Actions secret `VERCEL_DEPLOY_HOOK_URL` (vidi sekciju
+   "Dnevni pipeline na GitHub Actions — M32") — workflow ga okida TEK nakon
+   što su novi exporti potvrđeni i commitani. Pri lokalnom ručnom pokretanju
+   `src/daily.py` isti env radi i dalje (bez varijable korak se preskače).
 
 ## Ručni koraci za Borisa (Auth v2 — M26)
 
@@ -246,3 +247,56 @@ docs/    specifikacija ekstrakcije i validacije
    — prazna varijabla znači da se X linkovi u footeru i na /vijesti
    jednostavno ne prikazuju (promjena handlea = samo env update, bez
    promjene koda).
+
+## Dnevni pipeline na GitHub Actions (M32)
+
+`src/daily.py` se više NE vrti na lokalnom stroju/VPS-u — workflow
+`.github/workflows/daily-eod.yml` ga pokreće **radnim danima u 16:20
+Europe/Zagreb** (ZSE zatvara u 16:00). Dva cron unosa pokrivaju ljetno i
+zimsko računanje vremena; DST guard korak propušta samo onaj koji padne u
+lokalni prozor 16–17 h. `concurrency: daily-eod` garantira da se dva runa
+nikad ne izvršavaju paralelno.
+
+Model stanja (runner je efemeran — ništa ne preživljava run):
+- **Postgres stanje** (companies, filings, financials, prices_eod,
+  valuations…) živi u **Supabase Postgresu** — pipeline se spaja secretom
+  `ZSE_DSN` (puni connection string; `src/config.py` mu daje prednost).
+- **JSON exporti** (`frontend/public/data/`) se nakon uspješnog runa
+  **commitaju natrag u repo** (`[skip ci]` u poruci da ne okinu novi
+  workflow); Vercel build ih čita iz repoa — zato deploy hook ima smisla
+  tek NAKON pusha.
+- Readiness/retry: tečajnica za danas se čeka do 18:00 (retry svakih 10
+  min; `EOD_RETRY_DEADLINE`/`EOD_RETRY_INTERVAL_MIN` env). Istek bez
+  podataka NE dira postojeće stanje (sajt ostaje na zadnjem datumu) i
+  označava run neuspješnim -> notifikacija.
+- Neuspjeh runa: GitHub automatski mailira vlasnika na failed run, a
+  workflow dodatno otvara Issue s labelom `pipeline-fail` (trajni trag +
+  link na run). Napomena: burzovni praznik radnim danom također istekne
+  readiness — takav issue samo zatvori.
+
+### Ručni koraci za Borisa (M32)
+
+1. **Migracija baze** (jednokratno, sa stroja na kojem je lokalni Postgres):
+   ```
+   SUPABASE_DB_URL='postgresql://postgres:<lozinka>@db.<ref>.supabase.co:5432/postgres?sslmode=require' \
+     scripts/migrate_db_to_supabase.sh
+   ```
+   (dump je samo public shema pipeline tablica, ~21 MB; ne dira
+   blog/news/profiles tablice ni auth).
+2. **GitHub secreti** (repo → Settings → Secrets and variables → Actions):
+   - `ZSE_DSN` — isti Supabase connection string kao gore
+   - `ANTHROPIC_API_KEY` — ekstrakcija novih izvješća (potrošnja i dalje
+     ide kroz `src/api_usage.py` budžet)
+   - `VERCEL_DEPLOY_HOOK_URL` — postojeći hook
+   - `SUPABASE_URL` + `BLOG_API_KEY` — auto-vijesti (news-ingest)
+   NIŠTA od ovoga ne ide u repo.
+3. **Stari cron na tvom stroju**: obriši ga ako je ikad bio postavljen
+   (`crontab -e`); ako nije bio — ništa.
+4. **Prvi tjedan**: Actions tab nakon 16:20 — pogledaj trajanje runova i
+   je li retry bio potreban. Ako tečajnica redovito kasni, pomakni cron na
+   16:45/17:00 (jedna linija u workflowu; prozor DST guarda tada proširi).
+   Ručno pokretanje/nadoknada: Actions → daily-eod → **Run workflow**.
+5. **Minute**: privatni repo ima 2.000 besplatnih minuta/mj. Tipičan run
+   bez retryja je procijenjen na ~3–5 min (≈ 65–110 min/mj); s retryjima
+   do 18:00 teoretski max ~130 min/run. Nakon prvog tjedna upiši ovdje
+   stvarnu brojku iz Actions taba.

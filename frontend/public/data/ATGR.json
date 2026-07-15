@@ -384,7 +384,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "free float približno 11%; ATGR: zadnja trgovina 2026-07-14: 27 kom / 1,364 € prometa (1 d)."
+        "txt": "free float približno 11%; ATGR: zadnja trgovina 2026-07-15: 16 kom / 808 € prometa (0 d)."
       },
       {
         "l": "RASKORAK METODA",
@@ -420,14 +420,14 @@
       {
         "class_ticker": "ATGR",
         "last_trade": {
-          "date": "2026-07-14",
+          "date": "2026-07-15",
           "close_eur": 50.5,
-          "volume": 27.0,
-          "turnover_eur": 1363.5
+          "volume": 16.0,
+          "turnover_eur": 808.0
         },
-        "days_since_trade": 1,
+        "days_since_trade": 0,
         "flag": "low",
-        "note": "zadnja trgovina 2026-07-14: 27 kom / 1,364 € prometa (1 d)"
+        "note": "zadnja trgovina 2026-07-15: 16 kom / 808 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -588,8 +588,8 @@
       "note": "ISIN iz službene ZSE tečajnice; izdano = Uvrštena količina 13.337.200 (zse.hr papir); trezorske 82.936 = GI FY2025 (financials); ex-trezor 13.254.264 = GI FY2025 str. 377 (konzistentno)",
       "last_price": {
         "close_eur": 50.5,
-        "trade_date": "2026-07-14",
-        "volume": 27.0,
+        "trade_date": "2026-07-15",
+        "volume": 16.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -791,7 +791,7 @@
       {
         "class_ticker": "ATGR",
         "last": {
-          "date": "2026-07-14",
+          "date": "2026-07-15",
           "close_eur": 50.5
         },
         "prev_close_eur": 50.5,
@@ -4609,6 +4609,14 @@
       "volume": 27.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "ATGR",
+      "trade_date": "2026-07-15",
+      "close_eur": 50.5,
+      "volume": 16.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -4635,7 +4643,7 @@
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.6 (n=3), P/B=1.31 (n=3), EV/EBITDA=5.98 (n=2). Skup ['PODR', 'ZITO', 'TOK'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PODR P/E=8.44 P/B=1.57; ZITO P/E=13.6 P/B=1.3; TOK P/E=14.96 P/B=1.31"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.6 (n=3), P/B=1.31 (n=3), EV/EBITDA=5.97 (n=2). Skup ['PODR', 'ZITO', 'TOK'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PODR P/E=8.41 P/B=1.56; ZITO P/E=13.6 P/B=1.3; TOK P/E=14.96 P/B=1.31"
       }
     },
     "assumption_flags": [],
@@ -4643,9 +4651,9 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 28.133326492752975,
-        "base": 33.098031167944676,
-        "high": 38.06273584313637,
+        "low": 28.107891932599347,
+        "base": 33.068108155999234,
+        "high": 38.028324379399116,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
@@ -4656,12 +4664,12 @@
               "per_share": 32.82
             },
             "ev_ebitda": {
-              "mult": 5.98,
-              "per_share": 36.42
+              "mult": 5.97,
+              "per_share": 36.34
             },
             "ev_ebit": {
-              "mult": 10.47,
-              "per_share": 30.15
+              "mult": 10.46,
+              "per_share": 30.11
             },
             "pb": {
               "mult": 0.93,
@@ -4677,7 +4685,7 @@
             "rule": "leće konzistentne (<40%) -> prosjek"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.6 (n=3), P/B=1.31 (n=3), EV/EBITDA=5.98 (n=2). Skup ['PODR', 'ZITO', 'TOK'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PODR P/E=8.44 P/B=1.57; ZITO P/E=13.6 P/B=1.3; TOK P/E=14.96 P/B=1.31"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.6 (n=3), P/B=1.31 (n=3), EV/EBITDA=5.97 (n=2). Skup ['PODR', 'ZITO', 'TOK'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PODR P/E=8.41 P/B=1.56; ZITO P/E=13.6 P/B=1.3; TOK P/E=14.96 P/B=1.31"
           }
         }
       },
@@ -4754,7 +4762,7 @@
         "comps": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.24508715735464204
+          "vs_zone_pct": 0.2439615085904121
         },
         "dcf_fcf": {
           "role": "anchor_excluded",
@@ -4769,10 +4777,10 @@
       },
       "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
       "all_methods_low": -9.141833749406267,
-      "all_methods_high": 33.098031167944676,
-      "dispersion_all": 1.2762047598245088,
+      "all_methods_high": 33.068108155999234,
+      "dispersion_all": 1.2764546948461504,
       "method_bases": {
-        "comps": 33.098031167944676,
+        "comps": 33.068108155999234,
         "dcf_fcf": -9.141833749406267,
         "justified_pb_roe": 25.82460203716537
       },
@@ -4782,7 +4790,7 @@
       ],
       "vs_market_pct": 90.0,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 9 € operativne zarade (EBITDA marža 8.8%). Firma ima 469 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 6.8% godišnje — manje od 8.4% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 25.82 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +25% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+8.3% trajnog rasta godišnje / multipl P/E 20.9×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 9 € operativne zarade (EBITDA marža 8.8%). Firma ima 469 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 6.8% godišnje — manje od 8.4% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 25.82 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +24% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+8.3% trajnog rasta godišnje / multipl P/E 20.9×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 8.3,
@@ -4866,35 +4874,35 @@
             "k": "Povrat 1M",
             "v": -0.01941747572815533,
             "unit": "%",
-            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-15 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.010000000000000009,
+            "v": 0.0,
             "unit": "%",
-            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-15 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": 0.07905982905982922,
+            "v": 0.060924369747899165,
             "unit": "%",
-            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-15 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": 0.07905982905982922,
             "unit": "%",
-            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-15 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": 0.11233480176211463,
+            "v": 0.10745614035087714,
             "unit": "%",
-            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "basis": "EOD do 2026-07-15 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
