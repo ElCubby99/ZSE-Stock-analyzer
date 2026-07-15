@@ -1217,8 +1217,10 @@ def build_stock_json(conn, ticker: str) -> dict:
     if not params.beta_calibrated:
         assumption_flags.append(
             {"key": "beta", "label": "β = 1,0", "status": "pretpostavka",
-             "why": "beta nije kalibrirana za ovu firmu (serija prekratka/"
-                    "nelikvidna) — vidi src/calibrate.py"})
+             "why": "beta nije kalibrirana za ovu firmu (serija cijena "
+                    "prekratka ili nelikvidna) — korištena je neutralna "
+                    "tržišna beta 1,0; postupak kalibracije je opisan u "
+                    "Metodologiji"})
     if sotp_breakdown is not None:  # samo gdje se SOTP primjenjuje
         # v2 §4: flag opisuje STVARNO primijenjeni diskont, ne default;
         # 'pretpostavka' je samo kad je korišten default 15–25%
@@ -1256,7 +1258,8 @@ def build_stock_json(conn, ticker: str) -> dict:
         assumption_flags.append(
             {"key": "peer_multiples", "label": "peer multipli (P/E 12, P/B 1,5)",
              "status": "pretpostavka",
-             "why": "nema usporedivog osiguratelja na ZSE (docs/peers.md)"})
+             "why": "nema usporedivog osiguratelja na ZSE (kriteriji odabira "
+                    "peera opisani u Metodologiji)"})
 
     latest_fy = max((r["fiscal_year"] for r in fund if r["fiscal_year"]), default=None)
     audited = any(r["audited"] for r in fund if r["audited"] is not None)

@@ -1,8 +1,7 @@
 # Kako procjenjujemo
 
-*Nacrt za pregled (Boris) — v2.1, 14.07.2026. Izvor: doktrina v2 (docs/) +
-stvarno stanje sustava. Sve ispod opisuje ono što sustav RADI; gdje je nešto
-tek planirano, tako i piše.*
+*Sve ispod opisuje ono što sustav stvarno radi; gdje je nešto tek planirano,
+tako i piše.*
 
 ## Što ovo jest — i što nije
 
@@ -152,8 +151,9 @@ zaostatak (provjereno 14.07.2026.):
   financijama), kriteriji peer skupova javno u dokumentaciji; sektor bez
   usporedivog peera ne dobiva peer-metodu.
 
-Detaljni registar (način čitanja, poznate slabosti svakog izvora, datumi
-provjere) vodi se u projektnoj dokumentaciji (`docs/data_sources.md`).
+Detaljni registar izvora (način čitanja, poznate slabosti svakog izvora,
+datumi provjere) vodi se u internoj projektnoj dokumentaciji i redovito se
+revidira.
 
 ## Automatizacija
 

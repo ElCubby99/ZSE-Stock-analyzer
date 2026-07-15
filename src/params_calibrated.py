@@ -50,7 +50,7 @@ ERP_SRC = ("ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): "
 BETA = 1.0
 BETA_SRC = ("beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete "
             "(serija prekratka/nelikvidna ili kalibracija nije pokrenuta); "
-            "vidi src/calibrate.py")
+            "korištena je neutralna tržišna beta")
 
 
 def _calibration(key: str):
@@ -74,7 +74,7 @@ G_SRC = ("M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: "
 
 DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holdinge "
                 "(nelikvidnost, dvostruko oporezivanje, trošak centra); "
-                "OSTAJE PRETPOSTAVKA — vidi docs/calibration.md")
+                "OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji")
 
 ADRS_PEERS = ["ATGR", "PODR", "RIVP", "PLAG", "ARNT"]
 
@@ -188,8 +188,9 @@ def build_params(ticker: str) -> Params:
                 f"peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje "
                 f"kons. financije): P/E={p.peer_pe} (n={m['pe_n']}), P/B={p.peer_pb} "
                 f"(n={m['pb_n']}), EV/EBITDA={p.peer_ev_ebitda} "
-                f"(n={m['ev_ebitda_n']}). Skup {peer_set} (docs/peers.md; sektorski "
-                f"skup unutar praćenog univerzuma, bez cirkularnosti)."
+                f"(n={m['ev_ebitda_n']}). Skup {peer_set} (kriteriji odabira u "
+                f"Metodologiji; sektorski skup unutar praćenog univerzuma, "
+                f"bez cirkularnosti)."
                 f"{narrow_note} Po peeru: {rows}")
         else:
             sources["peers"] = (f"peer skup {peer_set} nedovoljno pokriven "
@@ -198,11 +199,11 @@ def build_params(ticker: str) -> Params:
                                 "NISKE pouzdanosti")
     else:
         sources["peers"] = (f"{ticker}: peer skup nije kalibriran — na ZSE nema "
-                            "dovoljno usporedivih firmi u sektoru (odluke i kandidati "
-                            "u docs/peers.md; regionalni peeri nedostupni mrežnom "
-                            "politikom) -> peer multipli OSTAJU placeholder "
-                            "(P/E 12, P/B 1,5), a multipl-metode nose NISKU "
-                            "pouzdanost (0,3)")
+                            "dovoljno usporedivih firmi u sektoru (kriteriji "
+                            "odabira peera opisani u Metodologiji; regionalni "
+                            "peeri se ne koriste) -> peer multipli OSTAJU "
+                            "placeholder (P/E 12, P/B 1,5), a multipl-metode "
+                            "nose NISKU pouzdanost (0,3)")
 
     # master flag: placeholder samo ako su i stope i peeri placeholder
     p.placeholder = not (p.rates_calibrated and p.peers_calibrated)

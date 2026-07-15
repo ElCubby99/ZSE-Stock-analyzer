@@ -233,7 +233,9 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
               _np("EV/EBITDA", "n/p za banke/osiguranje"),
               _np("EV/EBIT", "n/p za banke/osiguranje")]
     else:
-        g.append(_i("EV", ev, "meur", ev_b, "EV formula dokumentirana u docs/indicators.md"))
+        g.append(_i("EV", ev, "meur", ev_b,
+                    "EV = trž. kap. + dug − novac − kratkoročna fin. imovina "
+                    "+ manjinski udjeli"))
         for lab, num_v, num_b in (("EV/Prihod", rev, rev_b), ("EV/EBITDA", ebitda, ebitda_b),
                                   ("EV/EBIT", ebit, ebit_b)):
             g.append(_i(lab, (ev / num_v) if (ev and num_v and num_v > 0) else None,
@@ -434,4 +436,4 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     return {"groups": groups, "review_flags": ix.flags,
             "note": ("TTM = zadnji FY + tekući YTD − lanjski isti YTD (samo tokovne "
                      "stavke); bilanca = zadnje objavljeno stanje; FY se nikad ne "
-                     "prikazuje kao TTM. Formule: docs/indicators.md.")}
+                     "prikazuje kao TTM. Formule su opisane u Metodologiji.")}

@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-14",
+  "generated_at": "2026-07-15",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -304,7 +304,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-14",
+    "as_of": "2026-07-15",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -320,9 +320,9 @@
           "volume": 12.0,
           "turnover_eur": 54120.0
         },
-        "days_since_trade": 0,
+        "days_since_trade": 1,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-14: 12 kom / 54,120 € prometa (0 d)"
+        "note": "zadnja trgovina 2026-07-14: 12 kom / 54,120 € prometa (1 d)"
       },
       {
         "class_ticker": "KODT2",
@@ -332,9 +332,9 @@
           "volume": 5.0,
           "turnover_eur": 21500.0
         },
-        "days_since_trade": 0,
+        "days_since_trade": 1,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-14: 5 kom / 21,500 € prometa (0 d)"
+        "note": "zadnja trgovina 2026-07-14: 5 kom / 21,500 € prometa (1 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -723,7 +723,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-14",
+    "as_of": "2026-07-15",
     "classes": [
       {
         "class_ticker": "KODT",
@@ -757,7 +757,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-14",
+    "as_of": "2026-07-15",
     "events": [
       {
         "class_ticker": "KODT",
@@ -8743,8 +8743,8 @@
         "r": "r=0.1347 (CAPM: rf+beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.73: IZMJERENA — OLS tjednih log-prinosa klase KODT vs CROBEX (2024-07-01..2026-07-14, n=106 tjedana, R²=0.426); izvor: zse.hr securityHistory + indexHistory (službene serije). NAPOMENA: R²<0,5 znači široku pouzdanost nagiba — beta je procjena, ne konstanta",
         "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-        "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — vidi docs/calibration.md",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=17.51 (n=3), P/B=8.45 (n=3), EV/EBITDA=23.94 (n=2). Skup ['ADPL', 'DLKV', 'IG'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ADPL P/E=8.72 P/B=1.09; DLKV P/E=60.12 P/B=8.45; IG P/E=17.51 P/B=14.0"
+        "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=17.51 (n=3), P/B=8.45 (n=3), EV/EBITDA=23.94 (n=2). Skup ['ADPL', 'DLKV', 'IG'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ADPL P/E=8.72 P/B=1.09; DLKV P/E=60.12 P/B=8.45; IG P/E=17.51 P/B=14.0"
       }
     },
     "assumption_flags": [],
@@ -8786,7 +8786,7 @@
             "anomaly": "ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=17.51 (n=3), P/B=8.45 (n=3), EV/EBITDA=23.94 (n=2). Skup ['ADPL', 'DLKV', 'IG'] (docs/peers.md; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ADPL P/E=8.72 P/B=1.09; DLKV P/E=60.12 P/B=8.45; IG P/E=17.51 P/B=14.0"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=17.51 (n=3), P/B=8.45 (n=3), EV/EBITDA=23.94 (n=2). Skup ['ADPL', 'DLKV', 'IG'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ADPL P/E=8.72 P/B=1.09; DLKV P/E=60.12 P/B=8.45; IG P/E=17.51 P/B=14.0"
           }
         }
       },
@@ -9016,7 +9016,7 @@
             "v": 1965982543.0,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
-            "formula": "EV formula dokumentirana u docs/indicators.md"
+            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli"
           },
           {
             "k": "EV/Prihod",
@@ -9410,7 +9410,7 @@
       }
     ],
     "review_flags": [],
-    "note": "TTM = zadnji FY + tekući YTD − lanjski isti YTD (samo tokovne stavke); bilanca = zadnje objavljeno stanje; FY se nikad ne prikazuje kao TTM. Formule: docs/indicators.md."
+    "note": "TTM = zadnji FY + tekući YTD − lanjski isti YTD (samo tokovne stavke); bilanca = zadnje objavljeno stanje; FY se nikad ne prikazuje kao TTM. Formule su opisane u Metodologiji."
   },
   "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }
