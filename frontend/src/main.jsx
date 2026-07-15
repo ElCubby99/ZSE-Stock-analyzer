@@ -19,6 +19,7 @@ import { ConsentProvider, pushEvent } from './consent.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import AuthCallback from './AuthCallback.jsx'
 import { initAuthEvents } from './authEvents.js'
+import { ROUTES } from './routes/registry.mjs'
 import './styles.css'
 
 initAuthEvents() // globalni sign_up/login eventi (method po provideru)
@@ -59,28 +60,39 @@ function NotFound() {
   )
 }
 
+/* Rute se grade ISKLJUČIVO iz src/routes/registry.mjs (jedan izvor istine za
+   router, prerender i sitemap). Nova stranica: unos u registry + komponenta
+   ovdje u COMPONENTS mapi — nikad hardkodiran path u ovom fajlu. */
+const COMPONENTS = {
+  Trziste: <Trziste />,
+  Screener: <Screener />,
+  Portfelj: <Portfelj />,
+  StockPage: <StockPage />,
+  BlogIndex: <BlogIndex />,
+  BlogPost: <BlogPost />,
+  Alati: <Alati />,
+  Metodologija: <Metodologija />,
+  Impressum: <Impressum />,
+  Dividende: <Dividende />,
+  Usporedba: <Usporedba />,
+  AuthCallback: <AuthCallback />,
+  Admin: <Admin />,
+  PolitikaKolacica: <PolitikaKolacica />,
+  UvjetiKoristenja: <UvjetiKoristenja />,
+  PolitikaPrivatnosti: <PolitikaPrivatnosti />,
+}
+
+const routeChildren = ROUTES.map((r) => {
+  if (!COMPONENTS[r.component]) {
+    throw new Error(`ruta ${r.path}: komponenta '${r.component}' nije u COMPONENTS mapi (main.jsx)`)
+  }
+  return { path: r.path, element: COMPONENTS[r.component] }
+})
+
 const router = createBrowserRouter([
   {
     element: <RootLayout />,
-    children: [
-      { path: '/', element: <Trziste /> },
-      { path: '/screener', element: <Screener /> },
-      { path: '/portfelj', element: <Portfelj /> },
-      { path: '/dionica/:ticker', element: <StockPage /> },
-      { path: '/blog', element: <BlogIndex /> },
-      { path: '/blog/:slug', element: <BlogPost /> },
-      { path: '/alati', element: <Alati /> },
-      { path: '/metodologija', element: <Metodologija /> },
-      { path: '/impressum', element: <Impressum /> },
-      { path: '/dividende', element: <Dividende /> },
-      { path: '/usporedba', element: <Usporedba /> },
-      { path: '/auth/callback', element: <AuthCallback /> },
-      { path: '/admin', element: <Admin /> },
-      { path: '/politika-kolacica', element: <PolitikaKolacica /> },
-      { path: '/uvjeti-koristenja', element: <UvjetiKoristenja /> },
-      { path: '/politika-privatnosti', element: <PolitikaPrivatnosti /> },
-      { path: '*', element: <NotFound /> },
-    ],
+    children: [...routeChildren, { path: '*', element: <NotFound /> }],
   },
 ])
 

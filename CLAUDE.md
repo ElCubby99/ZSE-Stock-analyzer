@@ -28,3 +28,9 @@ pushaj** — Vercel deploya automatski s `main`. Redoslijed:
 - Analitika se učitava isključivo kroz consent sustav (Consent Mode v2);
   GTM container i politika kolačića moraju ostati usklađeni — promjena
   kategorija kolačića = bump `CONSENT_VERSION` + ažuriranje politike.
+- **Svaka nova javna stranica/ruta ide isključivo kroz
+  `frontend/src/routes/registry.mjs`** — nikad hardkodirana zasebno u
+  routeru (main.jsx) i zasebno u sitemap generatoru (prerender.mjs); oba
+  čitaju samo registry. `indexable: false` automatski znači noindex + nema
+  u sitemapu. Sitemap test (`tests/test_sitemap.py`, traži buildan
+  `frontend/dist`) mora ostati zelen prije svakog mergea u `main`.

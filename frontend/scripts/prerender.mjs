@@ -7,9 +7,15 @@
 
    Ovo je svjesno "manja opcija" umjesto migracije na Next.js/vite-ssg:
    nula novih ovisnosti, build ostaje isti, sav sadržaj dolazi iz istih
-   statičkih JSON exporta koje SPA ionako koristi. */
+   statičkih JSON exporta koje SPA ionako koristi.
+
+   Popis ruta dolazi ISKLJUČIVO iz src/routes/registry.mjs — istog registryja
+   iz kojeg router (main.jsx) gradi rute. Ova skripta NEMA vlastitu listu
+   ruta: nova stranica registrirana u registryju automatski dobiva prerender
+   i ulazi u sitemap (indexable: true) bez diranja ove skripte. */
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+import { ROUTES } from '../src/routes/registry.mjs'
 
 const DIST = path.resolve(process.cwd(), 'dist')
 const SITE = 'https://burzovnilist.com'
@@ -77,6 +83,7 @@ function zoneText(s) {
 }
 
 let nStocks = 0
+async function buildStockPages() {
 for (const [company, s] of byCompany) {
   let data = null
   try {
@@ -138,9 +145,11 @@ for (const [company, s] of byCompany) {
   urls.push({ loc: canonical, lastmod: s.date || eod })
   nStocks += 1
 }
+}
 
 /* ---------- blog ---------- */
 let posts = []
+async function buildBlogPages() {
 try {
   posts = JSON.parse(await fs.readFile(path.join(DIST, 'blog/index.json'), 'utf8'))
 } catch { /* bez bloga */ }
@@ -198,6 +207,7 @@ for (const p of posts) {
     urls.push({ loc: canonical, lastmod: post.date || null })
   } catch { /* preskoči post bez JSON-a */ }
 }
+}
 
 /* ---------- statičke stranice ---------- */
 const FAQ = [ // MORA odgovarati sekciji "Česta pitanja" na /metodologija
@@ -208,22 +218,16 @@ const FAQ = [ // MORA odgovarati sekciji "Česta pitanja" na /metodologija
   ['Koliko su podaci ažurni?', 'Cijene su službeni EOD zaključci Zagrebačke burze s danom zaostatka; financije se ažuriraju kad izdavatelj objavi izvješće (EHO registar).'],
 ]
 
-const staticPages = [
-  { route: '', title: 'Burzovni list — analiza dionica Zagrebačke burze',
-    description: 'Fundamentalna analiza dionica Zagrebačke burze: cijene, fer-zone vrijednosti, pokazatelji, dividende i izvještaji. Informativno, nije investicijski savjet.',
+/* Dinamički body/extraHead za pojedine statičke rute — sve ostalo (naslov,
+   opis, indexability) dolazi iz registryja. */
+const BODY_BUILDERS = {
+  '/': () => ({
     body: `<main><h1>Analiza dionica Zagrebačke burze</h1>
       <p>Fer vrijednost, CROBEX, dividende i pokazatelji za sve uvrštene dionice — službeni EOD podaci${eod ? ` (${esc(eod)})` : ''}.</p>
       <h2>Dionice</h2><ul>${[...byCompany.keys()].map((c) => `<li><a href="/dionica/${c.toLowerCase()}">${esc(c)}</a></li>`).join('')}</ul>
-      <p><a href="/usporedba">Usporedba dionica</a> · <a href="/dividende">Kalendar dividendi</a> · <a href="/metodologija">Metodologija</a> · <a href="/screener">Screener</a></p></main>` },
-  { route: 'dividende', title: 'Kalendar dividendi ZSE — ex-datumi, isplate i prinosi | Burzovni list',
-    description: 'Kalendar dividendi Zagrebačke burze: iznosi, ex-datumi, datumi isplate i dividendni prinosi svih firmi. Iz službenih objava, dnevno ažurirano.' },
-  { route: 'usporedba',
-    title: 'Usporedba dionica Zagrebačke burze — P/E, P/B, dividendni prinos | Burzovni list',
-    description: 'Usporedite sve dionice ZSE: P/E, P/B, EV/EBITDA, earnings yield, dividendni prinos, payout i raskorak od fer-zone — sortiranje, filtri i usporedba do 5 dionica.' },
-  { route: 'screener', title: 'Screener dionica ZSE | Burzovni list',
-    description: 'Screener svih dionica Zagrebačke burze: fer-zona, P/E, P/B, prinos, promet i sektor — sortiranje i filtriranje.' },
-  { route: 'metodologija', title: 'Metodologija — kako procjenjujemo | Burzovni list',
-    description: 'Kako računamo fer-zone: metode po arhetipu firme, izvori podataka, parametri s citatima i priznate greške. Bez preporuka — po dizajnu.',
+      <p><a href="/usporedba">Usporedba dionica</a> · <a href="/dividende">Kalendar dividendi</a> · <a href="/metodologija">Metodologija</a> · <a href="/screener">Screener</a></p></main>`,
+  }),
+  '/metodologija': () => ({
     extraHead: jsonLd({
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
@@ -232,29 +236,28 @@ const staticPages = [
         acceptedAnswer: { '@type': 'Answer', text: a },
       })),
     }),
-    body: `<main><h1>Kako procjenjujemo</h1>${FAQ.map(([q, a]) => `<h2>${esc(q)}</h2><p>${esc(a)}</p>`).join('')}</main>` },
-  { route: 'blog', title: 'Blog — edukacija o analizi dionica | Burzovni list',
-    description: 'Edukativni tekstovi: kako čitati P/E, što je fer-zona, zašto holding ne vrijedi kao zbroj dijelova — bez preporuka.' },
-  { route: 'alati', title: 'Alati i kalkulatori za ulagače | Burzovni list',
-    description: 'Kalkulatori: dividendni prinos, DCF/DDM, porez na kapitalnu dobit (HR pravila s izvorima), složeni kamatni račun.' },
-  { route: 'impressum', title: 'Impressum | Burzovni list',
-    description: 'Impressum servisa Burzovni list — informativna analitička platforma za dionice Zagrebačke burze.' },
-  { route: 'uvjeti-koristenja', title: 'Uvjeti korištenja | Burzovni list',
-    description: 'Uvjeti korištenja servisa Burzovni list: informativna priroda sadržaja, računi, intelektualno vlasništvo, odgovornost.' },
-  { route: 'politika-privatnosti', title: 'Politika privatnosti | Burzovni list',
-    description: 'Politika privatnosti: koje podatke obrađujemo, pravne osnove, obrađivači, rokovi čuvanja i vaša prava (GDPR).' },
-  { route: 'politika-kolacica', title: 'Politika kolačića | Burzovni list',
-    description: 'Politika kolačića: tablica kolačića i lokalne pohrane, upravljanje pristankom, pravna osnova.' },
-  { route: 'portfelj', title: 'Portfelj | Burzovni list',
-    description: 'Moj portfelj — evidencija pozicija uz naše analize.', robots: 'noindex' },
-]
+    body: `<main><h1>Kako procjenjujemo</h1>${FAQ.map(([q, a]) => `<h2>${esc(q)}</h2><p>${esc(a)}</p>`).join('')}</main>`,
+  }),
+}
 
-for (const p of staticPages) {
-  const canonical = `${SITE}/${p.route}`.replace(/\/$/, '') || SITE
-  const html = page({ ...p, canonical: p.route ? canonical : `${SITE}/` })
-  if (p.route === '') await fs.writeFile(path.join(DIST, 'index.html'), html)
-  else await write(p.route, html)
-  if (!p.robots) urls.push({ loc: p.route ? canonical : `${SITE}/`, lastmod: eod })
+/* ---------- driver: registry je JEDINI popis ruta ---------- */
+let nStatic = 0
+for (const r of ROUTES) {
+  if (r.prerender === false) continue // samo SPA fallback (admin, auth)
+  if (r.expand === 'stocks') { await buildStockPages(); continue }
+  if (r.expand === 'blog') { await buildBlogPages(); continue }
+  const route = r.path.replace(/^\//, '')
+  const canonical = route ? `${SITE}/${route}` : `${SITE}/`
+  const extra = BODY_BUILDERS[r.path] ? BODY_BUILDERS[r.path]() : {}
+  const html = page({
+    title: r.seo.title, description: r.seo.description, canonical,
+    robots: r.indexable ? undefined : 'noindex', ...extra,
+  })
+  if (!route) await fs.writeFile(path.join(DIST, 'index.html'), html)
+  else await write(route, html)
+  // noindex rute NEMA u sitemapu upravo zato što nisu indexable u registryju
+  if (r.indexable) urls.push({ loc: canonical, lastmod: eod })
+  nStatic += 1
 }
 
 /* ---------- sitemap ---------- */
@@ -265,4 +268,4 @@ ${urls.map((u) => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod
 `
 await fs.writeFile(path.join(DIST, 'sitemap.xml'), sm)
 
-console.log(`[prerender] dionice=${nStocks}, blog=${posts.length}, statične=${staticPages.length}, sitemap=${urls.length} URL-ova`)
+console.log(`[prerender] dionice=${nStocks}, blog=${posts.length}, statične=${nStatic}, sitemap=${urls.length} URL-ova`)
