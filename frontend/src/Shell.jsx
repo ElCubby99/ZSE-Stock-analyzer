@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { num } from './format.js'
+import { useConsent } from './consent.jsx'
 
 /* App ljuska po dizajnu: logo + top-level nav + search; footer s MAR ogradom.
    NE red svih tickera — do dionice se dolazi kroz Tržište/Screener/search. */
@@ -95,6 +96,7 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
+  const { openSettings } = useConsent()
   return (
     <footer className="ftr">
       <div className="ftr-in">
@@ -108,6 +110,12 @@ export function SiteFooter() {
           <a href="mailto:info@burzovnilist.com">info@burzovnilist.com</a> ·{' '}
           <a href="/impressum">Impressum</a> ·{' '}
           <a href="/metodologija">Metodologija</a> ·{' '}
+          <a href="/uvjeti-koristenja">Uvjeti korištenja</a> ·{' '}
+          <a href="/politika-privatnosti">Politika privatnosti</a> ·{' '}
+          <a href="/politika-kolacica">Politika kolačića</a> ·{' '}
+          <button type="button" className="cc-inline-link" onClick={openSettings}>
+            Postavke kolačića
+          </button> ·{' '}
           Izvor: ZSE službeni EOD (dan zaostatka)
         </span>
       </div>

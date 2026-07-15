@@ -14,6 +14,7 @@ function AuthForms({ onDemo }) {
   const [mode, setMode] = useState('login') // login | signup | reset
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
+  const [terms, setTerms] = useState(false) // NIKAD pre-checked (GDPR)
   const [msg, setMsg] = useState(null)
   const [busy, setBusy] = useState(false)
 
@@ -26,9 +27,20 @@ function AuthForms({ onDemo }) {
   const submit = (e) => {
     e.preventDefault()
     if (mode === 'signup') {
+      if (!terms) { // registracija bez prihvata uvjeta ne prolazi
+        setMsg({ t: 'err', s: 'Za registraciju je potrebno prihvatiti Uvjete korištenja i Politiku privatnosti.' })
+        return
+      }
       run(() => supabase.auth.signUp({
         email, password: pass,
-        options: { emailRedirectTo: `${window.location.origin}/portfelj` },
+        options: {
+          emailRedirectTo: `${window.location.origin}/portfelj`,
+          // timestamp prihvata uvjeta uz korisnika (user_metadata)
+          data: {
+            terms_accepted_at: new Date().toISOString(),
+            terms_version: '15.07.2026.',
+          },
+        },
       }), 'Registracija zaprimljena — provjeri email i potvrdi adresu, pa se prijavi.')
     } else if (mode === 'login') {
       run(() => supabase.auth.signInWithPassword({ email, password: pass }),
@@ -56,6 +68,17 @@ function AuthForms({ onDemo }) {
             <input type="password" required minLength={8}
               autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
               value={pass} onChange={(e) => setPass(e.target.value)} />
+          </label>
+        )}
+        {mode === 'signup' && (
+          <label className="auth-terms">
+            <input type="checkbox" required checked={terms}
+              onChange={(e) => setTerms(e.target.checked)} />
+            <span>Pročitao/la sam i prihvaćam{' '}
+              <a href="/uvjeti-koristenja" target="_blank" rel="noreferrer">Uvjete
+              korištenja</a> i{' '}
+              <a href="/politika-privatnosti" target="_blank" rel="noreferrer">Politiku
+              privatnosti</a>.</span>
           </label>
         )}
         <button className="auth-submit" disabled={busy}>

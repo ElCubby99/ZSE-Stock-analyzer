@@ -10,6 +10,8 @@ import { BlogIndex, BlogPost } from './Blog.jsx'
 import Metodologija from './Metodologija.jsx'
 import Impressum from './Impressum.jsx'
 import Dividende from './Dividende.jsx'
+import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
+import { ConsentProvider } from './consent.jsx'
 import './styles.css'
 
 const router = createBrowserRouter([
@@ -23,11 +25,16 @@ const router = createBrowserRouter([
   { path: '/metodologija', element: <Metodologija /> },
   { path: '/impressum', element: <Impressum /> },
   { path: '/dividende', element: <Dividende /> },
+  { path: '/politika-kolacica', element: <PolitikaKolacica /> },
+  { path: '/uvjeti-koristenja', element: <UvjetiKoristenja /> },
+  { path: '/politika-privatnosti', element: <PolitikaPrivatnosti /> },
   { path: '*', element: <Navigate to="/" replace /> },
 ])
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ConsentProvider>
+      <RouterProvider router={router} />
+    </ConsentProvider>
   </React.StrictMode>,
 )
