@@ -276,13 +276,26 @@ Model stanja (runner je efemeran — ništa ne preživljava run):
 
 ### Ručni koraci za Borisa (M32)
 
-1. **Migracija baze** (jednokratno, sa stroja na kojem je lokalni Postgres):
+1. **Migracija baze** (jednokratno). Dump izvora je već u repou —
+   `data/migration/zse_pipeline_2026-07-15.sql.gz` (public shema, 20
+   pipeline tablica, 38.291 redaka; ne dira blog/news/profiles ni auth).
+   S bilo kojeg stroja s psql-om (connection string: Supabase dashboard →
+   Connect → Session pooler ili Direct):
    ```
-   SUPABASE_DB_URL='postgresql://postgres:<lozinka>@db.<ref>.supabase.co:5432/postgres?sslmode=require' \
-     scripts/migrate_db_to_supabase.sh
+   git pull
+   gunzip -k data/migration/zse_pipeline_2026-07-15.sql.gz
+   psql "$SUPABASE_DB_URL" --set ON_ERROR_STOP=1 -f data/migration/zse_pipeline_2026-07-15.sql
+   psql "$SUPABASE_DB_URL" -f scripts/verify_migration.sql   # svaki red mora biti OK
    ```
-   (dump je samo public shema pipeline tablica, ~21 MB; ne dira
-   blog/news/profiles tablice ni auth).
+   `scripts/verify_migration.sql` uspoređuje broj redaka odredišta s
+   ugrađenim brojevima iz izvora (OK / DIFF / MISSING po tablici). Nakon
+   potvrde obriši dump iz repoa (`git rm -r data/migration`). Napomena:
+   direktni Postgres portovi i supabase domene nisu na mrežnoj allowlisti
+   Claude Code okruženja — zato restore ide s tvog stroja; alternativno
+   dodaj `*.supabase.co`, `*.supabase.com` i `*.pooler.supabase.com` u
+   network policy okruženja pa iduću migraciju može odraditi Claude Code.
+   (`scripts/migrate_db_to_supabase.sh` ostaje za slučaj dump+restore u
+   jednom koraku sa stroja koji ima i lokalnu bazu i mrežni pristup.)
 2. **GitHub secreti** (repo → Settings → Secrets and variables → Actions):
    - `ZSE_DSN` — isti Supabase connection string kao gore
    - `ANTHROPIC_API_KEY` — ekstrakcija novih izvješća (potrošnja i dalje
