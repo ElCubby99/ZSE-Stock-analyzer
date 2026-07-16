@@ -75,10 +75,18 @@ export function IndicatorGroups({ indicators }) {
               {g.items.map((it, i) => {
                 const val = fmtIndVal(it)
                 const np = val === null
+                /* balončić: formula + "Zašto ovako" reasoning (dvorazinski
+                   princip — brojka odmah, obrazloženje izbora iza hovera) */
+                const hint = [
+                  it.formula ? `Formula: ${it.formula}` : null,
+                  it.why ? `Zašto ovako: ${it.why}` : null,
+                ].filter(Boolean).join('\n\n')
                 return (
                   <tr key={i}>
                     <td className="ind-k">
-                      <span title={it.formula || ''} className={it.formula ? 'ind-hint' : ''}>{it.k}</span>
+                      <span title={hint} className={hint ? 'ind-hint' : ''}>
+                        {it.k}{it.why ? <sup className="ind-why">?</sup> : null}
+                      </span>
                     </td>
                     <td className="ind-v num">
                       {np ? (
@@ -107,7 +115,8 @@ export function IndicatorGroups({ indicators }) {
         {indicators.note} Nazovi osnovice: <b>TTM →dd.mm.</b> = trailing 12 mj.,{' '}
         <b>FYgg</b> = zadnja poslovna godina, <b>Q dd.mm.</b> = zadnje kvartalno stanje.
         Sve izvedenice su izračun iz objavljenih izvješća (kod), ne procjena —
-        formula je u opisu svakog retka (hover). <span className="np">n/p</span> nosi razlog.
+        formula i obrazloženje "zašto baš ovako" (oznaka <sup>?</sup>) su u
+        opisu svakog retka (hover / dodir). <span className="np">n/p</span> nosi razlog.
       </div>
     </section>
   )

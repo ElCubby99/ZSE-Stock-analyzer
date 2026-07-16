@@ -495,6 +495,32 @@ function Metrics({ data }) {
   )
 }
 
+/* Raskorak prinosne i knjigovodstvene vrijednosti (LPLH-tip) — generirani
+   komentar iz brojki OVE firme koji objašnjava naš stav kad je fer-zona
+   bitno ispod/iznad knjige. Činjenice bez preporuke; zaključak čitateljev. */
+function ValueVsBook({ note }) {
+  if (!note) return null
+  return (
+    <section>
+      <div className="sec-label">Procjena naspram knjigovodstvene vrijednosti — običnim jezikom</div>
+      <div className="controls">
+        <div className="ctrl">
+          <div className="top">
+            <span className="name">
+              {note.title}{' '}
+              <span className="okflag">izvor</span>
+            </span>
+            <span className="out mono">
+              BVPS {num(note.bvps, 2)} € · ROE {num(note.roe * 100, 1)} % · r {num(note.r * 100, 1)} %
+            </span>
+          </div>
+          <div className="plain">{note.plain}</div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* v3 A (Borisov zahtjev): test održive dividende — for-dummies raspis s
    brojkama OVE dionice, kod svake dionice gdje je test primjenjiv.
    Struktura: što je D_sust -> što je donji rub -> što je implicirani
@@ -1072,6 +1098,7 @@ export default function StockPage() {
           ) : (
           <>
           <AnchorPanel data={data} />
+          <ValueVsBook note={data.valuation.value_vs_book} />
           <SecondaryList data={data} />
           <Risks risks={data.risks} />
           <Assumptions valuation={data.valuation} />

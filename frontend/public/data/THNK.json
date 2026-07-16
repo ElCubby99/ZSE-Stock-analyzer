@@ -1099,7 +1099,8 @@
       }
     ],
     "reconciliation": null,
-    "sotp": null
+    "sotp": null,
+    "value_vs_book": null
   },
   "methodology": null,
   "indicators": {
@@ -1177,21 +1178,24 @@
             "v": 2955576.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
-            "formula": "Σ close klase × dionice klase"
+            "formula": "Σ close klase × dionice klase",
+            "why": "Zbrajamo SVE klase dionica (svaku po svojoj cijeni), a trezorske isključujemo — firma ne može biti vlasnik same sebe, pa te dionice ne nose ekonomsku vrijednost."
           },
           {
             "k": "EV",
             "v": 13569137.48,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
-            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli"
+            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli",
+            "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), a manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču."
           },
           {
             "k": "EV/Prihod",
             "v": 0.35001056360076654,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "EV / Prihod"
+            "formula": "EV / Prihod",
+            "why": "Koliko se plaća po euru prihoda cijelog poslovanja — neovisno o tome financira li se firma dugom ili kapitalom."
           },
           {
             "k": "EV/EBITDA",
@@ -1222,28 +1226,32 @@
             "v": 0.07623792028414905,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "trž.kap / prihod"
+            "formula": "trž.kap / prihod",
+            "why": "Gruba mjera kad je dobit mala ili volatilna — prihod se teže 'friziran' od dobiti, ali ništa ne govori o marži."
           },
           {
             "k": "P/CF",
             "v": 1.2000570019523742,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "trž.kap / operativni CF"
+            "formula": "trž.kap / operativni CF",
+            "why": "Novac iz poslovanja umjesto računovodstvene dobiti — otporniji na nenovčane stavke (rezervacije, revalorizacije)."
           },
           {
             "k": "P/FCF",
             "v": 3.2985123695553096,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "trž.kap / slobodni novčani tok"
+            "formula": "trž.kap / slobodni novčani tok",
+            "why": "Novac koji NAKON ulaganja stvarno ostaje vlasnicima — najbliže onome što DCF diskontira."
           },
           {
             "k": "EPS",
             "v": -20.456076005489287,
             "unit": "eur",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "neto dobit matici / dionice ex-trezor"
+            "formula": "neto dobit matici / dionice ex-trezor",
+            "why": "Zarada po dionici: dobit koja pripada matici podijeljena brojem dionica bez trezorskih. TTM (zadnjih 12 mj.) gdje kvartali postoje — svježije od zadnjeg godišnjeg izvješća."
           },
           {
             "k": "Earnings yield",

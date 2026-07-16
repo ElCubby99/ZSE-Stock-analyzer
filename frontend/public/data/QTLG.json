@@ -825,7 +825,8 @@
       },
       "low_float_note": "free float ~0% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
-    "sotp": null
+    "sotp": null,
+    "value_vs_book": null
   },
   "methodology": {
     "story": "Quattro logistika d.d. je ciklična firma (niža profitabilnost kapitala ili poluga): zarada zna varirati kroz ciklus, pa je sidro DCF (novčani tokovi) — guidance-DCF kad uprava daje brojke, inače knjiga kapitala; peer usporedba je kontrola, a EV/EBITDA se izbjegava jer laska zaduženima.",
@@ -940,14 +941,16 @@
             "v": null,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
-            "formula": "Σ close klase × dionice klase"
+            "formula": "Σ close klase × dionice klase",
+            "why": "Zbrajamo SVE klase dionica (svaku po svojoj cijeni), a trezorske isključujemo — firma ne može biti vlasnik same sebe, pa te dionice ne nose ekonomsku vrijednost."
           },
           {
             "k": "EV",
             "v": null,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
-            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli"
+            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli",
+            "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), a manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču."
           },
           {
             "k": "EV/Prihod",
@@ -1010,7 +1013,8 @@
             "v": 0.10064372513173458,
             "unit": "eur",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "neto dobit matici / dionice ex-trezor"
+            "formula": "neto dobit matici / dionice ex-trezor",
+            "why": "Zarada po dionici: dobit koja pripada matici podijeljena brojem dionica bez trezorskih. TTM (zadnjih 12 mj.) gdje kvartali postoje — svježije od zadnjeg godišnjeg izvješća."
           },
           {
             "k": "Earnings yield",
@@ -1033,7 +1037,8 @@
             "v": 1.4347166005051384,
             "unit": "eur",
             "basis": "Kvartalno (31.03.2026.)",
-            "formula": "knjiga (matici) / dionice ex-trezor"
+            "formula": "knjiga (matici) / dionice ex-trezor",
+            "why": "Knjigovodstvena vrijednost po dionici — računovodstvena imovina minus obveze. To NIJE gotovina: većinom je dugotrajna imovina po (amortiziranom) trošku, pa je usporedba s cijenom smislena tek uz pitanje koliko ta imovina zarađuje (ROE)."
           }
         ]
       },

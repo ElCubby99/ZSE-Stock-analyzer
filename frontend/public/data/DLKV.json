@@ -5091,7 +5091,19 @@
       },
       "low_float_note": "free float ~7% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
-    "sotp": null
+    "sotp": null,
+    "value_vs_book": {
+      "kind": "iznad_knjige",
+      "zone_low": 5.158308321339001,
+      "zone_high": 7.070498403615368,
+      "bvps": 2.01,
+      "roe": 0.150926,
+      "r": 0.10084259999999999,
+      "price": 17.15,
+      "pb_market": 8.53,
+      "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
+      "plain": "Fer-zona (5,16–7,07 €) viša je od knjigovodstvene vrijednosti (2,01 € po dionici). Firma na vlastitom kapitalu zarađuje oko 15,1 % godišnje, više od zahtijevanog prinosa od 10,1 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
+    }
   },
   "methodology": {
     "story": "Dalekovod, dioničko društvo za inženjering, proizvodnju i izgradnju ima kvantificirani signal budućeg posla (backlog/guidance), pa je sidro DCF s rastom izvedenim iz tog signala. Peer usporedba je kontrola.",
@@ -5252,91 +5264,104 @@
             "v": 707389359.95,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
-            "formula": "Σ close klase × dionice klase"
+            "formula": "Σ close klase × dionice klase",
+            "why": "Zbrajamo SVE klase dionica (svaku po svojoj cijeni), a trezorske isključujemo — firma ne može biti vlasnik same sebe, pa te dionice ne nose ekonomsku vrijednost."
           },
           {
             "k": "EV",
             "v": 693829411.45,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
-            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli"
+            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli",
+            "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), a manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču."
           },
           {
             "k": "EV/Prihod",
             "v": 2.4301846127910665,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "EV / Prihod"
+            "formula": "EV / Prihod",
+            "why": "Koliko se plaća po euru prihoda cijelog poslovanja — neovisno o tome financira li se firma dugom ili kapitalom."
           },
           {
             "k": "EV/EBITDA",
             "v": 33.69495364009852,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "EV / EBITDA"
+            "formula": "EV / EBITDA",
+            "why": "Omjer neovisan o strukturi financiranja i amortizacijskim politikama. Brojnik i nazivnik pokrivaju ISTI opseg: konsolidirana EBITDA uključuje 100% kćeri, pa EV uključuje i manjinske udjele; EBITDA je TTM (zadnjih 12 mj.) gdje kvartali postoje — zato se brojka može razlikovati od izračuna s godišnjom EBITDA-om ili bez manjinskih udjela."
           },
           {
             "k": "EV/EBIT",
             "v": 44.593837873990566,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "EV / EBIT"
+            "formula": "EV / EBIT",
+            "why": "Kao EV/EBITDA, ali NAKON amortizacije — strože prema kapitalno intenzivnim firmama kojima se oprema stvarno troši."
           },
           {
             "k": "P/E",
             "v": 47.283449278174444,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "trž.kap / neto dobit matici"
+            "formula": "trž.kap / neto dobit matici",
+            "why": "Koliko godina TRENUTNE zarade plaćate po današnjoj cijeni. Nazivnik je dobit koja pripada matici (bez manjinskih) — ista dobit iz koje se isplaćuje dividenda dioničarima."
           },
           {
             "k": "P/S",
             "v": 2.477679252901626,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "trž.kap / prihod"
+            "formula": "trž.kap / prihod",
+            "why": "Gruba mjera kad je dobit mala ili volatilna — prihod se teže 'friziran' od dobiti, ali ništa ne govori o marži."
           },
           {
             "k": "P/CF",
             "v": 35.05304069385252,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "trž.kap / operativni CF"
+            "formula": "trž.kap / operativni CF",
+            "why": "Novac iz poslovanja umjesto računovodstvene dobiti — otporniji na nenovčane stavke (rezervacije, revalorizacije)."
           },
           {
             "k": "P/FCF",
             "v": 54.841566807747185,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "trž.kap / slobodni novčani tok"
+            "formula": "trž.kap / slobodni novčani tok",
+            "why": "Novac koji NAKON ulaganja stvarno ostaje vlasnicima — najbliže onome što DCF diskontira."
           },
           {
             "k": "EPS",
             "v": 0.362706195546446,
             "unit": "eur",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "neto dobit matici / dionice ex-trezor"
+            "formula": "neto dobit matici / dionice ex-trezor",
+            "why": "Zarada po dionici: dobit koja pripada matici podijeljena brojem dionica bez trezorskih. TTM (zadnjih 12 mj.) gdje kvartali postoje — svježije od zadnjeg godišnjeg izvješća."
           },
           {
             "k": "Earnings yield",
             "v": 0.021149049302999767,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
-            "formula": "neto dobit / trž.kap"
+            "formula": "neto dobit / trž.kap",
+            "why": "Obrnuti P/E — 'prinos zarade' usporediv s prinosom obveznice: koliko firma zaradi na svakih 100 € tržišne vrijednosti."
           },
           {
             "k": "P/B",
             "v": 7.929203326269674,
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
-            "formula": "trž.kap / knjiga (matici)"
+            "formula": "trž.kap / knjiga (matici)",
+            "why": "Koliko se plaća po euru vlastitog kapitala. Sam po sebi ne kaže je li dionica 'jeftina': kapital koji zarađuje više od zahtijevanog prinosa OPRAVDANO vrijedi iznad knjige, a kapital s niskim povratom ispod nje — ključ je ROE naspram troška kapitala."
           },
           {
             "k": "BVPS",
             "v": 2.16289068325207,
             "unit": "eur",
             "basis": "Kvartalno (31.03.2026.)",
-            "formula": "knjiga (matici) / dionice ex-trezor"
+            "formula": "knjiga (matici) / dionice ex-trezor",
+            "why": "Knjigovodstvena vrijednost po dionici — računovodstvena imovina minus obveze. To NIJE gotovina: većinom je dugotrajna imovina po (amortiziranom) trošku, pa je usporedba s cijenom smislena tek uz pitanje koliko ta imovina zarađuje (ROE)."
           }
         ]
       },

@@ -120,9 +120,12 @@ class Ind:
         return (qs[(fy, q)] / prev - 1), f"{fy}{q} vs {fy - 1}{q}"
 
 
-def _i(k, v, unit, basis, formula, note=None):
+def _i(k, v, unit, basis, formula, note=None, why=None):
+    """why = 'zašto baš ovako' — obrazloženje izbora formule OBIČNIM jezikom
+    (balončić u UI-ju; reasoning vidljiv čitatelju, ne samo brojka)."""
     return {"k": k, "v": v, "unit": unit, "basis": basis, "formula": formula,
-            **({"note": note} if note else {})}
+            **({"note": note} if note else {}),
+            **({"why": why} if why else {})}
 
 
 def _np(k, reason):
@@ -226,7 +229,10 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
         if (mcap is not None and td is not None and cash is not None) else None
     ev_b = "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)"
     g = [_i("Tržišna kap.", mcap, "meur", "zadnji EOD × dionice ex-trezor",
-            "Σ close klase × dionice klase")]
+            "Σ close klase × dionice klase",
+            why="Zbrajamo SVE klase dionica (svaku po svojoj cijeni), a "
+                "trezorske isključujemo — firma ne može biti vlasnik same "
+                "sebe, pa te dionice ne nose ekonomsku vrijednost.")]
     if fin:
         g += [_np("EV", "financijska firma — dug je posao, ne struktura"),
               _np("EV/Prihod", "n/p za banke/osiguranje"),
@@ -235,32 +241,80 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     else:
         g.append(_i("EV", ev, "meur", ev_b,
                     "EV = trž. kap. + dug − novac − kratkoročna fin. imovina "
-                    "+ manjinski udjeli"))
-        for lab, num_v, num_b in (("EV/Prihod", rev, rev_b), ("EV/EBITDA", ebitda, ebitda_b),
-                                  ("EV/EBIT", ebit, ebit_b)):
+                    "+ manjinski udjeli",
+                    why="Vrijednost CIJELOG poslovanja, ne samo dioničara: dug "
+                        "se dodaje (i vjerovnici imaju pravo na taj novac), "
+                        "novac i kratkoročna financijska imovina se odbijaju "
+                        "(kupac ih 'dobije natrag'), a manjinski udjeli se "
+                        "DODAJU jer konsolidirani rezultati uključuju 100% "
+                        "kćeri — pa i dio koji pripada drugima mora biti u "
+                        "istoj mjeri. Zato se naš EV zna razlikovati od "
+                        "portala koji manjinske udjele preskaču."))
+        for lab, num_v, num_b, w in (
+                ("EV/Prihod", rev, rev_b,
+                 "Koliko se plaća po euru prihoda cijelog poslovanja — "
+                 "neovisno o tome financira li se firma dugom ili kapitalom."),
+                ("EV/EBITDA", ebitda, ebitda_b,
+                 "Omjer neovisan o strukturi financiranja i amortizacijskim "
+                 "politikama. Brojnik i nazivnik pokrivaju ISTI opseg: "
+                 "konsolidirana EBITDA uključuje 100% kćeri, pa EV uključuje "
+                 "i manjinske udjele; EBITDA je TTM (zadnjih 12 mj.) gdje "
+                 "kvartali postoje — zato se brojka može razlikovati od "
+                 "izračuna s godišnjom EBITDA-om ili bez manjinskih udjela."),
+                ("EV/EBIT", ebit, ebit_b,
+                 "Kao EV/EBITDA, ali NAKON amortizacije — strože prema "
+                 "kapitalno intenzivnim firmama kojima se oprema stvarno "
+                 "troši.")):
             g.append(_i(lab, (ev / num_v) if (ev and num_v and num_v > 0) else None,
-                        "x", num_b, f"EV / {lab.split('/')[1]}")
+                        "x", num_b, f"EV / {lab.split('/')[1]}", why=w)
                      if ev and num_v and num_v > 0 else _np(lab, "nema ulaza"))
-    for lab, num_v, num_b, f in (("P/E", ni, ni_b, "trž.kap / neto dobit matici"),
-                                 ("P/S", rev, rev_b, "trž.kap / prihod"),
-                                 ("P/CF", ocf, ocf_b, "trž.kap / operativni CF"),
-                                 ("P/FCF", fcf, fcf_b, "trž.kap / slobodni novčani tok")):
+    for lab, num_v, num_b, f, w in (
+            ("P/E", ni, ni_b, "trž.kap / neto dobit matici",
+             "Koliko godina TRENUTNE zarade plaćate po današnjoj cijeni. "
+             "Nazivnik je dobit koja pripada matici (bez manjinskih) — ista "
+             "dobit iz koje se isplaćuje dividenda dioničarima."),
+            ("P/S", rev, rev_b, "trž.kap / prihod",
+             "Gruba mjera kad je dobit mala ili volatilna — prihod se teže "
+             "'friziran' od dobiti, ali ništa ne govori o marži."),
+            ("P/CF", ocf, ocf_b, "trž.kap / operativni CF",
+             "Novac iz poslovanja umjesto računovodstvene dobiti — "
+             "otporniji na nenovčane stavke (rezervacije, revalorizacije)."),
+            ("P/FCF", fcf, fcf_b, "trž.kap / slobodni novčani tok",
+             "Novac koji NAKON ulaganja stvarno ostaje vlasnicima — "
+             "najbliže onome što DCF diskontira.")):
         if fin and lab in ("P/S",):
             g.append(_np(lab, "banka: prihod = operativni prihod (vidi P/TOI)"))
             continue
         g.append(_i(lab, (mcap / num_v) if (mcap and num_v and num_v > 0) else None,
-                    "x", num_b, f) if mcap and num_v and num_v > 0 else _np(lab, "nema ulaza"))
+                    "x", num_b, f, why=w)
+                 if mcap and num_v and num_v > 0 else _np(lab, "nema ulaza"))
     g.append(_i("EPS", (ni / shares) if (ni is not None and shares) else None,
-                "eur", ni_b, "neto dobit matici / dionice ex-trezor")
+                "eur", ni_b, "neto dobit matici / dionice ex-trezor",
+                why="Zarada po dionici: dobit koja pripada matici podijeljena "
+                    "brojem dionica bez trezorskih. TTM (zadnjih 12 mj.) gdje "
+                    "kvartali postoje — svježije od zadnjeg godišnjeg izvješća.")
              if ni is not None and shares else _np("EPS", "nema ulaza"))
     g.append(_i("Earnings yield", (ni / mcap) if (mcap and ni and ni > 0) else None,
-                "%", ni_b, "neto dobit / trž.kap") if mcap and ni and ni > 0
+                "%", ni_b, "neto dobit / trž.kap",
+                why="Obrnuti P/E — 'prinos zarade' usporediv s prinosom "
+                    "obveznice: koliko firma zaradi na svakih 100 € tržišne "
+                    "vrijednosti.") if mcap and ni and ni > 0
              else _np("Earnings yield", "nema ulaza"))
     g.append(_i("P/B", (mcap / eq) if (mcap and eq and eq > 0) else None, "x", eq_b,
-                "trž.kap / knjiga (matici)") if mcap and eq and eq > 0
+                "trž.kap / knjiga (matici)",
+                why="Koliko se plaća po euru vlastitog kapitala. Sam po sebi "
+                    "ne kaže je li dionica 'jeftina': kapital koji zarađuje "
+                    "više od zahtijevanog prinosa OPRAVDANO vrijedi iznad "
+                    "knjige, a kapital s niskim povratom ispod nje — ključ je "
+                    "ROE naspram troška kapitala.") if mcap and eq and eq > 0
              else _np("P/B", "nema ulaza"))
     g.append(_i("BVPS", (eq / shares) if (eq and eq > 0 and shares) else None,
-                "eur", eq_b, "knjiga (matici) / dionice ex-trezor")
+                "eur", eq_b, "knjiga (matici) / dionice ex-trezor",
+                why="Knjigovodstvena vrijednost po dionici — računovodstvena "
+                    "imovina minus obveze. To NIJE gotovina: većinom je "
+                    "dugotrajna imovina po (amortiziranom) trošku, pa je "
+                    "usporedba s cijenom smislena tek uz pitanje koliko ta "
+                    "imovina zarađuje (ROE).")
              if eq and eq > 0 and shares else _np("BVPS", "nema ulaza"))
     groups.append({"key": "valuacija", "title": "Valuacija", "items": g})
 

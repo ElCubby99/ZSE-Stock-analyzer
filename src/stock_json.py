@@ -1353,6 +1353,63 @@ def build_stock_json(conn, ticker: str) -> dict:
     bvps = (eq_parent / shares) if (eq_parent and shares) else None
     roe = (ni_parent / eq_parent) if (ni_parent and eq_parent) else None
 
+    # Prezentacija: RASKORAK prinosne i knjigovodstvene vrijednosti — kad je
+    # fer-zona bitno ispod (ili iznad) knjige, čitatelju se STAV objašnjava
+    # generiranim tekstom iz brojki te firme (LPLH-tip nalaz; činjenice bez
+    # preporuke, zaključak je čitateljev). Banke/osiguranja se preskaču —
+    # njihovo sidro je ionako kapitalna metoda vezana uz knjigu.
+    value_vs_book = None
+    _zl, _zh = _f(rec.get("zone_low")), _f(rec.get("zone_high"))
+    _roe_used = _f((getattr(ctx, "roe_hint", None) or {}).get("used")) or _f(roe)
+    _r_used = _f(params.cost_of_equity)
+    _px = _f(ctx.price)
+
+    def _hr(x, dec=2):
+        """hrvatski zapis broja: 1.234,56 (točka tisućice, zarez decimale)"""
+        return (f"{x:,.{dec}f}".replace(",", "\x00")
+                .replace(".", ",").replace("\x00", "."))
+    if (sector not in ("bank", "insurance") and bvps and bvps > 0
+            and _zl and _zh and _roe_used is not None and _r_used):
+        _pb_mkt = (_px / bvps) if _px else None
+        _nums = {"zone_low": _zl, "zone_high": _zh, "bvps": round(bvps, 2),
+                 "roe": _roe_used, "r": _r_used, "price": _px,
+                 "pb_market": (round(_pb_mkt, 2) if _pb_mkt else None)}
+        if _zh < 0.75 * bvps and _roe_used < _r_used:
+            value_vs_book = {
+                "kind": "ispod_knjige", **_nums,
+                "title": "Zašto je naša procjena ispod knjigovodstvene vrijednosti",
+                "plain": (
+                    f"Fer-zona ({_hr(_zl)}–{_hr(_zh)} €) niža je od knjigovodstvene "
+                    f"vrijednosti ({_hr(bvps)} € po dionici). To je posljedica "
+                    f"prinosnog pristupa, ne previda: firma na vlastitom kapitalu "
+                    f"trenutačno zarađuje oko {_hr(_roe_used * 100, 1)} % godišnje, a ulagač za "
+                    f"ovaj rizik traži {_hr(_r_used * 100, 1)} % — kapital koji trajno zarađuje "
+                    f"manje od zahtijevanog prinosa u pravilu vrijedi manje od svoje "
+                    f"knjige. Knjigovodstvena vrijednost pritom nije gotovina: "
+                    f"većinom je to dugotrajna imovina po amortiziranom trošku, a "
+                    f"punu knjigu bi opravdala tek prodaja imovine blizu tih "
+                    f"vrijednosti — što procjena poslovanja koje nastavlja "
+                    f"poslovati ne pretpostavlja."
+                    + (f" Tržišna cijena ({_hr(_px)} €; P/B {_hr(_pb_mkt)}×) stoji "
+                       f"između te dvije kotve — koliko vrijedi mogućnost prodaje "
+                       f"imovine ili oporavka profitabilnosti, zaključak je "
+                       f"čitateljev." if _px and _pb_mkt else
+                       " Zaključak je čitateljev.")),
+            }
+        elif _zl > 1.5 * bvps and _roe_used > _r_used:
+            value_vs_book = {
+                "kind": "iznad_knjige", **_nums,
+                "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
+                "plain": (
+                    f"Fer-zona ({_hr(_zl)}–{_hr(_zh)} €) viša je od knjigovodstvene "
+                    f"vrijednosti ({_hr(bvps)} € po dionici). Firma na vlastitom "
+                    f"kapitalu zarađuje oko {_hr(_roe_used * 100, 1)} % godišnje, više od "
+                    f"zahtijevanog prinosa od {_hr(_r_used * 100, 1)} % — kapital koji trajno "
+                    f"zarađuje iznad tražene stope opravdano vrijedi više od knjige "
+                    f"(ista logika po kojoj slab povrat vuče vrijednost ispod nje). "
+                    f"Zaključak je čitateljev."),
+            }
+
     # sotp breakdown (ako je metoda pokrenuta) — komponente + placeholder zastave
     sotp = next((m for m in ran if m["key"] == "sotp_nav"), None)
     sotp_breakdown = None
@@ -1597,6 +1654,8 @@ def build_stock_json(conn, ticker: str) -> dict:
             "assumption_flags": assumption_flags,
             "ran": ran, "skipped": skipped, "reconciliation": reconciliation,
             "sotp": sotp_breakdown,
+            # raskorak prinosne i knjigovodstvene vrijednosti (generirano)
+            "value_vs_book": value_vs_book,
         },
         # M17: 'Kako je nastala ova procjena' — generirano iz istih podataka
         "methodology": (_methodology_note(
