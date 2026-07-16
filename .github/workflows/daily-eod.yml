@@ -121,10 +121,24 @@ jobs:
             echo "nema promjena u exportima — bez commita i bez deploya"
           else
             git commit -m "EOD $(TZ=Europe/Zagreb date +%F): osvježeni exporti [skip ci]"
+            # -X theirs: exporti su GENERIRANE datoteke — kod konflikta s
+            # commitom koji je stigao na main tijekom runa naša (svježija)
+            # verzija smije pregaziti (incident 17.07.: rebase stao na
+            # konfliktu u HT.json, retry petlja vrtjela pull preko
+            # nerazriješenog konflikta i korak je pao "tiho" — bez exit 1
+            # je deploy okinuo stari sadržaj).
+            ok=false
             for i in 1 2 3 4; do
-              git pull --rebase origin main && git push origin main && break
+              if git pull --rebase -X theirs origin main && git push origin main; then
+                ok=true; break
+              fi
+              git rebase --abort 2>/dev/null || true
               echo "push nije prošao — retry za $((2**i))s"; sleep $((2**i))
             done
+            if [ "$ok" != "true" ]; then
+              echo "::error::push exporta nije uspio nakon 4 pokušaja"
+              exit 1
+            fi
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -134,8 +148,14 @@ jobs:
           HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$HOOK" ]; then echo "VERCEL_DEPLOY_HOOK_URL nije postavljen"; exit 1; fi
-          curl -fsS -X POST "$HOOK" -o /dev/null
-          echo "Vercel build pokrenut"
+          # Vercel hook povremeno vrati prolazni 502 (incident 17.07.) —
+          # kratki retry umjesto pada cijelog runa na tuđem hipaku
+          for i in 1 2 3; do
+            curl -fsS -X POST "$HOOK" -o /dev/null && { echo "Vercel build pokrenut"; exit 0; }
+            echo "hook nije prošao — retry za $((4*i))s"; sleep $((4*i))
+          done
+          echo "::error::Vercel deploy hook nije prošao (3 pokušaja)"
+          exit 1
 
       # Sporedni koraci NAKON objave — njihov pad ne smije dirati exporte.
       - name: Auto-vijesti (draftovi u news_items, dedup)
