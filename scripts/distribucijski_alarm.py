@@ -36,8 +36,7 @@ def main() -> int:
     big, elig, detalji = 0, 0, []
     for t in top20:
         r = rows.get(t) or next((rows[k] for k in rows if k.startswith(t)), None)
-        if not r or r.get("low_float") or r.get("zone_status") \
-                or not r.get("zone_low") or not r.get("price"):
+        if not r or r.get("low_float") or not r.get("zone_low") or not r.get("price"):
             continue
         mid = (r["zone_low"] + r["zone_high"]) / 2
         gap = r["price"] / mid - 1
@@ -51,7 +50,7 @@ def main() -> int:
         "active": alert, "big": big, "eligible": elig,
         "share_pct": round(udio * 100, 0),
         "names": detalji,
-        "note": ("dio fer-zona je u rekalibraciji — distribucija raskoraka "
+        "note": ("dio fer-zona je u provjeri — distribucija raskoraka "
                  "likvidnih imena premašuje interni prag; zone provjeravamo, "
                  "ne prilagođavamo ih tržištu" if alert else None),
     }

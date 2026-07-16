@@ -81,15 +81,27 @@ metoda razvukla zonu u beskorisno.
   nema lanjske usporedbe, TTM se NE gradi — koristi se godišnje uz vidljivu
   oznaku `godišnji podatak` s razlogom. Bilančne stavke (kapital, dug)
   uzimaju se sa zadnjeg objavljenog datuma.
-- **Faza rasta (g1) — isključivo iz objavljenih brojki (v3)**: g1 =
-  min(trogodišnji CAGR prihoda — odnosno zarade gdje prihodna serija ne
-  postoji — iz naše baze, **cap 10%**), pa linearni fade prema terminalnom
-  g kroz 5 godina. Gdje trogodišnje serije nema: min(rast zadnjih 12
-  mjeseci naspram prošle godine, **cap 8%**) uz oznaku `kratka serija`.
-  Ručne "forward procjene" (backlog, guidance, očekivanja uprave) se za
-  stopu rasta **ne koriste** — brojčani guidance smije poslužiti jedino
-  kao zamjenski ulaz za novčani tok kad izvještaj o novčanom toku nije
-  objavljen, i tada je jasno označen.
+- **Faza rasta (g1) — kompozit tri signala (v3.1)**: g1 je **medijan**
+  triju signala, svi isključivo iz objavljenih brojki: (1) **serija** —
+  trogodišnji CAGR prihoda (odnosno zarade gdje prihodna serija ne
+  postoji) iz naše baze, računa se samo uz **najmanje tri godišnja
+  izvješća**; (2) **održivi rast** — ROE × udio dobiti koji se ne
+  isplaćuje kao dividenda (payout nakon regulatorne kapice; firma bez
+  dividende zadržava svu dobit); (3) **terminalno sidro** (2,5% odnosno
+  4%, prema tipu metode). Cap se primjenjuje **nakon** medijana: 10% kad
+  serija postoji, 8% bez nje (oznaka `kratka serija`). **Jedna godišnja
+  usporedba (TTM naspram lani) nikad nije samostalan izvor stope rasta**
+  — jedna godina mjeri i jednokratne efekte i bazni efekt, pa se prikazuje
+  samo kao kontekst. g1 ne može biti negativan osim kad višegodišnje
+  skupljanje dokazuje ≥3-godišnja serija, i **uvijek je barem 0,5
+  postotnih bodova ispod troška kapitala r** (vrijednosne formule pucaju
+  kad se rast približi diskontnoj stopi). Nakon g1 slijedi linearni fade
+  prema terminalnom g kroz 5 godina, bez skokova. Sva tri signala, koji
+  je presudio i eventualna ograničenja raspisani su u Pretpostavkama na
+  stranici svake dionice. Ručne "forward procjene" (backlog, guidance,
+  očekivanja uprave) se za stopu rasta **ne koriste** — brojčani guidance
+  smije poslužiti jedino kao zamjenski ulaz za novčani tok kad izvještaj
+  o novčanom toku nije objavljen, i tada je jasno označen.
 - **ROE za kapitalne metode (v3)**: koristi se **viši od (trogodišnji
   medijan godišnjih ROE, TTM ROE × 0,9)** — medijan stabilizira jednu
   netipičnu godinu (npr. COVID ili jednokratni dobitak), a faktor 0,9
@@ -106,18 +118,24 @@ metoda razvukla zonu u beskorisno.
   osjetljivosti primarnog sidra (r ± 1 postotni bod). Ako se dvije metode
   međusobno slažu (±20%) a dosadašnje sidro od njih bitno odstupa (>30%),
   sidro gubi primat — to je vidljivo zabilježeno uz procjenu.
-- **Test održive dividende (v3)**: za isplatitelje dividendi zona mora
-  proći unutarnju kontrolu — prinos iz **održive** dividende na donjem rubu
-  zone ne smije biti veći od r − g (Gordonova donja granica: ako sama
-  dividenda na nekoj cijeni nosi više nego što ulagač traži za rizik, ta je
-  cijena preniska da bi bila fer). U pragu se koristi ista stopa rasta
-  kojom je zona i izračunata (2,5% za kapitalne metode, 4% za DCF/DDM
-  sidra) — prag s drugačijom stopom lažno bi pobijao zonu zbog razlike
-  naših vlastitih pretpostavki. Zona koja test ne prolazi nosi oznaku
-  **"u rekalibraciji"** i ne prikazuje se kao mjerodavna dok se ulazi ne
-  razriješe; puni raspis testa s brojkama te dionice stoji na njezinoj
-  stranici. Analogno postoji i obrnuti test (previsoka zona uz payout
-  ~100%).
+- **Test održive dividende → dividendni pod (v3.1)**: za isplatitelje
+  dividendi zona prolazi unutarnju kontrolu — prinos iz **održive**
+  dividende na donjem rubu zone ne smije biti veći od r − g (Gordonova
+  donja granica: ako sama dividenda na nekoj cijeni nosi više nego što
+  ulagač traži za rizik, ta je cijena preniska da bi bila fer). U pragu
+  se koristi ista stopa rasta kojom je zona i izračunata (2,5% za
+  kapitalne metode, 4% za DCF/DDM sidra) — prag s drugačijom stopom
+  lažno bi pobijao zonu zbog razlike naših vlastitih pretpostavki. Kad
+  zona test ne prolazi, test **više nije veto nego ulaz**: Gordonova
+  vrijednost održive dividende V_div = D_sust ÷ (r − g) ulazi među
+  kvalificirane metode (visoka pouzdanost — dividenda je najtvrđi javno
+  dostupan dokaz), zona se preračuna i donji rub podigne barem do V_div
+  (**dividendni pod**), pa se test ponovi nad novom zonom. Puni raspis s
+  brojkama te dionice stoji na njezinoj stranici. Analogno postoji i
+  obrnuti test (previsoka zona uz payout ~100%) — tada V_div ulazi u
+  medijan i spušta zonu. Suspenzija zone ("u rekalibraciji") kao ishod
+  **ne postoji**: svaka dionica s podacima ima objavljenu fer-zonu, a
+  gdje se metode jako razilaze zona je šira i nosi jasnu oznaku.
 - **Zanemariv free float (v3)**: kad top-10 dioničara drži >90% (npr.
   INA), cijena se formira u zanemarivom prometu pod dominantnim vlasnicima
   — raskorak cijene i zone tada NIJE informativan, nosi istaknutu napomenu
@@ -182,17 +200,28 @@ metoda razvukla zonu u beskorisno.
   poput Končara (kontrola + ista djelatnost) dobiva 0–5%; default 15–25%
   koristi se samo gdje mjerenje nije moguće, uz jasnu oznaku.
 
-## Rast: čitamo izvješće, ne povijest
+## Rast: tri signala iz brojki, nikad jedna godina
 
-Prosjek prošlih godina je loš prognozer: firma s rekordnim backlogom raste
-brže od svoje povijesti, a banka s regulatornim ograničenjima sporije. Zato
-rast eksplicitne faze (prvih 5 godina) izvodimo iz **forward signala u
-zadnjem izvješću** — ugovoreni neizvršeni poslovi (backlog) i njihov trend,
-book-to-bill, brojčani guidance uprave — svaki s citatom stranice izvješća.
-Pravila su mehanička i konzervativna: brojčani guidance uprave se poštuje;
-kvantificirani backlog ograničava rast na ostvareni tempo; samo kvalitativni
-signali dobivaju najviše 8%; bez signala se rast ne izmišlja. Povijesni
-prosjek ostaje na stranici kao kontekst.
+Stopa rasta je najosjetljiviji ulaz svake procjene, pa za nju vrijede
+najstroža pravila. Rast eksplicitne faze (g1) je **kompozit — medijan tri
+signala**, svaki izveden isključivo iz objavljenih brojki: višegodišnja
+serija (trogodišnji CAGR, samo uz ≥3 godišnja izvješća), održivi rast iz
+zadržane dobiti (ROE × dio dobiti koji se ne isplaćuje) i konzervativno
+terminalno sidro. Medijan znači da nijedan pojedini signal ne može sam
+odvući procjenu — ekstrem s bilo koje strane ispada.
+
+**Zašto jedna godina nije stopa rasta**: usporedba zadnjih 12 mjeseci s
+prošlom godinom mjeri i jednokratne efekte (prodaja imovine, državna
+potpora, jedan veliki ugovor) i bazni efekt (loša prošla godina "napuše"
+postotak). Takva brojka je legitiman **kontekst** — i tako je prikazujemo —
+ali nikad samostalan izvor g1. Rast "zauvijek" iz jedne dobre godine bio
+bi izmišljanje, a to je protivno prvom pravilu ovog projekta.
+
+Kompozit je ograničen odozgo (10% sa serijom, 8% bez), ne može biti
+negativan bez višegodišnjeg dokaza skupljanja i uvijek je barem 0,5
+postotnih bodova ispod troška kapitala. Ručne "forward procjene" (backlog,
+guidance, očekivanja uprave) se za stopu rasta ne koriste; povijesni
+prosjek i TTM usporedba ostaju na stranici kao kontekst.
 
 ## Kako se čuvamo grešaka
 
@@ -204,10 +233,11 @@ prosjek ostaje na stranici kao kontekst.
   se u sidro; nemoguć zbroj = crvena zastavica i analiza se zadržava.
 - **QA zastavice**: metode koje se ne slažu, široka zona, veliko odstupanje
   od tržišta — sve se loggira i prikazuje, ne skriva.
-- **"Što cijena implicira"**: kad je naša zona daleko od tržišne cijene
-  (>40%), izračunamo koji rast ili multipl cijena implicira i usporedimo s
-  forward signalom — pa napišemo je li razlika plauzibilna ili upitna. To je
-  usporedba implikacija, ne presuda o tržištu.
+- **"Što cijena implicira"**: kad je naša zona daleko od tržišne cijene,
+  izračunamo koji rast ili multipl cijena implicira i usporedimo s **našim
+  kompozitnim rastom** (serija / održivi / terminal) — implicirani rast
+  unutar 2 postotna boda od kompozita zovemo plauzibilnim, veće odstupanje
+  upitnim. To je usporedba implikacija, ne presuda o tržištu.
 - **Konzervativnost jednom**: oprez se primjenjuje na jednom mjestu, ne
   slaže se u slojeve (npr. popust se ne dodaje na već konzervativne procjene
   kćeri).
@@ -226,6 +256,22 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v3.1 (16.07.2026.)**: dividendni pod + kompozitna stopa rasta — dvije
+  priznate greške. Prva: **suspenzija zone bila je dizajnerska greška —
+  najtvrđi dokaz treba ulaziti u procjenu, ne gasiti je**. Kad zona ne bi
+  prošla test održive dividende, povlačili smo je s oznakom "u
+  rekalibraciji" — čitatelj je ostajao bez ikakve procjene upravo tamo
+  gdje postoji najčvršći dokaz (stvarno isplaćivana, održiva dividenda).
+  Novo: Gordonova vrijednost održive dividende V_div = D_sust ÷ (r − g)
+  ulazi među kvalificirane metode s visokom pouzdanošću, donji rub zone
+  se podiže barem do V_div (dividendni pod) i test se ponavlja nad novom
+  zonom; suspenzija kao ishod više ne postoji. Druga: kratka serija je
+  stopu rasta izvodila iz JEDNE godišnje usporedbe (TTM naspram lani) —
+  jedna godina mjeri jednokratne i bazne efekte, ne stopu rasta. Novo: g1
+  je kompozit (medijan) triju signala — serija ≥3 godine, održivi rast iz
+  zadržane dobiti (ROE × neisplaćeni dio dobiti) i terminalno sidro — uz
+  cap nakon medijana i tvrdi strop 0,5 p.b. ispod troška kapitala; TTM
+  usporedba ostaje samo kontekst.
 - **v3 — SAŽETAK (16.07.2026.)**: sustavna rekalibracija u šest faza —
   priznata greška v2 pristupa u cjelini: **trailing godišnje brojke bez
   faze rasta + rizik zemlje naplaćen dvaput + dogma jednog sidra + sirove

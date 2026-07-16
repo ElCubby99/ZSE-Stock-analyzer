@@ -592,6 +592,22 @@
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "VDZG: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+      },
+      "growth": {
+        "g1": 0.0,
+        "signals": {
+          "g_obs": null,
+          "g_sust": -0.0581,
+          "g_terminal": 0.04
+        },
+        "origin": "održivi rast (kratka serija — bez g_obs)",
+        "winner": "g_sust",
+        "badges": [
+          "donja granica 0 (trajno skupljanje se ne pretpostavlja bez ≥3g dokaza)"
+        ],
+        "ttm_context": -0.018,
+        "short_series": true,
+        "source": "g1=0.0% = KOMPOZIT (v3.1): medijan {serija: nema ≥3 godišnja izvješća (g_obs se ne računa — jedna godišnja usporedba nije stopa rasta; kontekst: TTM vs lani -1.8%); održivi rast: ROE -5.8% × (1 − payout 0%) = -5.8%; sidro terminala 4.0%} — pobjednik 'održivi rast (kratka serija — bez g_obs)'; donja granica 0 (trajno skupljanje se ne pretpostavlja bez ≥3g dokaza). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -617,7 +633,7 @@
         "key": "short_series",
         "label": "kratka serija (rast)",
         "status": "pretpostavka",
-        "why": "u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G"
+        "why": "u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)"
       },
       {
         "key": "roe_rule",
@@ -680,7 +696,7 @@
           "g_terminal": 0.04,
           "g1_explicit": 0.0,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=0.0% = min(TTM vs zadnje godišnje = -1.8%, cap 8%) — KRATKA SERIJA (nema 3 godišnja izvješća u bazi); v3 FAZA G",
+          "growth_source": "g1=0.0% = KOMPOZIT (v3.1): medijan {serija: nema ≥3 godišnja izvješća (g_obs se ne računa — jedna godišnja usporedba nije stopa rasta; kontekst: TTM vs lani -1.8%); održivi rast: ROE -5.8% × (1 − payout 0%) = -5.8%; sidro terminala 4.0%} — pobjednik 'održivi rast (kratka serija — bez g_obs)'; donja granica 0 (trajno skupljanje se ne pretpostavlja bez ≥3g dokaza). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -762,14 +778,14 @@
       ],
       "vs_market_pct": -68.9,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje -19 € operativne zarade (EBITDA marža -19.1%). Firma je lani stvorila 3.9 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 10.1%, uz izračunati rast 0.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 156.51 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~-9.0% trajnog rasta godišnje; naš izvedeni rast (iz objavljenih brojki) je +0.0% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +0.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održivi rast (kratka serija — bez g_obs)' (bez ≥3-godišnje serije — jedna godišnja usporedba nije stopa rasta) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje -19 € operativne zarade (EBITDA marža -19.1%). Firma je lani stvorila 3.9 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 10.1%, uz izračunati rast 0.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 156.51 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~-9.0% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je +0.0% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": -9.0,
         "implied_g_note": "uz naš r=10.1% cijena implicira trajni rast FCF-a ~-9.0% godišnje",
         "implied_r_pct": 25.86,
         "implied_r_note": "uz naš trajni rast 4.0% cijena implicira trošak kapitala ~25.9% (naš: 10.1%)",
-        "narrative": "Tržišna cijena implicira ~-9.0% trajnog rasta godišnje; naš izvedeni rast (iz objavljenih brojki) je +0.0% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~-9.0% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je +0.0% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
         "dcf_fcf"
@@ -795,6 +811,11 @@
         "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
       },
       {
+        "k": "Rast eksplicitne faze g1 (kompozit)",
+        "v": "0,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održivi rast (kratka serija — bez g_obs)'"
+      },
+      {
         "k": "Peer multipli",
         "v": "placeholder",
         "why": "na ZSE nema dovoljno usporedivih firmi ovog sektora — metoda peer usporedbe nosi NISKU pouzdanost i ne sidri zonu"
@@ -804,7 +825,7 @@
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
       "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
       "β = 1.00 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
-      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G",
+      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],

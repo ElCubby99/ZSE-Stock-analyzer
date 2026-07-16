@@ -4956,6 +4956,22 @@
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "SPAN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+      },
+      "growth": {
+        "g1": 0.0759,
+        "signals": {
+          "g_obs": null,
+          "g_sust": 0.1173,
+          "g_terminal": 0.04
+        },
+        "origin": "održivi rast (kratka serija — bez g_obs)",
+        "winner": "g_sust",
+        "badges": [
+          "TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r)"
+        ],
+        "ttm_context": 0.016,
+        "short_series": true,
+        "source": "g1=7.6% = KOMPOZIT (v3.1): medijan {serija: nema ≥3 godišnja izvješća (g_obs se ne računa — jedna godišnja usporedba nije stopa rasta; kontekst: TTM vs lani +1.6%); održivi rast: ROE 11.7% × (1 − payout 0%) = +11.7%; sidro terminala 4.0%} — pobjednik 'održivi rast (kratka serija — bez g_obs)'; TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -4969,7 +4985,7 @@
         "key": "short_series",
         "label": "kratka serija (rast)",
         "status": "pretpostavka",
-        "why": "u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G"
+        "why": "u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)"
       },
       {
         "key": "roe_rule",
@@ -5087,7 +5103,7 @@
         "implied_pe": 24.3,
         "peer_pe": 12.0,
         "implied_pe_note": "cijena implicira P/E 24.3× vs peer medijan 12.0× (placeholder)",
-        "narrative": "Tržišna cijena implicira ~+1.8% trajnog rasta godišnje / multipl P/E 24.3×; naš izvedeni rast (iz objavljenih brojki) je +1.6% — razlika je plauzibilna jer implicirani rast blizu izvedene stope iz podataka. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~+1.8% trajnog rasta godišnje / multipl P/E 24.3×; naš kompozitni rast (serija/održivi/terminal) je +7.6% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [],
       "class_zones": null,
@@ -5111,6 +5127,11 @@
         "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
       },
       {
+        "k": "Rast eksplicitne faze g1 (kompozit)",
+        "v": "7,6%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održivi rast (kratka serija — bez g_obs)'"
+      },
+      {
         "k": "Peer multipli",
         "v": "placeholder",
         "why": "na ZSE nema dovoljno usporedivih firmi ovog sektora — metoda peer usporedbe nosi NISKU pouzdanost i ne sidri zonu"
@@ -5118,7 +5139,7 @@
     ],
     "limitations": [
       "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
-      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G",
+      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],

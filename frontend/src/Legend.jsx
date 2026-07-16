@@ -25,11 +25,11 @@ export const TERMS = {
   CRP: 'Premija rizika zemlje (country risk premium) — mali dodatak na traženi prinos zbog ulaganja u Hrvatsku; primjeren investment-grade eurozoni i računa se točno jednom (nije skriven ni u rf-u ni u ERP-u).',
   TTM: 'Zadnjih 12 mjeseci (trailing twelve months) — zarada/prihodi zbrojeni kroz posljednja četiri kvartala umjesto iz zadnjeg godišnjeg izvješća; svježija slika poslovanja.',
   g: 'Stopa rasta — koliko firma (ili njezina dividenda) raste godišnje. Trajni g je rast "zauvijek" i drži se konzervativno: 2,5% za kapitalne metode, 4% terminalno za DCF/DDM.',
-  g1: 'Stopa rasta eksplicitne faze (prvih 5 godina) — izvodi se isključivo iz objavljenih brojki (trogodišnji prosjek rasta, ograničen na najviše 10%), zatim postupno pada prema trajnom g.',
+  g1: 'Stopa rasta eksplicitne faze (prvih 5 godina) — kompozit (medijan) tri signala iz objavljenih brojki: višegodišnja serija, održivi rast iz zadržane dobiti (ROE × neisplaćeni dio dobiti) i konzervativno terminalno sidro; ograničen odozgo (10% sa serijom, 8% bez) i uvijek ispod troška kapitala r, zatim postupno pada prema trajnom g.',
   CAGR: 'Prosječna godišnja stopa rasta kroz više godina (compound annual growth rate) — npr. "3g CAGR prihoda" je prosječni godišnji rast prihoda u zadnje tri godine.',
   payout: 'Udio dobiti koji firma isplati kao dividendu — npr. payout 60% znači da od svakih 100 € dobiti dioničarima ode 60 €.',
   D_sust: 'Naša procjena ODRŽIVE godišnje dividende po dionici: održivi payout (medijan povijesnih payouta, samo redovne isplate — jednokratne ne ulaze; kod banaka najviše 70%) × dobit zadnjih 12 mjeseci ÷ broj dionica.',
-  'u rekalibraciji': 'Oznaka da našu fer-zonu trenutačno pobija vlastiti test (npr. održiva dividenda implicira prinos veći od dopuštenog) — zonu ne prikazujemo kao mjerodavnu dok se ulazi ne razriješe.',
+  'dividendni pod': 'Donja granica vrijednosti iz održive dividende (Gordonov izračun: D_sust ÷ (r − g)) — kad bi zona pala ispod nje, sama dividenda bi nosila više nego što ulagač traži za rizik, pa se pod uključuje u zonu.',
   medijan: 'Srednja vrijednost po redoslijedu — pola vrijednosti je iznad, pola ispod; otporniji na ekstremne vrijednosti od običnog prosjeka.',
 }
 

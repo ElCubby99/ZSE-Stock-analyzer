@@ -1178,11 +1178,14 @@ def _methodology_note(cur, company_id, name, rec, params, sotp, flags, ctxgh):
         "why": ("kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% "
                 "(nominalni BDP proxy: realni rast + inflacija)"),
     })
-    if ctxgh and ctxgh.get("forward"):
-        pars.append({"k": "Rast eksplicitne faze",
+    if ctxgh and ctxgh.get("g1") is not None:
+        # v3.1 DIO 2: kompozitni g1 — raspis ide iz growth_hint.source
+        _origin = (ctxgh.get("signals") or {}).get("origin") or "kompozit"
+        pars.append({"k": "Rast eksplicitne faze g1 (kompozit)",
                      "v": f"{ctxgh['g1'] * 100:.1f}%".replace(".", ","),
-                     "why": f"iz zadnjeg izvješća: {ctxgh.get('drivers')} "
-                            f"(pravilo {ctxgh.get('rule')})"})
+                     "why": (f"medijan tri signala iz objavljenih brojki "
+                             f"(serija / održivi rast / terminalno sidro); "
+                             f"presudio je signal '{_origin}'")})
     if params.get("peers_calibrated"):
         pars.append({"k": "Peer multipli",
                      "v": f"P/E {params['peer_pe']}",
@@ -1420,9 +1423,10 @@ def build_stock_json(conn, ticker: str) -> dict:
         assumption_flags.append(
             {"key": "short_series", "label": "kratka serija (rast)",
              "status": "pretpostavka",
-             "why": ("u bazi nema tri godišnja izvješća pa je stopa rasta "
-                     "izvedena iz zadnjih 12 mjeseci naspram prošle godine "
-                     "(cap 8%) — v3 FAZA G")})
+             "why": ("u bazi nema tri godišnja izvješća pa kompozitni g1 "
+                     "nastaje bez signala serije — iz održivog rasta "
+                     "(ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; "
+                     "jedna godišnja usporedba nije stopa rasta (v3.1)")})
     _rh = getattr(ctx, "roe_hint", None)
     if _rh and _rh.get("basis") == "ttm":
         assumption_flags.append(
@@ -1577,6 +1581,18 @@ def build_stock_json(conn, ticker: str) -> dict:
                 "erp": _f(getattr(params, "erp", None)),
                 "crp": _f(getattr(params, "crp", None)),
                 "sources": params.sources,
+                # v3.1 DIO 2: kompozitni g1 — raspis tri signala,
+                # pobjednik i badge porijekla za UI (Pretpostavke)
+                "growth": ({
+                    "g1": _f(_gh.get("g1")),
+                    "signals": (_gh.get("signals") or {}).get("signals"),
+                    "origin": (_gh.get("signals") or {}).get("origin"),
+                    "winner": (_gh.get("signals") or {}).get("winner"),
+                    "badges": (_gh.get("signals") or {}).get("badges") or [],
+                    "ttm_context": _f(_gh.get("ttm_vs_lani_kontekst")),
+                    "short_series": bool(_gh.get("short_series")),
+                    "source": _gh.get("source"),
+                } if _gh.get("g1") is not None else None),
             },
             "assumption_flags": assumption_flags,
             "ran": ran, "skipped": skipped, "reconciliation": reconciliation,

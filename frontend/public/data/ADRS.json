@@ -7933,6 +7933,20 @@
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.22 (2026-07-14). serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.5 (n=5), P/B=1.56 (n=5), EV/EBITDA=8.65 (n=4). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.41 P/B=1.56; RIVP P/E=24.55 P/B=3.38; PLAG P/E=15.5 P/B=2.48; ARNT P/E=13.63 P/B=0.96"
+      },
+      "growth": {
+        "g1": 0.04,
+        "signals": {
+          "g_obs": 0.0941,
+          "g_sust": 0.0192,
+          "g_terminal": 0.04
+        },
+        "origin": "sidro terminala",
+        "winner": "g_terminal",
+        "badges": [],
+        "ttm_context": null,
+        "short_series": false,
+        "source": "g1=4.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +9.4%; održivi rast: ROE 5.4% × (1 − payout 65%) = +1.9%; sidro terminala 4.0%} — pobjednik 'sidro terminala'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -8201,7 +8215,7 @@
       ],
       "vs_market_pct": 101.6,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +9.4% godišnje izveden je iz objavljenih brojki (trogodišnji prosjek +9.4%, ograničen na najviše 10% — nijedna procjena 'iz glave'). Od svakih 100 € prihoda firmi ostaje 42 € operativne zarade (EBITDA marža 41.9%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,480 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa se popust klampa na 0 (v2 §4); sidro je 90.90 € po dionici. Tržište te iste kćeri trenutačno vrednuje 13.5% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~+5.5% trajnog rasta godišnje / multipl P/E 31.6×; naš izvedeni rast (iz objavljenih brojki) je +9.4% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +4.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'sidro terminala' (višegodišnja serija: +9.4%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 42 € operativne zarade (EBITDA marža 41.9%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,480 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa se popust klampa na 0 (v2 §4); sidro je 90.90 € po dionici. Tržište te iste kćeri trenutačno vrednuje 13.5% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~+5.5% trajnog rasta godišnje / multipl P/E 31.6×; naš kompozitni rast (serija/održivi/terminal) je +4.0% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 5.5,
@@ -8211,7 +8225,7 @@
         "implied_pe": 31.6,
         "peer_pe": 15.5,
         "implied_pe_note": "cijena implicira P/E 31.6× vs peer medijan 15.5×",
-        "narrative": "Tržišna cijena implicira ~+5.5% trajnog rasta godišnje / multipl P/E 31.6×; naš izvedeni rast (iz objavljenih brojki) je +9.4% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~+5.5% trajnog rasta godišnje / multipl P/E 31.6×; naš kompozitni rast (serija/održivi/terminal) je +4.0% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
         "comps",
@@ -8248,6 +8262,7 @@
         "r": 0.0819,
         "g_used": 0.025,
         "g_source": "kapitalni trajni g 2.5% (sidro zone je sotp_nav — ista pretpostavka rasta kojom je zona izračunata)",
+        "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
         "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 3.28 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (77.33 €), samo od te dividende dobivao bi 4.2% godišnje. Fer cijena to ne dopušta iznad 5.7% (traženi prinos 8.2% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
@@ -8398,6 +8413,11 @@
         "k": "Dugoročni rast g",
         "v": "2,5% / 4,0%",
         "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
+      },
+      {
+        "k": "Rast eksplicitne faze g1 (kompozit)",
+        "v": "4,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'sidro terminala'"
       },
       {
         "k": "Peer multipli",

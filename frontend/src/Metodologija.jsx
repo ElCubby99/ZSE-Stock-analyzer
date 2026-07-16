@@ -22,7 +22,7 @@ export default function Metodologija() {
       <main className="wrap">
         {alert && alert.active && (
           <div className="prof-illiq" style={{ marginBottom: 14 }}>
-            <span className="prof-illiq-t">ZONE U REKALIBRACIJI ZA DIO DIONICA</span>
+            <span className="prof-illiq-t">ZONE U PROVJERI ZA DIO DIONICA</span>
             <span className="prof-illiq-n">
               {alert.share_pct} % najlikvidnijih dionica ima raskorak veći od
               30 % naspram naše fer-zone — to je signal za provjeru naših

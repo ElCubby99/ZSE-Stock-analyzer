@@ -510,6 +510,64 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
                       0.7 if p.rates_calibrated else 0.5)
 
 
+GROWTH_CAP_SERIES = 0.10   # cap kad postoji ≥3g serija (g_obs)
+GROWTH_CAP_SHORT = 0.08    # cap bez serije (kratka serija — bez g_obs)
+
+
+def composite_g1(g_obs, g_sust, g_terminal, r):
+    """v3.1 DIO 2: KOMPOZITNA stopa rasta eksplicitne faze.
+
+    Tri signala (svi iz postojećih v3 ulaza):
+      g_obs      — CAGR prihoda/zarade iz ≥3g serije (None kad serije nema;
+                   jedna godišnja usporedba NIKAD nije samostalan izvor);
+      g_sust     — održivi rast iz zadržane dobiti = ROE_TTM × (1 − payout_sust);
+      g_terminal — sidro skupljanja (2,5% kapitalni / 4% DCF kontekst).
+
+    g1 = medijan raspoloživih signala (bez g_obs: sredina {g_sust, g_term});
+    cap NAKON medijana (10% sa serijom / 8% bez); g1 ≥ 0 osim kad ≥3g serija
+    dokazuje skupljanje (g_obs < 0) — tada smije negativan uz badge;
+    TVRDI clamp g1 ≤ r − 0,5 p.b. (formule pucaju kad g → r).
+    -> (g1, meta) ; meta nosi signale, pobjednika i badgeove za UI raspis."""
+    signals = {"g_obs": g_obs, "g_sust": g_sust, "g_terminal": g_terminal}
+    avail = [(k, v) for k, v in signals.items() if v is not None]
+    if not avail:
+        return None, {"signals": signals, "badges": ["nema signala"],
+                      "origin": "nema signala"}
+    vals = sorted(v for _, v in avail)
+    n = len(vals)
+    med = vals[n // 2] if n % 2 else (vals[n // 2 - 1] + vals[n // 2]) / 2
+    winner = min(avail, key=lambda kv: abs(kv[1] - med))[0]
+    cap = GROWTH_CAP_SERIES if g_obs is not None else GROWTH_CAP_SHORT
+    origin = ("serija" if winner == "g_obs" else
+              "održivi rast" if winner == "g_sust" else "sidro terminala")
+    if g_obs is None:
+        origin += " (kratka serija — bez g_obs)"
+    badges = []
+    g1 = med
+    if g1 > cap:
+        g1 = cap
+        badges.append(f"cap {cap:.0%} nakon medijana")
+    if g1 < 0:
+        if g_obs is not None and g_obs < 0:
+            badges.append("negativan g1 — višegodišnje skupljanje "
+                          "dokazano ≥3g serijom")
+        else:
+            g1 = 0.0
+            badges.append("donja granica 0 (trajno skupljanje se ne "
+                          "pretpostavlja bez ≥3g dokaza)")
+    hard = r - 0.005
+    if g1 > hard:
+        g1 = hard
+        badges.append("TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule "
+                      "pucaju kad g → r)")
+    # zaokruživanje ne smije probiti tvrdi clamp (round-up preko r−0,5 p.b.)
+    g1 = min(round(g1, 4), hard)
+    return g1, {"signals": {k: (round(v, 4) if v is not None else None)
+                                      for k, v in signals.items()},
+                          "median": round(med, 4), "winner": winner,
+                          "cap": cap, "badges": badges, "origin": origin}
+
+
 def _separate_standalone(c: "Ctx", h: dict, p: "Params"):
     """v3 FAZA SOTP: standalone dio matice iz NEKONSOLIDIRANOG izvještaja
     (filings.basis='separate'): NI − prihod od dividendi kćeri (obavezno
@@ -1041,20 +1099,24 @@ def _market_implied(c: Ctx, results: dict, rec: dict) -> dict:
         out["implied_pe_note"] = (f"cijena implicira P/E {pe_imp:.1f}× vs peer "
                                   f"medijan {p.peer_pe}×"
                                   + ("" if p.peers_calibrated else " (placeholder)"))
+    # v3.1 DIO 2: usporedba ide protiv KOMPOZITNOG g1 (serija/održivi/
+    # terminal) — kompozit postoji i bez serije, pa "nema serije" više
+    # nije razlog neprovjerljivosti (staro proturječje uklonjeno).
     gh = c.growth_hint or {}
-    fw = (f"naš izvedeni rast (iz objavljenih brojki) je {gh['g1']:+.1%}"
+    fw = (f"naš kompozitni rast (serija/održivi/terminal) je {gh['g1']:+.1%}"
           if gh.get("g1") is not None else
-          "izvedena stopa rasta nije dostupna (nema serije u bazi)")
+          "kompozitna stopa rasta nije dostupna")
     g_imp_v = out.get("implied_g_pct")
     if g_imp_v is not None and gh.get("g1") is not None:
-        diff_ok = abs(g_imp_v / 100 - gh["g1"]) <= 0.03
+        # prag plauzibilnosti (v3.1): |implicirani − kompozitni g1| ≤ 2 p.b.
+        diff_ok = abs(g_imp_v / 100 - gh["g1"]) <= 0.02
         verdict = "plauzibilna" if diff_ok else "upitna"
-        why = ("implicirani rast blizu izvedene stope iz podataka"
-               if diff_ok else "implicirani rast se bitno razlikuje od "
-               "stope izvedene iz objavljenih brojki")
+        why = ("implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta"
+               if diff_ok else "implicirani rast odstupa više od 2 p.b. od "
+               "našeg kompozitnog rasta (serija/održivi/terminal)")
     else:
-        verdict, why = ("neprovjerljiva bez izvedene stope rasta",
-                        "u bazi nema serije za izvod stope rasta")
+        verdict, why = ("neprovjerljiva bez kompozitne stope rasta",
+                        "kompozitna stopa rasta nije izračunata")
     out["narrative"] = (
         "Tržišna cijena implicira "
         + (f"~{g_imp_v:+.1f}% trajnog rasta godišnje" if g_imp_v is not None else "")
@@ -1088,14 +1150,18 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
     gh = c.growth_hint or {}
     prim = (rec.get("anchor_methods") or [None])[0]
     parts = []
-    if gh.get("g1") is not None and gh.get("rev_cagr_3y") is not None:
-        parts.append(f"Rast {gh['g1']:+.1%} godišnje izveden je iz objavljenih "
-                     f"brojki (trogodišnji prosjek {gh['rev_cagr_3y']:+.1%}, "
-                     f"ograničen na najviše 10% — nijedna procjena 'iz glave')")
-    elif gh.get("g1") is not None:
-        parts.append(f"Rast {gh['g1']:+.1%} godišnje izveden je iz zadnjih 12 "
-                     f"mjeseci naspram prošle godine (kratka serija u bazi, "
-                     f"ograničeno na najviše 8%)")
+    if gh.get("g1") is not None:
+        # v3.1 DIO 2: g1 je KOMPOZIT tri signala — raspis ide iz meta
+        origin = (gh.get("signals") or {}).get("origin") or "kompozit"
+        extra = (f" (višegodišnja serija: {gh['rev_cagr_3y']:+.1%})"
+                 if gh.get("rev_cagr_3y") is not None else
+                 " (bez ≥3-godišnje serije — jedna godišnja usporedba "
+                 "nije stopa rasta)")
+        parts.append(f"Rast {gh['g1']:+.1%} godišnje je kompozit tri signala "
+                     f"iz objavljenih brojki — višegodišnja serija, održivi "
+                     f"rast iz zadržane dobiti i konzervativno terminalno "
+                     f"sidro; presudio je medijan, najbliži mu je signal "
+                     f"'{origin}'{extra} — nijedna procjena 'iz glave'")
     else:
         parts.append("Stopu rasta ne možemo izračunati — u bazi još nije "
                      "dovoljna serija objavljenih brojki, pa računamo oprezno, "
@@ -1380,15 +1446,18 @@ def reconcile(results: dict, sector: Optional[str] = None,
             roles[k] = {"role": "secondary", "note": h["secondary_note"],
                         "vs_zone_pct": 0.0}
 
-    # v3 A.3: dividendni sanity flag — NAD D_sust (nikad sirova isplata).
-    # Gordonova donja granica: fer vrijednost >= D_sust/(r − g), pa prinos
-    # iz održive dividende na donjem rubu zone ne smije premašiti r − g.
-    # ODLUKA (opcija 1, 16.07.2026.): g u pragu je KONZISTENTAN sa sidrom
-    # zone — kapitalna sidra (opravdani P/B, RI) i comps/SOTP računaju s
-    # konzervativnim trajnim g (2,5%), pa i prag koristi r − 2,5%; DCF/DDM
-    # sidra koriste terminalni g (4%) pa i prag r − 4%. Prag s "tuđim" g-om
-    # lažno bi pobijao zonu zbog razlike naših vlastitih pretpostavki.
-    recalibrating = None
+    # v3.1 DIO 1: DIVIDENDNI POD — sanity test je ULAZ, ne veto.
+    # Gordonova donja granica: fer vrijednost >= V_div = D_sust/(r − g).
+    # Kad test padne, V_div ulazi u kvalificirane metode (visok conf —
+    # temelji se na stvarno isplaćenom novcu; D_sust već čisti jednokratne
+    # i testira pokrivenost), medijan se preračuna, a donji rub zone se
+    # podiže na pod (re-test tada prolazi PO KONSTRUKCIJI). Suspenzija
+    # ("u rekalibraciji") NIJE dopušten ishod za firme s podacima —
+    # priznata greška v3.1: najtvrđi dokaz treba ulaziti u procjenu, ne
+    # gasiti je. g u pragu KONZISTENTAN sa sidrom zone (opcija 1): kapitalna
+    # sidra r − 2,5%, DCF/DDM sidra r − 4% — isti pragovi, bez novih
+    # parametara.
+    recalibrating = None   # zadržan ključ radi kompatibilnosti — UVIJEK None
     dividend_sanity = None
     dh = getattr(ctx, "dsust_hint", None) if ctx is not None else None
     if ctx is not None and dh and dh.get("d_sust_ps") and zone_low > 0:
@@ -1409,16 +1478,57 @@ def reconcile(results: dict, sector: Optional[str] = None,
         previsoka = (not preniska and zone_high > 0
                      and (dh.get("payout_used") or 0) >= 0.9
                      and d_ps / zone_high < 0.5 * prag)
+        dividend_floor = None
+        if (preniska or previsoka) and prag > 0:
+            # V_div u medijan kvalificiranih + (kod preniske) POD na donji rub
+            v_div = d_ps / prag
+            q_plus = sorted(list(
+                (bases[k] for k in qualified)) + [v_div]) or [v_div]
+            n_qp = len(q_plus)
+            med_p = (q_plus[n_qp // 2] if n_qp % 2 else
+                     (q_plus[n_qp // 2 - 1] + q_plus[n_qp // 2]) / 2)
+            old_lo, old_hi = zone_low, zone_high
+            if zone_high > 0 and zone_low > 0:
+                rel_lo2 = zone_low / ((zone_low + zone_high) / 2)
+                rel_hi2 = zone_high / ((zone_low + zone_high) / 2)
+                zone_low, zone_high = med_p * rel_lo2, med_p * rel_hi2
+            if preniska and zone_low < v_div:
+                zone_low = v_div            # POD: donji rub ≥ Gordonova granica
+                if zone_high < zone_low * 1.05:
+                    zone_high = zone_low * 1.05
+            qualified = sorted(qualified + ["dividend_floor"])
+            dividend_floor = {
+                "v_div": round(v_div, 2), "confidence": 0.8,
+                "formula": (f"V_div = D_sust {d_ps:,.2f} € / (r {r_:.2%} − g "
+                            f"{g_prag:.1%}) = {v_div:,.2f} € — Gordonova donja "
+                            "granica iz stvarno isplaćenog novca"),
+                "applied_floor": bool(preniska),
+                "zone_before": [round(old_lo, 2), round(old_hi, 2)],
+                "zone_after": [round(zone_low, 2), round(zone_high, 2)],
+            }
+            zone_note += (
+                f"; DIVIDENDNI POD (v3.1): V_div {v_div:,.2f} € uključen u "
+                "medijan kvalificiranih metoda"
+                + (f", donji rub podignut na pod ({old_lo:,.2f} → "
+                   f"{zone_low:,.2f})" if preniska and zone_low > old_lo else "")
+                + " — održiva dividenda podržava vrijednost, ne gasi zonu")
+            # re-test nad NOVOM zonom (po konstrukciji prolazi kod preniske)
+            y_low = d_ps / zone_low
+            preniska = y_low > prag * (1 + 1e-9)
+            previsoka = False   # V_div u medijanu — bez suspenzije (v3.1)
         # v3 (Borisov zahtjev): puni for-dummies raspis testa — izvozi se
         # za SVAKOG isplatitelja s D_sust, ne samo kad flag padne
+        floor_applied = bool(dividend_floor and dividend_floor["applied_floor"])
         dividend_sanity = {
             "d_sust_ps": round(d_ps, 4),
             "zone_low": round(zone_low, 2), "zone_high": round(zone_high, 2),
             "implied_yield_low": round(y_low, 4),
             "threshold": round(prag, 4), "r": round(r_, 4),
             "g_used": round(g_prag, 4), "g_source": g_src,
+            "dividend_floor": dividend_floor,
             "passes": not (preniska or previsoka),
-            "verdict": ("preniska" if preniska else
+            "verdict": ("prolazi (uz dividendni pod)" if floor_applied
+                        else "preniska" if preniska else
                         "previsoka" if previsoka else "prolazi"),
             "plain": (
                 f"Test održive dividende: procjenjujemo da firma može trajno "
@@ -1431,27 +1541,15 @@ def reconcile(results: dict, sector: Optional[str] = None,
                 f"dividende {g_prag:.1%}) — jer ako sama dividenda nosi više "
                 f"nego što ulagač traži za rizik, cijena je preniska da bi "
                 f"bila fer i zona se sama pobija. Rezultat: "
-                + ("prinos {:.1%} > prag {:.1%} — donji rub je vjerojatno "
-                   "PRENIZAK, zona ide u rekalibraciju.".format(y_low, prag)
-                   if preniska else
-                   "prinos je unutar dopuštenog — zona prolazi test."
-                   if not previsoka else
-                   "uz payout ~100% prinos na gornjem rubu je premalen — "
-                   "zona je vjerojatno PREVISOKA i ide u rekalibraciju.")),
+                + (("Dividendni pod primijenjen: održiva dividenda od "
+                    "{:,.2f} € podržava vrijednost od najmanje {:,.2f} € "
+                    "(Gordonov izračun) — uključeno u zonu."
+                    .format(d_ps, dividend_floor["v_div"])) if floor_applied
+                   else "prinos je unutar dopuštenog — zona prolazi test."
+                   if not (preniska or previsoka) else
+                   "V_div je uključen u medijan — zona objavljena bez "
+                   "suspenzije (v3.1).")),
         }
-        if preniska:
-            recalibrating = (
-                f"zona vjerojatno PRENISKA — održive dividende je ne "
-                f"podržavaju: D_sust {d_ps:,.2f} € na donjem rubu "
-                f"{zone_low:,.2f} € implicira prinos {y_low:.1%} > r − g = "
-                f"{prag:.1%} ({g_src}); zona se ne objavljuje dok se ulazi "
-                "ne razriješe")
-        elif previsoka:
-            recalibrating = (
-                f"zona vjerojatno PREVISOKA — uz payout ~100% održiva "
-                f"dividenda {d_ps:,.2f} € na gornjem rubu {zone_high:,.2f} € "
-                f"implicira prinos {d_ps / zone_high:.1%} < ½(r − g) — zona "
-                "se ne objavljuje dok se ulazi ne razriješe")
     # v3 A.4 (INA-tip): zanemariv free float -> raskorak nije informativan
     low_float_note = None
     ff = getattr(ctx, "free_float_proxy", None) if ctx is not None else None
@@ -1460,6 +1558,15 @@ def reconcile(results: dict, sector: Optional[str] = None,
             f"free float ~{ff:.0f}% (proxy: 100 − zbroj top-10 dioničara) — "
             "cijena se formira pod dominantnim vlasnicima uz zanemariv "
             "float; raskorak cijene i fer-zone NIJE informativan")
+
+    # v3.1: nakon dividendnog poda osvježi disperziju nad NOVOM zonom;
+    # široka zona se OBJAVLJUJE s badgeom (suspenzija ukinuta)
+    if dividend_sanity and dividend_sanity.get("dividend_floor"):
+        spread = (zone_high - zone_low) / zone_high if zone_high else spread
+        if spread > 0.30:
+            zone_note += ("; ŠIROK RASPON — metode se razilaze (raspis po "
+                          "metodi iza klika); zona se objavljuje šira, ne "
+                          "suspendira")
 
     return {
         "qualified_methods": qualified,
@@ -1790,13 +1897,10 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         r = cur.fetchone()
         return float(r[0]) if r and r[0] is not None else None
 
-    # v3 FAZA G: faza rasta ISKLJUČIVO iz objavljenih brojki u bazi — NIKAD
-    # ručne forward procjene. Primarno: g1 = min(3g CAGR prihoda, cap 10%);
-    # bez pune prihodne serije fallback na 3g CAGR zarade (isti cap); bez
-    # ijedne 3g serije: TTM vs zadnje godišnje, cap 8%, oznaka `kratka
-    # serija`. Guidance signali iz growth_estimates služe SAMO guidance-DCF
-    # FCF proxyju (v2 §9.2, kad CF izvještaj fali) — g1 NE određuju.
-    GROWTH_CAP, SHORT_CAP = 0.10, 0.08
+    # v3.1 DIO 2: signali rasta — g_obs iz ≥3g serije (jedna godišnja
+    # usporedba NIKAD nije samostalan izvor; smije biti samo KONTEKST),
+    # guidance samo za guidance-DCF FCF proxy. Kompozitni g1 se slaže
+    # NIŽE (nakon roe_hint i D_sust — treba ROE_TTM i payout_sust).
     rev_item = "total_operating_income" if sector == "bank" else "revenue"
 
     def _cagr3(item):
@@ -1815,49 +1919,26 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                         rows[-1][0], rows[0][0])
         return None
 
-    growth_hint = None
-    trailing = None
-    c3 = _cagr3(rev_item)
-    c3_src_item = "prihoda"
-    if c3 is None:
-        c3 = _cagr3("net_income_parent")
-        c3_src_item = "zarade (net_income_parent)"
-    if c3 is not None:
-        trailing, fy0, fy1 = c3
-        g1 = max(0.0, min(GROWTH_CAP, trailing))
-        growth_hint = {
-            "g1": round(g1, 4), "rev_cagr_3y": round(trailing, 4),
-            "archetype": "growth" if g1 > 0.08 else "mature",
-            "source": (f"g1={g1:.1%} = min(3g CAGR {c3_src_item} FY{fy0}->"
-                       f"FY{fy1} iz baze = {trailing:+.1%}, cap {GROWTH_CAP:.0%})"
-                       " — v3 FAZA G: rast isključivo iz objavljenih brojki "
-                       "(bez ručnih forward procjena); eksplicitna faza 5 g s "
-                       "linearnim fadeom prema terminalnom g"),
-        }
-    else:
-        # kratka serija: TTM vs zadnje godišnje (cap 8%) — samo ako TTM
-        # stvarno postoji za prihodnu stavku
-        cur.execute(
-            """SELECT fin.value_eur FROM financials fin
-               JOIN filings f ON f.id = fin.filing_id
-               WHERE f.company_id=%s AND fin.item=%s AND f.period_type='annual'
-                     AND f.basis='consolidated' AND fin.value_eur IS NOT NULL
-               ORDER BY f.fiscal_year DESC LIMIT 1""", (company_id, rev_item))
-        r_ann = cur.fetchone()
-        ttm_rev = data(rev_item)
-        if (r_ann and r_ann[0] and float(r_ann[0]) > 0 and ttm_rev
-                and ttm_rev[0] is not None
-                and ttm_meta.get(rev_item, {}).get("basis") == "ttm"):
-            gr = float(ttm_rev[0]) / float(r_ann[0]) - 1
-            g1 = max(0.0, min(SHORT_CAP, gr))
-            growth_hint = {
-                "g1": round(g1, 4), "rev_cagr_3y": None, "short_series": True,
-                "archetype": "mature",
-                "source": (f"g1={g1:.1%} = min(TTM vs zadnje godišnje = "
-                           f"{gr:+.1%}, cap {SHORT_CAP:.0%}) — KRATKA SERIJA "
-                           "(nema 3 godišnja izvješća u bazi); v3 FAZA G"),
-            }
-    # guidance signali (SAMO za guidance-DCF FCF proxy, v2 §9.2 — ne za g1)
+    _c3 = _cagr3(rev_item)
+    _c3_item = "prihoda"
+    if _c3 is None:
+        _c3 = _cagr3("net_income_parent")
+        _c3_item = "zarade (net_income_parent)"
+    # TTM vs zadnje godišnje — SAMO KONTEKST (v3.1: nikad izvor g1)
+    _ttm_ctx = None
+    cur.execute(
+        """SELECT fin.value_eur FROM financials fin
+           JOIN filings f ON f.id = fin.filing_id
+           WHERE f.company_id=%s AND fin.item=%s AND f.period_type='annual'
+                 AND f.basis='consolidated' AND fin.value_eur IS NOT NULL
+           ORDER BY f.fiscal_year DESC LIMIT 1""", (company_id, rev_item))
+    _r_ann = cur.fetchone()
+    _ttm_rev = data(rev_item)
+    if (_r_ann and _r_ann[0] and float(_r_ann[0]) > 0 and _ttm_rev
+            and _ttm_rev[0] is not None
+            and ttm_meta.get(rev_item, {}).get("basis") == "ttm"):
+        _ttm_ctx = float(_ttm_rev[0]) / float(_r_ann[0]) - 1
+    # guidance signali (SAMO za guidance-DCF FCF proxy — ne za g1)
     try:
         cur.execute(
             """SELECT rule, drivers, signals FROM growth_estimates
@@ -1867,12 +1948,7 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     except Exception:  # noqa: BLE001 — tablica je opcionalna nadogradnja
         conn.rollback()
         fw = None
-    if fw and fw[0] == "R0" and (fw[2] or {}):
-        if growth_hint is None:
-            growth_hint = {"g1": None, "source": "guidance-DCF ulazi bez g1 serije"}
-        growth_hint["rule"] = fw[0]
-        growth_hint["guidance_signals"] = fw[2] or {}
-        growth_hint.setdefault("drivers", fw[1])
+    growth_hint = None   # slaže se niže (kompozit v3.1)
 
     # v3 FAZA G: ROE pravilo za kapitalne metode (opravdani P/B, RI) —
     # koristi se VIŠI od (3g medijan godišnjih ROE, TTM ROE × 0,9).
@@ -1971,6 +2047,56 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     # v3 DIV: dps se izračuna EAGER (puni dsust_holder) — Ctx.dsust_hint je
     # snapshot pa lijeni prvi poziv ne bi stigao u polje
     data("dps")
+
+    # v3.1 DIO 2: KOMPOZITNI g1 = medijan {g_obs, g_sust, g_terminal}
+    _g_obs = _c3[0] if _c3 else None
+    _roe_for_g = (roe_hint or {}).get("ttm_or_annual")
+    _payout_for_g = (dsust_holder.get("hint") or {}).get("payout_used")
+    g_sust = None
+    if _roe_for_g is not None:
+        g_sust = _roe_for_g * (1.0 - (_payout_for_g if _payout_for_g
+                                      is not None else 0.0))
+    gT_for_g = params.terminal_growth
+    g1_comp, g_meta = composite_g1(_g_obs, g_sust, gT_for_g,
+                                   params.cost_of_equity)
+    if g1_comp is not None:
+        sig = g_meta["signals"]
+        parts_txt = []
+        if _c3:
+            parts_txt.append(f"serija: 3g CAGR {_c3_item} FY{_c3[1]}->"
+                             f"FY{_c3[2]} iz baze = {sig['g_obs']:+.1%}")
+        else:
+            parts_txt.append("serija: nema ≥3 godišnja izvješća (g_obs se ne "
+                             "računa — jedna godišnja usporedba nije stopa "
+                             "rasta"
+                             + (f"; kontekst: TTM vs lani {_ttm_ctx:+.1%}"
+                                if _ttm_ctx is not None else "") + ")")
+        if g_sust is not None:
+            parts_txt.append(f"održivi rast: ROE {_roe_for_g:.1%} × (1 − "
+                             f"payout {(_payout_for_g or 0.0):.0%}) = "
+                             f"{sig['g_sust']:+.1%}")
+        parts_txt.append(f"sidro terminala {sig['g_terminal']:.1%}")
+        growth_hint = {
+            "g1": g1_comp,
+            "rev_cagr_3y": round(_g_obs, 4) if _g_obs is not None else None,
+            "ttm_vs_lani_kontekst": (round(_ttm_ctx, 4)
+                                     if _ttm_ctx is not None else None),
+            "signals": g_meta, "short_series": _c3 is None,
+            "archetype": "growth" if g1_comp > 0.08 else "mature",
+            "source": (f"g1={g1_comp:.1%} = KOMPOZIT (v3.1): medijan "
+                       f"{{{'; '.join(parts_txt)}}} — pobjednik "
+                       f"'{g_meta['origin']}'"
+                       + (f"; {'; '.join(g_meta['badges'])}"
+                          if g_meta['badges'] else "")
+                       + ". Eksplicitna faza 5 g s linearnim fadeom prema "
+                         "terminalnom g."),
+        }
+    if fw and fw[0] == "R0" and (fw[2] or {}):
+        if growth_hint is None:
+            growth_hint = {"g1": None, "source": "guidance-DCF ulazi bez g1 signala"}
+        growth_hint["rule"] = fw[0]
+        growth_hint["guidance_signals"] = fw[2] or {}
+        growth_hint.setdefault("drivers", fw[1])
 
     # v3 FAZA SOTP: nekonsolidirani (odvojeni) izvještaj matice, ako je
     # ekstrahiran u bazu (basis='separate') — za standalone SOTP komponentu

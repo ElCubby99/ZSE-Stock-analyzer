@@ -65,14 +65,23 @@ def test_placeholder_i_degenerirane_ne_kvalificiraju():
     assert rec["qualified_methods"] == ["justified_pb_roe"]
 
 
-def test_dividendni_sanity_flag_preniska():
-    """Umjetni slučaj: D_sust/donji rub > r − g_terminal -> zona
-    'u rekalibraciji' (Borisov test, formaliziran)."""
+def test_dividendni_pod_umjesto_suspenzije():
+    """v3.1: umjetni slučaj gdje bi test pao -> V_div ulazi u medijan,
+    donji rub se diže na pod, re-test PROLAZI, zona OBJAVLJENA."""
     res = _res({"justified_pb_roe": (9.0, 10.0, 11.0, 0.7)})
     ctx = _ctx(dsust_hint={"d_sust_ps": 1.0, "payout_used": 0.6})
-    # 1,0 / 9,0 = 11,1% > 8% − 4% = 4%
+    # prag: r 8% − g kapitalni 2,5% = 5,5%; V_div = 1,0/0,055 = 18,18
     rec = reconcile(res, "bank", ctx=ctx)
-    assert rec["recalibrating"] and "PRENISKA" in rec["recalibrating"]
+    assert rec["recalibrating"] is None, "suspenzija je ukinuta (v3.1)"
+    ds = rec["dividend_sanity"]
+    df = ds["dividend_floor"]
+    assert df and df["applied_floor"]
+    assert abs(df["v_div"] - 1.0 / 0.055) < 0.01
+    assert rec["zone_low"] >= df["v_div"] - 1e-9, "donji rub = pod"
+    # re-test nad novom zonom prolazi po konstrukciji
+    assert ds["d_sust_ps"] / rec["zone_low"] <= ds["threshold"] + 1e-9
+    assert ds["verdict"] == "prolazi (uz dividendni pod)"
+    assert "dividend_floor" in rec["qualified_methods"]
 
 
 def test_dividendni_sanity_bez_flaga_kad_pokriveno():
@@ -83,13 +92,17 @@ def test_dividendni_sanity_bez_flaga_kad_pokriveno():
     assert rec["recalibrating"] is None
 
 
-def test_obrnuti_flag_previsoka_zona():
-    """Payout ~100%, a prinos iz D_sust na gornjem rubu << r − gT."""
+def test_previsoka_bez_suspenzije():
+    """v3.1: payout ~100% i premalen prinos na gornjem rubu -> V_div u
+    medijan (vuče dolje), bez suspenzije."""
     res = _res({"justified_pb_roe": (90.0, 100.0, 110.0, 0.7)})
     ctx = _ctx(dsust_hint={"d_sust_ps": 1.0, "payout_used": 0.95})
-    # 1,0 / 110 = 0,9% < 0,5 × 4% = 2%
     rec = reconcile(res, "bank", ctx=ctx)
-    assert rec["recalibrating"] and "PREVISOKA" in rec["recalibrating"]
+    assert rec["recalibrating"] is None
+    assert "dividend_floor" in rec["qualified_methods"]
+    ds = rec["dividend_sanity"]
+    assert ds["dividend_floor"]["applied_floor"] is False
+    assert rec["zone_low"] < 90.0, "V_div u medijanu mora povući zonu naniže"
 
 
 def test_ina_tip_niski_float():
@@ -98,3 +111,17 @@ def test_ina_tip_niski_float():
     assert rec["low_float_note"] and "NIJE informativan" in rec["low_float_note"]
     rec2 = reconcile(res, "bank", ctx=_ctx(free_float_proxy=35.0))
     assert rec2["low_float_note"] is None
+
+
+def test_pod_se_ne_aktivira_gdje_test_prolazi():
+    """v3.1 regresija (ZABA/CROS princip): kad sanity prolazi, V_div se NE
+    uključuje i zona je identična kao bez dsust_hinta."""
+    spec = {"justified_pb_roe": (30.0, 33.0, 36.0, 0.7)}
+    rec_bez = reconcile(_res(spec), "bank", ctx=_ctx())
+    rec_s = reconcile(_res(spec), "bank",
+                      ctx=_ctx(dsust_hint={"d_sust_ps": 1.0,
+                                           "payout_used": 0.6}))
+    assert rec_s["dividend_sanity"]["verdict"] == "prolazi"
+    assert "dividend_floor" not in rec_s["qualified_methods"]
+    assert abs(rec_s["zone_low"] - rec_bez["zone_low"]) < 1e-9
+    assert abs(rec_s["zone_high"] - rec_bez["zone_high"]) < 1e-9

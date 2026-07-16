@@ -5161,6 +5161,20 @@
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "ZABA: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+      },
+      "growth": {
+        "g1": 0.0429,
+        "signals": {
+          "g_obs": 0.0429,
+          "g_sust": 0.0636,
+          "g_terminal": 0.04
+        },
+        "origin": "serija",
+        "winner": "g_obs",
+        "badges": [],
+        "ttm_context": 0.0091,
+        "short_series": false,
+        "source": "g1=4.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +4.3%; održivi rast: ROE 21.2% × (1 − payout 70%) = +6.4%; sidro terminala 4.0%} — pobjednik 'serija'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -5231,7 +5245,7 @@
           "g_terminal": 0.04,
           "g1_explicit": 0.0429,
           "model": "dvofazni DDM",
-          "growth_source": "g1=4.3% = min(3g CAGR prihoda FY2023->FY2025 iz baze = +4.3%, cap 10%) — v3 FAZA G: rast isključivo iz objavljenih brojki (bez ručnih forward procjena); eksplicitna faza 5 g s linearnim fadeom prema terminalnom g",
+          "growth_source": "g1=4.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +4.3%; održivi rast: ROE 21.2% × (1 − payout 70%) = +6.4%; sidro terminala 4.0%} — pobjednik 'serija'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
           "placeholder": true,
           "d_sust": {
             "d_sust_ps": 1.2481,
@@ -5359,7 +5373,7 @@
       "anchor_inconsistency": [
         "residual_income -63% vs primarno sidro"
       ],
-      "reasoning": "Rast +4.3% godišnje izveden je iz objavljenih brojki (trogodišnji prosjek +4.3%, ograničen na najviše 10% — nijedna procjena 'iz glave'). Firma ima 2,693 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 21.2% godišnje — više od 8.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 27.24 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -63% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +4.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'serija' (višegodišnja serija: +4.3%) — nijedna procjena 'iz glave'. Firma ima 2,693 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 21.2% godišnje — više od 8.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 27.24 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -63% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
@@ -5378,6 +5392,7 @@
         "r": 0.0827,
         "g_used": 0.025,
         "g_source": "kapitalni trajni g 2.5% (sidro zone je justified_pb_roe — ista pretpostavka rasta kojom je zona izračunata)",
+        "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
         "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 1.25 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (23.22 €), samo od te dividende dobivao bi 5.4% godišnje. Fer cijena to ne dopušta iznad 5.8% (traženi prinos 8.3% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
@@ -5398,6 +5413,11 @@
         "k": "Dugoročni rast g",
         "v": "2,5% / 4,0%",
         "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
+      },
+      {
+        "k": "Rast eksplicitne faze g1 (kompozit)",
+        "v": "4,3%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'serija'"
       },
       {
         "k": "Peer multipli",

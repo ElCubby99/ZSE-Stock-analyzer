@@ -76,12 +76,9 @@ def build_stocks() -> list[dict]:
         rec = (d.get("valuation") or {}).get("reconciliation") or {}
         zone_low = None if market_only else rec.get("zone_low")
         zone_high = None if market_only else rec.get("zone_high")
-        # v3 A: zona "u rekalibraciji" se NE objavljuje kao mjerodavna;
-        # low_float (INA-tip): raskorak nije informativan
-        recal = bool(rec.get("recalibrating"))
+        # v3.1: suspenzija zone ukinuta (dividendni pod) — zone se uvijek
+        # objavljuju; low_float (INA-tip): raskorak nije informativan
         low_float = bool(rec.get("low_float_note"))
-        if recal:
-            zone_low = zone_high = None
 
         liq_flags = {
             c.get("class_ticker"): c.get("flag")
@@ -127,7 +124,6 @@ def build_stocks() -> list[dict]:
                 "turnover": cls.get("avg_turnover_20d_eur"),
                 "zone_low": czr["zone_low"] if czr else zone_low,
                 "zone_high": czr["zone_high"] if czr else zone_high,
-                "zone_status": "u_rekalibraciji" if recal else None,
                 "low_float": low_float,
                 "pe": pe,
                 "pb": m.get("pb"),

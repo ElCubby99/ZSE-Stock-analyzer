@@ -549,16 +549,17 @@ function DividendSanity({ rec }) {
         <div className="ctrl">
           <div className="top">
             <span className="name">Rezultat testa</span>
-            <span className="out">{ok
-              ? <span className="okflag">PROLAZI</span>
-              : <span className="flag">U REKALIBRACIJI ({ds.verdict.toUpperCase()})</span>}</span>
+            <span className="out">{ds.verdict === 'prolazi (uz dividendni pod)'
+              ? <span className="okflag">PROLAZI (UZ DIVIDENDNI POD)</span>
+              : ok ? <span className="okflag">PROLAZI</span>
+                : <span className="flag">{ds.verdict.toUpperCase()}</span>}</span>
           </div>
           <div className="plain">
-            {ok
-              ? `Prinos ${num(ds.implied_yield_low * 100, 1)} % je unutar dopuštenog (${num(ds.threshold * 100, 1)} %) — održiva dividenda ne pobija zonu.`
-              : ds.verdict === 'preniska'
-                ? `Prinos ${num(ds.implied_yield_low * 100, 1)} % je VEĆI od praga ${num(ds.threshold * 100, 1)} % — model bi tvrdio apsurd ("kupi po ${num(ds.zone_low, 2)} € i sama dividenda ti nosi više nego što tražiš za rizik"), pa je donji rub vjerojatno prenizak i zonu ne objavljujemo dok se ulazi ne razriješe.`
-                : 'Uz payout blizu 100% prinos na gornjem rubu je premalen — zona je vjerojatno previsoka i ne objavljujemo je dok se ulazi ne razriješe.'}
+            {ds.verdict === 'prolazi (uz dividendni pod)' && ds.dividend_floor
+              ? `Dividendni pod primijenjen: održiva dividenda od ${num(ds.d_sust_ps, 2)} € podržava vrijednost od najmanje ${num(ds.dividend_floor.v_div, 2)} € (Gordonov izračun: D_sust ÷ (r − g)) — uključeno u zonu, donji rub je podignut na taj pod.`
+              : ok
+                ? `Prinos ${num(ds.implied_yield_low * 100, 1)} % je unutar dopuštenog (${num(ds.threshold * 100, 1)} %) — održiva dividenda ne pobija zonu.`
+                : 'V_div je uključen u medijan kvalificiranih metoda — zona je objavljena bez suspenzije (v3.1).'}
             {' '}Test je činjenična unutarnja kontrola modela, ne preporuka.
           </div>
         </div>
@@ -642,6 +643,32 @@ function Assumptions({ valuation }) {
     out: p.g_terminal ? `${pct(p.g, 1)} · ${pct(p.g_terminal, 1)}` : pct(p.g, 1),
     plain: `Dugoročni rast — koliko firma raste "zauvijek" nakon razdoblja projekcije; vezan uz rast gospodarstva i inflaciju (${pct(p.g, 1)} za kapitalne metode, ${p.g_terminal ? pct(p.g_terminal, 1) : dash} terminal za DCF).`,
   })
+  if (p.growth && p.growth.g1 !== null && p.growth.g1 !== undefined) {
+    /* v3.1 DIO 2: kompozitni g1 — raspis tri signala + pobjednik + badgevi */
+    const gr = p.growth
+    const sg = gr.signals || {}
+    const sigTxt = [
+      sg.g_obs !== null && sg.g_obs !== undefined
+        ? `serija (3g CAGR): ${pct(sg.g_obs, 1)}`
+        : `serija: nema ≥3 godišnja izvješća${gr.ttm_context !== null && gr.ttm_context !== undefined ? ` (TTM vs lani ${pct(gr.ttm_context, 1)} — samo kontekst, nikad izvor)` : ''}`,
+      sg.g_sust !== null && sg.g_sust !== undefined
+        ? `održivi rast (ROE × zadržana dobit): ${pct(sg.g_sust, 1)}`
+        : null,
+      sg.g_terminal !== null && sg.g_terminal !== undefined
+        ? `sidro terminala: ${pct(sg.g_terminal, 1)}`
+        : null,
+    ].filter(Boolean).join(' · ')
+    cards.push({
+      name: 'Rast eksplicitne faze g1 (kompozit)',
+      out: pct(gr.g1, 1),
+      src: gr.source,
+      sure: true,
+      badge: gr.origin || null,
+      plain: `Kompozit tri signala iz objavljenih brojki — ${sigTxt}. Presudio je medijan; najbliži mu je signal "${gr.origin}".`
+        + (gr.badges && gr.badges.length ? ` Ograničenja: ${gr.badges.join('; ')}.` : '')
+        + ' Kroz 5 godina g1 postupno pada prema dugoročnom g.',
+    })
+  }
   if (p.beta !== null && p.beta !== undefined) {
     cards.push({
       name: 'Beta (β)', out: num(p.beta, 2), src: p.sources.r, sure: p.beta_calibrated,
@@ -998,9 +1025,7 @@ export default function StockPage() {
       {data && (() => {
         const marketOnly = data.data_status === 'market_only'
         const rec = data.valuation?.reconciliation
-        /* v3 A: "u rekalibraciji" — zonu ne prikazujemo kao mjerodavnu */
-        const recal = rec?.recalibrating || null
-        const zone = !recal && rec && rec.zone_low !== null && rec.zone_high !== null
+        const zone = rec && rec.zone_low !== null && rec.zone_high !== null
           ? [rec.zone_low, rec.zone_high] : null
         /* v3 S: po-klasne zone iz iste vrijednosti firme (tržišni omjer) */
         const classZones = rec?.class_zones || null
@@ -1011,7 +1036,7 @@ export default function StockPage() {
         <>
           {/* ============ GORE · TRŽIŠNI PROFIL ============ */}
           <ProfileHeader data={{ ...data, sector_hr: SECTOR_HR[data.sector] || data.sector }}
-            zone={zoneHdr} recal={recal} />
+            zone={zoneHdr} />
           {data.business_profile?.activity && (
             <div className="prof-activity">
               <div className="prof-klabel">PROFIL POSLOVANJA</div>
@@ -1028,7 +1053,7 @@ export default function StockPage() {
           {/* ============ PREGLED ============ */}
           {tab === 'pregled' && (
           <>
-          <PriceChart data={data} zone={zone} classZones={!recal ? classZones : null} />
+          <PriceChart data={data} zone={zone} classZones={classZones} />
           <StatsStrip data={data} />
           <ClassExplainer data={data} />
           {!marketOnly && (
@@ -1046,12 +1071,6 @@ export default function StockPage() {
             <AnalysisUnavailable note={data.data_note} />
           ) : (
           <>
-          {recal && (
-            <section className="prof-illiq" style={{ marginTop: 10 }}>
-              <span className="prof-illiq-t">FER-ZONA U REKALIBRACIJI</span>
-              <span className="prof-illiq-n">{recal}</span>
-            </section>
-          )}
           <AnchorPanel data={data} />
           <SecondaryList data={data} />
           <Risks risks={data.risks} />

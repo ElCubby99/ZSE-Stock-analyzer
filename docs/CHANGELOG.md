@@ -1,5 +1,47 @@
 # Changelog (tehnički — interni)
 
+## 2026-07-16 — Metodologija v3.1: dividendni pod + kompozitni g1
+
+### DIO 1 — dividendni pod (sanity test iz veta u ULAZ)
+
+Priznata greška: suspenzija zone ("u rekalibraciji") bila je dizajnerska
+greška — najtvrđi dokaz (održiva dividenda) treba ulaziti u procjenu, ne
+gasiti je. Novo (`src/valuation_methods.py::reconcile`): kad zona pada na
+testu, V_div = D_sust/(r − g_prag) — ISTI pragovi kao test (2,5% kapitalna
+sidra, 4% DCF/DDM), bez novih parametara — ulazi među kvalificirane metode
+(conf 0,8), medijan se preračuna, donji rub se podigne barem do V_div
+(floor clamp, min širina ×1,05) i test se PONOVI nad novom zonom; verdikt
+"prolazi (uz dividendni pod)". Suspenzija kao ishod ne postoji;
+`recalibrating` je uvijek None (ključ zadržan radi kompatibilnosti);
+"u rekalibraciji" uklonjeno iz SVIH UI grana (Shell/MarketProfile/
+StockPage/Screener/Legend/Metodologija/build_overview/distribucijski_alarm).
+Učinak: 5 nekad suspendiranih imena s objavljenim zonama — ATGR
+40,40–43,00; HT 50,68–70,39; QTLG 1,12–2,14 (pod više nije potreban —
+prolazi prirodno s kompozitnim g1); RIVP 4,40–4,86; ZB 1,36–1,42.
+Kontrole: ZABA 23,22–32,95 i CROS 1.823,40–2.496,43 NEPROMIJENJENE.
+
+### DIO 2 — kompozitna stopa rasta g1
+
+Priznata greška: kratka serija izvodila je g1 iz JEDNE godišnje usporedbe
+(TTM vs lani) — jedna godina mjeri jednokratne i bazne efekte, ne stopu
+rasta. Novo (`src/valuation_methods.py::composite_g1`): g1 = medijan
+{g_obs (3g CAGR, samo ≥3 godišnja izvješća), g_sust = ROE_TTM × (1 −
+payout_sust; bez dividende g_sust = ROE), g_terminal}; cap NAKON medijana
+(10% sa serijom / 8% bez); g1 < 0 samo uz negativan g_obs iz ≥3g serije;
+TVRDI clamp g1 ≤ r − 0,5 p.b. (uklj. zaštitu od round-up preko clampa —
+otkriveno na PODR). TTM-vs-lani ostaje SAMO kontekst. Reverse-DCF sada
+uspoređuje protiv "naš kompozitni rast (serija/održivi/terminal)", prag
+plauzibilnosti |implied − g1| ≤ 2 p.b. (staro 3 p.b.), proturječje "nema
+serije u bazi" uklonjeno. UI: kartica "Rast eksplicitne faze g1
+(kompozit)" u Pretpostavkama s raspisom tri signala + pobjednik + badge
+porijekla (`valuation.params.growth` u exportu).
+
+Distribucija top-15 po prometu: |gap|>30% = 6/15 = 40% (prag 40%, bez
+alarma; v3 stanje bilo 33% — pomak od preračuna svih zona s kompozitnim
+g1, 18 zona pomaknuto >10%, changelog redovi kind='methodology').
+Testovi: tests/test_composite_g1.py (9), tests/test_v31_db.py (3, nad
+živom bazom), test_reconcile_v3.py prerađen, test_ttm_growth ažuriran.
+
 ## 16.07.2026. — M33: SSG regresija i rupe u indeksabilnosti
 
 ### Nalaz: /screener, /dividende, /usporedba prazne za crawlere — UZROK

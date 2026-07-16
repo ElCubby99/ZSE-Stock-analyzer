@@ -1852,6 +1852,22 @@
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "JDRN: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+      },
+      "growth": {
+        "g1": 0.0,
+        "signals": {
+          "g_obs": null,
+          "g_sust": -0.1054,
+          "g_terminal": 0.04
+        },
+        "origin": "održivi rast (kratka serija — bez g_obs)",
+        "winner": "g_sust",
+        "badges": [
+          "donja granica 0 (trajno skupljanje se ne pretpostavlja bez ≥3g dokaza)"
+        ],
+        "ttm_context": 0.0012,
+        "short_series": true,
+        "source": "g1=0.0% = KOMPOZIT (v3.1): medijan {serija: nema ≥3 godišnja izvješća (g_obs se ne računa — jedna godišnja usporedba nije stopa rasta; kontekst: TTM vs lani +0.1%); održivi rast: ROE -10.5% × (1 − payout 0%) = -10.5%; sidro terminala 4.0%} — pobjednik 'održivi rast (kratka serija — bez g_obs)'; donja granica 0 (trajno skupljanje se ne pretpostavlja bez ≥3g dokaza). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -1877,7 +1893,7 @@
         "key": "short_series",
         "label": "kratka serija (rast)",
         "status": "pretpostavka",
-        "why": "u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G"
+        "why": "u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)"
       },
       {
         "key": "roe_rule",
@@ -1931,17 +1947,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -2.1958450148657542,
-        "base": -2.2186232077821653,
-        "high": -2.24745957121123,
+        "low": -2.1953138508889265,
+        "base": -2.2180251268060642,
+        "high": -2.246776626867986,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.12514,
           "g_terminal": 0.04,
-          "g1_explicit": 0.0012,
+          "g1_explicit": 0.0,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=0.1% = min(TTM vs zadnje godišnje = +0.1%, cap 8%) — KRATKA SERIJA (nema 3 godišnja izvješća u bazi); v3 FAZA G",
+          "growth_source": "g1=0.0% = KOMPOZIT (v3.1): medijan {serija: nema ≥3 godišnja izvješća (g_obs se ne računa — jedna godišnja usporedba nije stopa rasta; kontekst: TTM vs lani +0.1%); održivi rast: ROE -10.5% × (1 − payout 0%) = -10.5%; sidro terminala 4.0%} — pobjednik 'održivi rast (kratka serija — bez g_obs)'; donja granica 0 (trajno skupljanje se ne pretpostavlja bez ≥3g dokaza). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -1975,7 +1991,7 @@
     "reconciliation": {
       "zone_low": 2.7198940214398153,
       "zone_high": 2.859375766129036,
-      "dispersion": 1.7953095269655075,
+      "dispersion": 1.7950951329681304,
       "divergent": true,
       "archetype": "tourism",
       "anchor_methods": [],
@@ -1992,12 +2008,12 @@
         }
       },
       "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
-      "all_methods_low": -2.2186232077821653,
+      "all_methods_low": -2.2180251268060642,
       "all_methods_high": 2.789634893784426,
-      "dispersion_all": 1.7953095269655075,
+      "dispersion_all": 1.7950951329681304,
       "method_bases": {
         "comps": 2.789634893784426,
-        "dcf_fcf": -2.2186232077821653
+        "dcf_fcf": -2.2180251268060642
       },
       "qa_flags": [
         "metode se međusobno razilaze 180% (sve metode) — provjeri ulaze/pretpostavke"
@@ -2009,7 +2025,7 @@
       "market_implied": {
         "implied_r_pct": -11.52,
         "implied_r_note": "uz naš trajni rast 2.5% i ROE -9.5% cijena implicira trošak kapitala ~-11.5% (naš: 12.5%)",
-        "narrative": "Tržišna cijena implicira ; naš izvedeni rast (iz objavljenih brojki) je +0.1% — razlika je neprovjerljiva bez izvedene stope rasta jer u bazi nema serije za izvod stope rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ; naš kompozitni rast (serija/održivi/terminal) je +0.0% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [],
       "class_zones": null,
@@ -2033,6 +2049,11 @@
         "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
       },
       {
+        "k": "Rast eksplicitne faze g1 (kompozit)",
+        "v": "0,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održivi rast (kratka serija — bez g_obs)'"
+      },
+      {
         "k": "Peer multipli",
         "v": "placeholder",
         "why": "na ZSE nema dovoljno usporedivih firmi ovog sektora — metoda peer usporedbe nosi NISKU pouzdanost i ne sidri zonu"
@@ -2041,7 +2062,7 @@
     "limitations": [
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
       "β = 1.80 (clamp) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); finalna vrijednost ograničena na raspon [0,7, 1,8]; postupak je opisan u Metodologiji",
-      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G",
+      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
