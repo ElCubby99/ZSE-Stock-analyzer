@@ -26,7 +26,7 @@ sys.path.insert(0, ".")
 
 from src.db import get_conn                      # noqa: E402
 from src.params_calibrated import (              # noqa: E402
-    ERP, ERP_SRC, RF, RF_SRC, build_params)
+    CRP, CRP_SRC, ERP, ERP_SRC, RF, RF_SRC, build_params)
 from src.beta_discipline import (                # noqa: E402
     LIQ_MIN_RATIO, LIQ_MIN_TURNOVER, resolve_beta)
 from src.valuation_methods import (              # noqa: E402
@@ -144,15 +144,18 @@ def analyze(conn, ticker):
     out = value_company(ctx)
     rec = out["reconciliation"]
 
-    # --- raspis r (rf + β×ERP + nelikvidnost; CRP je UNUTAR ERP-a — audit!)
+    # --- raspis r po komponentama (v3 K: rf + β×ERP + CRP + nelikvidnost;
+    # prije FAZE K CRP je bio unutar ERP-a — vidi snapshot izvještaja)
     with conn.cursor() as cur:
         cur.execute("SELECT sector FROM companies WHERE ticker=%s", (ticker,))
         bd = resolve_beta(conn, ticker, cur.fetchone()[0])
+    crp = getattr(params, "crp", 0.0)
     r_stack = {
         "rf": RF, "beta": bd["beta"], "beta_origin": bd["origin"],
-        "erp": ERP, "erp_contains_crp": True,
+        "erp": ERP, "crp": crp,
+        "erp_contains_crp": crp == 0.0,
         "illiq_premium": bd["illiq_premium"],
-        "r_total": round(RF + bd["beta"] * ERP + bd["illiq_premium"], 4),
+        "r_total": round(RF + bd["beta"] * ERP + crp + bd["illiq_premium"], 4),
         "liquidity": {k: round(v, 3) if isinstance(v, float) else v
                       for k, v in bd["liquidity"].items()},
         "passes_liq_threshold": (bd["liquidity"]["ratio"] >= LIQ_MIN_RATIO
@@ -306,14 +309,13 @@ def main():
         "ttm_coverage": ttm,
         "erp_audit": {
             "rf": RF, "rf_src": RF_SRC, "erp": ERP, "erp_src": ERP_SRC,
-            "finding_erp_contains_crp": (
-                "ERP=5,7% = zreli 4,23% + CRP za Moody's A3 (~1,47 p.b.) — CRP je "
-                "SKRIVEN u ERP-u, nije zasebna komponenta. Nelikvidnosna premija se "
-                "dodaje ZASEBNO (samo ispod Z1 praga) pa formalnog double counta "
-                "CRP+CRP nema, ali: (a) CRP nije vidljiv u raspisu; (b) rf je HR 10g "
-                "(3,61%) koji VEĆ NOSI hrvatski spread naspram Bunda — zemlja se "
-                "naplaćuje i u rf i u ERP-u = DOUBLE COUNT rizika zemlje; "
-                "(c) A3/A- eurozona 2026. ne opravdava CRP iz starijih tablica."),
+            "crp": CRP, "crp_src": CRP_SRC,
+            "note": (
+                "Nalaz FAZE D o dvostrukom countu rizika zemlje (HR rf + CRP "
+                "skriven u ERP-u 5,7%) stoji u committanom snapshotu "
+                "docs/forenzika_v3_faza_d.md §5 (stanje prije FAZE K). Od "
+                "FAZE K rizik zemlje živi SAMO u zasebnom CRP-u; ovaj ključ "
+                "sada prikazuje tekuće komponente stacka."),
         },
     }
     OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=1,

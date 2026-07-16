@@ -379,8 +379,12 @@
         "txt": "free float približno 21%; PODR: zadnja trgovina 2026-07-15: 20 kom / 3,200 € prometa (1 d)."
       },
       {
+        "l": "PRETPOSTAVKE PROCJENE",
+        "txt": "Procjena počiva na označenim pretpostavkama: komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.."
+      },
+      {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 29–290 € (raspon 90%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 48–290 € (raspon 83%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -4862,7 +4866,7 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.079591,
+      "r": 0.07127489999999999,
       "g": 0.025,
       "g_terminal": 0.04,
       "beta": 0.763,
@@ -4878,15 +4882,28 @@
       "rates_calibrated": true,
       "peers_calibrated": true,
       "peers_narrow": false,
+      "rf": 0.027,
+      "erp": 0.0423,
+      "crp": 0.012,
       "sources": {
-        "r": "r=0.0796 (CAPM: rf + beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=0.76: IZMJERENA regresijom (OLS tjednih log-prinosa PODR vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.097) uz Blume prilagodbu 0,67·0.647 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 241/245 trgovanih dana (98%), prosj. promet 86,746 €/dan.",
-        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
+        "r": "r=0.0713 = rf 2.70% + β 0.76×ERP 4.23% + CRP 1.2 p.b. (v3 FAZA K raspis). rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u. ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede. beta=0.76: IZMJERENA regresijom (OLS tjednih log-prinosa PODR vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.097) uz Blume prilagodbu 0,67·0.647 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 241/251 trgovanih dana (96%), prosj. promet 86,746 €/dan.",
+        "rf": "rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u",
+        "erp": "ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true",
+        "crp": "CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede",
+        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=14.96 (n=3), P/B=1.31 (n=3), EV/EBITDA=6.66 (n=2). Skup ['ATGR', 'ZITO', 'TOK'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; ZITO P/E=13.6 P/B=1.3; TOK P/E=14.96 P/B=1.31"
       }
     },
-    "assumption_flags": [],
+    "assumption_flags": [
+      {
+        "key": "r_components",
+        "label": "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.",
+        "status": "pretpostavka",
+        "why": "vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
+      }
+    ],
     "ran": [
       {
         "key": "comps",
@@ -4932,13 +4949,13 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 14.178711230527988,
-        "base": 28.783865402265324,
-        "high": 53.262520312439406,
+        "low": 25.828882889017834,
+        "base": 48.04437057034159,
+        "high": 91.14717287123231,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "wacc": 0.079591,
+          "wacc": 0.07127489999999999,
           "g_terminal": 0.04,
           "g1_explicit": 0.08,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
@@ -4946,7 +4963,7 @@
           "placeholder": false,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
       }
@@ -4991,31 +5008,31 @@
         "dcf_fcf": {
           "role": "secondary",
           "note": "potvrda uz DCF sidro (forward rast iz izvješća) — knjiga/dividenda ne mjere operativni zamah",
-          "vs_zone_pct": -0.8831259200141651
+          "vs_zone_pct": -0.8049205160448925
         }
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno sidro s degeneriranom osjetljivošću (raspon > 100% baze): dcf_fcf",
-      "all_methods_low": 28.783865402265324,
+      "all_methods_low": 48.04437057034159,
       "all_methods_high": 289.74235404114296,
-      "dispersion_all": 0.9006570320120403,
+      "dispersion_all": 0.8341824386381587,
       "method_bases": {
         "comps": 289.74235404114296,
-        "dcf_fcf": 28.783865402265324
+        "dcf_fcf": 48.04437057034159
       },
       "qa_flags": [
-        "metode se međusobno razilaze 90% (sve metode) — provjeri ulaze/pretpostavke"
+        "metode se međusobno razilaze 83% (sve metode) — provjeri ulaze/pretpostavke"
       ],
       "vs_market_pct": -44.8,
       "anchor_inconsistency": [],
-      "reasoning": "Očekivani rast +8.0% godišnje procijenjen je iz zadnjeg izvješća — završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a. Od svakih 100 € prihoda firmi ostaje 22 € operativne zarade (EBITDA marža 22.4%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBIT kao sektorski primjerena — sidro je 289.74 € po dionici. Leće se razilaze (116%) pa se ne prosječe; razlog: ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+6.6% trajnog rasta godišnje / multipl P/E 8.4×; naš forward signal (završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Očekivani rast +8.0% godišnje procijenjen je iz zadnjeg izvješća — završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a. Od svakih 100 € prihoda firmi ostaje 22 € operativne zarade (EBITDA marža 22.4%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBIT kao sektorski primjerena — sidro je 289.74 € po dionici. Leće se razilaze (116%) pa se ne prosječe; razlog: ROE ispod peer medijana (P/B leća skalirana). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+5.8% trajnog rasta godišnje / multipl P/E 8.4×; naš forward signal (završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
-        "implied_g_pct": 6.6,
-        "implied_g_note": "uz naš r=8.0% cijena implicira trajni rast FCF-a ~+6.6% godišnje",
+        "implied_g_pct": 5.8,
+        "implied_g_note": "uz naš r=7.1% cijena implicira trajni rast FCF-a ~+5.8% godišnje",
         "implied_pe": 8.4,
         "peer_pe": 14.96,
         "implied_pe_note": "cijena implicira P/E 8.4× vs peer medijan 14.96×",
-        "narrative": "Tržišna cijena implicira ~+6.6% trajnog rasta godišnje / multipl P/E 8.4×; naš forward signal (završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~+5.8% trajnog rasta godišnje / multipl P/E 8.4×; naš forward signal (završen investicijski ciklus 250 M€ (capex se normalizira), akvizicija Agri segmenta (grupa >1 mlrd € prihoda), Strategija 2030 — bez brojčanog guidance-a) sugerira +8.0% — razlika je plauzibilna jer implicirani rast blizu forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       }
     },
     "sotp": null
@@ -5025,8 +5042,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "7,96%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 0.763 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "7,13%",
+        "why": "CAPM: nerizična stopa 2.70% (HR 10g obveznica) + beta 0.763 × premija rizika 4.23% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",
@@ -5045,7 +5062,8 @@
       }
     ],
     "limitations": [
-      "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke"
+      "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
+      "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
     ],
     "changelog": [
       {

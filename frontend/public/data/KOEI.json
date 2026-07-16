@@ -329,7 +329,7 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri +15.7% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri -1.6% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
@@ -341,7 +341,7 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: holding diskont 0–5%."
+        "txt": "Procjena počiva na označenim pretpostavkama: komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.; holding diskont 0–5%."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -4888,7 +4888,7 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.125419,
+      "r": 0.10528409999999999,
       "g": 0.025,
       "g_terminal": 0.04,
       "beta": 1.567,
@@ -4904,15 +4904,27 @@
       "rates_calibrated": true,
       "peers_calibrated": true,
       "peers_narrow": true,
+      "rf": 0.027,
+      "erp": 0.0423,
+      "crp": 0.012,
       "sources": {
-        "r": "r=0.1254 (CAPM: rf + beta×ERP). rf=3,61%: HR 10g državna obveznica, TradingEconomics (tradingeconomics.com/croatia/government-bond-yield, sredina 2026); cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina 02.01.2026 — nelikvidno, starije od rasta prinosa). ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. beta=1.57: IZMJERENA regresijom (OLS tjednih log-prinosa KOEI vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.354) uz Blume prilagodbu 0,67·1.847 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 243/245 trgovanih dana (99%), prosj. promet 905,595 €/dan.",
-        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)",
+        "r": "r=0.1053 = rf 2.70% + β 1.57×ERP 4.23% + CRP 1.2 p.b. (v3 FAZA K raspis). rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u. ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede. beta=1.57: IZMJERENA regresijom (OLS tjednih log-prinosa KOEI vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.354) uz Blume prilagodbu 0,67·1.847 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 243/251 trgovanih dana (97%), prosj. promet 905,595 €/dan.",
+        "rf": "rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u",
+        "erp": "ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true",
+        "crp": "CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede",
+        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.46 (n=2), P/B=7.72 (n=2), EV/EBITDA=7.0 (n=1). Skup ['ADPL', 'IG'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda. Po peeru: ADPL P/E=9.04 P/B=1.13; IG P/E=17.89 P/B=14.31"
       }
     },
     "assumption_flags": [
+      {
+        "key": "r_components",
+        "label": "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.",
+        "status": "pretpostavka",
+        "why": "vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
+      },
       {
         "key": "holding_discount",
         "label": "holding diskont 0–5%",
@@ -4961,13 +4973,13 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 1152.0329506449211,
-        "base": 1282.227074897868,
-        "high": 1447.0441718947573,
+        "low": 1449.5675549739383,
+        "base": 1665.7224696564315,
+        "high": 1960.218645823445,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "wacc": 0.125419,
+          "wacc": 0.10528409999999999,
           "g_terminal": 0.04,
           "g1_explicit": 0.2,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
@@ -4975,16 +4987,16 @@
           "placeholder": false,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~7,2%)"
+            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
       },
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 879.6780394506909,
-        "base": 902.8274615414986,
-        "high": 925.9768836323061,
+        "low": 1033.903436363355,
+        "base": 1061.1114215308116,
+        "high": 1088.3194066982685,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -4998,19 +5010,19 @@
           "parts": [
             {
               "name": "Dalekovod (DLKV)",
-              "value_eur": 178419181.0,
+              "value_eur": 233461117.0,
               "value_market_eur": 530542020.0,
               "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–6 €/dionici × 41,247,193 dionica × 0.7500",
+              "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 6–9 €/dionici × 41,247,193 dionica × 0.7500",
               "pct": 0.75,
               "placeholder": false
             },
             {
               "name": "KONČAR D&ST (KODT)",
-              "value_eur": 1172889804.0,
+              "value_eur": 1535412155.0,
               "value_market_eur": 1194729005.0,
               "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 3,833–4,869 €/dionici × 511,232 dionica × 0.5273",
+              "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 4,802–6,589 €/dionici × 511,232 dionica × 0.5273",
               "pct": 0.5273,
               "placeholder": false
             },
@@ -5042,20 +5054,20 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 2209249736.0,
-          "nav_total_eur": 2381722736.0,
+          "nav_gross_eur": 2626814024.0,
+          "nav_total_eur": 2799287024.0,
           "identity": [
             {
               "item": "Dalekovod (DLKV)",
-              "eur": 178419181.0,
-              "per_share": 69.36661212020128,
+              "eur": 233461117.0,
+              "per_share": 90.76606370078522,
               "basis": "our_estimate",
               "pct": 0.75
             },
             {
               "item": "KONČAR D&ST (KODT)",
-              "eur": 1172889804.0,
-              "per_share": 456.0013762971309,
+              "eur": 1535412155.0,
+              "per_share": 596.9444473603282,
               "basis": "our_estimate",
               "pct": 0.5273
             },
@@ -5081,15 +5093,15 @@
             },
             {
               "item": "holding diskont (2% sredina)",
-              "eur": -59543068.0,
-              "per_share": -23.149422090807658,
+              "eur": -69982176.0,
+              "per_share": -27.207985167456716,
               "basis": "v2 §4 taksonomija"
             }
           ],
           "identity_note": "Σ stavki = sidro po dionici (v2 §5); svaka stavka s osnovom: our_estimate / market_fallback / multiple",
           "sotp_fair": {
-            "nav_eur": 2381722736.0,
-            "base_per_share": 902.8274615414986,
+            "nav_eur": 2799287024.0,
+            "base_per_share": 1061.1114215308116,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
@@ -5097,15 +5109,15 @@
             "base_per_share": 1044.5833402869723,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": 15.7,
+          "market_vs_fair_pct": -1.6,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
             "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji"
           },
           "market_check": {
             "own_market_cap_eur": 2675003760.0,
-            "nav_pre_discount_eur": 2381722736.0,
-            "price_vs_nav_pct": 12.3,
+            "nav_pre_discount_eur": 2799287024.0,
+            "price_vs_nav_pct": -4.4,
             "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
           },
           "market_based_share_of_gross": 1.0
@@ -5130,9 +5142,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 880.2567750029609,
-      "zone_high": 925.3981480800359,
-      "dispersion": 0.04878048780487808,
+      "zone_low": 1033.903436363355,
+      "zone_high": 1088.3194066982685,
+      "dispersion": 0.05000000000000005,
       "divergent": false,
       "archetype": "holding_operating",
       "anchor_methods": [
@@ -5143,12 +5155,12 @@
         "comps": {
           "role": "secondary",
           "note": "integrirani operativni parent: SOTP BEZ holding diskonta; konsolidirani DCF je potvrda (v2 §2/§4)",
-          "vs_zone_pct": -0.07309934076855473
+          "vs_zone_pct": -0.21084449828983165
         },
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.42023490591278456
+          "vs_zone_pct": 0.5697903498704953
         },
         "sotp_nav": {
           "role": "anchor",
@@ -5156,23 +5168,23 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
+      "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
       "all_methods_low": 815.9105850431905,
-      "all_methods_high": 1282.227074897868,
-      "dispersion_all": 0.3636769952715439,
+      "all_methods_high": 1665.7224696564315,
+      "dispersion_all": 0.510176154848005,
       "method_bases": {
         "comps": 815.9105850431905,
-        "dcf_fcf": 1282.227074897868,
-        "sotp_nav": 902.8274615414986
+        "dcf_fcf": 1665.7224696564315,
+        "sotp_nav": 1061.1114215308116
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: dcf_fcf +42% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: dcf_fcf +57% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
       ],
-      "vs_market_pct": 15.2,
+      "vs_market_pct": -2.0,
       "anchor_inconsistency": [
-        "dcf_fcf +42% vs primarno sidro"
+        "dcf_fcf +57% vs primarno sidro"
       ],
-      "reasoning": "Očekivani rast +20.0% godišnje procijenjen je iz zadnjeg izvješća — backlog 2,7 mlrd € (+31,1% g/g), book-to-bill 1,5, prodaja +25,2%. Od svakih 100 € prihoda firmi ostaje 18 € operativne zarade (EBITDA marža 18.3%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,382 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 902.83 € po dionici. Tržište te iste kćeri trenutačno vrednuje 15.7% više nego mi. Kontrolne metode uz sidro: DCF (FCF) +42% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Očekivani rast +20.0% godišnje procijenjen je iz zadnjeg izvješća — backlog 2,7 mlrd € (+31,1% g/g), book-to-bill 1,5, prodaja +25,2%. Od svakih 100 € prihoda firmi ostaje 18 € operativne zarade (EBITDA marža 18.3%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,799 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 1,061.11 € po dionici. Tržište te iste kćeri trenutačno vrednuje 1.6% niže nego mi. Kontrolne metode uz sidro: DCF (FCF) +57% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null
     },
@@ -5180,19 +5192,19 @@
       "parts": [
         {
           "name": "Dalekovod (DLKV)",
-          "value_eur": 178419181.0,
+          "value_eur": 233461117.0,
           "value_market_eur": 530542020.0,
           "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–6 €/dionici × 41,247,193 dionica × 0.7500",
+          "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 6–9 €/dionici × 41,247,193 dionica × 0.7500",
           "pct": 0.75,
           "placeholder": false
         },
         {
           "name": "KONČAR D&ST (KODT)",
-          "value_eur": 1172889804.0,
+          "value_eur": 1535412155.0,
           "value_market_eur": 1194729005.0,
           "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 3,833–4,869 €/dionici × 511,232 dionica × 0.5273",
+          "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 4,802–6,589 €/dionici × 511,232 dionica × 0.5273",
           "pct": 0.5273,
           "placeholder": false
         },
@@ -5220,8 +5232,8 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 2209249736.0,
-      "nav_total_eur": 2381722736.0,
+      "nav_gross_eur": 2626814024.0,
+      "nav_total_eur": 2799287024.0,
       "holding_discount_range": [
         0.0,
         0.05
@@ -5229,13 +5241,13 @@
       "holding_discount_reason": "integrirani operativni parent (v2 §4): kontrola + konsolidacija iste djelatnosti -> diskont 0–5%, NE tretira se kao pasivni holding",
       "market_check": {
         "own_market_cap_eur": 2675003760.0,
-        "nav_pre_discount_eur": 2381722736.0,
-        "price_vs_nav_pct": 12.3,
+        "nav_pre_discount_eur": 2799287024.0,
+        "price_vs_nav_pct": -4.4,
         "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
       },
       "sotp_fair": {
-        "nav_eur": 2381722736.0,
-        "base_per_share": 902.8274615414986,
+        "nav_eur": 2799287024.0,
+        "base_per_share": 1061.1114215308116,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
@@ -5243,7 +5255,7 @@
         "base_per_share": 1044.5833402869723,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": 15.7,
+      "market_vs_fair_pct": -1.6,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
       "missing": [
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
@@ -5251,15 +5263,15 @@
       "identity": [
         {
           "item": "Dalekovod (DLKV)",
-          "eur": 178419181.0,
-          "per_share": 69.36661212020128,
+          "eur": 233461117.0,
+          "per_share": 90.76606370078522,
           "basis": "our_estimate",
           "pct": 0.75
         },
         {
           "item": "KONČAR D&ST (KODT)",
-          "eur": 1172889804.0,
-          "per_share": 456.0013762971309,
+          "eur": 1535412155.0,
+          "per_share": 596.9444473603282,
           "basis": "our_estimate",
           "pct": 0.5273
         },
@@ -5285,8 +5297,8 @@
         },
         {
           "item": "holding diskont (2% sredina)",
-          "eur": -59543068.0,
-          "per_share": -23.149422090807658,
+          "eur": -69982176.0,
+          "per_share": -27.207985167456716,
           "basis": "v2 §4 taksonomija"
         }
       ],
@@ -5299,8 +5311,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "12,54%",
-        "why": "CAPM: nerizična stopa 3.61% (HR 10g obveznica) + beta 1.567 × premija rizika 5.70% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "10,53%",
+        "why": "CAPM: nerizična stopa 2.70% (HR 10g obveznica) + beta 1.567 × premija rizika 4.23% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",
@@ -5324,9 +5336,19 @@
       }
     ],
     "limitations": [
-      "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je"
+      "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
+      "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 880.2567750029609,
+        "old_high": 925.3981480800359,
+        "new_low": 1033.903436363355,
+        "new_high": 1088.3194066982685,
+        "reason": "Metodologija v3 — faza K: rekalibracija troška kapitala. Rizik zemlje računa se točno jednom (rf = 10g Bund, ERP zreli, CRP zaseban ≤1,5 p.b. za 'A-'/A3 eurozonu) — do sada je bio uračunat dvaput (HR rf + premija zemlje unutar ERP-a). Ulazi firme nepromijenjeni; detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-15",
         "old_low": 800.2956793858835,

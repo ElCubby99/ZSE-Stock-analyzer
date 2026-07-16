@@ -1372,6 +1372,18 @@ def build_stock_json(conn, ticker: str) -> dict:
             {"key": "illiq", "label": f"premija nelikvidnosti "
              f"+{params.illiq_premium * 100:.1f} p.b.", "status": "izvor",
              "why": getattr(params, "illiq_src", "") or ""})
+    # v3 FAZA K: rf/ERP/CRP su ručni unosi s datumom (exact_unverified) —
+    # eksplicitna oznaka nesigurnosti, ista praksa kao dosad za ERP
+    if getattr(params, "crp", None) is not None:
+        assumption_flags.append(
+            {"key": "r_components",
+             "label": (f"komponente r-a: rf {params.rf * 100:.2f}% · ERP "
+                       f"{params.erp * 100:.2f}% · CRP {params.crp * 100:.1f} p.b."),
+             "status": "pretpostavka",
+             "why": ("vrijednosti su ručno unesene s datumom (tržišni izvori "
+                     "nedostupni iz build okruženja) i označene "
+                     "exact_unverified; rizik zemlje se računa točno jednom — "
+                     "u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)")})
     if sotp_breakdown is not None:  # samo gdje se SOTP primjenjuje
         # v2 §4: flag opisuje STVARNO primijenjeni diskont, ne default;
         # 'pretpostavka' je samo kad je korišten default 15–25%
@@ -1499,6 +1511,11 @@ def build_stock_json(conn, ticker: str) -> dict:
                 "rates_calibrated": params.rates_calibrated,
                 "peers_calibrated": params.peers_calibrated,
                 "peers_narrow": getattr(params, "peers_narrow", False),
+                # v3 FAZA K: komponente r-a za raspis u UI
+                # (r = rf + β×ERP + CRP + nelikvidnost, svaka s izvorom)
+                "rf": _f(getattr(params, "rf", None)),
+                "erp": _f(getattr(params, "erp", None)),
+                "crp": _f(getattr(params, "crp", None)),
                 "sources": params.sources,
             },
             "assumption_flags": assumption_flags,

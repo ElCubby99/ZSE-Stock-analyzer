@@ -1,22 +1,23 @@
-"""Kalibrirani Params (M3): r (CAPM), g, peer multipli IZ BAZE, holding diskont.
+"""Kalibrirani Params (M3, v3 FAZA K): r (CAPM raspis), g, peer multipli IZ
+BAZE, holding diskont.
 
 Svaka komponenta nosi IZVOR/OBRAZLOŽENJE (ide u assumptions -> na sajt).
 Pravilo: bez izvora -> ostaje placeholder (i niži confidence), ne izmišlja se.
 
-Komponente (stanje 2026-07-03):
-  rf   = 3,61%  — prinos HR 10g državne obveznice, TradingEconomics (sredina
-         2026, "najviše od prosinca 2023", +47bp y/y). Cross-check sa ZSE:
-         RHMF-O-357A (kupon 3,00%, dosp. 04.07.2035) zadnji close 100,50 na
-         02.01.2026 -> YTM ~2,94% — konzistentno starije (prinosi otad rasli);
-         ZSE obveznice su preslabo likvidne za primarni izvor.
-  ERP  = 5,7%   — Damodaranova metodologija, tablica siječanj 2026: zreli ERP
-         4,23% + CRP za Moody's A3 (Hrvatska A3 stabilno od 11/2024, potvrđeno
-         2026). A3 EU zemlje (Portugal) u bandi 5,0–5,8%. Točan HR redak
-         NEPROVJEREN (stern.nyu.edu blokiran egress politikom) -> vrijednost
-         označena erp_exact_unverified.
-  beta = 1,0    — PRETPOSTAVKA (nema pouzdane procjene: u bazi su 2 dana
-         cijena; beta traži povijesnu seriju). Eksplicitno označeno.
-  r    = rf + beta×ERP = 9,31% (ADRS i CROS — ista beta pretpostavka).
+Komponente (v3 FAZA K, stanje 2026-07-16) — r = rf + β×ERP + CRP + nelikv.:
+  rf   = 2,70%  — 10g njemački Bund (EUR bezrizični). IZBOR (dokumentiran):
+         Bund umjesto HR 10g krivulje, jer HR 10g (~3,6%) nosi hrvatski
+         spread — rizik zemlje mora živjeti SAMO u CRP-u (do FAZE K bio je
+         naplaćen dvaput: u rf i u ERP-u; docs/forenzika_v3_faza_d.md §5).
+         Ručni unos s datumom, rf_exact_unverified.
+  ERP  = 4,23%  — Damodaranov ZRELI ERP (siječanj 2026), BEZ premije zemlje.
+         erp_exact_unverified (egress blokiran).
+  CRP  = 1,2 p.b. — zasebna, MALA premija zemlje primjerena 'A-'/A3
+         investment-grade eurozoni (strop metodologije v3: ≤1,5 p.b.);
+         dodaje se ravno na r, ne množi se betom. crp_exact_unverified.
+  beta — po Z1 disciplini (regresija+Blume iznad praga likvidnosti,
+         sektorska ispod; clamp [0,7, 1,8]).
+  r(β=1) = 2,70 + 4,23 + 1,2 = 8,13% (prije: 9,31% s dvostrukim countom).
   g    = 2,0%   — ECB-ov inflacijski cilj (HR u eurozoni od 2023) kao
          konzervativna donja granica dugoročnog NOMINALNOG rasta; realno
          hrvatski nominalni BDP raste brže, ali perpetuitet ne smije
@@ -34,18 +35,33 @@ from __future__ import annotations
 
 from .valuation_methods import Params
 
-RF = 0.0361
-RF_SRC = ("rf=3,61%: HR 10g državna obveznica, TradingEconomics "
-          "(tradingeconomics.com/croatia/government-bond-yield, sredina 2026); "
-          "cross-check ZSE RHMF-O-357A YTM~2,94% @ close 100,50 (zadnja trgovina "
-          "02.01.2026 — nelikvidno, starije od rasta prinosa)")
+# --- v3 FAZA K: r = rf + β×ERP(zreli) + CRP + nelikvidnost -----------------
+# Rizik zemlje živi ISKLJUČIVO u CRP-u (jedan put, vidljivo). Do FAZE K je
+# bio naplaćen dvaput: u rf (HR 10g nosi HR spread) i u ERP-u (5,7% = zreli
+# 4,23% + A3 CRP) — vidi docs/forenzika_v3_faza_d.md §5.
+RF = 0.0270
+RF_SRC = ("rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos "
+          "16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni "
+          "iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR "
+          "10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi "
+          "hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno "
+          "i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u")
 
-ERP = 0.057
-ERP_SRC = ("ERP=5,7%: Damodaran (pages.stern.nyu.edu, tablica siječanj 2026): "
-           "zreli ERP 4,23% + CRP za Moody's A3 (HR A3 stabilno, Moody's 11/2024); "
-           "A3 EU zemlje (Portugal) u bandi 5,0–5,8% (germanpedia.com/eu-equity-"
-           "risk-premiums). TOČAN HR REDAK NEPROVJEREN (egress 403) — "
+ERP = 0.0423
+ERP_SRC = ("ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, "
+           "tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje "
+           "— CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki "
+           "count). TOČAN REDAK NEPROVJEREN (egress 403) — "
            "erp_exact_unverified=true")
+
+CRP = 0.012
+CRP_SRC = ("CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala "
+           "komponenta primjerena investment-grade eurozoni — Moody's A3 "
+           "(stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za "
+           "A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz "
+           "metodologije v3; ručni unos 16.07.2026 — "
+           "crp_exact_unverified=true. Dodaje se ravno na r (ne množi se "
+           "betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede")
 
 BETA = 1.0
 BETA_SRC = ("beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete "
@@ -70,7 +86,7 @@ G_SRC = ("M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: "
          "realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a "
          "prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani "
          "P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); "
-         "g<r zadovoljeno (min r ~7,2%)")
+         "g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)")
 
 DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holdinge "
                 "(nelikvidnost, dvostruko oporezivanje, trošak centra); "
@@ -123,7 +139,8 @@ def build_params(ticker: str) -> Params:
         illiq_premium, illiq_src = bd["illiq_premium"], bd["illiq_src"]
     except Exception:  # noqa: BLE001 — bez baze: stari fallback (β=1, bez premije)
         pass
-    r = RF + beta * ERP + illiq_premium
+    # v3 FAZA K: rizik zemlje SAMO u CRP-u (rf je EUR bezrizični, ERP zreli)
+    r = RF + beta * ERP + CRP + illiq_premium
 
     disc_src = DISCOUNT_SRC
     dc = _calibration("holding_discount:ADRS") if ticker == "ADRS" else None
@@ -150,11 +167,15 @@ def build_params(ticker: str) -> Params:
             f"{pnav_measured['note']}")
 
     sources = {
-        "r": (f"r={r:.4f} (CAPM: rf + beta×ERP"
+        "r": (f"r={r:.4f} = rf {RF:.2%} + β {beta:.2f}×ERP {ERP:.2%} + CRP "
+              f"{CRP * 100:.1f} p.b."
               + (f" + premija nelikvidnosti {illiq_premium * 100:.1f} p.b."
                  if illiq_premium else "")
-              + f"). {RF_SRC}. {ERP_SRC}. {beta_src}"
+              + f" (v3 FAZA K raspis). {RF_SRC}. {ERP_SRC}. {CRP_SRC}. {beta_src}"
               + (f" {illiq_src}" if illiq_src else "")),
+        "rf": RF_SRC,
+        "erp": ERP_SRC,
+        "crp": CRP_SRC,
         "g": G_SRC,
         "wacc": ("wacc≈r (pretpostavka strukture bez duga na razini metode; "
                  "DCF ionako gate-an za ADRS/CROS)"),
@@ -168,6 +189,10 @@ def build_params(ticker: str) -> Params:
     p.beta_origin = beta_origin      # Z1: badge porijekla (regresija/sektorska/clamp)
     p.illiq_premium = illiq_premium  # Z1: zasebna komponenta r-a
     p.illiq_src = illiq_src
+    # v3 FAZA K: komponente r-a za raspis u UI (rf + β×ERP + CRP + nelikv.)
+    p.rf = RF
+    p.erp = ERP
+    p.crp = CRP
     if pnav_measured:
         p.pnav_measured = pnav_measured  # v2 §4: izmjereni P/NAV za SOTP diskont
     p.sources = sources

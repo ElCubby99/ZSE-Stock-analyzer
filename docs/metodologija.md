@@ -46,11 +46,20 @@ metoda razvukla zonu u beskorisno.
 
 ## Kako biramo parametre
 
-- **Trošak kapitala (r)** — prinos koji ulagač razumno traži: nerizična
-  stopa (prinos hrvatske 10-godišnje obveznice) + beta × premija rizika
-  tržišta (Damodaranova metodologija za Hrvatsku). *Planirano, još nije
-  aktivno: izvoznicima koji većinu prihoda ostvaruju na razvijenim tržištima
-  pripada niži country-risk — ponderirat ćemo premiju po geografiji prihoda.*
+- **Trošak kapitala (r) — puni raspis (v3)**: r = rf + β × ERP + CRP
+  (+ premija nelikvidnosti). Komponente: **rf** je bezrizični prinos u
+  euru (10-godišnji njemački Bund) — namjerno NE hrvatska krivulja, jer
+  ona već nosi hrvatski spread; **ERP** je Damodaranova premija zrelog
+  tržišta (bez premije zemlje); **CRP** je mala, zasebna premija rizika
+  Hrvatske primjerena investment-grade eurozoni ('A-'/A3), ograničena na
+  ≤ 1,5 postotna boda i dodana točno jednom (ne množi se betom). Rizik
+  zemlje se time računa na JEDNOM mjestu — do metodologije v3 bio je
+  nenamjerno uračunat dvaput (u nerizičnoj stopi i unutar premije
+  tržišta), što je sustavno snižavalo procjene; vidi „Priznate greške".
+  Svaka komponenta na stranici dionice nosi vlastiti izvor i datum unosa.
+  *Planirano, još nije aktivno: izvoznicima koji većinu prihoda ostvaruju
+  na razvijenim tržištima pripada niži CRP — ponderirat ćemo premiju po
+  geografiji prihoda.*
 - **Beta disciplina (v2.2)** — regresijska beta iz burzovne serije (tjedni
   prinosi vs CROBEX) koristi se **samo iznad praga likvidnosti** (≥60%
   trgovanih dana i ≥1.000 € prosječnog dnevnog prometa) jer rijetko
@@ -123,6 +132,17 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v3 — faza K (16.07.2026.)**: rekalibracija troška kapitala — priznata
+  greška: **rizik Hrvatske bio je uračunat dvaput** — nerizična stopa bila
+  je hrvatska 10-godišnja obveznica (koja već nosi hrvatski spread), a
+  premija tržišta je dodatno sadržavala premiju zemlje. Uz to je premija
+  zemlje bila skrivena unutar premije tržišta umjesto vidljiva. Novi
+  raspis: rf = 10g njemački Bund, ERP = zrela premija tržišta, CRP =
+  zasebna mala premija Hrvatske (≤ 1,5 p.b., 'A-'/A3 eurozona), premija
+  nelikvidnosti samo ispod praga likvidnosti. Učinak: r se uz β=1 spušta
+  s 9,31% na 8,13%, fer-zone se pomiču naviše; svaka promjena zabilježena
+  u povijesti procjene dionice. Sustavni pregled uzroka: interna
+  forenzika v3 (faza D), sažeta u ovom changelogu kroz faze v3.
 - **v2.3 (16.07.2026.)**: crveno pravilo za degenerirano sidro — priznata
   greška: sidrena metoda čiji je vlastiti raspon osjetljivosti širi od 100%
   baze (npr. DCF u godini izvanrednog capexa/akvizicije) davala je besmisleno

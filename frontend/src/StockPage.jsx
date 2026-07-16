@@ -499,17 +499,41 @@ function Assumptions({ valuation }) {
   const p = valuation.params
   /* dvorazinski princip: jedna rečenica OBIČNIM jezikom vidljiva,
      tehnički izvod (CAPM, izvori, citati) iza klika — izračun se ne mijenja */
+  /* v3 FAZA K: puni raspis r-a — rf + β×ERP + CRP + nelikvidnost = r,
+     svaka komponenta zasebna kartica s izvorom iza klika */
+  const hasStack = p.rf !== null && p.rf !== undefined && p.crp !== null && p.crp !== undefined
+  const rFormula = hasStack
+    ? `${num(p.rf * 100, 2)} % + ${num(p.beta, 2)} × ${num(p.erp * 100, 2)} %`
+      + ` + ${num(p.crp * 100, 1)} p.b.`
+      + (p.illiq_premium ? ` + ${num(p.illiq_premium * 100, 1)} p.b.` : '')
+      + ` = ${pct(p.r, 2)}`
+    : null
   const cards = [
     {
       name: 'Trošak kapitala r', out: pct(p.r, 2), src: p.sources.r, sure: p.rates_calibrated,
-      plain: `Trošak kapitala ${pct(p.r, 2)} — prinos koji ulagač razumno traži za rizik ove dionice. Veći = stroža (niža) procjena.`,
-    },
-    {
-      name: 'Dugoročni rast g', src: p.sources.g, sure: p.rates_calibrated,
-      out: p.g_terminal ? `${pct(p.g, 1)} · ${pct(p.g_terminal, 1)}` : pct(p.g, 1),
-      plain: `Dugoročni rast — koliko firma raste "zauvijek" nakon razdoblja projekcije; vezan uz rast gospodarstva i inflaciju (${pct(p.g, 1)} za kapitalne metode, ${p.g_terminal ? pct(p.g_terminal, 1) : dash} terminal za DCF).`,
+      plain: `Trošak kapitala ${pct(p.r, 2)} — prinos koji ulagač razumno traži za rizik ove dionice. Veći = stroža (niža) procjena.`
+        + (rFormula ? ` Raspis: rf + β×ERP + CRP${p.illiq_premium ? ' + nelikvidnost' : ''} = ${rFormula}.` : ''),
     },
   ]
+  if (hasStack) {
+    cards.push({
+      name: 'Bezrizični prinos rf', out: pct(p.rf, 2), src: p.sources.rf || p.sources.r, sure: false,
+      plain: `Prinos "bez rizika" u euru (10-godišnji njemački Bund) — temelj od kojeg svaki zahtijevani prinos kreće. Rizik Hrvatske NIJE ovdje — on je zasebna stavka (CRP), da se ne bi računao dvaput.`,
+    })
+    cards.push({
+      name: 'Premija tržišta ERP', out: pct(p.erp, 2), src: p.sources.erp || p.sources.r, sure: false,
+      plain: `Koliko ulagači povrh bezrizičnog prinosa traže za ulaganje u dionice općenito (zrelo tržište, bez premije zemlje). Množi se betom dionice.`,
+    })
+    cards.push({
+      name: 'Premija zemlje CRP', out: `+${num(p.crp * 100, 1)} p.b.`, src: p.sources.crp || p.sources.r, sure: false,
+      plain: `Mali dodatak za rizik Hrvatske — primjeren investment-grade eurozoni ('A-'). Računa se točno jednom: nije skriven ni u rf-u ni u ERP-u.`,
+    })
+  }
+  cards.push({
+    name: 'Dugoročni rast g', src: p.sources.g, sure: p.rates_calibrated,
+    out: p.g_terminal ? `${pct(p.g, 1)} · ${pct(p.g_terminal, 1)}` : pct(p.g, 1),
+    plain: `Dugoročni rast — koliko firma raste "zauvijek" nakon razdoblja projekcije; vezan uz rast gospodarstva i inflaciju (${pct(p.g, 1)} za kapitalne metode, ${p.g_terminal ? pct(p.g_terminal, 1) : dash} terminal za DCF).`,
+  })
   if (p.beta !== null && p.beta !== undefined) {
     cards.push({
       name: 'Beta (β)', out: num(p.beta, 2), src: p.sources.r, sure: p.beta_calibrated,

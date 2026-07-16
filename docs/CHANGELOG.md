@@ -49,3 +49,36 @@ eventualni Content-Encoding) i `curl -s --compressed .../sitemap.xml`
 (mora vratiti čitljiv XML). Autoritativna potvrda: GSC → Sitemaps status.
 Vanjski alat koji prijavljuje "binarni sadržaj" najvjerojatnije ne šalje
 Accept-Encoding a dobiva gzip, ili ne dekomprimira — problem alata.
+
+## 2026-07-16 — Metodologija v3, FAZA K: rekalibracija troška kapitala
+
+Temelj: forenzika FAZE D (docs/forenzika_v3_faza_d.md) dokazala da se
+rizik zemlje naplaćivao DVAPUT — rf je bio HR 10g (nosi HR spread), a ERP
+5,7% je već sadržavao A3 CRP (~1,47 p.b.), skriven umjesto vidljiv.
+
+Promjena (src/params_calibrated.py): r = rf + β×ERP + CRP + nelikvidnost,
+gdje je rf = 2,70% (10g Bund, EUR bezrizični, ručni unos 16.07.2026,
+exact_unverified), ERP = 4,23% (Damodaran zreli, bez zemlje), CRP = 1,2
+p.b. (zaseban, 'A-'/A3 eurozona, strop ≤1,5 p.b., ne množi se betom).
+r(β=1): 9,31% → 8,13%. Premija nelikvidnosti nepromijenjena (samo ispod
+Z1 praga — potvrđeno da je nijedno likvidno ime nema).
+
+Čuvari (tests/test_r_stack.py): rf < 3,5% (EUR, ne HR krivulja); ERP <
+4,5% ("BEZ premije zemlje" u izvoru); 0 < CRP ≤ 1,5 p.b.; r je TOČNO
+zbroj vidljivih komponenti; likvidna imena bez premije nelikvidnosti.
+
+UI: kartice "Pretpostavke" sada nose puni raspis — zasebne kartice rf,
+ERP i CRP (svaka s izvorom i datumom iza klika) + formula u kartici r.
+
+Učinak na zone (staro→novo, objavljeno kao baza; puni ispis u
+scripts/apply_v3_k.py runu; valuation_changelog nosi kind='methodology'
+po firmi): 46 zona pomaknuto >10% naviše, 19 nepromijenjeno/malo (comps
+i SOTP sidra ne ovise o r). Ključna imena: HT 19,5–27,6 → 22,6–34,1
+(raskorak +48,7% → +20,2% iznad); CROS 1.191–1.556 → 1.369–1.874 (+113%
+→ +77% iznad); ZABA 19,4–25,8 → 22,9–32,5 (cijena 22,6 sada 1,4% ISPOD
+donjeg ruba — kontrola "u zoni ili blizu" prolazi, prati se kroz G/DIV/A);
+ATGR 22,1–31,1 → 25,6–38,5; HPB 309,8–431,9 → 360,2–536,6; KOEI 880–925
+→ 1.034–1.088. Temperatura tržišta (CROBEX): 16/4/2 → 13/4/5
+(iznad/unutar/ispod). NAPOMENA: ovo je 1. od 4 računske faze v3 — TTM i
+rast (G), održiva dividenda (DIV) i medijan-sidro (A) tek slijede;
+raskoraci se NE fitaju na tržište.
