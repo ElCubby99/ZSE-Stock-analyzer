@@ -964,6 +964,10 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
             status, label = "paid", "isplaćena (izvedeno iz NT obrasca)"
         elif pay is not None and pay <= as_of:
             status, label = "paid", "isplaćena"
+        elif (pay is None and ex is None and fy is not None
+              and fy < as_of.year - 1):
+            # M35.1: povijesni zapis bez datuma — nikad "nadolazeća"
+            status, label = "paid", "isplaćena (povijesni zapis bez datuma)"
         elif dtyp and "rijedlog" in dtyp:
             status, label = "proposed", "prijedlog (nije izglasana)"
         else:

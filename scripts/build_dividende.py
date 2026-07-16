@@ -44,6 +44,12 @@ def main() -> int:
                 status = "paid"  # Z2: povijesni izvedeni zapis (NT) = isplaćen
             elif pay is not None and pay <= today:
                 status = "paid"
+            elif (pay is None and ex is None and fy is not None
+                  and fy < today.year - 1):
+                # M35.1: povijesni zapis BEZ datuma (stara fiskalna godina)
+                # ne smije defaultati na "nadolazeća" — dividenda za FY1999
+                # nije upcoming ni u kojem svemiru
+                status = "paid"
             elif dtyp and "rijedlog" in (dtyp or ""):
                 status = "proposed"
             else:

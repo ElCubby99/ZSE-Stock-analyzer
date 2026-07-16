@@ -74,26 +74,34 @@ def test_payout_nikad_prema_krivoj_godini(conn):
     """Sintetička isplata s fiskalnom godinom BEZ dobiti u bazi mora dobiti
     payout_ratio NULL (s razlogom), a NE ratio iz neke druge godine."""
     from src.dividend_sustainability import classify_company
-    with conn.cursor() as cur:
-        cid = _cid(cur, "HT")
-        cur.execute("""SELECT id FROM share_classes WHERE company_id=%s
-                       ORDER BY is_primary_line DESC NULLS LAST LIMIT 1""", (cid,))
-        scid = cur.fetchone()[0]
-        cur.execute(
-            """INSERT INTO dividends (company_id, share_class_id, class_ticker,
-                   fiscal_year, amount_eur, div_type, source_url)
-               VALUES (%s,%s,'HT',1999,0.50,'Izglasana dividenda',
-                       'sintetički-test')
-               RETURNING id""", (cid, scid))
-        div_id = cur.fetchone()[0]
-    classify_company(conn, cid)
-    with conn.cursor() as cur:
-        cur.execute("SELECT payout_ratio, classified_reason FROM dividends WHERE id=%s",
-                    (div_id,))
-        ratio, reason = cur.fetchone()
-    assert ratio is None, "payout prema godini bez dobiti mora biti NULL"
-    assert "FY1999" in (reason or "")
-    conn.rollback()   # sintetika van; klasifikacije stvarnih redaka su idempotentne
+    # OPREZ: classify_company interno COMMITA, pa rollback na kraju NE čisti
+    # sintetiku (incident 16.07.2026.: 24 procurjela retka na /dividende).
+    # Čišćenje mora biti eksplicitno, u finally, s commitom.
+    try:
+        with conn.cursor() as cur:
+            cid = _cid(cur, "HT")
+            cur.execute("""SELECT id FROM share_classes WHERE company_id=%s
+                           ORDER BY is_primary_line DESC NULLS LAST LIMIT 1""", (cid,))
+            scid = cur.fetchone()[0]
+            cur.execute(
+                """INSERT INTO dividends (company_id, share_class_id, class_ticker,
+                       fiscal_year, amount_eur, div_type, source_url)
+                   VALUES (%s,%s,'HT',1999,0.50,'Izglasana dividenda',
+                           'sintetički-test')
+                   RETURNING id""", (cid, scid))
+            div_id = cur.fetchone()[0]
+        classify_company(conn, cid)
+        with conn.cursor() as cur:
+            cur.execute("SELECT payout_ratio, classified_reason FROM dividends WHERE id=%s",
+                        (div_id,))
+            ratio, reason = cur.fetchone()
+        assert ratio is None, "payout prema godini bez dobiti mora biti NULL"
+        assert "FY1999" in (reason or "")
+    finally:
+        conn.rollback()
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM dividends WHERE source_url='sintetički-test'")
+        conn.commit()
 
 
 def test_politika_bez_pokrivenosti_pada_na_medijan(conn):

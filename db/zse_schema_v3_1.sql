@@ -75,6 +75,21 @@ CREATE TABLE IF NOT EXISTS valuation_changelog (
   UNIQUE (company_id, changed_on, reason)
 );
 
+-- M35.1: higijena dividendi (incident 16.07.2026.: 24 sintetička test
+-- retka HT/FY1999 procurila u dev bazu i na /dividende — test se oslanjao
+-- na rollback, a classify_company interno commita; UNIQUE ključ ih nije
+-- hvatao jer se NULL ex_date vrijednosti u Postgresu ne sudaraju).
+DELETE FROM dividends WHERE source_url = 'sintetički-test';
+DELETE FROM dividends d USING dividends d2
+ WHERE d.ex_date IS NULL AND d2.ex_date IS NULL
+   AND d.class_ticker = d2.class_ticker
+   AND COALESCE(d.fiscal_year, 0) = COALESCE(d2.fiscal_year, 0)
+   AND d.amount_eur = d2.amount_eur
+   AND d.id > d2.id;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_dividends_no_exdate
+  ON dividends (class_ticker, COALESCE(fiscal_year, 0), amount_eur)
+  WHERE ex_date IS NULL;
+
 -- M35: KADA su EOD podaci stvarno postali dostupni — kalibracija cron
 -- rasporeda iz stvarnosti (upisuje se pri PRVOM uspješnom dohvatu dana)
 CREATE TABLE IF NOT EXISTS eod_first_seen (
