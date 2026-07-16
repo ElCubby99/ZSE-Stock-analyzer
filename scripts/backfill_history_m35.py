@@ -35,17 +35,23 @@ YEARS = (2022, 2023, 2024)
 def _short_series(conn, only=None):
     """{ticker: [godine koje FALE]} za live firme s <3 'annual' godina."""
     with conn.cursor() as cur:
+        # INNER join na revenue: godina se broji SAMO ako stvarno ima prihod
+        # (LEFT JOIN je brojao i "stub" godišnje filinge s jednim dps retkom
+        # iz dividendnog pipelinea — KOEI/HT su zbog toga bili preskočeni)
         cur.execute("""
-          SELECT c.ticker, c.sector,
-                 ARRAY_AGG(DISTINCT f.fiscal_year ORDER BY f.fiscal_year)
-                   FILTER (WHERE f.fiscal_year IS NOT NULL)
+          SELECT c.ticker, c.sector, COALESCE(y.years, '{}')
           FROM companies c
-          LEFT JOIN filings f ON f.company_id=c.id AND f.period_type='annual'
-               AND f.basis='consolidated'
-          LEFT JOIN financials fin ON fin.filing_id=f.id AND fin.item='revenue'
-               AND fin.value_eur IS NOT NULL
-          WHERE c.is_live GROUP BY c.ticker, c.sector
-          HAVING COUNT(DISTINCT f.fiscal_year) < 4 ORDER BY c.ticker""")
+          LEFT JOIN (
+            SELECT f.company_id,
+                   ARRAY_AGG(DISTINCT f.fiscal_year ORDER BY f.fiscal_year) AS years
+            FROM filings f
+            JOIN financials fin ON fin.filing_id=f.id AND fin.item='revenue'
+                 AND fin.value_eur IS NOT NULL
+            WHERE f.period_type='annual' AND f.basis='consolidated'
+            GROUP BY f.company_id) y ON y.company_id=c.id
+          WHERE c.is_live
+            AND COALESCE(array_length(y.years, 1), 0) < 4
+          ORDER BY c.ticker""")
         out = {}
         for t, sector, have in cur.fetchall():
             if only and t not in only:

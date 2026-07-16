@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Term } from './Legend.jsx'
 import { GapCell, SECTOR_HR, useOverview } from './Shell.jsx'
 import { dash, eur, meur, num, pct } from './format.js'
@@ -63,6 +63,10 @@ function shortBasis(b) {
 }
 
 export function IndicatorGroups({ indicators }) {
+  /* balončić radi i NA DODIR (mobitel): native title postoji samo na
+     hover, pa klik/tap na naziv otvara redak s objašnjenjem ispod
+     pokazatelja — isto objašnjenje, dva ulaza (hover title + tap). */
+  const [open, setOpen] = useState(null)
   if (!indicators || !indicators.groups) return null
   return (
     <section>
@@ -75,22 +79,27 @@ export function IndicatorGroups({ indicators }) {
               {g.items.map((it, i) => {
                 const val = fmtIndVal(it)
                 const np = val === null
-                /* balončić: formula + "Zašto ovako" reasoning (dvorazinski
-                   princip — brojka odmah, obrazloženje izbora iza hovera) */
+                /* formula + "Zašto ovako" reasoning (dvorazinski princip —
+                   brojka odmah, obrazloženje izbora iza hovera/dodira) */
                 const hint = [
                   it.formula ? `Formula: ${it.formula}` : null,
                   it.why ? `Zašto ovako: ${it.why}` : null,
                 ].filter(Boolean).join('\n\n')
+                const rk = `${g.key}:${i}`
+                const isOpen = open === rk
                 return (
-                  <tr key={i}>
+                  <React.Fragment key={i}>
+                  <tr>
                     <td className="ind-k">
-                      <span title={hint} className={hint ? 'ind-hint' : ''}>
+                      <span title={hint} className={hint ? 'ind-hint' : ''}
+                        onClick={() => hint && setOpen(isOpen ? null : rk)}>
                         {it.k}{it.why ? <sup className="ind-why">?</sup> : null}
                       </span>
                     </td>
                     <td className="ind-v num">
                       {np ? (
-                        <span className="np" title={it.np_reason || ''}>n/p</span>
+                        <span className="np" title={it.np_reason || ''}
+                          onClick={() => it.np_reason && setOpen(isOpen ? null : rk)}>n/p</span>
                       ) : (
                         <>
                           <b>{val}</b>
@@ -101,6 +110,17 @@ export function IndicatorGroups({ indicators }) {
                       )}
                     </td>
                   </tr>
+                  {isOpen && (hint || it.np_reason) && (
+                    <tr className="ind-poprow">
+                      <td colSpan={2}>
+                        {it.formula && <div><b>Formula:</b> {it.formula}</div>}
+                        {it.why && <div><b>Zašto ovako:</b> {it.why}</div>}
+                        {np && it.np_reason && <div><b>n/p:</b> {it.np_reason}</div>}
+                        {it.basis && <div className="dim">Osnovica: {it.basis}</div>}
+                      </td>
+                    </tr>
+                  )}
+                  </React.Fragment>
                 )
               })}
             </tbody></table>
