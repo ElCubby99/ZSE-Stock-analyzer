@@ -613,9 +613,9 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": null,
-      "suppressed_one_off": 12.0,
-      "note": "zadnja isplata je jednokratna/iz zadržane dobiti, a održiva baza nije izračunljiva — DDM se ne računa (radije prazno nego krivo)"
+      "d_sust_ps": 5.0,
+      "fallback_raw": true,
+      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
     }
   },
   "prices": [
@@ -897,7 +897,20 @@
       ],
       "class_zones": null,
       "recalibrating": null,
-      "dividend_sanity": null,
+      "dividend_sanity": {
+        "d_sust_ps": 5.0,
+        "zone_low": 245.88,
+        "zone_high": 343.04,
+        "implied_yield_low": 0.0203,
+        "threshold": 0.0659,
+        "r": 0.1059,
+        "g_used": 0.04,
+        "g_source": "terminalni g 4.0% (sidro zone je dcf_fcf)",
+        "dividend_floor": null,
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 5.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (245.88 €), samo od te dividende dobivao bi 2.0% godišnje. Fer cijena to ne dopušta iznad 6.6% (traženi prinos 10.6% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
       "low_float_note": "free float ~4% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null
@@ -1125,6 +1138,13 @@
             "formula": "trž.kap / slobodni novčani tok"
           },
           {
+            "k": "EPS",
+            "v": 2.6470445629710295,
+            "unit": "eur",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "neto dobit matici / dionice ex-trezor"
+          },
+          {
             "k": "Earnings yield",
             "v": 0.023017778808443735,
             "unit": "%",
@@ -1137,6 +1157,13 @@
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)"
+          },
+          {
+            "k": "BVPS",
+            "v": 75.1706546462559,
+            "unit": "eur",
+            "basis": "Kvartalno (31.03.2026.)",
+            "formula": "knjiga (matici) / dionice ex-trezor"
           }
         ]
       },

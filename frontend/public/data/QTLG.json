@@ -546,7 +546,7 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 0.05,
+      "d_sust_ps": 0.08,
       "fallback_raw": true,
       "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
     }
@@ -743,10 +743,10 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 1.1150204467020042,
-      "zone_high": 2.139357479497198,
-      "dispersion": 0.47880592309235687,
-      "divergent": true,
+      "zone_low": 1.455736511691384,
+      "zone_high": 1.9139392320678446,
+      "dispersion": 0.23940296154617843,
+      "divergent": false,
       "archetype": "cyclical",
       "anchor_methods": [
         "dcf_fcf",
@@ -769,7 +769,7 @@
           "vs_zone_pct": -0.5193579815285365
         }
       },
-      "zone_note": "dvije kvalificirane metode razmaknute 96% > 40% — NE prosječi (v2 §3): sredinu nosi sidro 'dcf_fcf', druga metoda je kontekst — v3 triangulacija; isključeno (nepozitivna baza/conf): comps",
+      "zone_note": "dvije kvalificirane metode razmaknute 96% > 40% — NE prosječi (v2 §3): sredinu nosi sidro 'dcf_fcf', druga metoda je kontekst — v3 triangulacija; isključeno (nepozitivna baza/conf): comps; DIVIDENDNI POD (v3.1): V_div 1.46 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (1.12 → 1.46) — održiva dividenda podržava vrijednost, ne gasi zonu",
       "all_methods_low": 0.7820953876586799,
       "all_methods_high": 2.1520749007577074,
       "dispersion_all": 0.6365854239630239,
@@ -791,23 +791,37 @@
       "market_implied": null,
       "qualified_methods": [
         "dcf_fcf",
+        "dividend_floor",
         "justified_pb_roe"
       ],
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 0.05,
-        "zone_low": 1.12,
-        "zone_high": 2.14,
-        "implied_yield_low": 0.0448,
+        "d_sust_ps": 0.08,
+        "zone_low": 1.46,
+        "zone_high": 1.91,
+        "implied_yield_low": 0.055,
         "threshold": 0.055,
         "r": 0.095,
         "g_used": 0.04,
         "g_source": "terminalni g 4.0% (sidro zone je dcf_fcf)",
-        "dividend_floor": null,
+        "dividend_floor": {
+          "v_div": 1.46,
+          "confidence": 0.8,
+          "formula": "V_div = D_sust 0.08 € / (r 9.50% − g 4.0%) = 1.46 € — Gordonova donja granica iz stvarno isplaćenog novca",
+          "applied_floor": true,
+          "zone_before": [
+            1.12,
+            2.14
+          ],
+          "zone_after": [
+            1.46,
+            1.91
+          ]
+        },
         "passes": true,
-        "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.05 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (1.12 €), samo od te dividende dobivao bi 4.5% godišnje. Fer cijena to ne dopušta iznad 5.5% (traženi prinos 9.5% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "verdict": "prolazi (uz dividendni pod)",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.08 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (1.46 €), samo od te dividende dobivao bi 5.5% godišnje. Fer cijena to ne dopušta iznad 5.5% (traženi prinos 9.5% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: Dividendni pod primijenjen: održiva dividenda od 0.08 € podržava vrijednost od najmanje 1.46 € (Gordonov izračun) — uključeno u zonu."
       },
       "low_float_note": "free float ~0% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
@@ -992,6 +1006,13 @@
             "np_reason": "nema ulaza"
           },
           {
+            "k": "EPS",
+            "v": 0.10064372513173458,
+            "unit": "eur",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "neto dobit matici / dionice ex-trezor"
+          },
+          {
             "k": "Earnings yield",
             "v": null,
             "unit": null,
@@ -1006,6 +1027,13 @@
             "basis": null,
             "formula": null,
             "np_reason": "nema ulaza"
+          },
+          {
+            "k": "BVPS",
+            "v": 1.4347166005051384,
+            "unit": "eur",
+            "basis": "Kvartalno (31.03.2026.)",
+            "formula": "knjiga (matici) / dionice ex-trezor"
           }
         ]
       },

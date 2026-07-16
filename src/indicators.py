@@ -250,12 +250,18 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
             continue
         g.append(_i(lab, (mcap / num_v) if (mcap and num_v and num_v > 0) else None,
                     "x", num_b, f) if mcap and num_v and num_v > 0 else _np(lab, "nema ulaza"))
+    g.append(_i("EPS", (ni / shares) if (ni is not None and shares) else None,
+                "eur", ni_b, "neto dobit matici / dionice ex-trezor")
+             if ni is not None and shares else _np("EPS", "nema ulaza"))
     g.append(_i("Earnings yield", (ni / mcap) if (mcap and ni and ni > 0) else None,
                 "%", ni_b, "neto dobit / trž.kap") if mcap and ni and ni > 0
              else _np("Earnings yield", "nema ulaza"))
     g.append(_i("P/B", (mcap / eq) if (mcap and eq and eq > 0) else None, "x", eq_b,
                 "trž.kap / knjiga (matici)") if mcap and eq and eq > 0
              else _np("P/B", "nema ulaza"))
+    g.append(_i("BVPS", (eq / shares) if (eq and eq > 0 and shares) else None,
+                "eur", eq_b, "knjiga (matici) / dionice ex-trezor")
+             if eq and eq > 0 and shares else _np("BVPS", "nema ulaza"))
     groups.append({"key": "valuacija", "title": "Valuacija", "items": g})
 
     # 3) RAST -----------------------------------------------------------

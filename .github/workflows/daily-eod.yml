@@ -36,7 +36,11 @@ permissions:
 jobs:
   daily:
     runs-on: ubuntu-latest
-    timeout-minutes: 30        # bez sleep petlje: no-op ~10-30 s, puni prolaz < 25 min
+    # no-op ~10-30 s; PUNI prolaz radi regen protiv udaljene Supabase baze
+    # (mrežna latencija po SQL upitu) — run 21:12 16.07. ubijen na 30 min
+    # bez ijednog retka loga (stdout je bio bufferiran). 60 min dok se ne
+    # izmjeri stvarno trajanje; PYTHONUNBUFFERED streama log u živo.
+    timeout-minutes: 60
     steps:
       # DST guard: dva cron raspona postoje jer se UTC offset mijenja
       # (CET/CEST) — dio termina je uvijek "krivi" za sat. Izvrši se samo
@@ -86,6 +90,7 @@ jobs:
         env:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PYTHONUNBUFFERED: '1'   # log u živo (16.07.: 30 min bez retka)
         run: |
           set -o pipefail
           python -m src.daily | tee daily-run.log

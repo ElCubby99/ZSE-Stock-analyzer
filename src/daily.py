@@ -65,12 +65,20 @@ def ensure_schema(conn) -> None:
 
     Lokalni razvoj dodaje stupce/tablice — bez ovoga produkcijska baza
     razjaše od koda (incident 16.07.2026.: regen pao na stupcima koji su
-    postojali samo lokalno). IF NOT EXISTS => no-op kad je sve već tu."""
+    postojali samo lokalno). IF NOT EXISTS => no-op kad je sve već tu.
+
+    lock_timeout je OBAVEZAN: ALTER TABLE čeka ACCESS EXCLUSIVE lock i bez
+    limita može visjeti unedogled iza bilo koje tuđe konekcije (Supabase
+    pooler/REST) — run 21:12 16.07. je ubio 30-min timeout bez ijednog
+    retka loga. Radije preskoči migraciju (sljedeći sat novi pokušaj)
+    nego objesi cijeli run."""
     import pathlib
     sql = (pathlib.Path(__file__).resolve().parents[1]
            / "db" / "zse_schema_v3_1.sql").read_text(encoding="utf-8")
     with conn.cursor() as cur:
+        cur.execute("SET lock_timeout = '10s'; SET statement_timeout = '120s'")
         cur.execute(sql)
+        cur.execute("SET lock_timeout = DEFAULT; SET statement_timeout = DEFAULT")
     conn.commit()
 
 
@@ -529,6 +537,12 @@ def main(argv=None) -> int:
         run_id = f"daily-{date.today().isoformat()}"
         log = _logger(conn, run_id)
 
+        # Nijedan pojedinačni SQL ne smije visjeti unedogled (lock/mreža) —
+        # radije jedan failed korak s razlogom nego run ubijen timeoutom.
+        with conn.cursor() as cur:
+            cur.execute("SET statement_timeout = '120s'")
+        conn.commit()
+
         # 0. shema: idempotentne migracije — lokalna i produkcijska baza
         #    ne smiju razjahati (uzrok pada 16.07.2026.)
         try:
@@ -578,16 +592,25 @@ def main(argv=None) -> int:
             return 0
 
         # 3. podaci su tu -> puni prolaz (watcher/extract/recompute se rade
-        #    JEDNOM dnevno, u runu koji je našao podatke — ne 7x)
-        from .watcher import run_watcher
-        try:
-            stats = run_watcher(conn, run_id, log)
-            log("watcher", None, "ok", f"feed: {stats}")
-            conn.commit()
-        except Exception as e:  # noqa: BLE001
-            conn.rollback()
-            log("watcher", None, "failed", f"{type(e).__name__}: {e}")
-        touched = stage_extract_queue(conn, run_id, log)
+        #    JEDNOM dnevno, u runu koji je našao podatke — ne 7x).
+        #    Bez API ključa: watcher/extract se PRESKAČU s razlogom —
+        #    cijene i exporti NE OVISE o Anthropic API-ju.
+        from . import config as _cfg
+        touched = []
+        if not _cfg.ANTHROPIC_API_KEY:
+            log("watcher", None, "skipped",
+                "ANTHROPIC_API_KEY nije postavljen — klasifikacija objava i "
+                "ekstrakcija novih izvješća se preskaču (cijene rade bez API-ja)")
+        else:
+            from .watcher import run_watcher
+            try:
+                stats = run_watcher(conn, run_id, log)
+                log("watcher", None, "ok", f"feed: {stats}")
+                conn.commit()
+            except Exception as e:  # noqa: BLE001
+                conn.rollback()
+                log("watcher", None, "failed", f"{type(e).__name__}: {e}")
+            touched = stage_extract_queue(conn, run_id, log)
         stage_recompute(conn, run_id, log, touched)
         # M-IDX: indeksi (vrijednosti + sastavnice) — rupa: do M-IDX se
         # index_eod nikad nije ažurirao u dnevnom prolazu
