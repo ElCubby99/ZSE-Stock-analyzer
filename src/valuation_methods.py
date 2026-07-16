@@ -95,6 +95,8 @@ class Ctx:
     dsust_hint: Optional[dict] = None
     # v3 FAZA A (INA-tip): free float proxy = 100 − Σ top-10 dioničara (%)
     free_float_proxy: Optional[float] = None
+    # v3 FAZA SOTP: NEKONSOLIDIRANI izvještaj matice (basis='separate')
+    separate_fin: Optional[dict] = None
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -508,6 +510,28 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
                       0.7 if p.rates_calibrated else 0.5)
 
 
+def _separate_standalone(c: "Ctx", h: dict, p: "Params"):
+    """v3 FAZA SOTP: standalone dio matice iz NEKONSOLIDIRANOG izvještaja
+    (filings.basis='separate'): NI − prihod od dividendi kćeri (obavezno
+    isključenje — kći je već u NAV-u kroz udio), × peer P/E × pct.
+    None -> izvještaja nema u bazi ('u obradi')."""
+    sep = getattr(c, "separate_fin", None)
+    if not sep or sep.get("net_income") is None:
+        return None
+    div_inc = sep.get("dividend_income") or 0.0
+    ni = sep["net_income"] - div_inc
+    if ni <= 0:
+        return None
+    pct = float(h.get("ownership_pct") or 1.0)
+    stake = ni * p.peer_pe * pct
+    basis = (f"standalone_separate (v3 SOTP): NI iz NEKONSOLIDIRANOG "
+             f"izvještaja FY{sep.get('fy')} {sep['net_income']:,.0f} € − "
+             f"prihod od dividendi kćeri {div_inc:,.0f} € (isključen: kćeri "
+             f"su već u NAV-u kroz udjele) = {ni:,.0f} € × P/E {p.peer_pe}"
+             f" × {pct:.2f}")
+    return stake, basis
+
+
 def compute_sotp(c: Ctx) -> ValueRange:
     """
     Σ vrijednost udjela + neto novac − holding diskont, sve / shares_ex_treasury.
@@ -592,41 +616,57 @@ def compute_sotp(c: Ctx) -> ValueRange:
                      f"× {h['default_multiple']} × {pct:.2f}")
             is_placeholder = True  # default_multiple je pretpostavka
         elif h["valuation_basis"] == "associate_pe":
-            # v2 §9.3 (KPT): pridruženo društvo po metodi udjela — udjel u
-            # NJEGOVOJ dobiti × peer P/E; ista se dobit ODUZIMA iz residual_pe
-            # (metoda udjela ju je već unijela u konsolidiranu NI — bez toga
-            # bi se dvostruko brojala)
+            # v3 FAZA SOTP (točka 3): neuvršteni udjeli/JV — PRIMARNO udio u
+            # KNJIGOVODSTVENOJ vrijednosti iz bilješki izvješća (metoda
+            # udjela); tek ako knjigovodstvene vrijednosti nema, konzervativni
+            # multiplikator (sektorski P/E s diskontom 20%) na objavljenu
+            # dobit. Uvijek OZNAČENA pretpostavka s izvorom.
+            jv_book = h.get("jv_book_value_eur")
             ani = h.get("associate_ni")
-            if not ani:
-                missing.append(f"associate_pe({h['held_name']}): nema dobiti"); continue
-            ani = float(ani)
-            stake = ani * pct * p.peer_pe
-            basis = (f"associate_pe: dobit pridruženog {ani:,.0f} × {pct:.2f} "
-                     f"× P/E {p.peer_pe} — metoda udjela (izvor u holdings)")
-            is_placeholder = not p.peers_calibrated
+            if jv_book:
+                stake = float(jv_book)   # carrying value VEĆ JE naš udio
+                basis = (f"associate_book (v3 SOTP): udio u knjigovodstvenoj "
+                         f"vrijednosti JV-a po metodi udjela = {stake:,.0f} € "
+                         f"— {h.get('jv_book_source') or 'bilješke izvješća'}."
+                         + (f" Napomena: objavljena dobit JV-a (100%) je "
+                            f"{float(ani):,.0f} € (naš udio ~"
+                            f"{float(ani) * pct:,.0f} €/g) — knjigovodstveno "
+                            "pravilo je namjerno konzervativno (JV isplaćuje "
+                            "gotovo svu dobit pa knjiga ostaje niska)"
+                            if ani else ""))
+                is_placeholder = True   # pravilo vrednovanja = pretpostavka
+            elif ani:
+                ani = float(ani)
+                stake = ani * pct * p.peer_pe * 0.80
+                basis = (f"associate_pe (v3 SOTP fallback): dobit pridruženog "
+                         f"{ani:,.0f} × {pct:.2f} × P/E {p.peer_pe} × 0,80 "
+                         "(konzervativni diskont) — knjigovodstvena vrijednost "
+                         "iz bilješki nije u bazi")
+                is_placeholder = True
+            else:
+                missing.append(f"associate({h['held_name']}): nema ni "
+                               "knjigovodstvene vrijednosti ni dobiti"); continue
         elif h["valuation_basis"] == "residual_pe":
-            # standalone ostatak matice: (NI matici grupe - Σ pripisive NI
-            # uvrštenih kćeri - Σ udjela u dobiti pridruženih koji su zasebno
-            # vrednovani) × peer P/E — aproksimacija, jasno označena
-            ni_group = c.val("net_income_parent")
-            if ni_group is None or not c.ni_parent_of:
-                missing.append(f"residual_pe({h['held_name']})"); continue
-            attributable = 0.0
-            for h2 in c.holdings:
-                if h2["valuation_basis"] == "market" and h2.get("held_company_id"):
-                    ni_sub = c.ni_parent_of(h2["held_company_id"])
-                    if ni_sub is not None:
-                        attributable += ni_sub * h2["ownership_pct"]
-                elif h2["valuation_basis"] == "associate_pe" and h2.get("associate_ni"):
-                    attributable += float(h2["associate_ni"]) * h2["ownership_pct"]
-            resid_ni = ni_group - attributable
-            if resid_ni <= 0:
-                missing.append(f"residual_pe({h['held_name']}): ostatak dobiti <= 0")
+            # v3 FAZA SOTP (točka 2): standalone komponenta matice vrednuje
+            # se ISKLJUČIVO iz NEKONSOLIDIRANIH (odvojenih) izvještaja, uz
+            # isključenje prihoda od dividendi kćeri (dvostruko brojanje).
+            # Stara residual_pe aproksimacija iz KONSOLIDIRANIH brojki je
+            # UKINUTA — bez nekonsolidiranog izvješća u bazi komponenta nosi
+            # status 'u obradi' i NE ulazi u NAV (radije prazno nego krivo).
+            sep = _separate_standalone(c, h, p)
+            if sep is None:
+                missing.append(
+                    f"{h['held_name']}: U OBRADI — standalone se vrednuje iz "
+                    "nekonsolidiranog izvještaja matice (uz isključenje "
+                    "prihoda od dividendi kćeri), koji još nije u bazi; ne "
+                    "aproksimira se iz konsolidiranih brojki (v3 SOTP)")
+                assum["standalone_status"] = {
+                    "component": h["held_name"], "status": "u obradi",
+                    "reason": ("nekonsolidirani izvještaj matice izdan je "
+                               "zasebno i još nije ekstrahiran u bazu; do "
+                               "tada standalone dio NIJE u NAV-u")}
                 continue
-            stake = resid_ni * p.peer_pe * pct
-            basis = (f"residual_pe: (NI matici {ni_group:,.0f} - pripisivo kćerima/"
-                     f"pridruženima {attributable:,.0f}) × P/E {p.peer_pe} × {pct:.2f} "
-                     f"— aproksimacija")
+            stake, basis = sep
             is_placeholder = not p.peers_calibrated
         elif h["valuation_basis"] == "no_data":
             # dio bez podataka u bazi (npr. JV) — NE blokira, ide u napomenu
@@ -1932,6 +1972,29 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     # snapshot pa lijeni prvi poziv ne bi stigao u polje
     data("dps")
 
+    # v3 FAZA SOTP: nekonsolidirani (odvojeni) izvještaj matice, ako je
+    # ekstrahiran u bazu (basis='separate') — za standalone SOTP komponentu
+    separate_fin = None
+    try:
+        cur.execute(
+            """SELECT f.fiscal_year,
+                      MAX(fin.value_eur) FILTER (WHERE fin.item IN
+                          ('net_income_parent','net_income')),
+                      MAX(fin.value_eur) FILTER (WHERE fin.item IN
+                          ('dividend_income_from_subsidiaries','dividend_income'))
+               FROM financials fin JOIN filings f ON f.id = fin.filing_id
+               WHERE f.company_id=%s AND f.period_type='annual'
+                     AND f.basis='separate'
+               GROUP BY f.fiscal_year ORDER BY f.fiscal_year DESC LIMIT 1""",
+            (company_id,))
+        r_sep = cur.fetchone()
+        if r_sep and r_sep[1] is not None:
+            separate_fin = {"fy": r_sep[0], "net_income": float(r_sep[1]),
+                            "dividend_income": (float(r_sep[2])
+                                                if r_sep[2] is not None else None)}
+    except Exception:  # noqa: BLE001
+        conn.rollback()
+
     # v3 A.4: free float proxy iz zadnjeg top-10 snapshota dioničara
     free_float_proxy = None
     try:
@@ -1956,7 +2019,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         ni_parent_of=ni_parent_of, holding_type=holding_type,
         ttm_meta=ttm_meta, roe_hint=roe_hint,
         dsust_hint=dsust_holder.get("hint"),
-        free_float_proxy=free_float_proxy, params=params,
+        free_float_proxy=free_float_proxy, separate_fin=separate_fin,
+        params=params,
     )
 
 
