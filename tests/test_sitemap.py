@@ -98,6 +98,7 @@ MIN_TEXT = {  # ruta -> minimalan broj znakova VIDLJIVOG teksta u #root
     f"{SITE}/usporedba": 2000,
     f"{SITE}/dividende": 2000,
     f"{SITE}/obveznice": 2000,
+    f"{SITE}/mirovinski-fondovi": 1200,
     f"{SITE}/indeksi": 1500,
     f"{SITE}/metodologija": 1500,
     f"{SITE}/impressum": 1500,

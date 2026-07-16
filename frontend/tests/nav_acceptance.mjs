@@ -45,7 +45,7 @@ const browser = await chromium.launch(launchOpts)
   await p.waitForTimeout(150)
   check('TRŽIŠTE dropdown se otvara hoverom',
     await trziste.locator('.hdr-dd').isVisible())
-  for (const [label, path] of [['Screener', '/screener'], ['Indeksi', '/indeksi'], ['Obveznice', '/obveznice'],
+  for (const [label, path] of [['Screener', '/screener'], ['Indeksi', '/indeksi'], ['Obveznice', '/obveznice'], ['Mirovinski fondovi', '/mirovinski-fondovi'],
     ['Dividende', '/dividende'], ['Usporedba', '/usporedba'],
     ['Alati', '/alati'], ['Sve dionice', '/']]) {
     await p.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' })
@@ -113,8 +113,8 @@ const browser = await chromium.launch(launchOpts)
   await p.click('.hdr-burger')
   check('mobile: panel se otvara', await p.locator('.hdr-mobile').isVisible())
   // TRŽIŠTE accordion je otvoren zadano; BLOG se rasklapa klikom
-  check('mobile: TRŽIŠTE sekcija rasklopljena (7 stavki)',
-    await p.locator('.hdr-mob-sub').count() === 7)
+  check('mobile: TRŽIŠTE sekcija rasklopljena (8 stavki)',
+    await p.locator('.hdr-mob-sub').count() === 8)
   await p.click('.hdr-mob-group button:has-text("BLOG")')
   check('mobile: BLOG accordion prikazuje Blog+Vijesti',
     await p.locator('.hdr-mob-sub').count() === 2)

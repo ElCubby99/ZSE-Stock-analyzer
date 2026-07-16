@@ -184,3 +184,18 @@ Zadnja cjelovita provjera svih izvora: **14.07.2026.**
 - **Spread prema referentnoj krivulji**: IZOSTAVLJENO — pouzdani referentni
   podaci (ECB/Bund krivulja) nisu dostupni u okruženju bez API troška;
   zabilježeno kao buduće proširenje.
+
+## Mirovinski fondovi (M-FOND)
+
+- **Jedinice OMF-ova + Mirex**: HANFA javne objave, MJESEČNI ritam —
+  zaseban workflow (`.github/workflows/monthly-fondovi.yml`), idempotentan
+  (ponovni run bez novih objava ne mijenja ništa). NAPOMENA: hanfa.hr nije
+  na allowlisti Claude Code okruženja pa je parser pisan za Actions runner
+  i namjerno STROG (pad s razlogom umjesto krive brojke); podržan i ručni
+  uvoz XLSX-a (`python -m src.pension_funds --import-file`).
+- **Matching OMF računa u top-10 dioničara** (za sinergiju): odbaci
+  custodian prefiks (prije '/'), normaliziraj (ligature, dijakritici),
+  obitelj AZ / Erste Plavi / PBZ CO / Raiffeisen + 'OMF'/'obvezni
+  mirovinski'; kategorija iz 'kategorije A/B/C'. Dobrovoljni fondovi se NE
+  broje. Implementacija i testovi: src/pension_funds.py, tests/test_fondovi.py.
+- **Bez rangiranja fondova** — abecedni redoslijed, činjenični prikaz.

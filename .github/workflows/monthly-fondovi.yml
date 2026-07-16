@@ -1,0 +1,72 @@
+# M-FOND: mjesečni uvoz HANFA podataka o mirovinskim fondovima (jedinice
+# OMF-ova + Mirex). ZASEBAN od dnevnog EOD-a — HANFA objavljuje mjesečno.
+# Idempotentan: ponovni run bez novih objava ne mijenja ništa (ON CONFLICT
+# DO NOTHING; bez novih redova nema commita ni deploya).
+# NAPOMENA: hanfa.hr nije dostupna iz Claude Code okruženja (allowlist), pa
+# je parser pisan "na slijepo" i STROG — prvi run može tražiti prilagodbu
+# (pad otvara issue s uputom; vidi src/pension_funds.py).
+name: monthly-fondovi
+
+on:
+  schedule:
+    - cron: '30 6 5 * *'   # 5. u mjesecu, 06:30 UTC (HANFA objave su do tada vani)
+  workflow_dispatch: {}
+
+concurrency:
+  group: monthly-fondovi
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  fondovi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: HANFA uvoz (idempotentan)
+        id: uvoz
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+        run: |
+          NOVO=$(python -m src.pension_funds | grep -oE 'novo: [0-9]+' | grep -oE '[0-9]+')
+          echo "novo=$NOVO" >> "$GITHUB_OUTPUT"
+          echo "novih zapisa: $NOVO"
+      - name: Regen fondovi.json + commit (samo ako ima novih podataka)
+        if: steps.uvoz.outputs.novo != '0'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+        run: |
+          python -m scripts.build_fondovi
+          git config user.name "monthly-fondovi bot"
+          git config user.email "noreply@burzovnilist.com"
+          git add frontend/public/data/fondovi.json
+          if git diff --cached --quiet; then echo "bez promjena"; exit 0; fi
+          git commit -m "Fondovi $(date +%Y-%m): HANFA mjesečni uvoz [skip ci]"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main && git push origin main && break
+            sleep $((2**i))
+          done
+          curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" -o /dev/null
+      - name: Issue na neuspjeh
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `monthly-fondovi pao — ${new Date().toISOString().slice(0,10)}`,
+              labels: ['pipeline-fail'],
+              body: `Mjesečni HANFA uvoz nije uspio (vjerojatno format objave — vidi ` +
+                `src/pension_funds.py, parser je namjerno strog).\n\nRun: ` +
+                `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            })

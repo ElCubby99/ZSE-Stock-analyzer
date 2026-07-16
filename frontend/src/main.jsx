@@ -16,6 +16,7 @@ import Usporedba from './Usporedba.jsx'
 import { VijestDetail, VijestiIndex } from './Vijesti.jsx'
 import { IndeksDetail, IndeksiIndex } from './Indeksi.jsx'
 import { ObveznicaDetail, ObvezniceIndex } from './Obveznice.jsx'
+import MirovinskiFondovi from './MirovinskiFondovi.jsx'
 import Admin from './Admin.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
 import { ConsentProvider, pushEvent } from './consent.jsx'
@@ -83,6 +84,7 @@ const COMPONENTS = {
   IndeksDetail: <IndeksDetail />,
   ObvezniceIndex: <ObvezniceIndex />,
   ObveznicaDetail: <ObveznicaDetail />,
+  MirovinskiFondovi: <MirovinskiFondovi />,
   VijestDetail: <VijestDetail />,
   AuthCallback: <AuthCallback />,
   Admin: <Admin />,

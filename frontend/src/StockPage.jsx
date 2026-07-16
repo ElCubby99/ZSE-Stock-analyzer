@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { OmfHolders } from './MirovinskiFondovi.jsx'
 import { NavLink, useNavigate, useParams } from 'react-router-dom'
 import { pushEvent } from './consent.jsx'
 import VerdictSpread from './VerdictSpread.jsx'
@@ -977,7 +978,10 @@ export default function StockPage() {
 
           {/* ============ DIONIČARI ============ */}
           {tab === 'dionicari' && (
-            <Ownership own={data.ownership} liquidity={data.liquidity} />
+            <>
+              <Ownership own={data.ownership} liquidity={data.liquidity} />
+              <OmfHolders ticker={data.ticker} />
+            </>
           )}
 
           {/* ============ NOVOSTI ============ */}

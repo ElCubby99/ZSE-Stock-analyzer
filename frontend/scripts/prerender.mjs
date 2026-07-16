@@ -406,6 +406,11 @@ function dividendeTable() {
 }
 
 /* ---------- M-BOND: obveznice ---------- */
+let fondoviData = { units: [], mirex: [], synergy: [], units_available: false }
+try {
+  fondoviData = JSON.parse(await fs.readFile(path.join(DIST, 'data/fondovi.json'), 'utf8'))
+} catch { /* bez podataka o fondovima */ }
+
 let obveznice = { rows: [], as_of: null }
 try {
   obveznice = JSON.parse(await fs.readFile(path.join(DIST, 'data/obveznice.json'), 'utf8'))
@@ -520,6 +525,28 @@ const BODY_BUILDERS = {
       <p>Izračuni: <a href="/metodologija">Metodologija — sekcija Obveznice</a>.</p>
       <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
   }),
+  '/mirovinski-fondovi': () => {
+    const f = fondoviData
+    const byT = new Map()
+    for (const s of f.synergy || []) {
+      if (!byT.has(s.ticker)) byT.set(s.ticker, { name: s.company_name, funds: [] })
+      byT.get(s.ticker).funds.push(s)
+    }
+    return {
+      body: `<main><h1>Mirovinski fondovi (OMF) — obračunske jedinice i prinosi</h1>
+      <p>Obvezni mirovinski fondovi (AZ, Erste Plavi, PBZ CO, Raiffeisen; kategorije A/B/C)
+      i Mirex za usporedbu. Izvor: HANFA javne objave, mjesečni ritam. Bez rangiranja —
+      redoslijed je abecedni. ${f.units_available ? '' : 'Prvi mjesečni uvoz HANFA podataka još nije obavljen — vrijednosti jedinica pojavit će se nakon prve objave.'}</p>
+      <h2>ZSE dionice s OMF-ovima među top 10 dioničara</h2>
+      <table><thead><tr><th>Dionica</th><th>Fond (kategorija)</th><th>Ukupni udjel</th></tr></thead>
+      <tbody>${[...byT.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([t, info]) => `<tr>
+        <td><a href="/dionica/${esc(t.toLowerCase())}">${esc(t)}</a> — ${esc(info.name)}</td>
+        <td>${esc(info.funds.map((x) => `${x.fund} (${x.category})`).join(', '))}</td>
+        <td>${num(info.funds.reduce((a, x) => a + (x.pct || 0), 0), 2)} %</td></tr>`).join('')}</tbody></table>
+      <p>Iz naših snapshota top 10 dioničara (ZSE/SKDD)${f.synergy?.[0]?.as_of ? `, stanje ${esc(f.synergy[0].as_of)}` : ''}.</p>
+      <p><em>Činjenični prikaz, bez rangiranja i preporuka — nije investicijski savjet.</em></p></main>`,
+    }
+  },
   '/impressum': () => ({ body: `<main><h1>Impressum</h1>${renderStatic('/impressum')}</main>` }),
   '/uvjeti-koristenja': () => ({ body: `<main><h1>Uvjeti korištenja</h1>${renderStatic('/uvjeti-koristenja')}</main>` }),
   '/politika-privatnosti': () => ({ body: `<main><h1>Politika privatnosti</h1>${renderStatic('/politika-privatnosti')}</main>` }),

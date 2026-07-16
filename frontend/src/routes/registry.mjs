@@ -73,6 +73,15 @@ export const ROUTES = [
     expand: 'bonds',
   },
   {
+    path: '/mirovinski-fondovi',
+    component: 'MirovinskiFondovi',
+    indexable: true,
+    seo: {
+      title: 'Mirovinski fondovi (OMF) — jedinice, prinosi i ZSE ulaganja | Burzovni list',
+      description: 'Obračunske jedinice obveznih mirovinskih fondova (AZ, Erste Plavi, PBZ CO, Raiffeisen; kategorije A/B/C), Mirex za usporedbu i ZSE dionice u kojima se OMF-ovi pojavljuju među top 10 dioničara.',
+    },
+  },
+  {
     path: '/usporedba',
     component: 'Usporedba',
     indexable: true,

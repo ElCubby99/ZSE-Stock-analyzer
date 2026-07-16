@@ -71,6 +71,7 @@ const NAV_GROUPS = [
       { to: '/screener', label: 'Screener' },
       { to: '/indeksi', label: 'Indeksi' },
       { to: '/obveznice', label: 'Obveznice' },
+      { to: '/mirovinski-fondovi', label: 'Mirovinski fondovi' },
       { to: '/dividende', label: 'Dividende' },
       { to: '/usporedba', label: 'Usporedba' },
       { to: '/alati', label: 'Alati' },
