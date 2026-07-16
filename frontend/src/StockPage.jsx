@@ -701,6 +701,23 @@ function ClassExplainer({ data }) {
           ))}
         </tbody>
       </table>
+      {(() => {
+        const m = data.valuation?.reconciliation?.class_zones?._meta
+        if (!m) return null
+        return (
+          <div className="subnote">
+            Premija redovne ({m.ordinary}) naspram povlaštene ({m.preferred}):{' '}
+            <b>{m.premium_pct > 0 ? '+' : ''}{num(m.premium_pct, 1)} %</b>{' '}
+            ({m.ratio_basis === 'tržišni medijan'
+              ? `povijesni tržišni medijan, ${m.ratio_n_days} zajednički trgovanih dana`
+              : 'teorijski omjer — premalo zajednički trgovanih dana, OZNAČENA pretpostavka'})
+            — naša raspodjela vrijednosti firme po klasama, ne fundamentalna
+            tvrdnja; obje klase imaju fer-zonu izvedenu iz iste vrijednosti
+            firme. Zašto premija glasa postoji i zašto je ne izvodimo
+            teorijski: <a href="/metodologija">Metodologija</a>.
+          </div>
+        )
+      })()}
       <div className="subnote">{ex.note}</div>
     </section>
   )
@@ -949,11 +966,16 @@ export default function StockPage() {
         const recal = rec?.recalibrating || null
         const zone = !recal && rec && rec.zone_low !== null && rec.zone_high !== null
           ? [rec.zone_low, rec.zone_high] : null
+        /* v3 S: po-klasne zone iz iste vrijednosti firme (tržišni omjer) */
+        const classZones = rec?.class_zones || null
+        const primaryCls = data.share_classes.find((c) => c.is_primary) || data.share_classes[0]
+        const pz = zone && classZones && classZones[primaryCls?.ticker]
+        const zoneHdr = pz ? [pz.zone_low, pz.zone_high] : zone
         return (
         <>
           {/* ============ GORE · TRŽIŠNI PROFIL ============ */}
           <ProfileHeader data={{ ...data, sector_hr: SECTOR_HR[data.sector] || data.sector }}
-            zone={zone} recal={recal} />
+            zone={zoneHdr} recal={recal} />
           {data.business_profile?.activity && (
             <div className="prof-activity">
               <div className="prof-klabel">PROFIL POSLOVANJA</div>
@@ -970,7 +992,7 @@ export default function StockPage() {
           {/* ============ PREGLED ============ */}
           {tab === 'pregled' && (
           <>
-          <PriceChart data={data} zone={zone} />
+          <PriceChart data={data} zone={zone} classZones={!recal ? classZones : null} />
           <StatsStrip data={data} />
           <ClassExplainer data={data} />
           {!marketOnly && (

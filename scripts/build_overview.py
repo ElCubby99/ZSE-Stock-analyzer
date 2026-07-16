@@ -107,8 +107,12 @@ def build_stocks() -> list[dict]:
                 if it.get("k") == "Payout" and isinstance(it.get("v"), (int, float)):
                     payout = it["v"]
 
+        class_zones = rec.get("class_zones") or {}
         for cls in (d.get("price_summary") or {}).get("classes", []):
             ct = cls.get("class_ticker")
+            # v3 S: zona PO KLASI (ista vrijednost firme, tržišni omjer
+            # klasa) — kad rekalibracija ne poništava zonu
+            czr = class_zones.get(ct) if zone_low is not None else None
             last = cls.get("last") or {}
             m = metrics.get(ct) or {}
             pe = m.get("pe")
@@ -121,8 +125,8 @@ def build_stocks() -> list[dict]:
                 "date": last.get("date"),
                 "change_pct": cls.get("change_pct"),
                 "turnover": cls.get("avg_turnover_20d_eur"),
-                "zone_low": zone_low,
-                "zone_high": zone_high,
+                "zone_low": czr["zone_low"] if czr else zone_low,
+                "zone_high": czr["zone_high"] if czr else zone_high,
                 "zone_status": "u_rekalibraciji" if recal else None,
                 "low_float": low_float,
                 "pe": pe,

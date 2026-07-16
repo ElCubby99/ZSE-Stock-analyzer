@@ -122,6 +122,20 @@ metoda razvukla zonu u beskorisno.
   INA), cijena se formira u zanemarivom prometu pod dominantnim vlasnicima
   — raskorak cijene i zone tada NIJE informativan, nosi istaknutu napomenu
   i ne ulazi u agregat "temperatura tržišta".
+- **Klase dionica — jedna vrijednost firme (v3)**: kod firmi s dvije
+  klase (redovne i povlaštene: ADRS/ADRS2, KODT/KODT2, CROS/CROS2,
+  PLAG/PLAG2) fer-zona se računa za FIRMU, pa raspoređuje na klase
+  **tržišno opaženim omjerom cijena klasa** — medijanom dnevnog omjera
+  kroz zadnjih 5 godina, samo na danima kad su obje klase stvarno
+  trgovane (najmanje 30 opažanja; inače omjer dividendnih prava uz oznaku
+  `teorijski omjer`). Premija redovne dionice postoji jer redovna nosi
+  pravo glasa, a povlaštena ga nema — koliko to pravo vrijedi ne izvodimo
+  teorijski (ovisi o vjerojatnosti preuzimanja, koncentraciji vlasništva i
+  likvidnosti), nego uzimamo koliko ga tržište POVIJESNO plaća. Obje klase
+  tako imaju zone izvedene iz iste vrijednosti firme: ne može jedna biti
+  "u zoni" a druga duboko iznad, osim ako današnji omjer klasa odstupa od
+  povijesnog medijana — a tada je upravo TA razlika činjenica koju
+  prikazujemo.
 - **Dividende — klasifikacija isplata i održiva dividenda (v3)**: svaka
   povijesna isplata nosi činjeničnu oznaku tipa — **redovna**;
   **izvanredna** (iznos veći od 150% medijana prethodnih redovnih isplata
@@ -195,6 +209,11 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v3 — faza S (16.07.2026.)**: klase dionica — priznata greška: obje
+  klase iste firme uspoređivale su se s JEDNOM zonom, pa je redovna
+  (s premijom glasa) izgledala "+58% iznad" dok je povlaštena bila "u
+  zoni" — ista firma, dvije priče. Novo: vrijednost firme se raspoređuje
+  na klase tržišnim medijanom omjera cijena; svaka klasa ima svoju zonu.
 - **v3 — faza A (16.07.2026.)**: triangulacija umjesto dogme jednog sidra —
   priznata greška: fer-zona je bila raspon JEDNE metode po tipu firme, pa
   su potvrde koje konvergiraju prema drugačijoj vrijednosti bile vidljive

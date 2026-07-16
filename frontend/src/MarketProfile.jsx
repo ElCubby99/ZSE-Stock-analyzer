@@ -144,11 +144,14 @@ function fmtHr(iso) {
   return `${Number(d)}.${Number(m)}.${y}.`
 }
 
-export function PriceChart({ data, zone }) {
+export function PriceChart({ data, zone, classZones }) {
   const classes = data.share_classes
   const [clsTk, setClsTk] = useState(
     (classes.find((c) => c.is_primary) || classes[0] || {}).ticker)
   const [range, setRange] = useState('1G')
+  /* v3 S: zona PO KLASI (ista vrijednost firme, tržišni omjer klasa) */
+  const cz = classZones && classZones[clsTk]
+  const zoneEff = cz ? [cz.zone_low, cz.zone_high] : zone
 
   const series = useMemo(() => (data.prices || [])
     .filter((p) => p.class_ticker === clsTk && p.close_eur !== null)
@@ -176,7 +179,7 @@ export function PriceChart({ data, zone }) {
   const W = 760; const H = 230; const pT = 12; const pB = 26; const pL = 10; const pR = 66
   const vals = clipped.map((p) => p.close_eur)
   let vMin = Math.min(...vals); let vMax = Math.max(...vals)
-  if (zone) { vMin = Math.min(vMin, zone[0]); vMax = Math.max(vMax, zone[1]) }
+  if (zoneEff) { vMin = Math.min(vMin, zoneEff[0]); vMax = Math.max(vMax, zoneEff[1]) }
   const vPad = (vMax - vMin) * 0.07 || vMax * 0.03
   vMin -= vPad; vMax += vPad
   const n = clipped.length - 1 || 1
@@ -210,13 +213,13 @@ export function PriceChart({ data, zone }) {
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}
         role="img" aria-label={`Kretanje cijene ${clsTk}`}>
         {gy.map((y) => <line key={y} x1={pL} x2={x2} y1={y} y2={y} stroke="rgba(38,46,51,0.09)" />)}
-        {zone && (
+        {zoneEff && (
           <>
-            <rect x={pL} y={yF(zone[1])} width={x2 - pL} height={Math.max(0, yF(zone[0]) - yF(zone[1]))}
+            <rect x={pL} y={yF(zoneEff[1])} width={x2 - pL} height={Math.max(0, yF(zoneEff[0]) - yF(zoneEff[1]))}
               fill="rgba(31,110,90,0.10)" />
-            <line x1={pL} x2={x2} y1={yF(zone[1])} y2={yF(zone[1])} stroke={PINE} strokeDasharray="3 4" opacity="0.7" />
-            <line x1={pL} x2={x2} y1={yF(zone[0])} y2={yF(zone[0])} stroke={PINE} strokeDasharray="3 4" opacity="0.7" />
-            <text x={x2 + 8} y={(yF(zone[0]) + yF(zone[1])) / 2 + 3.5} fill={PINE}
+            <line x1={pL} x2={x2} y1={yF(zoneEff[1])} y2={yF(zoneEff[1])} stroke={PINE} strokeDasharray="3 4" opacity="0.7" />
+            <line x1={pL} x2={x2} y1={yF(zoneEff[0])} y2={yF(zoneEff[0])} stroke={PINE} strokeDasharray="3 4" opacity="0.7" />
+            <text x={x2 + 8} y={(yF(zoneEff[0]) + yF(zoneEff[1])) / 2 + 3.5} fill={PINE}
               fontFamily="IBM Plex Mono" fontSize="10">fer-zona</text>
           </>
         )}
@@ -232,7 +235,7 @@ export function PriceChart({ data, zone }) {
         <span>{fmtHr(clipped[0].trade_date)}{truncated ? ' (početak dostupne povijesti)' : ''}</span>
         <span className="prof-legend">
           <i className="prof-sw" style={{ background: lineCol }} /> tržišna cijena (EOD)
-          {zone && <><i className="prof-sw-zone" /> fer-zona (naša procjena)</>}
+          {zoneEff && <><i className="prof-sw-zone" /> fer-zona (naša procjena)</>}
         </span>
         <span>{fmtHr(last.trade_date)}</span>
       </div>

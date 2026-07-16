@@ -1231,6 +1231,17 @@ def _methodology_note(cur, company_id, name, rec, params, sotp, flags, ctxgh):
     }
 
 
+def _class_zones_safe(conn, company_id, rec):
+    """v3 S: po-klasne fer-zone (None za jednu klasu/bez zone) — izolirano."""
+    try:
+        from .class_ratio import class_zones
+        return class_zones(conn, company_id,
+                           rec.get("zone_low"), rec.get("zone_high"))
+    except Exception:  # noqa: BLE001 — raspodjela ne smije srušiti export
+        conn.rollback()
+        return None
+
+
 def build_stock_json(conn, ticker: str) -> dict:
     cur = conn.cursor()
     cur.execute("SELECT id, name, sector, is_group, isin, is_live FROM companies "
@@ -1315,6 +1326,8 @@ def build_stock_json(conn, ticker: str) -> dict:
         if rec.get("market_implied") else None,
         # v3 FAZA A: triangulacija + sanity testovi
         "qualified_methods": rec.get("qualified_methods") or [],
+        # v3 FAZA S: po-klasne zone iz ISTE vrijednosti firme (tržišni omjer)
+        "class_zones": _class_zones_safe(conn, company_id, rec),
         "recalibrating": rec.get("recalibrating"),
         "dividend_sanity": json.loads(json.dumps(rec.get("dividend_sanity"),
                                                  default=_f))

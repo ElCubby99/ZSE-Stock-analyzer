@@ -184,3 +184,23 @@ Raskoraci se NE fitaju na tržište.
   prosjek comps+SOTP unutar 40%; KODT +0% zahvaljujući ne-prosječi pravilu).
 - Testovi: tests/test_reconcile_v3.py (7 sintetičkih), pytest 66/66;
   Playwright: header + banner + sanity blok + screener oznake + legenda.
+
+## 2026-07-16 — Metodologija v3, FAZA S: klase dionica
+
+- Vrijednost FIRME (klasno agnostična zona iz FAZE A) raspoređuje se na
+  klase tržišnim medijanom omjera cijena (src/class_ratio.py): 5 g, samo
+  dani kad su OBJE klase trgovane, min N=30; izmjereno: ADRS/ADRS2 1,3953
+  (n=354), KODT/KODT2 1,0316 (n=483), CROS/CROS2 1,0394 (n=59); PLAG/PLAG2
+  n=0 → teorijski omjer 1,0 + oznaka. Identitet čuvan: Σ klasa = vrijednost
+  firme (unit test na ±0,1%).
+- Učinak (Borisova ADRS nekonzistentnost riješena): ADRS +78,6% i ADRS2
+  +61,2% naspram SVOJIH zona — obje klase konzistentno iznad; razlika
+  raskoraka = TOČNO odstupanje današnjeg omjera (1,55) od povijesnog
+  medijana (1,40), prikazana činjenica (unit test identiteta). KODT −8,7%
+  / KODT2 −10,0%.
+- UI: linija "Premija redovne naspram povlaštene: +X% (povijesni tržišni
+  medijan — naša raspodjela, ne fundamentalna tvrdnja)" + link na
+  Metodologiju; header/graf/screener koriste zonu KLASE.
+- Metodologija: sekcija o klasama (zašto premija glasa postoji i zašto se
+  ne izvodi teorijski) + priznata greška v3-S.
+- pytest 69/69 (3 nova); Playwright: premija vidljiva na ADRS i KODT.
