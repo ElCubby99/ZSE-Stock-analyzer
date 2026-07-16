@@ -90,12 +90,14 @@ TABLE_ROUTES = {  # ruta -> minimalan broj redaka podataka
     f"{SITE}/screener": 60,
     f"{SITE}/usporedba": 60,
     f"{SITE}/dividende": 10,
+    f"{SITE}/obveznice": 25,
 }
 MIN_TEXT = {  # ruta -> minimalan broj znakova VIDLJIVOG teksta u #root
     f"{SITE}/": 2000,
     f"{SITE}/screener": 2000,
     f"{SITE}/usporedba": 2000,
     f"{SITE}/dividende": 2000,
+    f"{SITE}/obveznice": 2000,
     f"{SITE}/indeksi": 1500,
     f"{SITE}/metodologija": 1500,
     f"{SITE}/impressum": 1500,

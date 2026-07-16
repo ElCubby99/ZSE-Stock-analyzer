@@ -405,6 +405,44 @@ function dividendeTable() {
     <tbody>${rows}</tbody></table>`
 }
 
+/* ---------- M-BOND: obveznice ---------- */
+let obveznice = { rows: [], as_of: null }
+try {
+  obveznice = JSON.parse(await fs.readFile(path.join(DIST, 'data/obveznice.json'), 'utf8'))
+} catch { /* bez obveznica nema tablice */ }
+const bondPct = (v, d = 2) => (v === null || v === undefined ? 'n/p' : `${num(v, d)} %`)
+
+async function buildBondPages() {
+  for (const r of obveznice.rows) {
+    const sym = r.symbol.toLowerCase()
+    const canonical = `${SITE}/obveznica/${sym}`
+    const schedRows = (r.schedule || []).map((c) => `<tr><td>${esc(c.date)}</td>
+      <td>${num(c.amount_pct, 3)}</td><td>${c.amount_pct > 90 ? 'kupon + glavnica' : 'kupon'}</td></tr>`).join('')
+    await write(`obveznica/${sym}`, page({
+      title: `${r.symbol} obveznica — prinos (YTM), kupon i dospijeće | Burzovni list`,
+      description: `${r.symbol} (${r.issuer || 'izdavatelj u obradi'}, ${r.btype}): kupon ${bondPct(r.coupon_pct, 3)}, dospijeće ${r.maturity_date || 'n/p'}, YTM ${bondPct(r.ytm_pct)}. Čista cijena u % nominale.`.slice(0, 155),
+      canonical,
+      body: `<main>
+        <nav><a href="/">Naslovnica</a> › <a href="/obveznice">Obveznice</a> › ${esc(r.symbol)}</nav>
+        <h1>${esc(r.symbol)} — ${esc(r.issuer || 'izdavatelj u obradi')} (${esc(r.btype)} obveznica)</h1>
+        <p>${r.series_name ? `${esc(r.series_name)}. ` : ''}ISIN ${esc(r.isin)}.
+        Kupon ${bondPct(r.coupon_pct, 3)} godišnje${r.freq_assumed ? ' (frekvencija: pretpostavka)' : ''} ·
+        dospijeće ${esc(r.maturity_date || 'n/p')} · čista cijena
+        ${r.price_pct !== null && r.price_pct !== undefined ? `${num(r.price_pct, 2)} % nominale (EOD ${esc(r.price_date)})` : 'n/p (nema trgovanja)'}${r.stale ? ' — indikativna (rijetko trgovanje)' : ''}.</p>
+        <p>Prinos do dospijeća (YTM): <strong>${bondPct(r.ytm_pct)}</strong> ·
+        tekući prinos ${bondPct(r.current_yield_pct)} ·
+        modificirana duracija ${r.duration ? num(r.duration.modified, 2) : 'n/p'} ·
+        obračunata kamata ${r.accrued_pct !== null && r.accrued_pct !== undefined ? num(r.accrued_pct, 3) : 'n/p'} % (${esc(r.day_count)}${r.day_count_assumed ? ', pretpostavka' : ''}).</p>
+        ${schedRows ? `<h2>Raspored budućih isplata (na 100 nominale)</h2>
+        <table><thead><tr><th>Datum</th><th>Iznos (% nominale)</th><th>Vrsta</th></tr></thead>
+        <tbody>${schedRows}</tbody></table>` : ''}
+        <p>Formule i konvencije: <a href="/metodologija">Metodologija — sekcija Obveznice</a>.</p>
+        <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+    }))
+    urls.push({ loc: canonical, lastmod: r.price_date || obveznice.as_of || eod })
+  }
+}
+
 /* Dinamički body/extraHead za pojedine statičke rute — sve ostalo (naslov,
    opis, indexability) dolazi iz registryja. */
 const BODY_BUILDERS = {
@@ -465,6 +503,23 @@ const BODY_BUILDERS = {
   }).join('')}</tbody></table>
       <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
   }),
+  '/obveznice': () => ({
+    body: `<main><h1>Obveznice na Zagrebačkoj burzi — prinosi i dospijeća</h1>
+      <p>Sve uvrštene obveznice: državne (uključujući narodne obveznice), municipalne i korporativne.
+      Cijene su ČISTE, u % nominale${obveznice.as_of ? ` (zadnje trgovanje ${esc(obveznice.as_of)})` : ''};
+      obveznicama se na ZSE trguje rijetko pa su cijene često indikativne.</p>
+      <table><thead><tr><th>Oznaka</th><th>Izdavatelj</th><th>Tip</th><th>Dospijeće</th>
+      <th>Kupon</th><th>Cijena (% nom.)</th><th>YTM</th><th>Mod. duracija</th></tr></thead>
+      <tbody>${obveznice.rows.map((r) => `<tr>
+        <td><a href="/obveznica/${esc(r.symbol.toLowerCase())}">${esc(r.symbol)}</a>${r.stale ? ' (ILIKV.)' : ''}</td>
+        <td>${esc(r.issuer || 'master data u obradi')}</td><td>${esc(r.btype)}</td>
+        <td>${esc(r.maturity_date || 'n/p')}</td><td>${bondPct(r.coupon_pct, 3)}</td>
+        <td>${r.price_pct !== null && r.price_pct !== undefined ? num(r.price_pct, 2) : 'n/p'}</td>
+        <td>${bondPct(r.ytm_pct)}</td>
+        <td>${r.duration ? num(r.duration.modified, 2) : 'n/p'}</td></tr>`).join('')}</tbody></table>
+      <p>Izračuni: <a href="/metodologija">Metodologija — sekcija Obveznice</a>.</p>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
   '/impressum': () => ({ body: `<main><h1>Impressum</h1>${renderStatic('/impressum')}</main>` }),
   '/uvjeti-koristenja': () => ({ body: `<main><h1>Uvjeti korištenja</h1>${renderStatic('/uvjeti-koristenja')}</main>` }),
   '/politika-privatnosti': () => ({ body: `<main><h1>Politika privatnosti</h1>${renderStatic('/politika-privatnosti')}</main>` }),
@@ -500,6 +555,7 @@ for (const r of ROUTES) {
   if (r.expand === 'blog') { await buildBlogPages(); continue }
   if (r.expand === 'news') { await buildNewsPages(); continue }
   if (r.expand === 'indices') { await buildIndexPages(); continue }
+  if (r.expand === 'bonds') { await buildBondPages(); continue }
   const route = r.path.replace(/^\//, '')
   const canonical = route ? `${SITE}/${route}` : `${SITE}/`
   const extra = BODY_BUILDERS[r.path] ? BODY_BUILDERS[r.path]() : {}

@@ -11,7 +11,7 @@
    - indexable   true → ulazi u sitemap; false → noindex i NEMA ga u sitemapu
                  (nema zasebne exclude-liste — indexability živi samo ovdje)
    - seo         {title, description} za prerendane statičke stranice
-   - expand      'stocks' | 'blog' | 'news' | 'indices' — dinamička ruta
+   - expand      'stocks' | 'blog' | 'news' | 'indices' | 'bonds' — dinamička ruta
                  koju prerender širi po podacima (exporti dionica / postovi /
                  vijesti s bodyjem / indeksi)
    - prerender   false → stranica se NE prerendera (samo SPA fallback);
@@ -56,6 +56,21 @@ export const ROUTES = [
     component: 'IndeksDetail',
     indexable: true,
     expand: 'indices',
+  },
+  {
+    path: '/obveznice',
+    component: 'ObvezniceIndex',
+    indexable: true,
+    seo: {
+      title: 'Obveznice ZSE — narodne obveznice, prinosi (YTM) i dospijeća | Burzovni list',
+      description: 'Sve obveznice uvrštene na Zagrebačku burzu: državne (narodne), municipalne i korporativne — kupon, dospijeće, čista cijena, prinos do dospijeća (YTM) i duracija.',
+    },
+  },
+  {
+    path: '/obveznica/:symbol',
+    component: 'ObveznicaDetail',
+    indexable: true,
+    expand: 'bonds',
   },
   {
     path: '/usporedba',

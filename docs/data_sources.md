@@ -168,3 +168,19 @@ Zadnja cjelovita provjera svih izvora: **14.07.2026.**
   osvježava se dnevno, `as_of` datum uz svaku tablicu.
 - **Temperatura tržišta**: naš agregat (sastavnice CROBEX-a naspram naših
   fer-zona) — činjenični prikaz vlastite metrike s ogradom, bez preporuka.
+
+## Obveznice (M-BOND)
+
+- **Popis i master data**: službena ZSE tečajnica (price-list JSON) — svih
+  32 uvrštenih (17 državnih, 14 korporativnih, 1 municipalna) s tipom,
+  kuponom, dospijećem i valutom kotacije; imena izdavatelja deterministički
+  (RHMF prefiks -> Ministarstvo financija; ISIN prefiks izdavatelja ->
+  match s našim share_classes; CROBIS sastavnice -> puna imena serija).
+  8 korporativnih/municipalnih bez determinističkog imena = "u obradi"
+  (čeka ručnu ekstrakciju prospekta, isti obrazac kao profili firmi).
+- **Cijene**: čiste, u % nominale; povijest zse.hr securityHistory od
+  01.07.2024., dnevno u EOD pipelineu. Frekvencija kupona i konvencija
+  dana: pretpostavka (godišnji, ACT/ACT) s oznakom dok prospekt ne potvrdi.
+- **Spread prema referentnoj krivulji**: IZOSTAVLJENO — pouzdani referentni
+  podaci (ECB/Bund krivulja) nisu dostupni u okruženju bez API troška;
+  zabilježeno kao buduće proširenje.

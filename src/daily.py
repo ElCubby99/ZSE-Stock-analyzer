@@ -313,6 +313,14 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
         log("regen", None, "ok", "indeksi.json regeneriran")
     except Exception as e:  # noqa: BLE001
         log("regen", None, "failed", f"indeksi.json: {type(e).__name__}: {e}")
+    # M-BOND: obveznice.json (tablica + YTM/duracija + rasporedi kupona)
+    try:
+        import subprocess
+        subprocess.run([os.sys.executable, "-m", "scripts.build_obveznice"],
+                       check=True, capture_output=True, text=True)
+        log("regen", None, "ok", "obveznice.json regeneriran")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"obveznice.json: {type(e).__name__}: {e}")
     # M25: EOD update -> okini Vercel build (prerender po dionici čita svježe
     # exporte). Hook URL NIJE u repou — env VERCEL_DEPLOY_HOOK_URL (README).
     hook = os.environ.get("VERCEL_DEPLOY_HOOK_URL")
@@ -402,7 +410,17 @@ def main(argv=None) -> int:
             conn.rollback()
             log("indices", None, "failed", f"{type(e).__name__}: {e}")
             n_idx = 0
-        stage_regen(conn, run_id, log, changed=bool(touched or n_prices or n_idx))
+        # M-BOND: obveznice (master iz tečajnice + EOD cijene u % nominale)
+        try:
+            from .bonds import sync_master, update_prices
+            sync_master(conn, log=lambda m: None)
+            n_bond = update_prices(conn, log=lambda m: None)
+            log("bonds", None, "ok", f"{n_bond} EOD zapisa obveznica")
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("bonds", None, "failed", f"{type(e).__name__}: {e}")
+            n_bond = 0
+        stage_regen(conn, run_id, log, changed=bool(touched or n_prices or n_idx or n_bond))
         conn.commit()
         digest = build_digest(conn, run_id)
         os.makedirs("data/digests", exist_ok=True)

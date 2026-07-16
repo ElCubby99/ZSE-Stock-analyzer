@@ -15,6 +15,7 @@ import Dividende from './Dividende.jsx'
 import Usporedba from './Usporedba.jsx'
 import { VijestDetail, VijestiIndex } from './Vijesti.jsx'
 import { IndeksDetail, IndeksiIndex } from './Indeksi.jsx'
+import { ObveznicaDetail, ObvezniceIndex } from './Obveznice.jsx'
 import Admin from './Admin.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
 import { ConsentProvider, pushEvent } from './consent.jsx'
@@ -80,6 +81,8 @@ const COMPONENTS = {
   VijestiIndex: <VijestiIndex />,
   IndeksiIndex: <IndeksiIndex />,
   IndeksDetail: <IndeksDetail />,
+  ObvezniceIndex: <ObvezniceIndex />,
+  ObveznicaDetail: <ObveznicaDetail />,
   VijestDetail: <VijestDetail />,
   AuthCallback: <AuthCallback />,
   Admin: <Admin />,

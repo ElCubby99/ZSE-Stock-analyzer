@@ -145,6 +145,33 @@ Nismo nepogrešivi ni sada — zato svaka dionica ima vidljivu povijest
 promjena svoje zone s razlogom, a distribuciju naših zona prema tržištu
 mjerimo kontinuirano (alarm ako >70% završi na istoj strani).
 
+## Obveznice
+
+Za obveznice ne računamo fer-zonu — prikaz je **deterministička analiza
+prinosa** iz javnih ulaza (čista cijena sa ZSE, kupon i dospijeće iz
+podataka uvrštenja). Nema pretpostavki o rastu ni diskontnim stopama;
+svaka brojka slijedi iz formule:
+
+- **Cijene su čiste (clean)**, u % nominale — kako kotiraju na ZSE.
+  Obveznicama se trguje rijetko, pa je cijena često stara: takva nosi
+  ILIKV. oznaku i indikativna je, kao i kod dionica.
+- **Tekući prinos** = godišnji kupon / čista cijena.
+- **Obračunata kamata** (ACT/ACT ICMA): kupon/frekvencija × dani od
+  zadnjeg kupona / dani u kuponskom razdoblju. Konvencija dana i
+  frekvencija kupona žive u prospektu — dok ih ne potvrdimo iz prospekta,
+  koristimo ACT/ACT i godišnji kupon i to OZNAČAVAMO kao pretpostavku.
+- **YTM (prinos do dospijeća)**: stopa y za koju je prljava cijena
+  (čista + obračunata kamata) jednaka zbroju diskontiranih budućih
+  isplata: Σ CF/(1+y)^t, gdje su t vremena do isplata u godinama
+  (ACT/365,25), a raspored isplata se izvodi unatrag od dospijeća.
+  Rješavamo bisekcijom (deterministički, bez lokalnih minimuma);
+  settlement za izračun je datum zadnje cijene.
+- **Duracija**: Macaulayjeva = Σ t·PV(CF)/Σ PV(CF); modificirana =
+  Macaulayjeva / (1+y). Mjera osjetljivosti cijene na promjenu prinosa.
+- Izdavatelji bez determinističkog izvora imena nose status
+  **"master data u obradi"** — ništa se ne izmišlja; YTM se ne prikazuje
+  bez potpunih ulaza (kupon + dospijeće + cijena).
+
 ## Odakle podaci
 
 Sažetak izvora — svaki tip podatka na webu ima poznato porijeklo i deklariranu
