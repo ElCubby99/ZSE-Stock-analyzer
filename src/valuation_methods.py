@@ -923,8 +923,9 @@ def value_company(c: Ctx) -> dict:
                                  "mogući propust u pretpostavkama (rast, arhetip, "
                                  "jedinice) ili tržišni raskorak; tretiraj kao "
                                  "pitanje, ne zaključak")
-        # v2 §6: market-implied check (inverse DCF) OBAVEZAN kad |gap| > 40%
-        if gap is not None and abs(gap) > 0.40:
+        # v3 P.1: market-implied okvir STANDARDIZIRAN — računa se već kod
+        # |gap| > 30% (v2 §6 tražio je 40%; red rule §8.3 ostaje na 40%)
+        if gap is not None and abs(gap) > 0.30:
             rec["market_implied"] = _market_implied(c, results, rec)
         # v2 §8 RED RULES — analiza ne ide live dok se ne razriješe
         red = []
@@ -966,6 +967,32 @@ def _market_implied(c: Ctx, results: dict, rec: dict) -> dict:
             out["implied_g_pct"] = round(g_imp * 100, 1)
             out["implied_g_note"] = (f"uz naš r={p.wacc:.1%} cijena implicira "
                                      f"trajni rast FCF-a ~{g_imp:+.1%} godišnje")
+    # v3 P.1: "ili r od Y% uz naš rast" — implicirani trošak kapitala uz
+    # NAŠU stopu trajnog rasta (Gordon aproksimacija; činjenična implikacija)
+    if fcf and fcf > 0 and shares and price:
+        ev_mkt2 = price * shares + (c.val("net_debt") or 0.0)
+        if ev_mkt2 > 0:
+            r_imp = fcf * (1 + p.terminal_growth) / ev_mkt2 + p.terminal_growth
+            out["implied_r_pct"] = round(r_imp * 100, 2)
+            out["implied_r_note"] = (
+                f"uz naš trajni rast {p.terminal_growth:.1%} cijena implicira "
+                f"trošak kapitala ~{r_imp:.1%} (naš: {p.wacc:.1%})")
+    else:
+        eq_mi = c.val("equity_parent") or c.val("total_equity")
+        ni_mi = c.val("net_income_parent")
+        rh_mi = getattr(c, "roe_hint", None)
+        roe_mi = (rh_mi or {}).get("used") or (
+            ni_mi / eq_mi if (ni_mi and eq_mi and eq_mi > 0) else None)
+        sh_mi = c.shares_ex_treasury
+        if roe_mi and eq_mi and sh_mi and price:
+            bvps_mi = eq_mi / sh_mi
+            g_mi = p.perpetual_growth
+            r_imp = g_mi + (roe_mi - g_mi) * bvps_mi / price
+            out["implied_r_pct"] = round(r_imp * 100, 2)
+            out["implied_r_note"] = (
+                f"uz naš trajni rast {g_mi:.1%} i ROE {roe_mi:.1%} cijena "
+                f"implicira trošak kapitala ~{r_imp:.1%} "
+                f"(naš: {p.cost_of_equity:.1%})")
     ni = c.val("net_income_parent")
     if ni and ni > 0 and shares and price:
         pe_imp = price * shares / ni

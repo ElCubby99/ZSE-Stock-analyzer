@@ -313,6 +313,18 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
         log("regen", None, "ok", "indeksi.json regeneriran")
     except Exception as e:  # noqa: BLE001
         log("regen", None, "failed", f"indeksi.json: {type(e).__name__}: {e}")
+
+    # v3 P.2: distribucijski alarm (top-20 likvidnih) — exit 2 = alarm;
+    # zapisuje calibration_alert u overview.json (banner na /metodologija),
+    # a workflow na alarm otvara issue s labelom calibration-review
+    try:
+        import subprocess
+        r_al = subprocess.run([os.sys.executable, "-m", "scripts.distribucijski_alarm"],
+                              capture_output=True, text=True)
+        log("regen", None, "ok" if r_al.returncode == 0 else "failed",
+            f"distribucijski alarm: {(r_al.stdout or '').strip()[-200:]}")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"distribucijski alarm: {e}")
     # M-BOND: obveznice.json (tablica + YTM/duracija + rasporedi kupona)
     try:
         import subprocess

@@ -209,6 +209,22 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v3 — SAŽETAK (16.07.2026.)**: sustavna rekalibracija u šest faza —
+  priznata greška v2 pristupa u cjelini: **trailing godišnje brojke bez
+  faze rasta + rizik zemlje naplaćen dvaput + dogma jednog sidra + sirove
+  zadnje dividende + jedna zona za dvije klase** zajedno su proizvodili
+  sustavno preniske fer-zone (u forenzici 16.07.: 47% najlikvidnijih
+  dionica "iznad zone" uz implicirani trošak kapitala tržišta 5,5–7,5%
+  naspram naših 8–11%). Svaka faza ispravlja jedan dokazani uzrok (vidi
+  unose ispod); distribucija naspram tržišta ostaje dijagnostika s
+  automatskim alarmom — zone se provjeravaju, nikad ne prilagođavaju
+  cijenama.
+- **v3 — faza P (16.07.2026.)**: prezentacija i alarmi — okvir "što
+  tržišna cijena implicira" (činjenična implikacija umjesto alarmantnog
+  postotka) na svakoj dionici s raskorakom većim od 30%; automatski
+  distribucijski alarm (>40% top-20 likvidnih s raskorakom >30% → interna
+  provjera + vidljiv banner ovdje na Metodologiji); changelog v3 po
+  dionici staro→novo u internom dnevniku promjena.
 - **v3 — faza S (16.07.2026.)**: klase dionica — priznata greška: obje
   klase iste firme uspoređivale su se s JEDNOM zonom, pa je redovna
   (s premijom glasa) izgledala "+58% iznad" dok je povlaštena bila "u

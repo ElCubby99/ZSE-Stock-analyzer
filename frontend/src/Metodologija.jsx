@@ -7,6 +7,11 @@ import { SiteFooter, SiteHeader } from './Shell.jsx'
 export default function Metodologija() {
   const [doc, setDoc] = useState(null)
   useEffect(() => { document.title = 'Metodologija · Burzovni list' }, [])
+  const [alert, setAlert] = useState(null)
+  useEffect(() => {
+    fetch('/data/overview.json').then((r) => r.json())
+      .then((o) => setAlert(o.calibration_alert || null)).catch(() => {})
+  }, [])
   useEffect(() => {
     fetch('/data/metodologija.json').then((r) => r.json()).then(setDoc)
       .catch(() => setDoc(false))
@@ -15,6 +20,17 @@ export default function Metodologija() {
     <div className="shellpg">
       <SiteHeader />
       <main className="wrap">
+        {alert && alert.active && (
+          <div className="prof-illiq" style={{ marginBottom: 14 }}>
+            <span className="prof-illiq-t">ZONE U REKALIBRACIJI ZA DIO DIONICA</span>
+            <span className="prof-illiq-n">
+              {alert.share_pct} % najlikvidnijih dionica ima raskorak veći od
+              30 % naspram naše fer-zone — to je signal za provjeru naših
+              pretpostavki, ne tržišta. Zone provjeravamo; ne prilagođavamo ih
+              cijenama.
+            </span>
+          </div>
+        )}
         {doc === null && <div className="loading">učitavam…</div>}
         {doc === false && <div className="error">metodologija nije dostupna</div>}
         {doc && (

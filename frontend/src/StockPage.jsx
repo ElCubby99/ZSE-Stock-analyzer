@@ -567,6 +567,42 @@ function DividendSanity({ rec }) {
   )
 }
 
+/* v3 P.1: reverse-DCF okvir — činjenična implikacija tržišne cijene,
+   standardizirano za |raskorak| > 30% (umjesto alarmantnog postotka). */
+function MarketImplied({ rec }) {
+  const mi = rec?.market_implied
+  if (!mi) return null
+  return (
+    <section>
+      <div className="sec-label">Što tržišna cijena implicira</div>
+      <div className="ctrl">
+        <div className="top">
+          <span className="name">Implikacija umjesto alarma</span>
+          <span className="out mono">
+            {mi.implied_g_pct !== null && mi.implied_g_pct !== undefined
+              ? `rast ~${num(mi.implied_g_pct, 1)} %/g` : ''}
+            {mi.implied_g_pct !== null && mi.implied_g_pct !== undefined
+              && mi.implied_r_pct !== null && mi.implied_r_pct !== undefined ? ' · ' : ''}
+            {mi.implied_r_pct !== null && mi.implied_r_pct !== undefined
+              ? `r ~${num(mi.implied_r_pct, 1)} %` : ''}
+          </span>
+        </div>
+        <div className="plain">
+          {mi.implied_g_note ? `${mi.implied_g_note}. ` : ''}
+          {mi.implied_r_note ? `${mi.implied_r_note}. ` : ''}
+          Drugim riječima: da bi današnja cijena bila fer po našem modelu,
+          morala bi vrijediti jedna od tih pretpostavki umjesto naših.
+          Usporedba implikacija, ne preporuka — zaključak je čitateljev.
+        </div>
+        <details className="src-details">
+          <summary>puni narativ</summary>
+          <div className="src">{mi.narrative}</div>
+        </details>
+      </div>
+    </section>
+  )
+}
+
 function Assumptions({ valuation }) {
   const p = valuation.params
   /* dvorazinski princip: jedna rečenica OBIČNIM jezikom vidljiva,
@@ -1021,6 +1057,7 @@ export default function StockPage() {
           <Risks risks={data.risks} />
           <Assumptions valuation={data.valuation} />
           <DividendSanity rec={rec} />
+          <MarketImplied rec={rec} />
 
           <section>
             <div className="sec-label">Vrednovanje — što kaže svaka metoda</div>

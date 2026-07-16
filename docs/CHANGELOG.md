@@ -204,3 +204,39 @@ Raskoraci se NE fitaju na tržište.
 - Metodologija: sekcija o klasama (zašto premija glasa postoji i zašto se
   ne izvodi teorijski) + priznata greška v3-S.
 - pytest 69/69 (3 nova); Playwright: premija vidljiva na ADRS i KODT.
+
+## 2026-07-16 — Metodologija v3, FAZA P: prezentacija, alarmi i bilanca v3
+
+### Changelog v3 po dionici — staro (FAZA D, 16.07. ujutro) → novo (nakon K+G+DIV+A+S)
+
+| Dionica | Stara zona € | Stari raskorak | Nova zona € | Novi raskorak | Status |
+|---------|-------------:|---------------:|------------:|--------------:|--------|
+| KOEI | 880–925 | +15.2% | 966–1,017 | +4.9% | objavljena |
+| KODT | 3,833–4,869 | +3.0% | 4,142–5,668 | -8.7% | objavljena |
+| ADRS | 96–101 | +62.6% | 87–92 | +78.6% | objavljena |
+| DLKV | 5–6 | +197.4% | 5–7 | +194.3% | low float — raskorak nije informativan |
+| ADPL | 21–31 | +18.1% | 29–45 | -16.5% | objavljena |
+| HT | 20–28 | +74.2% | — | — | u rekalibraciji (test održive dividende) |
+| ZABA | 19–26 | -0.1% | 23–33 | -19.5% | low float — raskorak nije informativan |
+| RIVP | 4–6 | +73.7% | — | — | u rekalibraciji (test održive dividende) |
+| PODR | 246–333 | -44.8% | 164–222 | -16.9% | objavljena |
+| ZITO | 17–23 | -9.0% | 18–25 | -13.0% | objavljena |
+| IG | 56–75 | +15.3% | 60–81 | +7.4% | objavljena |
+| ERNT | 147–195 | +18.3% | 406–627 | -60.9% | objavljena |
+| SPAN | 32–43 | +52.3% | 28–30 | +96.2% | objavljena |
+| HPB | 310–432 | -9.9% | 279–416 | -3.9% | low float — raskorak nije informativan |
+| ATGR | 22–31 | +90.0% | — | — | u rekalibraciji (test održive dividende) |
+| CROS | 1,191–1,556 | +141.7% | 1,825–2,498 | +53.6% | low float — raskorak nije informativan |
+| INA | 81–127 | +386.3% | 234–363 | +69.2% | low float — raskorak nije informativan |
+
+*(zone po PRIMARNOJ klasi; klasne zone iz FAZE S; stara mjerenja: docs/forenzika_v3_faza_d.json)*
+
+### Distribucija nakon svega (acceptance 7)
+
+Top-20 likvidnih, kvalificirani (bez low-float i rekalibracija): 4/12 = 33% s |raskorakom| > 30% — ISPOD praga alarma (40%), alarm neaktivan. Preostala velika imena: ADRS +79%, ERNT -61%, SPAN +96%, INGR +493% — svako nosi reverse-DCF implikaciju na svojoj stranici (P.1); ne fitamo na tržište.
+
+### Ostalo u FAZI P
+
+- Reverse-DCF okvir standardiziran: market-implied implikacija ("rast X%/god uz naš r, ili r od Y% uz naš rast") računa se već kod |raskoraka| > 30% i prikazuje u bloku "Što tržišna cijena implicira" na stranici dionice (red rule §8.3 ostaje na 40%).
+- Distribucijski alarm: scripts/distribucijski_alarm.py u dnevnom pipelineu; >40% → GitHub issue s labelom calibration-review + automatski banner na /metodologija ("zone u rekalibraciji za dio dionica").
+- Priznate greške v3 (sažetak u metodologiji): trailing bez rasta + dvostruko naplaćen rizik zemlje + dogma jednog sidra + sirove dividende + jedna zona za dvije klase → sustavno preniske zone; svaka faza ispravlja jedan uzrok, dokumentirano po dionici.
