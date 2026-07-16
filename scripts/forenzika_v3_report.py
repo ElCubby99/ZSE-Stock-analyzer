@@ -79,7 +79,9 @@ w(f"2. **Trailing godišnje bez TTM-a i bez rasta u kapitalnim metodama** "
   f"{n_cap_anchor}/{len(ORDER)} analiziranih — povrh toga NEMAJU fazu rasta: "
   "trailing ROE i trajni g=2,5% kažnjavaju svaku firmu čija dobit raste.")
 w("3. **Dogma jednog sidra** (FAZA A). Zona = raspon JEDNE metode po "
-  "hijerarhiji arhetipa. Potvrdne metode koje konvergiraju prema tržištu "
+  "hijerarhiji arhetipa (fallback min–max svih pozitivnih baza postoji, "
+  "ali samo kad NIJEDNO sidro ne kvalificira — redovni režim je jedno "
+  "sidro). Potvrdne metode koje konvergiraju prema tržištu "
   "vidljive su, ali zonu ne pomiču (HT: DCF 61,1 € vs sidro 22,8 €; CROS: "
   "DDM 2.396 / RI 1.939 / comps 3.038 vs sidro 1.349). Za HT/CROS/SPAN/HPB/"
   "ZABA/INA comps je uz to placeholder (conf 0,3 — nema peer skupa) pa po "
@@ -135,7 +137,9 @@ w("*g1: F = forward procjena iz izvješća (growth_estimates), H = povijesni 3g 
 w("")
 w("**Napomena o PODR-u**: na živom webu Boris je vidio +200,4% — to je bila "
   "zona 14–53 € iz builda PRIJE v2.3 (degenerirano DCF sidro). Tekući kod "
-  "daje comps sidro 246–333 € i raskorak **−44,8%** (cijena ISPOD zone). "
+  "daje comps sidro 246–333 € i raskorak **−44,8%** (cijena ISPOD zone; "
+  "napomena o formuli: +200,4% s weba je cijena vs GORNJI rub zone — "
+  "160/53,26−1 — dok ovaj izvještaj računa vs SREDINU zone). "
   "Ista dionica je u dva uzastopna builda bila 'duboko iznad' pa 'duboko "
   "ispod' zone — nestabilnost izbora jednog sidra je sama po sebi nalaz "
   "za FAZU A (medijan kvalificiranih metoda).")
@@ -250,8 +254,12 @@ w("## 4. Dijagnostika 3 — TTM pokrivenost (kvartali POSTOJE, vrednujemo godiš
 w("")
 n_ttm = len(J["ttm_coverage"])
 w(f"U bazi **{n_ttm} firmi ima interim filinge** (M18/M20), a `data()` u "
-  "`build_ctx` čita ISKLJUČIVO `period_type='annual'` — dakle SVE se "
-  "vrednuje iz zadnjeg godišnjeg. Za top imena stanje interima:")
+  "`build_ctx` čita `period_type='annual'` — ROE, dobit, prihod, kapital i "
+  "CF se dakle vrednuju iz zadnjeg GODIŠNJEG. (Jedina iznimka od "
+  "annual-only pravila: DPS ima fallback na tablicu `dividends` — zadnja "
+  "IZGLASANA isplata, bez godišnjeg filtra — pa DDM barem koristi svježu "
+  "dividendu; to je ujedno ulaz koji FAZA DIV zamjenjuje s D_sust.) "
+  "Za top imena stanje interima:")
 w("")
 w("| Dionica | zadnje godišnje | zadnji interim | stariji interimi | NI u interimu? |")
 w("|---------|-----------------|----------------|------------------|----------------|")

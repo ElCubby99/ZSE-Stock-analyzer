@@ -10,7 +10,7 @@ Od 15 najprometnijih dionica njih **7/15 (47%) ima |raskorak| > 30%** naspram sr
 
 1. **r-stack naplaćuje Hrvatsku dvaput** (FAZA K). rf = 3,61% je prinos HR 10g obveznice — on VEĆ SADRŽI hrvatski spread naspram njemačkog Bunda. ERP = 5,7% je Damodaranov zreli ERP 4,23% + CRP za Moody's A3 (~1,5 p.b.) — rizik zemlje je time u r-u ugrađen DVA puta, a CRP je uz to skriven unutar ERP-a (nije zasebna, vidljiva komponenta). Uz β=1 to daje r=9,31%; konzistentan stack (EUR bezrizični + zreli ERP + JEDAN mali CRP primjeren 'A-' eurozoni) bio bi ~8,3–8,4% (2,6–2,7 + 4,23 + ≤1,5).
 2. **Trailing godišnje bez TTM-a i bez rasta u kapitalnim metodama** (FAZA G). Sva imena vrednujemo iz zadnjeg GODIŠNJEG izvješća (FY2025), iako u bazi za 65 firmi postoje kvartali (zadnji: Q1 FY2026, s dobiti, prihodom i kapitalom). Opravdani P/B i RI — sidro za 7/17 analiziranih — povrh toga NEMAJU fazu rasta: trailing ROE i trajni g=2,5% kažnjavaju svaku firmu čija dobit raste.
-3. **Dogma jednog sidra** (FAZA A). Zona = raspon JEDNE metode po hijerarhiji arhetipa. Potvrdne metode koje konvergiraju prema tržištu vidljive su, ali zonu ne pomiču (HT: DCF 61,1 € vs sidro 22,8 €; CROS: DDM 2.396 / RI 1.939 / comps 3.038 vs sidro 1.349). Za HT/CROS/SPAN/HPB/ZABA/INA comps je uz to placeholder (conf 0,3 — nema peer skupa) pa po postojećim pravilima ništa ne može 'preglasati' sidro.
+3. **Dogma jednog sidra** (FAZA A). Zona = raspon JEDNE metode po hijerarhiji arhetipa (fallback min–max svih pozitivnih baza postoji, ali samo kad NIJEDNO sidro ne kvalificira — redovni režim je jedno sidro). Potvrdne metode koje konvergiraju prema tržištu vidljive su, ali zonu ne pomiču (HT: DCF 61,1 € vs sidro 22,8 €; CROS: DDM 2.396 / RI 1.939 / comps 3.038 vs sidro 1.349). Za HT/CROS/SPAN/HPB/ZABA/INA comps je uz to placeholder (conf 0,3 — nema peer skupa) pa po postojećim pravilima ništa ne može 'preglasati' sidro.
 
 **Reverse-r potvrđuje Borisovu hipotezu, uz jednu poštenu ogradu**: kod 6 imena s pozitivnim raskorakom > 30% i r-ovisnim sidrom, implicirani r sidrene metode (onaj koji izjednačava našu projekciju s tržišnom cijenom) je **5.5–6.8%**, dok mi tim istim imenima računamo znatno više (naš r po svih 17 imena: 7.8–12.5%). Puni raspon implied r po SVIM imenima je širi (do 14,6% kod KOEI — protuprimjeri u §2). Dio tog klina je r-stack (FAZA K), ali dio je i to što je 'naša projekcija' trailing godišnja bez TTM-a i bez rasta — pa se klin dijeli između K i G. Cilj v3 NIJE zatvoriti raskorak prema tržištu, nego ukloniti dokazane metodološke greške; preostala razlika je činjenica koju prikazujemo.
 
@@ -38,7 +38,7 @@ Od 15 najprometnijih dionica njih **7/15 (47%) ima |raskorak| > 30%** naspram sr
 
 *g1: F = forward procjena iz izvješća (growth_estimates), H = povijesni 3g CAGR, — = nema serije (bez faze rasta). ROE: trailing iz zadnjeg godišnjeg (NE TTM). Raskorak = cijena / sredina zone − 1.*
 
-**Napomena o PODR-u**: na živom webu Boris je vidio +200,4% — to je bila zona 14–53 € iz builda PRIJE v2.3 (degenerirano DCF sidro). Tekući kod daje comps sidro 246–333 € i raskorak **−44,8%** (cijena ISPOD zone). Ista dionica je u dva uzastopna builda bila 'duboko iznad' pa 'duboko ispod' zone — nestabilnost izbora jednog sidra je sama po sebi nalaz za FAZU A (medijan kvalificiranih metoda).
+**Napomena o PODR-u**: na živom webu Boris je vidio +200,4% — to je bila zona 14–53 € iz builda PRIJE v2.3 (degenerirano DCF sidro). Tekući kod daje comps sidro 246–333 € i raskorak **−44,8%** (cijena ISPOD zone; napomena o formuli: +200,4% s weba je cijena vs GORNJI rub zone — 160/53,26−1 — dok ovaj izvještaj računa vs SREDINU zone). Ista dionica je u dva uzastopna builda bila 'duboko iznad' pa 'duboko ispod' zone — nestabilnost izbora jednog sidra je sama po sebi nalaz za FAZU A (medijan kvalificiranih metoda).
 
 ## 2. Dijagnostika 1 — reverse-r (koji bi r izjednačio projekciju s cijenom)
 
@@ -86,7 +86,7 @@ Najbliži slučajevi (par unutar ±30%), koji pokazuju ISTI obrazac koji je Bori
 
 ## 4. Dijagnostika 3 — TTM pokrivenost (kvartali POSTOJE, vrednujemo godišnje)
 
-U bazi **65 firmi ima interim filinge** (M18/M20), a `data()` u `build_ctx` čita ISKLJUČIVO `period_type='annual'` — dakle SVE se vrednuje iz zadnjeg godišnjeg. Za top imena stanje interima:
+U bazi **65 firmi ima interim filinge** (M18/M20), a `data()` u `build_ctx` čita `period_type='annual'` — ROE, dobit, prihod, kapital i CF se dakle vrednuju iz zadnjeg GODIŠNJEG. (Jedina iznimka od annual-only pravila: DPS ima fallback na tablicu `dividends` — zadnja IZGLASANA isplata, bez godišnjeg filtra — pa DDM barem koristi svježu dividendu; to je ujedno ulaz koji FAZA DIV zamjenjuje s D_sust.) Za top imena stanje interima:
 
 | Dionica | zadnje godišnje | zadnji interim | stariji interimi | NI u interimu? |
 |---------|-----------------|----------------|------------------|----------------|
