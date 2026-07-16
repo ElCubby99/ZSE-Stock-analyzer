@@ -12,7 +12,7 @@ Od 15 najprometnijih dionica njih **7/15 (47%) ima |raskorak| > 30%** naspram sr
 2. **Trailing godišnje bez TTM-a i bez rasta u kapitalnim metodama** (FAZA G). Sva imena vrednujemo iz zadnjeg GODIŠNJEG izvješća (FY2025), iako u bazi za 65 firmi postoje kvartali (zadnji: Q1 FY2026, s dobiti, prihodom i kapitalom). Opravdani P/B i RI — sidro za 7/17 analiziranih — povrh toga NEMAJU fazu rasta: trailing ROE i trajni g=2,5% kažnjavaju svaku firmu čija dobit raste.
 3. **Dogma jednog sidra** (FAZA A). Zona = raspon JEDNE metode po hijerarhiji arhetipa. Potvrdne metode koje konvergiraju prema tržištu vidljive su, ali zonu ne pomiču (HT: DCF 61,1 € vs sidro 22,8 €; CROS: DDM 2.396 / RI 1.939 / comps 3.038 vs sidro 1.349). Za HT/CROS/SPAN/HPB/ZABA/INA comps je uz to placeholder (conf 0,3 — nema peer skupa) pa po postojećim pravilima ništa ne može 'preglasati' sidro.
 
-**Reverse-r potvrđuje Borisovu hipotezu, uz jednu poštenu ogradu**: implicirani r (onaj koji izjednačava našu projekciju s tržišnom cijenom) grupira se na **5,2–8,1%**, dok mi koristimo **7,8–12,5%**. Dio tog klina je r-stack (FAZA K), ali dio je i to što je 'naša projekcija' trailing godišnja bez TTM-a i bez rasta — pa se klin dijeli između K i G. Cilj v3 NIJE zatvoriti raskorak prema tržištu, nego ukloniti dokazane metodološke greške; preostala razlika je činjenica koju prikazujemo.
+**Reverse-r potvrđuje Borisovu hipotezu, uz jednu poštenu ogradu**: kod 6 imena s pozitivnim raskorakom > 30% i r-ovisnim sidrom, implicirani r sidrene metode (onaj koji izjednačava našu projekciju s tržišnom cijenom) je **5.5–6.8%**, dok mi tim istim imenima računamo znatno više (naš r po svih 17 imena: 7.8–12.5%). Puni raspon implied r po SVIM imenima je širi (do 14,6% kod KOEI — protuprimjeri u §2). Dio tog klina je r-stack (FAZA K), ali dio je i to što je 'naša projekcija' trailing godišnja bez TTM-a i bez rasta — pa se klin dijeli između K i G. Cilj v3 NIJE zatvoriti raskorak prema tržištu, nego ukloniti dokazane metodološke greške; preostala razlika je činjenica koju prikazujemo.
 
 ## 1. Zbirna tablica — top 15 po prometu (+ CROS i INA iz naloga)
 
@@ -64,7 +64,7 @@ Bisekcija po r za svaku r-ovisnu metodu s pozitivnom bazom (comps i SOTP ne ovis
 | CROS | 10.02% | DDM: 8.36%; Opravdani P/B: 5.56%; Rezidualni dohodak: n/p | +4.5 p.b. (justified_pb_roe) |
 | INA | 10.99% | DCF (FCF): 5.97%; Opravdani P/B: 5.23% | +5.0 p.b. (dcf_fcf) |
 
-**Čitanje**: kod imena s velikim pozitivnim raskorakom implied r sidrene metode iznosi DLKV 6.6%, HT 5.8%, SPAN 6.8%, ATGR 5.5%, CROS 5.6%, INA 6.0%. Grupiranje je na ~5,2–7,5% za nefinancijska imena — dok im mi računamo 8,0–11,0%. To je smjer koji je Boris predvidio. Ograda: implied r je izračunat nad TRAILING projekcijom (bez TTM-a, kapitalne metode bez rasta), pa 'pravi' klin r-a nakon FAZE G bude manji — dio klina pripada podcijenjenoj projekciji, ne r-u.
+**Čitanje**: kod imena s velikim pozitivnim raskorakom implied r sidrene metode iznosi DLKV 6.6%, HT 5.8%, SPAN 6.8%, ATGR 5.5%, CROS 5.6%, INA 6.0%. Grupiranje je na 5.5–6.8% — dok tim istim imenima računamo 8.3–11.9%. To je smjer koji je Boris predvidio. Ograda: implied r je izračunat nad TRAILING projekcijom (bez TTM-a, kapitalne metode bez rasta), pa 'pravi' klin r-a nakon FAZE G bude manji — dio klina pripada podcijenjenoj projekciji, ne r-u.
 
 Suprotan smjer postoji i dokazuje da se ne radi o univerzalnom 'r je prevelik': KOEI implied 14,6% > naš 12,5% (tržište KOEI vrednuje KONZERVATIVNIJE od nas), KODT implied 11,7% ≈ naš 12,1%, ZABA implied 9,4–9,7% ≈ naš 9,5% (u zoni). Problem je sustavan kod imena sidrenih na kapitalne metode bez rasta i s dvostrukim CRP-om.
 
@@ -88,25 +88,25 @@ Najbliži slučajevi (par unutar ±30%), koji pokazuju ISTI obrazac koji je Bori
 
 U bazi **65 firmi ima interim filinge** (M18/M20), a `data()` u `build_ctx` čita ISKLJUČIVO `period_type='annual'` — dakle SVE se vrednuje iz zadnjeg godišnjeg. Za top imena stanje interima:
 
-| Dionica | zadnje godišnje | zadnji interim | NI u interimu? |
-|---------|-----------------|----------------|----------------|
-| KOEI | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| KODT | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| ADRS | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| DLKV | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| ADPL | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| HT | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| ZABA | FY2025 | FY2026 (9m, h1, q1, q4) | Q1'26 bez NI (FINREP objavljuje polugodišnje) — TTM tek s H1'26 |
-| RIVP | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| PODR | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| ZITO | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| IG | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| ERNT | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| SPAN | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| HPB | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| ATGR | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| CROS | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
-| INA | FY2025 | FY2026 (9m, h1, q1, q4) | da (dobit+prihod+kapital) |
+| Dionica | zadnje godišnje | zadnji interim | stariji interimi | NI u interimu? |
+|---------|-----------------|----------------|------------------|----------------|
+| KOEI | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| KODT | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| ADRS | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| DLKV | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| ADPL | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| HT | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| ZABA | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | Q1'26 bez NI (FINREP objavljuje polugodišnje) — TTM tek s H1'26 |
+| RIVP | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| PODR | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| ZITO | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| IG | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| ERNT | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| SPAN | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| HPB | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| ATGR | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2024 | da (dobit+prihod+kapital) |
+| CROS | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
+| INA | FY2025 | q1 FY2026 | 9m FY2025; h1 FY2025; q4 FY2025 | da (dobit+prihod+kapital) |
 
 Provjereno na uzorku (ADRS, ATGR, CROS, DLKV, HT, INA, PODR, RIVP, SPAN, KODT...): interim filingi NOSE net_income_parent, prihod i kapital — TTM (FY2025 + Q1'26 − Q1'25) je izračunljiv odmah, za sve sektore. Jedina iznimka u top skupini: ZABA Q1'26 bez NI. Popis svih 65 firmi s interimima je u JSON-u (`ttm_coverage`).
 
@@ -418,7 +418,7 @@ Posljedica ne-TTM-a je asimetrična: firme kojima dobit raste (većina univerzum
 
 ## 7. Interne kontradikcije iz naloga — potvrđene
 
-- **ADRS vs ADRS2**: ista fer-zona (96–101 €), a ADRS 160.00 € je +62.6% dok je ADRS2 103.50 € +5.2% — ista firma, dvije priče. Redovna trguje ~55% iznad povlaštene (glasačka premija) — FAZA S raspoređuje vrijednost firme tržišnim omjerom klasa. KODT/KODT2 su usporedbe radi konzistentne (+3,0% / −1,6%), CROS/CROS2 obje ~+142%.
+- **ADRS vs ADRS2**: ista fer-zona (96–101 €), a ADRS 160.00 € je +62.6% dok je ADRS2 103.50 € +5.2% — ista firma, dvije priče. Redovna trguje ~55% iznad povlaštene (glasačka premija) — FAZA S raspoređuje vrijednost firme tržišnim omjerom klasa. KODT/KODT2 su usporedbe radi konzistentne (+3,0% / −1,6%), CROS/CROS2 blizu (+141,7% / +144,6%).
 - **CROS se ne slaže sam sa sobom**: vidi §3 — DDM/RI/comps 1.939–3.038 €, sidro 1.349 €, tržište 3.320 €.
 - **PODR**: +200% (stara builda, degenerirani DCF) → −45% (v2.3 comps) — izbor jednog sidra proizvodi diskontinuitete od 245 p.b. raskoraka bez ijedne nove brojke u bazi.
 - **INA**: top-10 dioničara 99% (MOL + RH ≈ 94%, free float <5%): cijena se formira u plitkoj knjižici bez floata — raskorak +386% NIJE informativan; FAZA A.4 iznimka (napomena + isključenje iz 'temperature tržišta'). Isto vrijedi provjeriti za CROS (top-10 99%, u čemu je ADRS-ov udjel ~67% i nelikvidnost ispod praga).

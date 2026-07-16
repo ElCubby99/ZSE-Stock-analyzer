@@ -85,12 +85,29 @@ w("3. **Dogma jednog sidra** (FAZA A). Zona = raspon JEDNE metode po "
   "ZABA/INA comps je uz to placeholder (conf 0,3 — nema peer skupa) pa po "
   "postojećim pravilima ništa ne može 'preglasati' sidro.")
 w("")
-w("**Reverse-r potvrđuje Borisovu hipotezu, uz jednu poštenu ogradu**: "
-  "implicirani r (onaj koji izjednačava našu projekciju s tržišnom cijenom) "
-  "grupira se na **5,2–8,1%**, dok mi koristimo **7,8–12,5%**. Dio tog klina "
-  "je r-stack (FAZA K), ali dio je i to što je 'naša projekcija' trailing "
-  "godišnja bez TTM-a i bez rasta — pa se klin dijeli između K i G. "
-  "Cilj v3 NIJE zatvoriti raskorak prema tržištu, nego ukloniti dokazane "
+# implied r SIDRENE metode kod imena s pozitivnim raskorakom > 30%
+_imp_big = []
+for _t, _g in gaps.items():
+    _r = R[_t]
+    _k = _r["anchor"] if _r["anchor"] in (_r["reverse_r"] or {}) else None
+    if _g > 30 and _k and _r["reverse_r"][_k] is not None:
+        _imp_big.append(_r["reverse_r"][_k])
+for _t in J["extra_from_order"]:
+    _r = R[_t]
+    _k = _r["anchor"] if _r["anchor"] in (_r["reverse_r"] or {}) else None
+    if (_r["gap_vs_mid_pct"] or 0) > 30 and _k and _r["reverse_r"][_k] is not None:
+        _imp_big.append(_r["reverse_r"][_k])
+_rs_all = [R[t]["r_stack"]["r_total"] for t in ORDER]
+w(f"**Reverse-r potvrđuje Borisovu hipotezu, uz jednu poštenu ogradu**: kod "
+  f"{len(_imp_big)} imena s pozitivnim raskorakom > 30% i r-ovisnim sidrom, "
+  f"implicirani r sidrene metode (onaj koji izjednačava našu projekciju s "
+  f"tržišnom cijenom) je **{min(_imp_big) * 100:.1f}–{max(_imp_big) * 100:.1f}%**, "
+  f"dok mi tim istim imenima računamo znatno više (naš r po svih 17 imena: "
+  f"{min(_rs_all) * 100:.1f}–{max(_rs_all) * 100:.1f}%). Puni raspon implied "
+  "r po SVIM imenima je širi (do 14,6% kod KOEI — protuprimjeri u §2). Dio "
+  "tog klina je r-stack (FAZA K), ali dio je i to što je 'naša projekcija' "
+  "trailing godišnja bez TTM-a i bez rasta — pa se klin dijeli između K i "
+  "G. Cilj v3 NIJE zatvoriti raskorak prema tržištu, nego ukloniti dokazane "
   "metodološke greške; preostala razlika je činjenica koju prikazujemo.")
 w("")
 
@@ -154,13 +171,16 @@ for t in ORDER:
     k = r["anchor"] if r["anchor"] in (r["reverse_r"] or {}) else None
     if k and r["reverse_r"][k] is not None and (r["gap_vs_mid_pct"] or 0) > 30:
         imp.append((t, r["reverse_r"][k]))
+_imp_vals = [v for _, v in imp]
+_r_big = [R[t]["r_stack"]["r_total"] for t, _ in imp]
 w("**Čitanje**: kod imena s velikim pozitivnim raskorakom implied r sidrene "
   "metode iznosi " + ", ".join(f"{t} {v * 100:.1f}%" for t, v in imp) + ". "
-  "Grupiranje je na ~5,2–7,5% za nefinancijska imena — dok im mi računamo "
-  "8,0–11,0%. To je smjer koji je Boris predvidio. Ograda: implied r je "
-  "izračunat nad TRAILING projekcijom (bez TTM-a, kapitalne metode bez "
-  "rasta), pa 'pravi' klin r-a nakon FAZE G bude manji — dio klina pripada "
-  "podcijenjenoj projekciji, ne r-u.")
+  f"Grupiranje je na {min(_imp_vals) * 100:.1f}–{max(_imp_vals) * 100:.1f}% — "
+  f"dok tim istim imenima računamo {min(_r_big) * 100:.1f}–"
+  f"{max(_r_big) * 100:.1f}%. To je smjer koji je Boris predvidio. Ograda: "
+  "implied r je izračunat nad TRAILING projekcijom (bez TTM-a, kapitalne "
+  "metode bez rasta), pa 'pravi' klin r-a nakon FAZE G bude manji — dio "
+  "klina pripada podcijenjenoj projekciji, ne r-u.")
 w("")
 w("Suprotan smjer postoji i dokazuje da se ne radi o univerzalnom 'r je "
   "prevelik': KOEI implied 14,6% > naš 12,5% (tržište KOEI vrednuje "
@@ -233,18 +253,24 @@ w(f"U bazi **{n_ttm} firmi ima interim filinge** (M18/M20), a `data()` u "
   "`build_ctx` čita ISKLJUČIVO `period_type='annual'` — dakle SVE se "
   "vrednuje iz zadnjeg godišnjeg. Za top imena stanje interima:")
 w("")
-w("| Dionica | zadnje godišnje | zadnji interim | NI u interimu? |")
-w("|---------|-----------------|----------------|----------------|")
+w("| Dionica | zadnje godišnje | zadnji interim | stariji interimi | NI u interimu? |")
+w("|---------|-----------------|----------------|------------------|----------------|")
 ttm_by = {x["ticker"]: x for x in J["ttm_coverage"]}
 NI_NOTE = {"ZABA": "Q1'26 bez NI (FINREP objavljuje polugodišnje) — TTM tek s H1'26"}
 for t in ORDER:
     x = ttm_by.get(t)
     if not x:
-        w(f"| {t} | — | nema interima | — |")
+        w(f"| {t} | — | nema interima | — | — |")
         continue
+    # stvarni zadnji interim po firmi (ne unija tipova preko svih godina)
+    ifl = R[t]["inputs_provenance"].get("_interim_filings") or []
+    last_fy = max((e["fy"] for e in ifl), default=None)
+    latest = ", ".join(sorted(e["period"] for e in ifl if e["fy"] == last_fy))
+    older = "; ".join(f"{e['period']} FY{e['fy']}"
+                      for e in sorted(ifl, key=lambda e: (-e["fy"], e["period"]))
+                      if e["fy"] != last_fy)
     note = NI_NOTE.get(t, "da (dobit+prihod+kapital)")
-    w(f"| {t} | FY{x['last_annual_fy']} | FY{x['last_interim_fy']} "
-      f"({', '.join(x['interim_types'])}) | {note} |")
+    w(f"| {t} | FY{x['last_annual_fy']} | {latest} FY{last_fy} | {older or '—'} | {note} |")
 w("")
 w("Provjereno na uzorku (ADRS, ATGR, CROS, DLKV, HT, INA, PODR, RIVP, SPAN, "
   "KODT...): interim filingi NOSE net_income_parent, prihod i kapital — TTM "
@@ -349,7 +375,8 @@ w(f"- **ADRS vs ADRS2**: ista fer-zona ({zone_s(R['ADRS'])} €), a ADRS "
   f"{pct(adrs_map['ADRS2']['gap_vs_mid_pct'])} — ista firma, dvije priče. "
   "Redovna trguje ~55% iznad povlaštene (glasačka premija) — FAZA S "
   "raspoređuje vrijednost firme tržišnim omjerom klasa. KODT/KODT2 su "
-  "usporedbe radi konzistentne (+3,0% / −1,6%), CROS/CROS2 obje ~+142%.")
+  "usporedbe radi konzistentne (+3,0% / −1,6%), CROS/CROS2 blizu "
+  "(+141,7% / +144,6%).")
 w("- **CROS se ne slaže sam sa sobom**: vidi §3 — DDM/RI/comps 1.939–3.038 "
   "€, sidro 1.349 €, tržište 3.320 €.")
 w("- **PODR**: +200% (stara builda, degenerirani DCF) → −45% (v2.3 comps) — "
