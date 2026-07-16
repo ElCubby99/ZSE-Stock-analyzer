@@ -5,13 +5,10 @@ import { SiteFooter, SiteHeader } from './Shell.jsx'
 /* Impressum (M21): diskretna ali potpuna stranica za informativni servis.
    Jedini kontakt: info@burzovnilist.com (bez telefona/adrese/imena osobe). */
 
-export default function Impressum() {
-  useEffect(() => { document.title = 'Impressum · Burzovni list' }, [])
+/* Content je čist (bez hookova) — koristi ga SPA wrapper i prerender (SSR). */
+export function ImpressumContent() {
   return (
-    <div className="shellpg">
-      <SiteHeader />
-      <main className="wrap">
-        <h1 className="page-h1">Impressum</h1>
+    <>
 
         <section>
           <div className="sec-label">O servisu</div>
@@ -47,7 +44,8 @@ export default function Impressum() {
         <section>
           <div className="sec-label">Podaci</div>
           <p className="imp-p">Tržišni podaci: službena EOD tečajnica
-          Zagrebačke burze (zse.hr), s odmakom od jednog trgovinskog dana.
+          Zagrebačke burze (zse.hr); objavljuje se nakon zatvaranja trgovine,
+          a uz svaku cijenu stoji stvarni datum podatka.
           Financijski podaci: javno objavljena izvješća izdavatelja
           (EHO/ZSE). Vrijednosti rijetko trgovanih dionica su indikativne i
           tako su označene. Unatoč pažnji pri obradi, servis ne jamči potpunu
@@ -60,6 +58,18 @@ export default function Impressum() {
           informativne svrhe. Za investicijske, porezne ili pravne odluke
           potražite ovlaštenog savjetnika.
         </div>
+    </>
+  )
+}
+
+export default function Impressum() {
+  useEffect(() => { document.title = 'Impressum · Burzovni list' }, [])
+  return (
+    <div className="shellpg">
+      <SiteHeader />
+      <main className="wrap">
+        <h1 className="page-h1">Impressum</h1>
+        <ImpressumContent />
       </main>
       <SiteFooter />
     </div>

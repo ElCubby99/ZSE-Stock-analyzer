@@ -6,14 +6,8 @@ import { useConsent } from './consent.jsx'
 /* App ljuska po dizajnu: logo + top-level nav + search; footer s MAR ogradom.
    NE red svih tickera — do dionice se dolazi kroz Tržište/Screener/search. */
 
-export const SECTOR_HR = {
-  holding: 'Holding', insurance: 'Osiguranje', tourism: 'Turizam',
-  consumer: 'Konzumeri', industrial: 'Industrija', bank: 'Banka',
-  telecom: 'Telekomunikacije', technology: 'Tehnologija', energy: 'Energetika',
-  shipping: 'Brodarstvo', aquaculture: 'Marikultura', fund: 'Fond (ZAIF)',
-  transport: 'Promet', construction: 'Graditeljstvo', real_estate: 'Nekretnine',
-  other: 'Ostalo',
-}
+// SECTOR_HR živi u sectorLabels.mjs (dijele ga SPA i prerender)
+export { SECTOR_HR } from './sectorLabels.mjs'
 
 export function useOverview() {
   const [ov, setOv] = useState(null)

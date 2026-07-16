@@ -1138,6 +1138,24 @@ def reconcile(results: dict, sector: Optional[str] = None,
     anchors = [k for k in anchors_all
                if bases[k] > 0 and results[k]["range"].confidence >= 0.5]
     dropped = [k for k in anchors_all if k not in anchors]
+    # RED RULE (M33, v2.3): sidro s DEGENERIRANOM osjetljivošću ne smije samo
+    # definirati zonu — ako je raspon sidra širi od 100% vlastite baze
+    # (npr. DCF u godini izvanrednog capexa/akvizicije: PODR 14–53 € uz bazu
+    # ~33 €, dok potvrdne metode stoje 3–5x više), pretpostavke su očito
+    # nestabilne pa sidrenje pada na sljedeći pristup u hijerarhiji. Metoda
+    # ostaje prikazana s ulogom i razlogom. (Namjerno NE uspoređujemo sidro s
+    # ostalim metodama kao kriterij — kod holdinga SOTP legitimno odstupa.)
+    degenerate = []
+    while anchors:
+        cand = anchors[0]
+        vr_c = results[cand]["range"]
+        lo_c = vr_c.low or bases[cand]
+        hi_c = vr_c.high or bases[cand]
+        if bases[cand] > 0 and (hi_c - lo_c) / bases[cand] > 1.0:
+            degenerate.append(cand)
+            anchors = anchors[1:]
+            continue
+        break
     if anchors:
         prim = anchors[0]              # primarno sidro (redoslijed arhetipa)
         vr = results[prim]["range"]
@@ -1147,6 +1165,9 @@ def reconcile(results: dict, sector: Optional[str] = None,
                      f"(r/wacc ±1 p.b.); ostala sidra su potvrda")
         if dropped:
             zone_note += (f"; isključeno (nepozitivna baza): {', '.join(dropped)}")
+        if degenerate:
+            zone_note += ("; isključeno sidro s degeneriranom osjetljivošću "
+                          f"(raspon > 100% baze): {', '.join(degenerate)}")
         anchors = [prim] + [k for k in anchors if k != prim]
     else:
         # sidro nije dostupno (npr. holding bez SOTP ulaza) -> pošten fallback;
@@ -1158,6 +1179,9 @@ def reconcile(results: dict, sector: Optional[str] = None,
         zone_low, zone_high = min(pos), max(pos)
         zone_note = ("sidrena metoda nije dostupna — zona je min–max pozitivnih "
                      "baza (fallback); vidi 'skipped' za razlog")
+        if degenerate:
+            zone_note += ("; sidra isključena zbog degenerirane osjetljivosti: "
+                          + ", ".join(degenerate))
     # M20: donji rub zone ne može biti < 0 (ograničena odgovornost dioničara);
     # negativna osjetljivost (npr. DCF pri r−1 p.b. blizu g) se REŽE, ne skriva
     if zone_low < 0:

@@ -16,6 +16,9 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { ROUTES } from '../src/routes/registry.mjs'
+import { SECTOR_HR } from '../src/sectorLabels.mjs'
+// M33: SSR bundle pravnih stranica (isti React sadržaj kao SPA, jedan izvor)
+import { renderStatic } from '../dist-ssr/prerender-entry.js'
 
 const DIST = path.resolve(process.cwd(), 'dist')
 const SITE = 'https://burzovnilist.com'
@@ -28,6 +31,29 @@ const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
 const num = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v)
   ? null
   : Number(v).toLocaleString('hr-HR', { minimumFractionDigits: d, maximumFractionDigits: d }))
+
+/* M33: jedinstveni statički footer na SVIM prerendered rutama — crawleri
+   moraju moći otkriti pravne stranice s bilo koje rute (trust/compliance).
+   "Postavke kolačića" bez JS-a vodi na /politika-kolacica (panel radi tek
+   s JS-om); React na hydrateu zamijeni sadržaj pravim footerom. */
+const X_HANDLE = String(process.env.VITE_X_HANDLE || '').replace(/^@/, '')
+const staticFooter = () => `
+  <footer>
+    <p>Prikazani podaci, rasponi i fer-zone su informativni i analitički — ne
+    predstavljaju investicijski savjet, preporuku ni poticaj na trgovanje.
+    Vrijednosti ilikvidnih dionica su indikativne. Zaključak je uvijek vaš.</p>
+    <p>© 2026 Burzovni list · <a href="mailto:info@burzovnilist.com">info@burzovnilist.com</a> ·
+    <a href="/impressum">Impressum</a> · <a href="/metodologija">Metodologija</a> ·
+    <a href="/uvjeti-koristenja">Uvjeti korištenja</a> ·
+    <a href="/politika-privatnosti">Politika privatnosti</a> ·
+    <a href="/politika-kolacica">Politika kolačića</a> ·
+    <a href="/politika-kolacica">Postavke kolačića</a>${X_HANDLE ? ` ·
+    <a href="https://x.com/${esc(X_HANDLE)}" rel="noopener noreferrer">X: @${esc(X_HANDLE)}</a>` : ''}</p>
+    <p><a href="/">Sve dionice</a> · <a href="/screener">Screener</a> ·
+    <a href="/dividende">Dividende</a> · <a href="/usporedba">Usporedba</a> ·
+    <a href="/vijesti">Vijesti</a> · <a href="/blog">Blog</a> ·
+    Izvor: ZSE službeni EOD · podaci se ažuriraju nakon zatvaranja burze</p>
+  </footer>`
 
 function page({ title, description, canonical, robots, extraHead = '', body = '' }) {
   let html = template
@@ -51,8 +77,10 @@ function page({ title, description, canonical, robots, extraHead = '', body = ''
     extraHead,
   ].filter(Boolean).join('\n  ')
   html = html.replace('</head>', `  ${head}\n</head>`)
-  // statički sadržaj u #root — React ga na mountu zamijeni
-  html = html.replace('<div id="root"></div>', `<div id="root">${body}</div>`)
+  // statički sadržaj u #root — React ga na mountu zamijeni; footer IDE NA
+  // SVAKU rutu (M33), i onu bez vlastitog bodyja
+  html = html.replace('<div id="root"></div>',
+    `<div id="root">${body}${staticFooter()}</div>`)
   return html
 }
 
@@ -276,15 +304,109 @@ const FAQ = [ // MORA odgovarati sekciji "Česta pitanja" na /metodologija
   ['Koliko su podaci ažurni?', 'Cijene su službeni EOD zaključci Zagrebačke burze; ažuriraju se radnim danom nakon zatvaranja trgovine (16:00), a uz svaku cijenu stoji stvarni datum podatka. Financije se ažuriraju kad izdavatelj objavi izvješće (EHO registar).'],
 ]
 
+/* ---------- M33: statične tablice (sadržajni temelj za crawlere; React se
+   preko njih hidrira za sortiranje/filtriranje) ---------- */
+const pct = (v, d = 1) => (v === null || v === undefined || Number.isNaN(v)
+  ? 'n/p' : `${num(v * 100, d)} %`)
+const zoneStatus = (s) => {
+  if (s.zone_low === null || s.zone_low === undefined || !s.price) return 'n/p'
+  if (s.price > s.zone_high) return `${num((s.price / s.zone_high - 1) * 100, 1)} % iznad fer-zone`
+  if (s.price < s.zone_low) return `${num((1 - s.price / s.zone_low) * 100, 1)} % ispod fer-zone`
+  return 'u fer-zoni'
+}
+const zoneTxt = (s) => (s.zone_low === null || s.zone_low === undefined
+  ? 'n/p' : `${num(s.zone_low, 0)}–${num(s.zone_high, 0)} €`)
+
+function screenerTable() {
+  const rows = overview.stocks.map((s) => `<tr>
+    <td>${esc(s.ticker)}</td><td>${esc(s.name)}</td>
+    <td>${num(s.price) ?? 'n/p'}${s.price ? ' €' : ''}</td>
+    <td>${zoneTxt(s)}</td><td>${esc(zoneStatus(s))}</td>
+    <td>${esc(SECTOR_HR[s.sector] || s.sector || 'n/p')}</td></tr>`).join('')
+  return `<table><thead><tr><th>Ticker</th><th>Firma</th><th>Cijena</th>
+    <th>Fer-zona</th><th>Cijena vs zona</th><th>Sektor</th></tr></thead>
+    <tbody>${rows}</tbody></table>`
+}
+
+function usporedbaTable() {
+  const rows = overview.stocks.map((s) => `<tr>
+    <td>${esc(s.ticker)}</td><td>${esc(s.name)}</td>
+    <td>${num(s.price) ?? 'n/p'}${s.price ? ' €' : ''}</td>
+    <td>${num(s.pe, 1) ?? 'n/p'}</td><td>${num(s.pb, 2) ?? 'n/p'}</td>
+    <td>${s.is_financial ? '—' : (num(s.ev_ebitda, 1) ?? 'n/p')}</td>
+    <td>${pct(s.earnings_yield)}</td><td>${pct(s.div_yield)}</td>
+    <td>${pct(s.payout, 0)}</td><td>${esc(zoneStatus(s))}</td></tr>`).join('')
+  return `<table><thead><tr><th>Ticker</th><th>Firma</th><th>Cijena</th>
+    <th>P/E</th><th>P/B</th><th>EV/EBITDA</th><th>Earnings yield</th>
+    <th>Div. prinos</th><th>Payout</th><th>Cijena vs fer-zona</th></tr></thead>
+    <tbody>${rows}</tbody></table>`
+}
+
+let dividendeData = { rows: [], as_of: null }
+try {
+  dividendeData = JSON.parse(await fs.readFile(path.join(DIST, 'data/dividende.json'), 'utf8'))
+} catch { /* bez kalendara nema tablice */ }
+function dividendeTable() {
+  const rows = (dividendeData.rows || []).map((r) => `<tr>
+    <td>${esc(r.class_ticker || r.company)}</td><td>${esc(r.name || r.company)}</td>
+    <td>${r.fiscal_year ?? '—'}</td>
+    <td>${num(r.amount_eur) ?? 'n/p'}${r.amount_eur ? ' €' : ''}</td>
+    <td>${esc(r.ex_date || '—')}</td><td>${esc(r.payment_date || '—')}</td>
+    <td>${esc(r.status || '—')}</td></tr>`).join('')
+  return `<table><thead><tr><th>Ticker</th><th>Firma</th><th>FG</th>
+    <th>Iznos po dionici</th><th>Ex-datum</th><th>Isplata</th><th>Status</th></tr></thead>
+    <tbody>${rows}</tbody></table>`
+}
+
 /* Dinamički body/extraHead za pojedine statičke rute — sve ostalo (naslov,
    opis, indexability) dolazi iz registryja. */
 const BODY_BUILDERS = {
   '/': () => ({
+    // M33: uz svaki ticker PUNO ime + cijena + odnos prema fer-zoni
     body: `<main><h1>Analiza dionica Zagrebačke burze</h1>
       <p>Fer vrijednost, CROBEX, dividende i pokazatelji za sve uvrštene dionice — službeni EOD podaci${eod ? ` (${esc(eod)})` : ''}.</p>
-      <h2>Dionice</h2><ul>${[...byCompany.keys()].map((c) => `<li><a href="/dionica/${c.toLowerCase()}">${esc(c)}</a></li>`).join('')}</ul>
+      <h2>Dionice</h2><ul>${[...byCompany.entries()].map(([c, s]) => `<li><a href="/dionica/${c.toLowerCase()}">${esc(c)} — ${esc(s.name)}</a>${s.price ? ` · ${num(s.price)} €` : ''} · ${esc(zoneStatus(s))}</li>`).join('')}</ul>
       <p><a href="/usporedba">Usporedba dionica</a> · <a href="/dividende">Kalendar dividendi</a> · <a href="/metodologija">Metodologija</a> · <a href="/screener">Screener</a></p></main>`,
   }),
+  '/screener': () => ({
+    body: `<main><h1>Screener dionica Zagrebačke burze</h1>
+      <p>Sve uvrštene dionice: cijena${eod ? ` (službeni EOD za ${esc(eod)})` : ''}, fer-zona iz javno opisane <a href="/metodologija">metodologije</a> i sektor. Sortiranje i filtriranje dostupni su u aplikaciji; podaci su isti.</p>
+      ${screenerTable()}
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
+  '/usporedba': () => ({
+    body: `<main><h1>Usporedba dionica Zagrebačke burze</h1>
+      <p>Multiplikatori svih uvrštenih dionica${eod ? ` (EOD za ${esc(eod)})` : ''}: P/E, P/B, EV/EBITDA, earnings yield, dividendni prinos, payout i položaj cijene naspram fer-zone. EV/EBITDA se ne prikazuje za financijski sektor (nije smislen).</p>
+      ${usporedbaTable()}
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
+  '/dividende': () => ({
+    body: `<main><h1>Kalendar dividendi Zagrebačke burze</h1>
+      <p>Iznosi po dionici, ex-datumi i datumi isplate iz službenih objava izdavatelja${dividendeData.as_of ? ` (stanje ${esc(dividendeData.as_of)})` : ''}. Derivirani povijesni zapisi nose oznaku izvora.</p>
+      ${dividendeTable()}
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
+  '/blog': () => ({
+    // popis postova je učitan u buildBlogPages (registry: /blog/:slug ide prije)
+    body: `<main><h1>Blog — edukacija o analizi dionica</h1>
+      <ul>${posts.map((b) => `<li><a href="/blog/${esc(b.slug)}">${esc(b.title)}</a>${b.date ? ` (${esc(b.date)})` : ''}${b.summary ? ` — ${esc(b.summary)}` : ''}</li>`).join('')}</ul>
+      <p><em>Edukativni sadržaj — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
+  '/alati': () => ({
+    body: `<main><h1>Alati i kalkulatori za ulagače</h1>
+      <ul>
+        <li>Kalkulator dividendnog prinosa — prinos iz iznosa dividende i cijene dionice.</li>
+        <li>DCF/DDM kalkulator — sadašnja vrijednost novčanih tokova uz vlastite pretpostavke.</li>
+        <li>Porez na kapitalnu dobit — hrvatska pravila s izvorima (rok držanja, stopa).</li>
+        <li>Složeni kamatni račun — rast uloga kroz vrijeme.</li>
+      </ul>
+      <p>Kalkulatori rade u pregledniku (učitava se aplikacija) i ne spremaju unesene podatke.</p>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
+  '/impressum': () => ({ body: `<main><h1>Impressum</h1>${renderStatic('/impressum')}</main>` }),
+  '/uvjeti-koristenja': () => ({ body: `<main><h1>Uvjeti korištenja</h1>${renderStatic('/uvjeti-koristenja')}</main>` }),
+  '/politika-privatnosti': () => ({ body: `<main><h1>Politika privatnosti</h1>${renderStatic('/politika-privatnosti')}</main>` }),
+  '/politika-kolacica': () => ({ body: `<main><h1>Politika kolačića</h1>${renderStatic('/politika-kolacica')}</main>` }),
   '/metodologija': () => ({
     extraHead: jsonLd({
       '@context': 'https://schema.org',

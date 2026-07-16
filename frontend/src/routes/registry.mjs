@@ -70,6 +70,12 @@ export const ROUTES = [
     },
   },
   {
+    path: '/blog/:slug',
+    component: 'BlogPost',
+    indexable: true,
+    expand: 'blog',
+  },
+  {
     path: '/blog',
     component: 'BlogIndex',
     indexable: true,
@@ -77,12 +83,6 @@ export const ROUTES = [
       title: 'Blog — edukacija o analizi dionica | Burzovni list',
       description: 'Edukativni tekstovi: kako čitati P/E, što je fer-zona, zašto holding ne vrijedi kao zbroj dijelova — bez preporuka.',
     },
-  },
-  {
-    path: '/blog/:slug',
-    component: 'BlogPost',
-    indexable: true,
-    expand: 'blog',
   },
   {
     path: '/vijesti',

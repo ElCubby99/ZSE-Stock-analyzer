@@ -54,10 +54,11 @@ const COOKIES = [
   },
 ]
 
-export function PolitikaKolacica() {
-  const { openSettings } = useConsent()
+/* Content komponente su ČISTE (bez hookova) — iste ih koristi SPA (kroz
+   wrapper s LegalPage) i prerender (SSR u statički HTML, jedan izvor teksta). */
+export function PolitikaKolacicaContent({ openSettings }) {
   return (
-    <LegalPage title="Politika kolačića">
+    <>
       <section>
         <div className="sec-label">Što su kolačići i tko ih postavlja</div>
         <p className="imp-p">Kolačići (cookies) i srodne tehnologije lokalne
@@ -130,15 +131,24 @@ export function PolitikaKolacica() {
         <p className="imp-p">Više o obradi osobnih podataka:{' '}
         <Link to="/politika-privatnosti">Politika privatnosti</Link>.</p>
       </section>
+    </>
+  )
+}
+
+export function PolitikaKolacica() {
+  const { openSettings } = useConsent()
+  return (
+    <LegalPage title="Politika kolačića">
+      <PolitikaKolacicaContent openSettings={openSettings} />
     </LegalPage>
   )
 }
 
 /* ============================ /uvjeti-koristenja ============================ */
 
-export function UvjetiKoristenja() {
+export function UvjetiKoristenjaContent() {
   return (
-    <LegalPage title="Uvjeti korištenja">
+    <>
       <section>
         <div className="sec-label">1. Opće odredbe</div>
         <p className="imp-p">Ove Uvjete korištenja primjenjuje <b>Burzovni
@@ -225,15 +235,23 @@ export function UvjetiKoristenja() {
         <div className="sec-label">9. Stupanje na snagu</div>
         <p className="imp-p">Ovi Uvjeti stupaju na snagu <b>{UPDATED}</b></p>
       </section>
+    </>
+  )
+}
+
+export function UvjetiKoristenja() {
+  return (
+    <LegalPage title="Uvjeti korištenja">
+      <UvjetiKoristenjaContent />
     </LegalPage>
   )
 }
 
 /* =========================== /politika-privatnosti =========================== */
 
-export function PolitikaPrivatnosti() {
+export function PolitikaPrivatnostiContent() {
   return (
-    <LegalPage title="Politika privatnosti">
+    <>
       <section>
         <div className="sec-label">Voditelj obrade</div>
         <p className="imp-p"><b>Burzovni list</b>, operator stranice
@@ -325,6 +343,14 @@ export function PolitikaPrivatnosti() {
         <Link to="/politika-kolacica">Politiku kolačića</Link> i{' '}
         <Link to="/uvjeti-koristenja">Uvjete korištenja</Link>.</p>
       </section>
+    </>
+  )
+}
+
+export function PolitikaPrivatnosti() {
+  return (
+    <LegalPage title="Politika privatnosti">
+      <PolitikaPrivatnostiContent />
     </LegalPage>
   )
 }

@@ -123,6 +123,13 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v2.3 (16.07.2026.)**: crveno pravilo za degenerirano sidro — priznata
+  greška: sidrena metoda čiji je vlastiti raspon osjetljivosti širi od 100%
+  baze (npr. DCF u godini izvanrednog capexa/akvizicije) davala je besmisleno
+  široke fer-zone (Podravka: 14–53 € uz potvrdne metode 3–5× više). Takvo
+  sidro sada pada na sljedeći pristup u hijerarhiji, ostaje prikazano s
+  razlogom isključenja. Namjerno se NE uspoređuje sidro s ostalim metodama
+  kao kriterij (kod holdinga SOTP legitimno odstupa od operativnih leća).
 - **v2.2 (15.07.2026.)**: disciplina bete — priznata greška: regresijske
   bete nelikvidnih dionica (npr. serija s ~40% trgovanih dana) statistički
   su nepouzdane i umjetno su SNIŽAVALE trošak kapitala. Uvedeni prag
