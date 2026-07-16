@@ -122,3 +122,33 @@ slijede: ADRS (klase → S), DLKV/RIVP/SPAN/ERNT/HT (dogma jednog sidra →
 A; ERNT/HT DCF sidro sada strši NAVIŠE dok potvrdne metode stoje niže —
 medijan kvalificiranih metoda u FAZI A to izravnava), CROS (D_sust → DIV).
 Raskoraci se NE fitaju na tržište.
+
+## 2026-07-16 — Metodologija v3, FAZA DIV: održiva dividenda (D_sust)
+
+- dividends tablica: payout_type (redovna|jednokratna|iz_zadrzane_dobiti),
+  payout_ratio (Σ isplata firme za fiskalnu godinu / NI_parent TE godine;
+  NULL s razlogom kad dobiti nema — NIKAD kriva godina), classified_reason.
+  Klasifikacija (src/dividend_sustainability.py): EHO formulacija > payout
+  >100% (iz zadržane dobiti; CROS FY2023 197%) > 150% medijana prethodnih
+  redovnih (HPB 21,83 vs medijan 2,61). 150 isplata klasificirano.
+- dividend_policies tablica (mehanizam za ručnu ekstrakciju politika) —
+  prazna dok nema izvora u repou/bazi; fallback je medijan (ništa izmišljeno).
+- D_sust = održivi payout × normalizirana dobit (TTM feed iz faze G) /
+  dionice; payout = politika (ako pokrivena) ili medijan payouta SAMO
+  redovnih godina; banke >80% → flag "ovisi o regulatornom odobrenju" +
+  baza min(stvarni, 70%) (ZABA: 0,88 → 0,70 uz flag). Pokrivenost najave:
+  <1,2 "napeto pokrivena" (HT: 1,13), <1,0 najava se ne koristi.
+- DDM SVIH firmi računa nad D_sust — dps ulaz staro→novo: CROS 114,14 →
+  116,12 €; ZABA 1,27 → 1,2481 €; HPB 21,83 → POTISNUTO (zadnja isplata
+  jednokratna, održiva baza neizračunljiva → DDM se ne računa; sirova
+  jednokratna VIŠE NIKAD ne ulazi u model). Zone nepromijenjene (DDM je
+  potvrda, ne sidro) — dividendni sanity flag nad D_sust dolazi u FAZI A.
+- UI: stranica dionice — "% dobiti" stupac (">100% (iz zadržane dobiti)";
+  "—" + tooltip kad dobit godine nije u bazi), badge tipa po retku,
+  "Održiva dividenda (procjena)" s punim raspisom iza klika, legenda;
+  /dividende — isti stupac + filter po tipu (default sve) + legenda.
+- Testovi (tests/test_dividends_sust.py, 5): HPB jednokratna ne diže bazu;
+  payout NIKAD prema krivoj godini (sintetički FY1999 → NULL); politika s
+  pokrivenošću <1,0 pada na medijan; ZABA regulatorni flag; DDM ulaz =
+  D_sust. Playwright: HPB (izvanredna badge, D_sust potisnut), HT (redovne,
+  D_sust prikazan), /dividende (stupac, legenda, filter 44→8 redaka).

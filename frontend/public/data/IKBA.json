@@ -198,7 +198,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 319–840 € (raspon 62%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 213–840 € (raspon 75%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -744,6 +744,9 @@
         "amount_eur": 17.0,
         "div_type": "cash",
         "ex_date": "2026-04-02",
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "prva zabilježena isplata klase; payout n/p: bez fiskalne godine",
         "record_date": "2026-04-07",
         "payment_date": "2026-04-23",
         "status": "paid",
@@ -756,6 +759,9 @@
         "amount_eur": 18.0,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (17.00 €); payout n/p: dobit FY2024 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -768,6 +774,9 @@
         "amount_eur": 15.0,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (17.50 €); payout n/p: dobit FY2023 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -780,6 +789,9 @@
         "amount_eur": 12.0,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (17.00 €); payout n/p: dobit FY2022 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -817,7 +829,12 @@
       "growth_cagr": 0.1231,
       "growth_note": "CAGR FY2022->FY2025"
     },
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
+    "d_sust": {
+      "d_sust_ps": 12.0,
+      "fallback_raw": true,
+      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
+    }
   },
   "prices": [
     {
@@ -3454,19 +3471,24 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 269.24135116259816,
-        "base": 319.3888442699426,
-        "high": 392.62909745227233,
+        "low": 179.49423410839876,
+        "base": 212.92589617996174,
+        "high": 261.75273163484826,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "dps": 18.0,
+          "dps": 12.0,
           "r": 0.09341499999999998,
           "g_terminal": 0.04,
           "g1_explicit": 0.0,
           "model": "dvofazni DDM",
           "growth_source": "g1=0.0% = min(TTM vs zadnje godišnje = -0.3%, cap 8%) — KRATKA SERIJA (nema 3 godišnja izvješća u bazi); v3 FAZA G",
           "placeholder": true,
+          "d_sust": {
+            "d_sust_ps": 12.0,
+            "fallback_raw": true,
+            "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
+          },
           "sources": {
             "r": "r=0.0934 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 1.0 p.b. (v3 FAZA K raspis). rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u. ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede. beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 131/251 trgovanih dana (52%), prosj. promet 11,743 €/dan). sektorske unlevered/levered bete: Damodaran (pages.stern.nyu.edu, Europe, tablica siječanj 2026); TOČAN REDAK NEPROVJEREN (egress 403) — sector_beta_exact_unverified=true. Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +1.0 p.b. na r: 131/251 trgovanih dana (52%), prosj. promet 11,743 €/dan — izlazak iz pozicije nosi stvaran trošak (širok spread, plitka knjiga); stupnjevano: <20% dana ili <300 €/dan -> +2,0 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,0 p.b. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane/slabo trgovane dionice.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
@@ -3550,7 +3572,7 @@
         "ddm_gordon": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": -0.4779767434325598
+          "vs_zone_pct": -0.6519844956217065
         },
         "justified_pb_roe": {
           "role": "anchor",
@@ -3564,17 +3586,17 @@
         }
       },
       "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 319.3888442699426,
+      "all_methods_low": 212.92589617996174,
       "all_methods_high": 839.5808817567568,
-      "dispersion_all": 0.6195853774068238,
+      "dispersion_all": 0.7463902516045493,
       "method_bases": {
         "comps": 839.5808817567568,
-        "ddm_gordon": 319.3888442699426,
+        "ddm_gordon": 212.92589617996174,
         "justified_pb_roe": 701.2578030096532,
         "residual_income": 582.7688475106817
       },
       "qa_flags": [
-        "metode se međusobno razilaze 62% (sve metode) — provjeri ulaze/pretpostavke"
+        "metode se međusobno razilaze 75% (sve metode) — provjeri ulaze/pretpostavke"
       ],
       "vs_market_pct": -21.2,
       "anchor_inconsistency": [],
@@ -4073,21 +4095,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 12.0,
+            "v": 18.0,
             "unit": "eur",
             "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.021238938053097345,
+            "v": 0.03185840707964602,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.17376937575015095,
+            "v": 0.2606540636252264,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"

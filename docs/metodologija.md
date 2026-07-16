@@ -99,6 +99,24 @@ metoda razvukla zonu u beskorisno.
   za DCF terminal (realni rast + inflacija), konzervativnijih 2,5% za
   kapitalne metode. Nijedna firma ne može "zauvijek" rasti brže od
   gospodarstva u kojem posluje.
+- **Dividende — klasifikacija isplata i održiva dividenda (v3)**: svaka
+  povijesna isplata nosi činjeničnu oznaku tipa — **redovna**;
+  **izvanredna** (iznos veći od 150% medijana prethodnih redovnih isplata
+  te klase); **iz zadržane dobiti** (ukupna isplata firme veća od neto
+  dobiti fiskalne godine iz koje se isplaćuje); formulacija same objave
+  (npr. "izvanredna dividenda") ima prednost pred ovim pravilima.
+  **Postotak dobiti** se računa isključivo prema dobiti pripadne fiskalne
+  godine — ako ta godina nije u bazi, polje je prazno (nikad kriva
+  godina). **Očekivana održiva dividenda**: D_sust = održivi payout ×
+  normalizirana dobit (zadnjih 12 mjeseci) / broj dionica; održivi payout
+  je objavljena politika društva (kad postoji i kad je pokrivena tekućom
+  dobiti), inače medijan povijesnih payout omjera računan SAMO nad
+  redovnim isplatama — jednokratne isplate ne ulaze u bazu. Kod banaka
+  payout iznad 80% nosi napomenu o regulatornom odobrenju, a za održivu
+  bazu koristi se najviše 70%. **Pokrivenost najave** = normalizirana
+  dobit / najavljena isplata; ispod 1,2 isplata je označena kao "napeto
+  pokrivena", ispod 1,0 najava se ne koristi u procjeni. Dividendni
+  diskontni model računa nad D_sust — nikad nad sirovom zadnjom isplatom.
 - **Peeri** — medijan stvarnih multipla usporedivih firmi s ZSE, istog
   sektora (auto-dijelovi se ne uspoređuju s prehranom); gdje sektorskih peera
   na ZSE nema, metoda nosi nisku pouzdanost i NE sidri zonu. *Planirano:
@@ -154,6 +172,14 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v3 — faza DIV (16.07.2026.)**: održiva dividenda — priznata greška:
+  dividendni model je računao nad sirovom zadnjom isplatom, pa bi
+  jednokratna isplata (npr. iz zadržane dobiti) lažno podigla procjenu, a
+  propuštena godina lažno je srušila. Novo: klasifikacija svih povijesnih
+  isplata (redovna / izvanredna / iz zadržane dobiti, s "% dobiti" prema
+  točnoj fiskalnoj godini), očekivana održiva dividenda D_sust (održivi
+  payout × normalizirana dobit) i pokrivenost najave — model računa nad
+  D_sust, jednokratne isplate ne ulaze u bazu.
 - **v3 — faza G (16.07.2026.)**: TTM i rast iz podataka — priznata greška:
   sve se vrednovalo iz zadnjeg GODIŠNJEG izvješća iako za većinu firmi u
   bazi postoje kvartali, a kapitalne metode (opravdani P/B, rezidualni

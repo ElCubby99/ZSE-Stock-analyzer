@@ -950,14 +950,15 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
     Z2: + povijest po fiskalnim godinama i metrike (kontinuitet, rast, prosjek)."""
     cur.execute(
         """SELECT class_ticker, fiscal_year, amount_eur, div_type, ex_date,
-                  record_date, payment_date, source_url
+                  record_date, payment_date, source_url,
+                  payout_type, payout_ratio, classified_reason
            FROM dividends WHERE company_id=%s
            ORDER BY COALESCE(fiscal_year,
                     EXTRACT(YEAR FROM COALESCE(ex_date, payment_date))::int - 1)
                     DESC NULLS LAST, class_ticker""",
         (company_id,))
     events, n_upcoming = [], 0
-    for ct, fy, amt, dtyp, ex, rec, pay, src in cur.fetchall():
+    for ct, fy, amt, dtyp, ex, rec, pay, src, ptype, pratio, preason in cur.fetchall():
         derived = bool(dtyp and "izvedeno" in dtyp)
         if derived:
             status, label = "paid", "isplaćena (izvedeno iz NT obrasca)"
@@ -975,6 +976,9 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
                             else (int(str(ex)[:4]) - 1 if ex else None)),
             "amount_eur": _f(amt),
             "div_type": dtyp, "ex_date": str(ex) if ex else None,
+            # v3 DIV: tip isplate + % dobiti pripadne fiskalne godine
+            "payout_type": ptype, "payout_ratio": _f(pratio),
+            "classified_reason": preason,
             "record_date": str(rec) if rec else None,
             "payment_date": str(pay) if pay else None,
             "status": status, "status_hr": label, "source_url": src,
@@ -1516,7 +1520,11 @@ def build_stock_json(conn, ticker: str) -> dict:
         },
         "fundamentals": fund,
         "price_summary": _price_summary(cur, classes, today),
-        "dividend_calendar": _dividend_calendar(cur, company_id, today),
+        # v3 DIV: kalendar + raspis održive dividende (D_sust) iz motora
+        "dividend_calendar": {
+            **_dividend_calendar(cur, company_id, today),
+            "d_sust": getattr(ctx, "dsust_hint", None),
+        },
         "prices": _price_history(cur, company_id),
         "share_class_explainer": share_class_explainer,
         "valuation": {

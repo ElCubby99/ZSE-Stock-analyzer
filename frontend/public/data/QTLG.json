@@ -478,6 +478,9 @@
         "amount_eur": 0.09,
         "div_type": "cash",
         "ex_date": "2025-07-07",
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "prva zabilježena isplata klase; payout n/p: bez fiskalne godine",
         "record_date": "2025-07-08",
         "payment_date": "2025-09-10",
         "status": "paid",
@@ -490,6 +493,9 @@
         "amount_eur": 0.08,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (0.09 €); payout n/p: dobit FY2023 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -502,6 +508,9 @@
         "amount_eur": 0.05,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (0.08 €); payout n/p: dobit FY2022 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -535,7 +544,12 @@
       "growth_cagr": 0.3416,
       "growth_note": "CAGR FY2022->FY2024"
     },
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
+    "d_sust": {
+      "d_sust_ps": 0.05,
+      "fallback_raw": true,
+      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
+    }
   },
   "prices": [],
   "share_class_explainer": null,
@@ -1198,7 +1212,7 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 0.05,
+            "v": 0.08,
             "unit": "eur",
             "basis": "",
             "formula": "dividends tablica"
@@ -1213,7 +1227,7 @@
           },
           {
             "k": "Payout",
-            "v": 0.49680196092259105,
+            "v": 0.7948831374761456,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"

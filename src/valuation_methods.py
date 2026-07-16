@@ -91,6 +91,8 @@ class Ctx:
     ttm_meta: dict = field(default_factory=dict)
     # v3 FAZA G: ROE pravilo za kapitalne metode — max(3g medijan, TTM×0,9)
     roe_hint: Optional[dict] = None
+    # v3 FAZA DIV: raspis održive dividende (D_sust) za DDM i prikaz
+    dsust_hint: Optional[dict] = None
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -445,6 +447,9 @@ def compute_ddm(c: Ctx) -> ValueRange:
              "model": ("dvofazni DDM" if g1 is not None else
                        "jednofazni Gordon — RAST NIJE IZVEDEN"),
              "growth_source": gh.get("source"), "placeholder": p.placeholder}
+    dh = getattr(c, "dsust_hint", None)
+    if dh:
+        assum["d_sust"] = dh   # v3 DIV: DDM računa nad ODRŽIVOM dividendom
     src = {k: p.sources[k] for k in ("r", "g") if p.sources.get(k)}
     if src:
         assum["sources"] = src
@@ -1378,6 +1383,7 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                       "cash_and_equivalents", "total_assets",
                       "short_term_debt", "long_term_debt", "total_debt"}
     ttm_meta: dict = {}
+    dsust_holder: dict = {}   # v3 DIV: raspis održive dividende (puni ga data('dps'))
 
     def _interim_rows(item: str):
         cur.execute(
@@ -1389,6 +1395,12 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         return cur.fetchall()
 
     def data(item: str):
+        # v3 FAZA DIV: 'dps' se rješava PRIJE godišnjeg lookupa — DDM za sve
+        # firme računa nad ODRŽIVOM dividendom (D_sust), nikad nad sirovom
+        # zadnjom isplatom (ni iz financials stavke 'dps' koja nosi istu
+        # sirovu izglasanu brojku)
+        if item == "dps":
+            return _dps_sustainable()
         # zadnja (najnovija) annual/consolidated vrijednost + confidence iz financials
         cur.execute(
             """
@@ -1457,14 +1469,27 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                 ttm_meta[item] = {"basis": "annual", "fy": fy_a,
                                   "reason": "nema novijih interima od godišnjeg"}
             return (val_a, conf_a)
-        if item == "dps":
-            # fallback: STVARNA zadnja dividenda iz dividends tablice (ZSE
-            # stranica papira / EHO) — izvješća često ne nose dps kao stavku,
-            # a "ne isplaćuje" bi bila kriva tvrdnja za redovite isplatitelje
-            # (npr. IKBA). Prijedlozi se NE računaju (nisu izglasana isplata);
-            # kod više klasa uzima se primarna linija.
+        return None if r is None else (None, 0.0)
+
+    def _dps_sustainable():
+        if True:
+            # v3 FAZA DIV: DDM računa nad ODRŽIVOM dividendom (D_sust =
+            # održivi payout × normalizirana dobit) — NIKAD nad sirovom
+            # zadnjom isplatom (jednokratne bi lažno digle bazu; HPB test).
+            # Fallback na sirovu isplatu SAMO ako je klasificirana 'redovna'
+            # a D_sust nije izračunljiv (npr. payout ratio bez NI u bazi).
+            try:
+                from .dividend_sustainability import d_sust
+                ni_r = data("net_income_parent")
+                ds = d_sust(conn, company_id,
+                            ni_r[0] if ni_r and ni_r[0] is not None else None)
+            except Exception:  # noqa: BLE001 — shema DIV možda još ne postoji
+                ds = None
+            if ds:
+                dsust_holder["hint"] = ds
+                return (float(ds["d_sust_ps"]), 0.9)
             cur.execute(
-                """SELECT d.amount_eur FROM dividends d
+                """SELECT d.amount_eur, d.payout_type FROM dividends d
                    JOIN share_classes sc ON sc.id = d.share_class_id
                    WHERE d.company_id = %s
                      AND d.div_type NOT ILIKE '%%rijedlog%%'
@@ -1474,9 +1499,20 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                    LIMIT 1""",
                 (company_id,))
             d = cur.fetchone()
-            if d and d[0] is not None:
+            if d and d[0] is not None and (d[1] or "redovna") == "redovna":
+                dsust_holder["hint"] = {
+                    "d_sust_ps": float(d[0]), "fallback_raw": True,
+                    "note": ("D_sust nije izračunljiv (nema payout povijesti "
+                             "s dobiti u bazi) — korištena zadnja REDOVNA "
+                             "isplata")}
                 return (float(d[0]), 0.9)
-        return None if r is None else (None, 0.0)
+            if d and d[0] is not None:
+                dsust_holder["hint"] = {
+                    "d_sust_ps": None, "suppressed_one_off": float(d[0]),
+                    "note": ("zadnja isplata je jednokratna/iz zadržane "
+                             "dobiti, a održiva baza nije izračunljiva — "
+                             "DDM se ne računa (radije prazno nego krivo)")}
+        return None
 
     cur.execute("SELECT * FROM v_sotp_inputs WHERE parent_company_id = %s", (company_id,))
     cols = [d[0] for d in cur.description]
@@ -1723,6 +1759,10 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                 f"sredina zone {rec['zone_low']:,.0f}–{rec['zone_high']:,.0f} "
                 f"€/dionici × {sh:,.0f} dionica")
 
+    # v3 DIV: dps se izračuna EAGER (puni dsust_holder) — Ctx.dsust_hint je
+    # snapshot pa lijeni prvi poziv ne bi stigao u polje
+    data("dps")
+
     return Ctx(
         ticker=ticker, sector=sector, is_group=is_group,
         holdings=holdings, has_segments=has_segments, data=data,
@@ -1731,7 +1771,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         market_cap_of=market_cap_of, segment_ebitda_of=segment_ebitda_of,
         fair_equity_of=fair_equity_of, growth_hint=growth_hint,
         ni_parent_of=ni_parent_of, holding_type=holding_type,
-        ttm_meta=ttm_meta, roe_hint=roe_hint, params=params,
+        ttm_meta=ttm_meta, roe_hint=roe_hint,
+        dsust_hint=dsust_holder.get("hint"), params=params,
     )
 
 

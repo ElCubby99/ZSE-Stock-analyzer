@@ -596,6 +596,9 @@
         "amount_eur": 16.8,
         "div_type": "cash",
         "ex_date": "2026-06-16",
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "prva zabilježena isplata klase; payout n/p: bez fiskalne godine",
         "record_date": "2026-06-17",
         "payment_date": "2026-07-10",
         "status": "paid",
@@ -608,6 +611,9 @@
         "amount_eur": 11.98,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (16.80 €); payout n/p: dobit FY2024 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -620,6 +626,9 @@
         "amount_eur": 24.0,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "jednokratna",
+        "payout_ratio": null,
+        "classified_reason": "24.00 € > 150% medijana prethodnih redovnih isplata (14.39 €); payout n/p: dobit FY2023 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -632,6 +641,9 @@
         "amount_eur": 20.0,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (14.39 €); payout n/p: dobit FY2022 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -669,7 +681,12 @@
       "growth_cagr": -0.0565,
       "growth_note": "CAGR FY2022->FY2025"
     },
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
+    "d_sust": {
+      "d_sust_ps": 11.98,
+      "fallback_raw": true,
+      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
+    }
   },
   "prices": [
     {
@@ -3427,21 +3444,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 20.0,
+            "v": 24.0,
             "unit": "eur",
             "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.039603960396039604,
+            "v": 0.047524752475247525,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 1.4154281670205238,
+            "v": 1.6985138004246285,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"

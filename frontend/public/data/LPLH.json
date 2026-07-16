@@ -596,6 +596,9 @@
         "amount_eur": 0.4,
         "div_type": "cash",
         "ex_date": "2026-05-21",
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "prva zabilježena isplata klase; payout n/p: bez fiskalne godine",
         "record_date": "2026-05-22",
         "payment_date": "2026-06-01",
         "status": "paid",
@@ -608,6 +611,9 @@
         "amount_eur": 0.3721,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "redovna",
+        "payout_ratio": null,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (0.40 €); payout n/p: dobit FY2024 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -620,6 +626,9 @@
         "amount_eur": 0.5921,
         "div_type": "izvedeno (NT obrazac)",
         "ex_date": null,
+        "payout_type": "jednokratna",
+        "payout_ratio": null,
+        "classified_reason": "0.59 € > 150% medijana prethodnih redovnih isplata (0.39 €); payout n/p: dobit FY2023 nije u bazi",
         "record_date": null,
         "payment_date": null,
         "status": "paid",
@@ -653,7 +662,12 @@
       "growth_cagr": -0.1781,
       "growth_note": "CAGR FY2023->FY2025"
     },
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
+    "d_sust": {
+      "d_sust_ps": null,
+      "suppressed_one_off": 0.5921,
+      "note": "zadnja isplata je jednokratna/iz zadržane dobiti, a održiva baza nije izračunljiva — DDM se ne računa (radije prazno nego krivo)"
+    }
   },
   "prices": [
     {
@@ -2582,21 +2596,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 0.5921,
+            "v": 0.3721,
             "unit": "eur",
             "basis": "",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.0222593984962406,
+            "v": 0.013988721804511276,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.4899680867064587,
+            "v": 0.30791610380589984,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"

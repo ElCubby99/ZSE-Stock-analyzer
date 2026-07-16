@@ -28,6 +28,7 @@ def main() -> int:
             """SELECT c.ticker, c.name, d.class_ticker, d.fiscal_year,
                       d.amount_eur, d.div_type, d.ex_date, d.record_date,
                       d.payment_date, d.source_url,
+                      d.payout_type, d.payout_ratio, d.classified_reason,
                       (SELECT p.close_eur FROM prices_eod p
                        JOIN share_classes sc ON sc.id = p.share_class_id
                        WHERE sc.ticker = d.class_ticker
@@ -37,7 +38,7 @@ def main() -> int:
                ORDER BY COALESCE(d.ex_date, d.payment_date) NULLS LAST,
                         d.class_ticker""")
         for (tick, name, ct, fy, amt, dtyp, ex, rec, pay, src,
-             close) in cur.fetchall():
+             ptype, pratio, preason, close) in cur.fetchall():
             # status istom logikom kao profil (jedan izvor istine za oznake)
             if dtyp and "izvedeno" in dtyp:
                 status = "paid"  # Z2: povijesni izvedeni zapis (NT) = isplaćen
@@ -65,6 +66,10 @@ def main() -> int:
                 "price_eur": close_f,
                 "yield_now": (amt_f / close_f) if close_f else None,
                 "source_url": src,
+                # v3 DIV: tip isplate + % dobiti pripadne fiskalne godine
+                "payout_type": ptype,
+                "payout_ratio": float(pratio) if pratio is not None else None,
+                "classified_reason": preason,
             })
         # Z2: povijest po firmi -> kontinuitet i prosjek za kalendar
         cur.execute(

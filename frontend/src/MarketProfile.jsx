@@ -298,6 +298,22 @@ export function Dividends({ data }) {
             {' '}<i className="fund-src">({h.growth_note})</i></span>
         </div>
       )}
+      {cal.d_sust && cal.d_sust.d_sust_ps !== null && cal.d_sust.d_sust_ps !== undefined && (
+        <div className="div-hist-strip">
+          <span>Održiva dividenda (procjena): <b>{num(cal.d_sust.d_sust_ps, 2)} €</b>/dionici
+            {cal.d_sust.flags && cal.d_sust.flags.length > 0 && (
+              <> {cal.d_sust.flags.map((f) => <span key={f} className="flag"> {f}</span>)}</>
+            )}
+          </span>
+          <details className="src-details"><summary>puni raspis</summary>
+            <div className="src">
+              {cal.d_sust.fallback_raw
+                ? cal.d_sust.note
+                : `Održivi payout ${num((cal.d_sust.payout_used || 0) * 100, 0)} % (${cal.d_sust.payout_basis}) × normalizirana dobit (12 mj.) / broj dionica. ${cal.d_sust.excluded_years && cal.d_sust.excluded_years.length ? `Isključene jednokratne/iz zadržane dobiti: ${cal.d_sust.excluded_years.join(', ')}. ` : ''}${cal.d_sust.coverage_announced ? `Pokrivenost zadnje najave tekućom dobiti: ${num(cal.d_sust.coverage_announced, 2)}×. ` : ''}${cal.d_sust.note}`}
+            </div>
+          </details>
+        </div>
+      )}
       <div className="prof-div-grid">
         <div>
           {paid.length ? (
@@ -307,6 +323,8 @@ export function Dividends({ data }) {
                   <th>FISK. GOD.</th>
                   {multi && <th>KLASA</th>}
                   <th className="num">IZNOS / DION.</th>
+                  <th className="num">% DOBITI</th>
+                  <th>TIP</th>
                   <th className="num">EX-DATUM</th>
                   <th className="num">ISPLATA</th>
                 </tr>
@@ -317,6 +335,15 @@ export function Dividends({ data }) {
                     <td>{e.fiscal_year ? `${e.fiscal_year}.` : dash}</td>
                     {multi && <td>{e.class_ticker}</td>}
                     <td className="num strong">{num(e.amount_eur, 2)} €</td>
+                    <td className="num">{e.payout_ratio === null || e.payout_ratio === undefined
+                      ? <i className="np" title={`dobit FY${e.fiscal_year ?? '?'} nije dostupna u bazi`}>—</i>
+                      : e.payout_ratio > 1
+                        ? <span title={e.classified_reason || ''}>&gt; 100% (iz zadržane dobiti)</span>
+                        : <span title={e.classified_reason || ''}>{num(e.payout_ratio * 100, 0)} %</span>}</td>
+                    <td>{e.payout_type ? (e.payout_type === 'redovna'
+                      ? <span className="div-onoff reg" title={e.classified_reason || ''}>redovna</span>
+                      : <span className="div-onoff" title={e.classified_reason || ''}>
+                        {e.payout_type === 'iz_zadrzane_dobiti' ? 'iz zadržane dobiti' : 'izvanredna'}</span>) : dash}</td>
                     <td className="num">{e.ex_date ? fmtHr(e.ex_date) : dash}</td>
                     <td className="num">{e.payment_date ? fmtHr(e.payment_date) : dash}</td>
                   </tr>
@@ -329,6 +356,15 @@ export function Dividends({ data }) {
             </div>
           )}
           <div className="prof-panel-note">{cal.note}</div>
+          <div className="prof-panel-note">
+            % DOBITI = ukupna isplata firme za tu fiskalnu godinu / neto dobit
+            iste godine (— kad dobit te godine nije u bazi). Tipovi isplata su
+            činjenične oznake: <b>redovna</b> — u liniji s dosadašnjima;{' '}
+            <b>izvanredna</b> — više od 150% medijana prethodnih redovnih;{' '}
+            <b>iz zadržane dobiti</b> — ukupna isplata veća od dobiti godine iz
+            koje se isplaćuje. Jednokratne isplate ne ulaze u procjenu održive
+            dividende.
+          </div>
         </div>
         <div>
           {next ? next.status === 'upcoming' ? (
