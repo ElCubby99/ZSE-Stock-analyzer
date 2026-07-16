@@ -280,6 +280,27 @@ def eod_already_done(conn, day: date | None = None) -> bool:
     return n_live > 0 and n_have / n_live >= EOD_COMPLETE_MIN_SHARE
 
 
+def exports_fresh(day: date | None = None, overview_path=None) -> bool:
+    """Odražavaju li commitani exporti (overview.json u checkoutu) zadani
+    dan? Guard "already done" traži OBOJE: kompletan EOD u bazi I svježe
+    exporte — inače run koji je upisao cijene pa pao prije regena (16.07.)
+    ostavlja sajt trajno na starom datumu jer bi svi sljedeći runovi bili
+    no-op."""
+    import pathlib
+    day = day or date.today()
+    p = pathlib.Path(overview_path) if overview_path else (
+        pathlib.Path(__file__).resolve().parents[1]
+        / "frontend" / "public" / "data" / "overview.json")
+    if not p.exists():
+        return False
+    try:
+        o = json.loads(p.read_text(encoding="utf-8"))
+        dates = [s.get("date") for s in o.get("stocks", []) if s.get("date")]
+        return bool(dates) and max(dates) >= day.isoformat()
+    except Exception:  # noqa: BLE001 — pokvaren export = nije svjež
+        return False
+
+
 def previous_trading_day(day: date) -> date:
     """Prethodni radni dan (pon-pet). Praznike ne modeliramo — rupa zbog
     praznika se ne backfilla jer izvor za taj dan nema tečajnicu."""
@@ -516,17 +537,29 @@ def main(argv=None) -> int:
             conn.rollback()
             log("schema", None, "failed", f"{type(e).__name__}: {e}")
 
-        # 1. idempotentni guard: dan već kompletan -> no-op od par sekundi
-        #    (satna serija je sigurna: nakon prvog uspjeha ostali runovi
-        #    tog dana ne rade ništa i NE diraju exporte/deploy)
-        if eod_already_done(conn):
+        # 1. idempotentni guard: dan već kompletan U BAZI i U EXPORTIMA ->
+        #    no-op od par sekundi (satna serija je sigurna: nakon prvog
+        #    uspjeha ostali runovi tog dana ne rade ništa, nula deploya)
+        db_done = eod_already_done(conn)
+        if db_done and exports_fresh():
             log("prices", None, "skipped",
-                "already done — današnji EOD je već kompletan u bazi")
+                "already done — današnji EOD je već kompletan u bazi i exportima")
             print("already done")
             return 0
 
-        # 2. kratki pokušaj povlačenja (bez spavanja — čekanje rade cronovi)
-        n_prices, not_ready = stage_prices(conn, run_id, log)
+        # 2. kratki pokušaj povlačenja (bez spavanja — čekanje rade cronovi).
+        #    Poseban slučaj: baza VEĆ ima današnji EOD, ali exporti zaostaju
+        #    (raniji run upisao cijene pa pao prije regena) -> preskoči
+        #    dohvat i idi ravno na puni prolaz da se sajt nadoknadi.
+        force_regen = False
+        if db_done:
+            log("prices", None, "ok",
+                "EOD u bazi već kompletan, exporti zaostaju — nadoknada "
+                "(regen + commit + deploy bez ponovnog dohvata)")
+            n_prices, not_ready = 0, False
+            force_regen = True
+        else:
+            n_prices, not_ready = stage_prices(conn, run_id, log)
         if not_ready:
             n_att, m_att = _attempt_no()
             if _is_final_attempt():
@@ -577,7 +610,9 @@ def main(argv=None) -> int:
             conn.rollback()
             log("bonds", None, "failed", f"{type(e).__name__}: {e}")
             n_bond = 0
-        stage_regen(conn, run_id, log, changed=bool(touched or n_prices or n_idx or n_bond))
+        stage_regen(conn, run_id, log,
+                    changed=bool(touched or n_prices or n_idx or n_bond
+                                 or force_regen))
         conn.commit()
         digest = build_digest(conn, run_id)
         os.makedirs("data/digests", exist_ok=True)

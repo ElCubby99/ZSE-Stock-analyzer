@@ -107,6 +107,26 @@ def test_prag_kompletnosti(conn):
         "3 klase od ~69 ne smije proći kao kompletan dan"
 
 
+def test_exports_fresh_iz_overviewa(tmp_path):
+    """Guard 'already done' traži i svježe exporte: baza s cijenama ali
+    stari overview.json (run pao prije regena, slučaj 16.07.) NE smije
+    proći kao done — sljedeći run mora nadoknaditi regen + deploy."""
+    import json as _json
+    p = tmp_path / "overview.json"
+    today = date.today()
+
+    p.write_text(_json.dumps({"stocks": [{"date": today.isoformat()}]}))
+    assert daily.exports_fresh(overview_path=p) is True
+
+    p.write_text(_json.dumps({"stocks": [{"date": "2020-01-02"}]}))
+    assert daily.exports_fresh(overview_path=p) is False, \
+        "stari exporti uz punu bazu = nadoknada, ne no-op"
+
+    p.write_text("{pokvaren json")
+    assert daily.exports_fresh(overview_path=p) is False
+    assert daily.exports_fresh(overview_path=tmp_path / "nema.json") is False
+
+
 # ---------- 3. alarm samo na zadnjem dnevnom pokušaju ----------
 
 def test_final_attempt_prag(monkeypatch):
