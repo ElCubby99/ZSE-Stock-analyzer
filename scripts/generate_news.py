@@ -121,15 +121,25 @@ def main() -> int:
         return 0
 
     import requests
-    r = requests.post(f"{url.rstrip('/')}/functions/v1/news-ingest",
-                      headers={"x-api-key": key, "Content-Type": "application/json"},
-                      json={"items": items}, timeout=60)
-    if r.status_code != 200:
-        print(f"[vijesti] news-ingest {r.status_code}: {r.text[:300]}")
-        return 1
-    d = r.json()
-    print(f"[vijesti] poslano {len(items)}: novo={d.get('inserted')} "
-          f"preskočeno(dedup)={d.get('skipped')} greške={d.get('errors')}")
+    # Edge Function prima najviše 200 stavki po pozivu — šalji u serijama
+    # (16.07.2026.: nagomilani kandidati srušili run s 400 "max 200 po pozivu")
+    BATCH = 200
+    tot_new = tot_skip = tot_err = 0
+    for i in range(0, len(items), BATCH):
+        chunk = items[i:i + BATCH]
+        r = requests.post(f"{url.rstrip('/')}/functions/v1/news-ingest",
+                          headers={"x-api-key": key, "Content-Type": "application/json"},
+                          json={"items": chunk}, timeout=60)
+        if r.status_code != 200:
+            print(f"[vijesti] news-ingest {r.status_code} (serija "
+                  f"{i // BATCH + 1}): {r.text[:300]}")
+            return 1
+        d = r.json()
+        tot_new += d.get("inserted") or 0
+        tot_skip += d.get("skipped") or 0
+        tot_err += d.get("errors") or 0
+    print(f"[vijesti] poslano {len(items)}: novo={tot_new} "
+          f"preskočeno(dedup)={tot_skip} greške={tot_err}")
     return 0
 
 

@@ -18,11 +18,13 @@ name: daily-eod
 
 on:
   schedule:
-    # Satni pokušaji 16:20 -> 22:20 lokalno, za OBA DST offseta; DST guard
-    # ispod propušta samo runove u lokalnom prozoru 16:00-23:00 (kombinacija
-    # dvaju raspona pokriva i CEST i CET bez ručnog prebacivanja).
-    - cron: '20 14-20 * * 1-5'   # 16:20-22:20 CEST (ljetno, UTC+2)
-    - cron: '20 15-21 * * 1-5'   # 16:20-22:20 CET (zimsko, UTC+1)
+    # Satni pokušaji 16:20 -> 23:20 lokalno, za OBA DST offseta; DST guard
+    # ispod propušta samo runove u lokalnom prozoru 16:00-24:00 (kombinacija
+    # dvaju raspona pokriva i CEST i CET bez ručnog prebacivanja). Prozor
+    # ide do kraja dana — pokušava se dok podaci ne stignu; vrijeme kad su
+    # stigli se bilježi (eod_first_seen) pa se raspored kasnije kalibrira.
+    - cron: '20 14-21 * * 1-5'   # 16:20-23:20 CEST (ljetno, UTC+2)
+    - cron: '20 15-22 * * 1-5'   # 16:20-23:20 CET (zimsko, UTC+1)
   workflow_dispatch: {}           # ručno pokretanje (test / nadoknada dana)
 
 concurrency:
@@ -44,19 +46,21 @@ jobs:
     steps:
       # DST guard: dva cron raspona postoje jer se UTC offset mijenja
       # (CET/CEST) — dio termina je uvijek "krivi" za sat. Izvrši se samo
-      # run koji padne u lokalni prozor 16:00-23:00 (širok namjerno:
+      # run koji padne u lokalni prozor 16:00-24:00 (širok namjerno:
       # GitHub cronovi kasne i do ~1,5 h — 16.07.2026. je zbog uskog
-      # prozora 16-17h preskočen SVAKI zakazani run). Dispatch preskače guard.
-      - name: DST guard (prozor 16-23h Europe/Zagreb)
+      # prozora 16-17h preskočen SVAKI zakazani run). Poslije ponoći se ne
+      # nastavlja ("danas" bi postao krivi datum) — rupu zakrpa backfill
+      # prvog sutrašnjeg uspješnog runa. Dispatch preskače guard.
+      - name: DST guard (prozor 16-24h Europe/Zagreb)
         id: guard
         run: |
           H=$(TZ=Europe/Zagreb date +%H)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || { [ "$H" -ge 16 ] && [ "$H" -le 22 ]; }; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$H" -ge 16 ]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
             echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') — pokrećem"
           else
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') izvan prozora 16-23h — čisti izlaz bez posla"
+            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') izvan prozora 16-24h — čisti izlaz bez posla"
           fi
 
       - name: Checkout
@@ -101,8 +105,42 @@ jobs:
             echo "did_work=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # GLAVNI ISHOD ODMAH: commit + deploy idu PRIJE sporednih koraka
+      # (16.07.2026.: pad Auto-vijesti preskočio je commit/deploy pa su
+      # svježi exporti bačeni s runnerom — objava cijena ne smije ovisiti
+      # o vijestima/alarmu). [skip ci] sprječava petlju workflowa.
+      - name: Commit exporta (ako ima promjena)
+        if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
+        id: commit
+        run: |
+          git config user.name "daily-eod bot"
+          git config user.email "noreply@burzovnilist.com"
+          git add frontend/public/data
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "nema promjena u exportima — bez commita i bez deploya"
+          else
+            git commit -m "EOD $(TZ=Europe/Zagreb date +%F): osvježeni exporti [skip ci]"
+            for i in 1 2 3 4; do
+              git pull --rebase origin main && git push origin main && break
+              echo "push nije prošao — retry za $((2**i))s"; sleep $((2**i))
+            done
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy hook (samo nakon potvrđenih novih podataka)
+        if: steps.guard.outputs.run == 'true' && steps.commit.outputs.changed == 'true'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "VERCEL_DEPLOY_HOOK_URL nije postavljen"; exit 1; fi
+          curl -fsS -X POST "$HOOK" -o /dev/null
+          echo "Vercel build pokrenut"
+
+      # Sporedni koraci NAKON objave — njihov pad ne smije dirati exporte.
       - name: Auto-vijesti (draftovi u news_items, dedup)
         if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
+        continue-on-error: true   # vijesti su nice-to-have, ne uvjet objave
         env:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -140,36 +178,6 @@ jobs:
               body: `Distribucijski alarm (metodologija v3, faza P): ${a.big}/${a.eligible} kvalificiranih top-20 imena ima |raskorak| > 30% naspram sredine fer-zone.\n\nImena: ${(a.names || []).join(', ')}\n\nPravilo: zone se provjeravaju (ulazi/pretpostavke), NE prilagođavaju tržištu. Banner je automatski aktivan na /metodologija.`,
               labels: ['calibration-review'],
             });
-
-      # Exporti natrag u repo: [skip ci] sprječava petlju workflowa; Vercel
-      # build svejedno okida deploy hook korak ispod (jedan, kontrolirani).
-      - name: Commit exporta (ako ima promjena)
-        if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
-        id: commit
-        run: |
-          git config user.name "daily-eod bot"
-          git config user.email "noreply@burzovnilist.com"
-          git add frontend/public/data
-          if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "nema promjena u exportima — bez commita i bez deploya"
-          else
-            git commit -m "EOD $(TZ=Europe/Zagreb date +%F): osvježeni exporti [skip ci]"
-            for i in 1 2 3 4; do
-              git pull --rebase origin main && git push origin main && break
-              echo "push nije prošao — retry za $((2**i))s"; sleep $((2**i))
-            done
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Deploy hook (samo nakon potvrđenih novih podataka)
-        if: steps.guard.outputs.run == 'true' && steps.commit.outputs.changed == 'true'
-        env:
-          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
-        run: |
-          if [ -z "$HOOK" ]; then echo "VERCEL_DEPLOY_HOOK_URL nije postavljen"; exit 1; fi
-          curl -fsS -X POST "$HOOK" -o /dev/null
-          echo "Vercel build pokrenut"
 
       # Notifikacija: GitHub ionako mailira vlasnika na failed run; issue
       # ostavlja trajni trag (label pipeline-fail). Failure nastaje SAMO iz

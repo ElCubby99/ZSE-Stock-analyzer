@@ -133,7 +133,7 @@ def test_final_attempt_prag(monkeypatch):
     class FakeNow:
         def __init__(self, h):
             self.hour = h
-    for h, final in [(16, False), (18, False), (21, False), (22, True), (23, True)]:
+    for h, final in [(16, False), (18, False), (22, False), (23, True)]:
         monkeypatch.setattr(daily, "_zagreb_now", lambda h=h: FakeNow(h))
         assert daily._is_final_attempt() == final, f"sat {h}"
 
@@ -142,10 +142,10 @@ def test_attempt_numbering(monkeypatch):
     class FakeNow:
         def __init__(self, h):
             self.hour = h
-    for h, expected in [(16, 1), (19, 4), (22, 7), (23, 7), (15, 1)]:
+    for h, expected in [(16, 1), (19, 4), (22, 7), (23, 8), (15, 1)]:
         monkeypatch.setattr(daily, "_zagreb_now", lambda h=h: FakeNow(h))
         n, m = daily._attempt_no()
-        assert (n, m) == (expected, 7), f"sat {h}"
+        assert (n, m) == (expected, 8), f"sat {h}"
 
 
 # ---------- 4. backfill jučerašnje rupe ----------
@@ -208,9 +208,9 @@ def test_nema_sleep_petlje():
 
 def test_workflow_raspored_i_guard():
     wf = (ROOT / ".github" / "workflows" / "daily-eod.yml").read_text(encoding="utf-8")
-    assert "'20 14-20 * * 1-5'" in wf, "satni CEST raspon 16:20-22:20"
-    assert "'20 15-21 * * 1-5'" in wf, "satni CET raspon 16:20-22:20"
-    assert '-ge 16' in wf and '-le 22' in wf, "guard prozor 16-23h lokalno"
+    assert "'20 14-21 * * 1-5'" in wf, "satni CEST raspon 16:20-23:20"
+    assert "'20 15-22 * * 1-5'" in wf, "satni CET raspon 16:20-23:20"
+    assert '-ge 16' in wf, "guard prozor 16-24h lokalno (do kraja dana)"
     assert "workflow_dispatch" in wf, "ručna nadoknada mora ostati"
     assert "group: daily-eod" in wf and "cancel-in-progress: false" in wf, \
         "concurrency bez paralelnih runova"

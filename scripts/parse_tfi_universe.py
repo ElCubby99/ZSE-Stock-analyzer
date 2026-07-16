@@ -40,7 +40,8 @@ def _verify():
 
 
 def ingest_tfi_xlsx(conn, ticker, url, year, period_type, *, consolidated=True,
-                    cumulative=True, published_at=None, path=None):
+                    cumulative=True, published_at=None, path=None,
+                    currency="EUR"):
     """Preuzmi + parsiraj TFI-POD XLSX i upiši kao filing (deterministički,
     0 kredita). Vraća (fid, parsed) ili (None, None) ako nije TFI-POD obrazac
     (npr. bankovni nadzorni — traži zaseban parser). Ne commita."""
@@ -62,7 +63,9 @@ def ingest_tfi_xlsx(conn, ticker, url, year, period_type, *, consolidated=True,
         "meta": {"company_ticker": ticker, "fiscal_year": year,
                  "period_type": period_type, "basis": "consolidated",
                  "audited": False, "cumulative": cumulative,
-                 "currency": "EUR", "reporting_scale": 1},
+                 # M35: izvještaji do FY2022 su u HRK — normalize dijeli
+                 # fiksnim tečajem (7,5345); od FY2023 EUR
+                 "currency": currency, "reporting_scale": 1},
         "items": [
             {"item": k, "value_raw": v, "confidence": 0.9 if k != "ebit" else 0.85,
              "source_page": (f"TFI {label} {year} XLSX ({kind}), {parsed['src'][k]}"

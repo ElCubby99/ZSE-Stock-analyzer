@@ -348,6 +348,29 @@ def stage_prices(conn, run_id, log, fetch=None) -> tuple[int, bool]:
         return 0, True
 
     log("prices", None, "ok", f"{n} EOD zapisa za {len(tickers)} live linija")
+    # M35: zabilježi KADA su podaci stvarno stigli (prvi uspješan dohvat
+    # dana) — iz ove tablice se kasnije kalibrira cron raspored prema
+    # stvarnom vremenu ZSE objave, umjesto pogađanja prozora.
+    now_l = _zagreb_now()
+    att, _m = _attempt_no()
+    with conn.cursor() as cur:
+        # SAVEPOINT umjesto commit/rollback: evidencija ne smije ni srušiti
+        # run ni presjeći transakciju pozivatelja (testovi rade u rollbacku)
+        cur.execute("SAVEPOINT eod_seen")
+        try:
+            cur.execute(
+                """INSERT INTO eod_first_seen (trade_date, found_local,
+                     attempt, n_records)
+                   VALUES (%s,%s,%s,%s) ON CONFLICT (trade_date) DO NOTHING""",
+                (today, now_l.strftime("%H:%M"), att, n))
+            cur.execute("RELEASE SAVEPOINT eod_seen")
+            log("prices", None, "ok",
+                f"eod_first_seen: {today} dostupno u {now_l.strftime('%H:%M')} "
+                f"(pokušaj {att})")
+        except Exception as e:  # noqa: BLE001 — evidencija ne ruši run
+            cur.execute("ROLLBACK TO SAVEPOINT eod_seen")
+            log("prices", None, "failed",
+                f"eod_first_seen: {type(e).__name__}: {e}")
     # Backfill: jučerašnja rupa (npr. dan kad ZSE ništa nije objavio do
     # 22:20) — ako izvor sad nudi i taj datum, serija ne ostaje šupljikava.
     prev = previous_trading_day(today)
@@ -514,15 +537,16 @@ def build_digest(conn, run_id: str) -> str:
 
 def _attempt_no() -> tuple[int, int]:
     """(N, M) za log "pokušaj N od M" — iz lokalnog sata (termini 16:20 →
-    22:20, svaki sat => 7 pokušaja; N clipan u [1, 7])."""
+    23:20, svaki sat => 8 pokušaja; N clipan u [1, 8])."""
     h = _zagreb_now().hour
-    return max(1, min(7, h - 15)), 7
+    return max(1, min(8, h - 15)), 8
 
 
 def _is_final_attempt() -> bool:
-    """Zadnji dnevni pokušaj = lokalni sat >= EOD_FINAL_HOUR (zadano 22).
+    """Zadnji dnevni pokušaj = lokalni sat >= EOD_FINAL_HOUR (zadano 23 —
+    prozor ide do kraja dana; poslije ponoći bi 'danas' bio krivi datum).
     Samo on smije failati kad podataka nema (jedan alarm dnevno, ne po satu)."""
-    return _zagreb_now().hour >= int(os.getenv("EOD_FINAL_HOUR", "22"))
+    return _zagreb_now().hour >= int(os.getenv("EOD_FINAL_HOUR", "23"))
 
 
 def main(argv=None) -> int:

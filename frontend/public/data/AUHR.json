@@ -10,6 +10,8 @@
   "data_status": "full",
   "financials_3y": {
     "years": [
+      2023,
+      2024,
       2025
     ],
     "rows": [
@@ -17,60 +19,72 @@
         "item": "revenue",
         "label": "Poslovni prihodi",
         "values": {
+          "2023": 241835615.0,
+          "2024": 271530078.0,
           "2025": 284249193.0
         },
-        "yoy_pct": null,
-        "cagr_pct": null,
+        "yoy_pct": 0.046842379649741694,
+        "cagr_pct": 0.08415029024660492,
         "unit": "eur"
       },
       {
         "item": "ebitda",
         "label": "EBITDA",
         "values": {
+          "2023": 21906704.0,
+          "2024": 21754173.0,
           "2025": 24795227.0
         },
-        "yoy_pct": null,
-        "cagr_pct": null,
+        "yoy_pct": 0.13979175397750132,
+        "cagr_pct": 0.0638870541133616,
         "unit": "eur"
       },
       {
         "item": "ebit",
         "label": "EBIT",
         "values": {
+          "2023": 14549306.0,
+          "2024": 14409269.0,
           "2025": 15771378.0
         },
-        "yoy_pct": null,
-        "cagr_pct": null,
+        "yoy_pct": 0.09453005561906025,
+        "cagr_pct": 0.04115090602590632,
         "unit": "eur"
       },
       {
         "item": "net_income_parent",
         "label": "Neto dobit matici",
         "values": {
+          "2023": 12129829.0,
+          "2024": 11950925.0,
           "2025": 12766307.0
         },
-        "yoy_pct": null,
-        "cagr_pct": null,
+        "yoy_pct": 0.06822752213740779,
+        "cagr_pct": 0.02590064477717524,
         "unit": "eur"
       },
       {
         "item": "eps",
         "label": "EPS (dobit matici / dionica)",
         "values": {
+          "2023": 20.216381666666667,
+          "2024": 19.918208333333332,
           "2025": 21.27717833333333
         },
-        "yoy_pct": null,
-        "cagr_pct": null,
+        "yoy_pct": 0.06822752213740779,
+        "cagr_pct": 0.02590064477717524,
         "unit": "eur_per_share"
       },
       {
         "item": "operating_cf",
         "label": "Operativni novčani tok",
         "values": {
+          "2023": 4869556.0,
+          "2024": 16059564.0,
           "2025": 24521191.0
         },
-        "yoy_pct": null,
-        "cagr_pct": null,
+        "yoy_pct": 0.5268902069819579,
+        "cagr_pct": 1.2440167679647622,
         "unit": "eur"
       }
     ],
@@ -79,6 +93,18 @@
   "trend": {
     "series": [
       {
+        "year": 2023,
+        "revenue": 241835615.0,
+        "ebitda": 21906704.0,
+        "ebitda_margin": 0.09058510261195399
+      },
+      {
+        "year": 2024,
+        "revenue": 271530078.0,
+        "ebitda": 21754173.0,
+        "ebitda_margin": 0.08011699168001565
+      },
+      {
         "year": 2025,
         "revenue": 284249193.0,
         "ebitda": 24795227.0,
@@ -86,7 +112,7 @@
       }
     ],
     "revenue_label": "Prihodi",
-    "narration": "Prihodi: samo 2025. u bazi (284,2 M€) — trend se ne računa iz jedne godine. EBITDA marža: 8,7% (2025.) — jedna godina u bazi.",
+    "narration": "Prihodi: 2023. 241,8 M€ → 2024. 271,5 M€ (+12,3%) → 2025. 284,2 M€ (+4,7%). Smjer: rast; ukupno kroz razdoblje +17,5%. EBITDA marža: 9,1% → 8,0% → 8,7% (2023.–2025.). Smjer: pad.",
     "note": "naracija je izvedena isključivo iz brojki u bazi (bez ocjena); smjer = usporedba ruba razdoblja uz prag ±1%"
   },
   "news": {
@@ -166,7 +192,7 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: β = 0.71 (sektorska (nema serije)); premija nelikvidnosti +1.0 p.b.; TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); kratka serija (rast); ROE pravilo (TTM + 3g medijan); komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.; peer multipli (P/E 12, P/B 1,5)."
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 0.71 (sektorska (nema serije)); premija nelikvidnosti +1.0 p.b.; TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); ROE pravilo (TTM + 3g medijan); komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.; peer multipli (P/E 12, P/B 1,5)."
       },
       {
         "l": "RASKORAK METODA",
@@ -2589,19 +2615,18 @@
       "growth": {
         "g1": 0.074,
         "signals": {
-          "g_obs": null,
+          "g_obs": 0.0842,
           "g_sust": 0.1241,
           "g_terminal": 0.04
         },
-        "origin": "održivi rast (kratka serija — bez g_obs)",
-        "winner": "g_sust",
+        "origin": "serija",
+        "winner": "g_obs",
         "badges": [
-          "cap 8% nakon medijana",
           "TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r)"
         ],
         "ttm_context": 0.023,
-        "short_series": true,
-        "source": "g1=7.4% = KOMPOZIT (v3.1): medijan {serija: nema ≥3 godišnja izvješća (g_obs se ne računa — jedna godišnja usporedba nije stopa rasta; kontekst: TTM vs lani +2.3%); održivi rast: ROE 12.4% × (1 − payout 0%) = +12.4%; sidro terminala 4.0%} — pobjednik 'održivi rast (kratka serija — bez g_obs)'; cap 8% nakon medijana; TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "short_series": false,
+        "source": "g1=7.4% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +8.4%; održivi rast: ROE 12.4% × (1 − payout 0%) = +12.4%; sidro terminala 4.0%} — pobjednik 'serija'; TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -2624,16 +2649,10 @@
         "why": "zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali) — v3 FAZA G; kvartalni izvještaji su nerevidirani"
       },
       {
-        "key": "short_series",
-        "label": "kratka serija (rast)",
-        "status": "pretpostavka",
-        "why": "u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)"
-      },
-      {
         "key": "roe_rule",
         "label": "ROE pravilo (TTM + 3g medijan)",
         "status": "izvor",
-        "why": "ROE pravilo (v3 G): TTM 12.4%×0,9 = 11.2% (nema 3g serije za medijan)"
+        "why": "ROE pravilo (v3 G): max(3g medijan 13.5%, TTM 12.4%×0,9) = 13.5%"
       },
       {
         "key": "r_components",
@@ -2698,7 +2717,7 @@
           "g_terminal": 0.04,
           "g1_explicit": 0.074,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=7.4% = KOMPOZIT (v3.1): medijan {serija: nema ≥3 godišnja izvješća (g_obs se ne računa — jedna godišnja usporedba nije stopa rasta; kontekst: TTM vs lani +2.3%); održivi rast: ROE 12.4% × (1 − payout 0%) = +12.4%; sidro terminala 4.0%} — pobjednik 'održivi rast (kratka serija — bez g_obs)'; cap 8% nakon medijana; TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=7.4% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +8.4%; održivi rast: ROE 12.4% × (1 − payout 0%) = +12.4%; sidro terminala 4.0%} — pobjednik 'serija'; TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -2763,7 +2782,7 @@
       ],
       "vs_market_pct": -56.2,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +7.4% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održivi rast (kratka serija — bez g_obs)' (bez ≥3-godišnje serije — jedna godišnja usporedba nije stopa rasta) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 8 € operativne zarade (EBITDA marža 8.5%). Firma je lani stvorila 9.2 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 7.9%, uz izračunati rast 7.4% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 471.63 € po dionici. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~-0.1% trajnog rasta godišnje / multipl P/E 10.8×; naš kompozitni rast (serija/održivi/terminal) je +7.4% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +7.4% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'serija' (višegodišnja serija: +8.4%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 8 € operativne zarade (EBITDA marža 8.5%). Firma je lani stvorila 9.2 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 7.9%, uz izračunati rast 7.4% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 471.63 € po dionici. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~-0.1% trajnog rasta godišnje / multipl P/E 10.8×; naš kompozitni rast (serija/održivi/terminal) je +7.4% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": -0.1,
@@ -2802,12 +2821,12 @@
       "zone_low": 381.1688593568251,
       "zone_high": 624.4163104067321,
       "bvps": 158.47,
-      "roe": 0.111702,
+      "roe": 0.135392,
       "r": 0.07903299999999999,
       "price": 220.0,
       "pb_market": 1.39,
       "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
-      "plain": "Fer-zona (381,17–624,42 €) viša je od knjigovodstvene vrijednosti (158,47 € po dionici). Firma na vlastitom kapitalu zarađuje oko 11,2 % godišnje, više od zahtijevanog prinosa od 7,9 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
+      "plain": "Fer-zona (381,17–624,42 €) viša je od knjigovodstvene vrijednosti (158,47 € po dionici). Firma na vlastitom kapitalu zarađuje oko 13,5 % godišnje, više od zahtijevanog prinosa od 7,9 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
     }
   },
   "methodology": {
@@ -2826,7 +2845,7 @@
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
         "v": "7,4%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održivi rast (kratka serija — bez g_obs)'"
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'serija'"
       },
       {
         "k": "Peer multipli",
@@ -2837,7 +2856,6 @@
     "limitations": [
       "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
       "β = 0.71 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
-      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa kompozitni g1 nastaje bez signala serije — iz održivog rasta (ROE × zadržana dobit) i terminalnog sidra, uz cap 8%; jedna godišnja usporedba nije stopa rasta (v3.1)",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],

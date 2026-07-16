@@ -75,6 +75,16 @@ CREATE TABLE IF NOT EXISTS valuation_changelog (
   UNIQUE (company_id, changed_on, reason)
 );
 
+-- M35: KADA su EOD podaci stvarno postali dostupni — kalibracija cron
+-- rasporeda iz stvarnosti (upisuje se pri PRVOM uspješnom dohvatu dana)
+CREATE TABLE IF NOT EXISTS eod_first_seen (
+    trade_date DATE PRIMARY KEY,
+    found_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+    found_local TEXT,          -- "HH:MM" Europe/Zagreb (čitljivo za pregled)
+    attempt    INT,            -- koji satni pokušaj je uspio (1 = 16:20)
+    n_records  INT
+);
+
 -- M-IDX / M-BOND / M-FOND pomoćne tablice (moduli ih inače stvaraju
 -- runtime — ovdje su radi kompletnosti migracije na svježu bazu)
 CREATE TABLE IF NOT EXISTS index_eod (

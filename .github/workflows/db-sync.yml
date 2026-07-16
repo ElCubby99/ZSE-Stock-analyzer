@@ -1,0 +1,55 @@
+# M35: sinkronizacija SADRŽAJNIH tablica u produkcijsku bazu (Supabase).
+# Kurirani podaci (ekstrakcije, klasifikacije, holdings, povijest zona)
+# nastaju u lokalnoj razvojnoj bazi; dump se commita u repo
+# (data/sync/content_dump.json.gz), a ovaj workflow ga primjenjuje na
+# produkciju po prirodnim ključevima. Pokreće se RUČNO nakon što je dump
+# osvježen i mergean u main.
+name: db-sync
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Ovisnosti
+        run: pip install -r requirements.txt
+
+      - name: Shema (idempotentne migracije)
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python - <<'EOF'
+          from src.db import get_conn
+          from src.daily import ensure_schema
+          with get_conn() as conn:
+              ensure_schema(conn)
+          print("shema ok")
+          EOF
+
+      - name: Sync sadržaja (dump -> produkcija)
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m scripts.db_sync apply
