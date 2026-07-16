@@ -11,9 +11,9 @@
    - indexable   true → ulazi u sitemap; false → noindex i NEMA ga u sitemapu
                  (nema zasebne exclude-liste — indexability živi samo ovdje)
    - seo         {title, description} za prerendane statičke stranice
-   - expand      'stocks' | 'blog' | 'news' — dinamička ruta koju prerender
-                 širi po podacima (exporti dionica / objavljeni postovi /
-                 objavljene vijesti s bodyjem)
+   - expand      'stocks' | 'blog' | 'news' | 'indices' — dinamička ruta
+                 koju prerender širi po podacima (exporti dionica / postovi /
+                 vijesti s bodyjem / indeksi)
    - prerender   false → stranica se NE prerendera (samo SPA fallback);
                  podrazumijevano true za statičke rute */
 
@@ -41,6 +41,21 @@ export const ROUTES = [
     component: 'StockPage',
     indexable: true,
     expand: 'stocks',
+  },
+  {
+    path: '/indeksi',
+    component: 'IndeksiIndex',
+    indexable: true,
+    seo: {
+      title: 'Indeksi Zagrebačke burze — CROBEX, CROBEX10, CROBIS | Burzovni list',
+      description: 'Svi indeksi Zagrebačke burze na jednom mjestu: vrijednosti, dnevne i godišnje promjene, sastavnice s težinama i temperatura tržišta prema fer-zonama.',
+    },
+  },
+  {
+    path: '/indeks/:slug',
+    component: 'IndeksDetail',
+    indexable: true,
+    expand: 'indices',
   },
   {
     path: '/usporedba',

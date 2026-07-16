@@ -346,6 +346,53 @@ let dividendeData = { rows: [], as_of: null }
 try {
   dividendeData = JSON.parse(await fs.readFile(path.join(DIST, 'data/dividende.json'), 'utf8'))
 } catch { /* bez kalendara nema tablice */ }
+
+/* ---------- M-IDX: indeksi ---------- */
+let indeksiData = { indices: [], temperature: null }
+try {
+  indeksiData = JSON.parse(await fs.readFile(path.join(DIST, 'data/indeksi.json'), 'utf8'))
+} catch { /* bez indeksa nema kartica */ }
+
+const temperatureHtml = () => {
+  const t = indeksiData.temperature
+  if (!t || !t.total) return ''
+  const p = (n) => Math.round((n / t.total) * 100)
+  return `<h2>Temperatura tržišta</h2>
+    <p>Sastavnice ${esc(t.index)}-a naspram naših fer-zona: <strong>${t.above} iznad zone (${p(t.above)} %)</strong>,
+    ${t.inside} u zoni (${p(t.inside)} %), ${t.below} ispod zone (${p(t.below)} %)${t.np ? `, ${t.np} n/p` : ''}
+    — od ukupno ${t.total} sastavnica. ${esc(t.note)}.</p>`
+}
+
+async function buildIndexPages() {
+  for (const ix of indeksiData.indices) {
+    const canonical = `${SITE}/indeks/${ix.slug}`
+    const pctTxt = (v) => (v === null || v === undefined ? 'n/p'
+      : `${v >= 0 ? '+' : '−'}${num(Math.abs(v) * 100, 2)} %`)
+    const consRows = (ix.constituents || []).map((c) => `<tr>
+      <td>${c.company
+    ? `<a href="/dionica/${esc(c.company.toLowerCase())}">${esc(c.ticker)}</a>`
+    : esc(c.ticker)}</td>
+      <td>${esc(c.name || '')}</td>
+      <td>${c.weight_pct !== null && c.weight_pct !== undefined ? `${num(c.weight_pct, 2)} %` : 'n/p'}</td></tr>`).join('')
+    await write(`indeks/${ix.slug}`, page({
+      title: `${ix.name} danas — vrijednost, sastav i povijest | Burzovni list`,
+      description: `${ix.name} (${ix.description}): ${num(ix.value, 2)} (${ix.date}), dnevna promjena ${pctTxt(ix.change_pct)}, YTD ${pctTxt(ix.ytd_pct)}. Sastavnice s težinama i povijest.`.slice(0, 155),
+      canonical,
+      body: `<main>
+        <nav><a href="/">Naslovnica</a> › <a href="/indeksi">Indeksi</a> › ${esc(ix.name)}</nav>
+        <h1>${esc(ix.name)} — vrijednost, sastav i povijest</h1>
+        <p>${esc(ix.description)}. Zadnja vrijednost: <strong>${num(ix.value, 2)}</strong>
+        (službeni EOD za ${esc(ix.date)} · ažurira se nakon zatvaranja trgovine u 16:00).
+        Dnevna promjena ${pctTxt(ix.change_pct)} · YTD ${pctTxt(ix.ytd_pct)} · 1 godina ${pctTxt(ix.y1_pct)}.</p>
+        ${consRows ? `<h2>Sastavnice (${ix.constituents.length})</h2>
+        <table><thead><tr><th>Ticker</th><th>Naziv</th><th>Težina</th></tr></thead>
+        <tbody>${consRows}</tbody></table>
+        <p>Izvor sastavnica i težina: ZSE (IndexComposition).</p>` : ''}
+        <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+    }))
+    urls.push({ loc: canonical, lastmod: ix.date || eod })
+  }
+}
 function dividendeTable() {
   const rows = (dividendeData.rows || []).map((r) => `<tr>
     <td>${esc(r.class_ticker || r.company)}</td><td>${esc(r.name || r.company)}</td>
@@ -365,6 +412,7 @@ const BODY_BUILDERS = {
     // M33: uz svaki ticker PUNO ime + cijena + odnos prema fer-zoni
     body: `<main><h1>Analiza dionica Zagrebačke burze</h1>
       <p>Fer vrijednost, CROBEX, dividende i pokazatelji za sve uvrštene dionice — službeni EOD podaci${eod ? ` (${esc(eod)})` : ''}.</p>
+      ${temperatureHtml()}
       <h2>Dionice</h2><ul>${[...byCompany.entries()].map(([c, s]) => `<li><a href="/dionica/${c.toLowerCase()}">${esc(c)} — ${esc(s.name)}</a>${s.price ? ` · ${num(s.price)} €` : ''} · ${esc(zoneStatus(s))}</li>`).join('')}</ul>
       <p><a href="/usporedba">Usporedba dionica</a> · <a href="/dividende">Kalendar dividendi</a> · <a href="/metodologija">Metodologija</a> · <a href="/screener">Screener</a></p></main>`,
   }),
@@ -403,6 +451,20 @@ const BODY_BUILDERS = {
       <p>Kalkulatori rade u pregledniku (učitava se aplikacija) i ne spremaju unesene podatke.</p>
       <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
   }),
+  '/indeksi': () => ({
+    body: `<main><h1>Indeksi Zagrebačke burze</h1>
+      <p>Službene vrijednosti svih ${indeksiData.indices.length} indeksa ZSE — ažuriraju se nakon zatvaranja trgovine (16:00).</p>
+      ${temperatureHtml()}
+      <table><thead><tr><th>Indeks</th><th>Vrijednost</th><th>Dan</th><th>YTD</th><th>1g</th></tr></thead>
+      <tbody>${indeksiData.indices.map((ix) => {
+    const pctTxt = (v) => (v === null || v === undefined ? 'n/p'
+      : `${v >= 0 ? '+' : '−'}${num(Math.abs(v) * 100, 2)} %`)
+    return `<tr><td><a href="/indeks/${esc(ix.slug)}">${esc(ix.name)}</a> — ${esc(ix.description)}</td>
+      <td>${num(ix.value, 2)}</td><td>${pctTxt(ix.change_pct)}</td>
+      <td>${pctTxt(ix.ytd_pct)}</td><td>${pctTxt(ix.y1_pct)}</td></tr>`
+  }).join('')}</tbody></table>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
   '/impressum': () => ({ body: `<main><h1>Impressum</h1>${renderStatic('/impressum')}</main>` }),
   '/uvjeti-koristenja': () => ({ body: `<main><h1>Uvjeti korištenja</h1>${renderStatic('/uvjeti-koristenja')}</main>` }),
   '/politika-privatnosti': () => ({ body: `<main><h1>Politika privatnosti</h1>${renderStatic('/politika-privatnosti')}</main>` }),
@@ -437,6 +499,7 @@ for (const r of ROUTES) {
   if (r.expand === 'stocks') { await buildStockPages(); continue }
   if (r.expand === 'blog') { await buildBlogPages(); continue }
   if (r.expand === 'news') { await buildNewsPages(); continue }
+  if (r.expand === 'indices') { await buildIndexPages(); continue }
   const route = r.path.replace(/^\//, '')
   const canonical = route ? `${SITE}/${route}` : `${SITE}/`
   const extra = BODY_BUILDERS[r.path] ? BODY_BUILDERS[r.path]() : {}

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { GapCell, SiteFooter, SiteHeader, chg, chgCol, useOverview } from './Shell.jsx'
+import { TemperatureBar, useIndeksi } from './Indeksi.jsx'
 import { num } from './format.js'
 
 const eur0 = (v) => (v === null || v === undefined ? '—' : num(v, 2))
@@ -31,6 +33,7 @@ const MK_COLS = [
 
 export default function Trziste() {
   const ov = useOverview()
+  const idx = useIndeksi() // M-IDX: temperatura tržišta na naslovnici
   const nav = useNavigate()
   // default: PROMET silazno (kao dosad); klik na isto zaglavlje obrće smjer
   const [sk, setSk] = useState('turnover'); const [dir, setDir] = useState(-1)
@@ -76,11 +79,12 @@ export default function Trziste() {
         </div>
         <div className="mk-idx">
           {ov.indices.length ? ov.indices.map((ix) => (
-            <div className="mk-idx-c" key={ix.name}>
-              <div className="prof-klabel">{ix.name}</div>
+            <Link to="/indeksi" className="mk-idx-c mk-idx-link" key={ix.name}
+              title="Svi indeksi ZSE">
+              <div className="prof-klabel">{ix.name} →</div>
               <div className="mk-idx-v">{num(ix.value, 2)}</div>
               <div className="mono" style={{ color: chgCol(ix.change_pct), fontSize: 12 }}>{chg(ix.change_pct)}</div>
-            </div>
+            </Link>
           )) : <div className="mk-idx-c"><div className="prof-klabel">INDEKSI</div><div className="np">nema u bazi</div></div>}
           <div className="mk-idx-c">
             <div className="prof-klabel">PRAĆENE DIONICE</div>
@@ -88,6 +92,7 @@ export default function Trziste() {
             <div className="mono" style={{ fontSize: 12, color: 'rgba(38,46,51,0.6)' }}>klasa u sustavu</div>
           </div>
         </div>
+        <TemperatureBar t={idx?.temperature} />
         <div className="mk-movers-grid">
           <Movers title={`Najveći dobitnici${fmtDate ? ` · ${fmtDate}` : ''}`} list={gainers} nav={nav} />
           <Movers title={`Najveći gubitnici${fmtDate ? ` · ${fmtDate}` : ''}`} list={losers} nav={nav} />

@@ -157,3 +157,14 @@ Zadnja cjelovita provjera svih izvora: **14.07.2026.**
    SKDD lista bez objavljenog as-of datuma nosi datum dohvata.
 5. **Krhki izvori imaju fallback ili alarm**: pad scrapea ide u dnevni
    digest, ne u tihu rupu.
+
+## Indeksi (M-IDX)
+
+- **Izvor vrijednosti**: zse.hr javni web JSON `indexHistory` (isti izvor kao
+  graf na zse.hr); svih 14 indeksa (CROBEX obitelj, CROBIS/TR, ADRIAprime),
+  povijest od 01.07.2024., dnevno u EOD pipelineu.
+- **Sastavnice i težine**: zse.hr `IndexComposition` (službeni sastav s
+  weight_percentage i free-float faktorom) — težine se NE izmišljaju;
+  osvježava se dnevno, `as_of` datum uz svaku tablicu.
+- **Temperatura tržišta**: naš agregat (sastavnice CROBEX-a naspram naših
+  fer-zona) — činjenični prikaz vlastite metrike s ogradom, bez preporuka.

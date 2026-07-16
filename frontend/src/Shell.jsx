@@ -69,6 +69,7 @@ const NAV_GROUPS = [
     items: [
       { to: '/', label: 'Sve dionice', end: true },
       { to: '/screener', label: 'Screener' },
+      { to: '/indeksi', label: 'Indeksi' },
       { to: '/dividende', label: 'Dividende' },
       { to: '/usporedba', label: 'Usporedba' },
       { to: '/alati', label: 'Alati' },

@@ -305,6 +305,14 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
         log("regen", None, "ok", "overview.json regeneriran")
     except Exception as e:  # noqa: BLE001
         log("regen", None, "failed", f"overview.json: {type(e).__name__}: {e}")
+    # M-IDX: indeksi.json (kartice + serije + sastavnice + temperatura)
+    try:
+        import subprocess
+        subprocess.run([os.sys.executable, "-m", "scripts.build_indeksi"],
+                       check=True, capture_output=True, text=True)
+        log("regen", None, "ok", "indeksi.json regeneriran")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"indeksi.json: {type(e).__name__}: {e}")
     # M25: EOD update -> okini Vercel build (prerender po dionici čita svježe
     # exporte). Hook URL NIJE u repou — env VERCEL_DEPLOY_HOOK_URL (README).
     hook = os.environ.get("VERCEL_DEPLOY_HOOK_URL")
@@ -383,7 +391,18 @@ def main(argv=None) -> int:
         touched = stage_extract_queue(conn, run_id, log)
         stage_recompute(conn, run_id, log, touched)
         n_prices, readiness_timeout = stage_prices(conn, run_id, log)
-        stage_regen(conn, run_id, log, changed=bool(touched or n_prices))
+        # M-IDX: indeksi (vrijednosti + sastavnice) — rupa: do M-IDX se
+        # index_eod nikad nije ažurirao u dnevnom prolazu
+        try:
+            from .indices import refresh_constituents, update_index_eod
+            n_idx = update_index_eod(conn, log=lambda m: None)
+            refresh_constituents(conn, log=lambda m: None)
+            log("indices", None, "ok", f"{n_idx} EOD zapisa indeksa + sastavnice")
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("indices", None, "failed", f"{type(e).__name__}: {e}")
+            n_idx = 0
+        stage_regen(conn, run_id, log, changed=bool(touched or n_prices or n_idx))
         conn.commit()
         digest = build_digest(conn, run_id)
         os.makedirs("data/digests", exist_ok=True)
