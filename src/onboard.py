@@ -197,6 +197,15 @@ def stage_filings(conn, run_id: str, cid: int, ticker: str, manifest: dict) -> d
     log(conn, run_id, "onboard:filings", cid, "ok",
         f"{ticker}: FY{rep['year']} {'kons.' if rep['consolidated'] else 'nekons.'} "
         f"PDF ({rep['publishDate'][:10]})")
+    # v3 FAZA SOTP: ubuduće se skidaju OBA godišnja izvještaja —
+    # konsolidirani I nekonsolidirani (ulaz za standalone komponentu matice)
+    try:
+        from .report_fetch import fetch_both
+        fetch_both(ticker, log=lambda m: log(conn, run_id, "onboard:reports",
+                                             cid, "ok", m[:200]))
+    except Exception as e:  # noqa: BLE001 — dohvat ne smije srušiti onboard
+        log(conn, run_id, "onboard:reports", cid, "failed",
+            f"{ticker}: dohvat oba izvještaja nije uspio: {e}")
     set_state(conn, cid, "filings_found")
     return rep
 

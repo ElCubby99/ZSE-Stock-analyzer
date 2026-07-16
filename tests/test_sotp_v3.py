@@ -41,7 +41,7 @@ def _koei_sotp(conn):
     return out["ran"]["sotp_nav"]["range"]
 
 
-def _insert_separate(conn, fy=2025, ni=60_000_000, div_income=None):
+def _insert_separate(conn, fy=2026, ni=60_000_000, div_income=None):
     with conn.cursor() as cur:
         cur.execute("SELECT id FROM companies WHERE ticker='KOEI'")
         cid = cur.fetchone()[0]
@@ -67,15 +67,27 @@ def _insert_separate(conn, fy=2025, ni=60_000_000, div_income=None):
     return cid
 
 
-def test_standalone_u_obradi_bez_nekonsolidiranog(conn):
-    """KOEI danas: nekonsolidirani izvještaj NIJE u bazi -> standalone
-    komponenta 'u obradi', NE aproksimira se iz konsolidiranih (nema
-    residual_pe vrijednosti u NAV-u)."""
+def test_standalone_pravilo(conn):
+    """Standalone: iz NEKONSOLIDIRANOG izvještaja (s isključenjem dividendi
+    kćeri) kad postoji u bazi; inače 'u obradi' — NIKAD residual_pe
+    aproksimacija iz konsolidiranih."""
+    with conn.cursor() as cur:
+        cur.execute("""SELECT 1 FROM filings f JOIN companies c ON c.id=f.company_id
+                       WHERE c.ticker='KOEI' AND f.basis='separate'
+                         AND f.period_type='annual' LIMIT 1""")
+        has_sep = cur.fetchone() is not None
     vr = _koei_sotp(conn)
     a = vr.assumptions
-    assert a.get("standalone_status", {}).get("status") == "u obradi"
-    assert not any("residual_pe" in (x.get("basis") or "") for x in a["parts"])
-    assert any("U OBRADI" in m for m in a.get("missing", []))
+    assert not any("residual_pe" in (x.get("basis") or "") for x in a["parts"]), \
+        "residual_pe aproksimacija iz konsolidiranih je ukinuta"
+    if has_sep:
+        st = next(x for x in a["parts"] if "standalone" in x["name"].lower()
+                  or "standalone_separate" in (x.get("basis") or ""))
+        assert "NEKONSOLIDIRANOG" in st["basis"]
+        assert "prihod od dividendi kćeri" in st["basis"]
+    else:
+        assert a.get("standalone_status", {}).get("status") == "u obradi"
+        assert any("U OBRADI" in m for m in a.get("missing", []))
 
 
 def test_iskljucenje_dividendnog_prihoda_mijenja_zbroj(conn):

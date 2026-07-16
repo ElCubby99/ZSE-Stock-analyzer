@@ -268,3 +268,22 @@ Top-20 likvidnih, kvalificirani (bez low-float i rekalibracija): 4/12 = 33% s |r
   kćeri (zadnja izglasana isplata kćeri × udio), u raspisu.
 - Učinak: SAMO KOEI zona 966–1.017 → 825–869 (−14,6%; KPT knjigovodstveno
   + standalone van NAV-a do nekonsolidiranog izvještaja). pytest 75/75.
+
+## 2026-07-16 — FAZA SOTP (nastavak): KOEI nekonsolidirani + automatski dohvat
+
+- src/report_fetch.py: automatski dohvat OBA godišnja izvještaja (kons. +
+  NEKONS., PDF, revidirani ima prednost) s EHO feeda za bilo koji ticker;
+  uvezano u onboard (stage_filings) — ubuduće se skidaju oba automatski.
+  CLI: python -m src.report_fetch <TICKER>.
+- KOEI nekonsolidirani FY2025 (revidirani, EHO 16.04.2026.) skinut i RUČNO
+  ekstrahiran (bez API-ja, izvori po stranicama): neto dobit Društva
+  80.142 tis. € (str. 15), prihod od dividendi Grupe 71.607 tis. €
+  (str. 3–4), poslovni prihodi 292.679 tis. € (str. 15), kapital 341.574
+  tis. € (str. 16) → filings basis='separate'.
+- KOEI standalone AKTIVAN: NI ex-dividende 8.535 tis. € × peer P/E =
+  114,9 M€ u NAV-u (umjesto "u obradi"); dvostruko brojanje isključeno
+  (71,6 M€ dividendi kćeri izvan standalone dobiti). Popis standalone
+  "u obradi": PRAZAN. Zona KOEI nepromijenjena (medijan kvalificiranih
+  ostaje na comps 847 €; SOTP interno potpun: 701 € baza).
+- pytest 75/75 (test standalone pravila pokriva oba stanja: separate u
+  bazi → NEKONSOLIDIRANI raspis; bez njega → "u obradi").
