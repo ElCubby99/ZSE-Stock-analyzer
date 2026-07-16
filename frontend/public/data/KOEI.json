@@ -329,11 +329,11 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri +8.9% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri +13.4% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
-        "txt": "Vrijednost i dividende matice ovise o društvima: Dalekovod (DLKV) (75%), KONČAR D&ST (KODT) (53%), KONČAR standalone (ex-uvrštene kćeri) (100%), KPT (Siemens JV, 49%) (49%)."
+        "txt": "Vrijednost i dividende matice ovise o društvima: Dalekovod (DLKV) (75%), KONČAR D&ST (KODT) (53%), KPT (Siemens JV, 49%) (49%)."
       },
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
@@ -341,7 +341,7 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); kratka serija (rast); ROE pravilo (TTM + 3g medijan); komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.; holding diskont 0–5%."
+        "txt": "Procjena počiva na označenim pretpostavkama: TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); kratka serija (rast); ROE pravilo (TTM + 3g medijan); komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.; holding diskont 0–5%; SOTP dijelovi na pretpostavljenim multiplama: KPT (Siemens JV, 49%)."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -4965,6 +4965,12 @@
         "label": "holding diskont 0–5%",
         "status": "izvor",
         "why": "taksonomija v2 §4: kontrola + konsolidacija iste djelatnosti — ne tretira se kao pasivni holding"
+      },
+      {
+        "key": "sotp_multiples",
+        "label": "SOTP dijelovi na pretpostavljenim multiplama: KPT (Siemens JV, 49%)",
+        "status": "pretpostavka",
+        "why": "default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
       }
     ],
     "ran": [
@@ -5029,9 +5035,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 965.8238921606364,
-        "base": 991.2403103753902,
-        "high": 1016.6567285901436,
+        "low": 640.975642454577,
+        "base": 657.8434225191713,
+        "high": 674.7112025837654,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -5042,6 +5048,11 @@
           "holding_discount_reason": "integrirani operativni parent (v2 §4): kontrola + konsolidacija iste djelatnosti -> diskont 0–5%, NE tretira se kao pasivni holding",
           "net_cash_excludes_insurance_portfolio": true,
           "placeholder": false,
+          "standalone_status": {
+            "component": "KONČAR standalone (ex-uvrštene kćeri)",
+            "status": "u obradi",
+            "reason": "nekonsolidirani izvještaj matice izdan je zasebno i još nije ekstrahiran u bazu; do tada standalone dio NIJE u NAV-u"
+          },
           "parts": [
             {
               "name": "Dalekovod (DLKV)",
@@ -5062,25 +5073,17 @@
               "placeholder": false
             },
             {
-              "name": "KONČAR standalone (ex-uvrštene kćeri)",
-              "value_eur": 345340004.0,
-              "value_market_eur": 345340004.0,
-              "fair_basis": "multiple",
-              "basis": "residual_pe: (NI matici 151,749,735 - pripisivo kćerima/pridruženima 126,092,974) × P/E 13.46 × 1.00 — aproksimacija",
-              "pct": 1.0,
-              "placeholder": false
-            },
-            {
               "name": "KPT (Siemens JV, 49%)",
-              "value_eur": 578416580.0,
-              "value_market_eur": 578416580.0,
+              "value_eur": 44232000.0,
+              "value_market_eur": 44232000.0,
               "fair_basis": "multiple",
-              "basis": "associate_pe: dobit pridruženog 87,700,000 × 0.49 × P/E 13.46 — metoda udjela (izvor u holdings)",
+              "basis": "associate_book (v3 SOTP): udio u knjigovodstvenoj vrijednosti JV-a po metodi udjela = 44,232,000 € — KOEI GI 2025, bilješka 16, str. 131 — knjigovodstvena vrijednost ulaganja po metodi udjela 31.12.2025. (44.232 tis. €); udio u dobiti 2025.: 43.551 tis. €, isplaćena dividenda KOEI-ju 2025.: 42.980 tis. €. Napomena: objavljena dobit JV-a (100%) je 87,700,000 € (naš udio ~42,973,000 €/g) — knjigovodstveno pravilo je namjerno konzervativno (JV isplaćuje gotovo svu dobit pa knjiga ostaje niska)",
               "pct": 0.49,
-              "placeholder": false
+              "placeholder": true
             }
           ],
           "missing": [
+            "KONČAR standalone (ex-uvrštene kćeri): U OBRADI — standalone se vrednuje iz nekonsolidiranog izvještaja matice (uz isključenje prihoda od dividendi kćeri), koji još nije u bazi; ne aproksimira se iz konsolidiranih brojki (v3 SOTP)",
             "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
           ],
           "missing_note": "dijelovi bez ulaza NISU u NAV-u (konzervativno podcjenjuje) — vidi missing",
@@ -5089,8 +5092,8 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 2416539851.0,
-          "nav_total_eur": 2614962088.0,
+          "nav_gross_eur": 1537015267.0,
+          "nav_total_eur": 1735437504.0,
           "identity": [
             {
               "item": "Dalekovod (DLKV)",
@@ -5107,16 +5110,9 @@
               "pct": 0.5273
             },
             {
-              "item": "KONČAR standalone (ex-uvrštene kćeri)",
-              "eur": 345340004.0,
-              "per_share": 134.2628408716704,
-              "basis": "multiple",
-              "pct": 1.0
-            },
-            {
               "item": "KPT (Siemens JV, 49%)",
-              "eur": 578416580.0,
-              "per_share": 224.87940099194478,
+              "eur": 44232000.0,
+              "per_share": 17.196716015083283,
               "basis": "multiple",
               "pct": 0.49
             },
@@ -5128,34 +5124,34 @@
             },
             {
               "item": "holding diskont (2% sredina)",
-              "eur": -65374052.0,
-              "per_share": -25.416418214753595,
+              "eur": -43385938.0,
+              "per_share": -16.867780064594136,
               "basis": "v2 §4 taksonomija"
             }
           ],
           "identity_note": "Σ stavki = sidro po dionici (v2 §5); svaka stavka s osnovom: our_estimate / market_fallback / multiple",
           "sotp_fair": {
-            "nav_eur": 2614962088.0,
-            "base_per_share": 991.2403103753902,
+            "nav_eur": 1735437504.0,
+            "base_per_share": 657.8434225191713,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
-            "nav_eur": 2847449846.0,
-            "base_per_share": 1079.3682562832776,
+            "nav_eur": 1967925262.0,
+            "base_per_share": 745.9713684270586,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": 8.9,
+          "market_vs_fair_pct": 13.4,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
             "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji"
           },
           "market_check": {
             "own_market_cap_eur": 2675003760.0,
-            "nav_pre_discount_eur": 2614962088.0,
-            "price_vs_nav_pct": 2.3,
+            "nav_pre_discount_eur": 1735437504.0,
+            "price_vs_nav_pct": 54.1,
             "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
           },
-          "market_based_share_of_gross": 1.0
+          "market_based_share_of_gross": 0.97
         }
       }
     ],
@@ -5177,9 +5173,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 965.8238921606364,
-      "zone_high": 1016.6567285901438,
-      "dispersion": 0.050000000000000135,
+      "zone_low": 825.2923605373863,
+      "zone_high": 868.72880056567,
+      "dispersion": 0.05000000000000016,
       "divergent": false,
       "archetype": "holding_operating",
       "anchor_methods": [
@@ -5190,12 +5186,12 @@
         "comps": {
           "role": "secondary",
           "note": "integrirani operativni parent: SOTP BEZ holding diskonta; konsolidirani DCF je potvrda (v2 §2/§4)",
-          "vs_zone_pct": -0.12301757346601971
+          "vs_zone_pct": 0.0
         },
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.3118586755417647
+          "vs_zone_pct": 0.535243160558794
         },
         "sotp_nav": {
           "role": "anchor",
@@ -5204,22 +5200,22 @@
         }
       },
       "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, dcf_fcf, sotp_nav) ± osjetljivost primarnog sidra 'sotp_nav' (r/wacc ±1 p.b.) — v3 triangulacija",
-      "all_methods_low": 847.0105805515283,
+      "all_methods_low": 657.8434225191713,
       "all_methods_high": 1300.367200712667,
-      "dispersion_all": 0.34863738481920825,
+      "dispersion_all": 0.4941094929504221,
       "method_bases": {
         "comps": 847.0105805515283,
         "dcf_fcf": 1300.367200712667,
-        "sotp_nav": 991.2403103753902
+        "sotp_nav": 657.8434225191713
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: dcf_fcf +31% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: dcf_fcf +54% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
       ],
-      "vs_market_pct": 4.9,
+      "vs_market_pct": 22.8,
       "anchor_inconsistency": [
-        "dcf_fcf +31% vs primarno sidro"
+        "dcf_fcf +54% vs primarno sidro"
       ],
-      "reasoning": "Rast +2.1% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,615 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 991.24 € po dionici. Tržište te iste kćeri trenutačno vrednuje 8.9% više nego mi. Kontrolne metode uz sidro: DCF (FCF) +31% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +2.1% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,735 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 657.84 € po dionici. Tržište te iste kćeri trenutačno vrednuje 13.4% više nego mi. Kontrolne metode uz sidro: DCF (FCF) +54% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
@@ -5253,22 +5249,13 @@
           "placeholder": false
         },
         {
-          "name": "KONČAR standalone (ex-uvrštene kćeri)",
-          "value_eur": 345340004.0,
-          "value_market_eur": 345340004.0,
-          "fair_basis": "multiple",
-          "basis": "residual_pe: (NI matici 151,749,735 - pripisivo kćerima/pridruženima 126,092,974) × P/E 13.46 × 1.00 — aproksimacija",
-          "pct": 1.0,
-          "placeholder": false
-        },
-        {
           "name": "KPT (Siemens JV, 49%)",
-          "value_eur": 578416580.0,
-          "value_market_eur": 578416580.0,
+          "value_eur": 44232000.0,
+          "value_market_eur": 44232000.0,
           "fair_basis": "multiple",
-          "basis": "associate_pe: dobit pridruženog 87,700,000 × 0.49 × P/E 13.46 — metoda udjela (izvor u holdings)",
+          "basis": "associate_book (v3 SOTP): udio u knjigovodstvenoj vrijednosti JV-a po metodi udjela = 44,232,000 € — KOEI GI 2025, bilješka 16, str. 131 — knjigovodstvena vrijednost ulaganja po metodi udjela 31.12.2025. (44.232 tis. €); udio u dobiti 2025.: 43.551 tis. €, isplaćena dividenda KOEI-ju 2025.: 42.980 tis. €. Napomena: objavljena dobit JV-a (100%) je 87,700,000 € (naš udio ~42,973,000 €/g) — knjigovodstveno pravilo je namjerno konzervativno (JV isplaćuje gotovo svu dobit pa knjiga ostaje niska)",
           "pct": 0.49,
-          "placeholder": false
+          "placeholder": true
         }
       ],
       "net_cash": {
@@ -5276,8 +5263,8 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 2416539851.0,
-      "nav_total_eur": 2614962088.0,
+      "nav_gross_eur": 1537015267.0,
+      "nav_total_eur": 1735437504.0,
       "holding_discount_range": [
         0.0,
         0.05
@@ -5285,23 +5272,24 @@
       "holding_discount_reason": "integrirani operativni parent (v2 §4): kontrola + konsolidacija iste djelatnosti -> diskont 0–5%, NE tretira se kao pasivni holding",
       "market_check": {
         "own_market_cap_eur": 2675003760.0,
-        "nav_pre_discount_eur": 2614962088.0,
-        "price_vs_nav_pct": 2.3,
+        "nav_pre_discount_eur": 1735437504.0,
+        "price_vs_nav_pct": 54.1,
         "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
       },
       "sotp_fair": {
-        "nav_eur": 2614962088.0,
-        "base_per_share": 991.2403103753902,
+        "nav_eur": 1735437504.0,
+        "base_per_share": 657.8434225191713,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
-        "nav_eur": 2847449846.0,
-        "base_per_share": 1079.3682562832776,
+        "nav_eur": 1967925262.0,
+        "base_per_share": 745.9713684270586,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": 8.9,
+      "market_vs_fair_pct": 13.4,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
       "missing": [
+        "KONČAR standalone (ex-uvrštene kćeri): U OBRADI — standalone se vrednuje iz nekonsolidiranog izvještaja matice (uz isključenje prihoda od dividendi kćeri), koji još nije u bazi; ne aproksimira se iz konsolidiranih brojki (v3 SOTP)",
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
       ],
       "identity": [
@@ -5320,16 +5308,9 @@
           "pct": 0.5273
         },
         {
-          "item": "KONČAR standalone (ex-uvrštene kćeri)",
-          "eur": 345340004.0,
-          "per_share": 134.2628408716704,
-          "basis": "multiple",
-          "pct": 1.0
-        },
-        {
           "item": "KPT (Siemens JV, 49%)",
-          "eur": 578416580.0,
-          "per_share": 224.87940099194478,
+          "eur": 44232000.0,
+          "per_share": 17.196716015083283,
           "basis": "multiple",
           "pct": 0.49
         },
@@ -5341,8 +5322,8 @@
         },
         {
           "item": "holding diskont (2% sredina)",
-          "eur": -65374052.0,
-          "per_share": -25.416418214753595,
+          "eur": -43385938.0,
+          "per_share": -16.867780064594136,
           "basis": "v2 §4 taksonomija"
         }
       ],
@@ -5377,9 +5358,19 @@
     "limitations": [
       "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
       "kratka serija (rast) — u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G",
-      "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
+      "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)",
+      "SOTP dijelovi na pretpostavljenim multiplama: KPT (Siemens JV, 49%) — default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 965.8238921606364,
+        "old_high": 1016.6567285901438,
+        "new_low": 825.2923605373863,
+        "new_high": 868.72880056567,
+        "reason": "Metodologija v3 — faza SOTP: standalone dio matice vrednuje se isključivo iz nekonsolidiranih izvještaja (bez toga 'u obradi', ne aproksimira se iz konsolidiranih); neuvršteni JV po knjigovodstvenoj vrijednosti iz bilješki (KPT: 44,2 M€, GI 2025 bilj. 16); preračun topološkim redom (kćeri prije matica). Detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-16",
         "old_low": 964.3794964486596,

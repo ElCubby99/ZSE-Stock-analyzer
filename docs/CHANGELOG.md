@@ -240,3 +240,31 @@ Top-20 likvidnih, kvalificirani (bez low-float i rekalibracija): 4/12 = 33% s |r
 - Reverse-DCF okvir standardiziran: market-implied implikacija ("rast X%/god uz naš r, ili r od Y% uz naš rast") računa se već kod |raskoraka| > 30% i prikazuje u bloku "Što tržišna cijena implicira" na stranici dionice (red rule §8.3 ostaje na 40%).
 - Distribucijski alarm: scripts/distribucijski_alarm.py u dnevnom pipelineu; >40% → GitHub issue s labelom calibration-review + automatski banner na /metodologija ("zone u rekalibraciji za dio dionica").
 - Priznate greške v3 (sažetak u metodologiji): trailing bez rasta + dvostruko naplaćen rizik zemlje + dogma jednog sidra + sirove dividende + jedna zona za dvije klase → sustavno preniske zone; svaka faza ispravlja jedan uzrok, dokumentirano po dionici.
+
+## 2026-07-16 — Metodologija v3, FAZA SOTP (dodatak): matice s vlastitim biznisom
+
+- INVENTURA komponenti (v_sotp_inputs): ADRS (CROS 67,47% market, MAIS
+  93,54% market, Cromaris/HUP/Energetika ebitda_multiple — matica je čisti
+  holding, standalone komponenta NIJE potrebna); KOEI (KODT 52,73%, DLKV
+  75% market, KPT JV 49%, Novi Siemens JV 60% no_data, standalone); UCG
+  (ZABA 96,19% market). Svaka komponenta ima dokumentirano pravilo.
+- STANDALONE (t.2): residual_pe aproksimacija iz konsolidiranih UKINUTA —
+  standalone se vrednuje iz NEKONSOLIDIRANIH izvještaja (basis='separate';
+  NI − prihod od dividendi kćeri) standardnom v3 metodologijom. KOEI GI
+  2025 str. 104: nekonsolidirani izvještaji izdani ZASEBNO, nisu lokalno
+  → KOEI standalone status "u obradi", vidljivo u UI SOTP raspisu.
+  POPIS firmi sa standalone "u obradi": KOEI (jedina).
+- JV pravilo (t.3): KPT po knjigovodstvenoj vrijednosti iz bilješke 16
+  (44.232 tis. € na 31.12.2025., ručna ekstrakcija iz PDF-a str. 131) uz
+  vidljivu napomenu da JV godišnje donosi ~43,6 M€ udjela u dobiti
+  (konzervativnost pravila vidljiva); fallback konzervativni P/E×0,80.
+- TOPOLOŠKI PRERAČUN (t.4): src/sotp_order.py — kćeri prije matica u
+  stage_recompute/stage_regen/apply skriptama; ciklus → CycleError.
+- KASKADA (t.5, dopuna forenzike): KOEI raskorak +22,8% = 14,5 p.b.
+  UVEZENO (KODT/DLKV) + 8,3 p.b. vlastito (~2/3 uvezeno — hipoteza
+  potvrđena); ADRS +101,6% = 24,1 uvezeno + 77,5 vlastito (dominira
+  premija na NAV). Dodatak u docs/forenzika_v3_faza_d.md.
+- D_sust matice (t.6): pokrivenost najave uključuje priljeve dividendi
+  kćeri (zadnja izglasana isplata kćeri × udio), u raspisu.
+- Učinak: SAMO KOEI zona 966–1.017 → 825–869 (−14,6%; KPT knjigovodstveno
+  + standalone van NAV-a do nekonsolidiranog izvještaja). pytest 75/75.

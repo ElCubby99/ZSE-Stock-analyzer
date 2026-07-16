@@ -122,6 +122,23 @@ metoda razvukla zonu u beskorisno.
   INA), cijena se formira u zanemarivom prometu pod dominantnim vlasnicima
   — raskorak cijene i zone tada NIJE informativan, nosi istaknutu napomenu
   i ne ulazi u agregat "temperatura tržišta".
+- **Matice s vlastitim biznisom — SOTP pravila (v3)**: zbroj dijelova
+  (SOTP) matice ima dokumentirano pravilo za SVAKU komponentu. Uvrštene
+  kćeri ulaze po našoj fer-procjeni (ili tržišnoj kapitalizaciji gdje naša
+  procjena ne kvalificira); **vlastiti operativni biznis matice
+  (standalone)** vrednuje se isključivo iz **nekonsolidiranih (odvojenih)
+  izvještaja matice**, uz obavezno isključenje prihoda od dividendi kćeri
+  (inače bi se kći brojala dvaput) — dok nekonsolidirani izvještaj nije u
+  bazi, komponenta nosi status "u obradi" i ne ulazi u zbroj (ne
+  aproksimira se iz konsolidiranih brojki). **Neuvršteni udjeli i
+  zajednički pothvati** vrednuju se udjelom u knjigovodstvenoj vrijednosti
+  iz bilješki izvješća (metoda udjela), a tek bez te brojke konzervativnim
+  multiplikatorom na objavljenu dobit — uvijek s oznakom pretpostavke i
+  izvorom. Preračun zona ide **redoslijedom ovisnosti** (prvo kćeri, zatim
+  matice), pa matica nikad ne naslijedi staru zonu kćeri; ciklus u
+  vlasničkom grafu prijavljuje se kao greška. Pokrivenost najavljene
+  dividende matice uključuje i očekivane priljeve dividendi od kćeri
+  (činjenično iz njihovih zadnjih izglasanih isplata × naš udio).
 - **Klase dionica — jedna vrijednost firme (v3)**: kod firmi s dvije
   klase (redovne i povlaštene: ADRS/ADRS2, KODT/KODT2, CROS/CROS2,
   PLAG/PLAG2) fer-zona se računa za FIRMU, pa raspoređuje na klase
@@ -225,6 +242,13 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   distribucijski alarm (>40% top-20 likvidnih s raskorakom >30% → interna
   provjera + vidljiv banner ovdje na Metodologiji); changelog v3 po
   dionici staro→novo u internom dnevniku promjena.
+- **v3 — faza SOTP (16.07.2026.)**: matice — priznate greške: standalone
+  dio matice aproksimirao se iz KONSOLIDIRANIH brojki (rizik dvostrukog
+  brojanja i krive baze) — sada isključivo nekonsolidirani izvještaji ili
+  "u obradi"; zajednički pothvat (KPT) vrednovao se multiplikatorom na
+  dobit umjesto po knjigovodstvenoj vrijednosti iz bilješki (novo pravilo
+  smanjilo je KOEI zonu ~15%, uz vidljivu napomenu koliko JV godišnje
+  donosi); preračun sada ide redoslijedom ovisnosti (kćeri prije matica).
 - **v3 — faza S (16.07.2026.)**: klase dionica — priznata greška: obje
   klase iste firme uspoređivale su se s JEDNOM zonom, pa je redovna
   (s premijom glasa) izgledala "+58% iznad" dok je povlaštena bila "u

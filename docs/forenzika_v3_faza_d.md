@@ -441,3 +441,29 @@ Posljedica ne-TTM-a je asimetrična: firme kojima dobit raste (većina univerzum
 
 ---
 *MAR napomena: ovaj dokument je interna dijagnostika modela. Ništa u njemu nije preporuka, rejting ni ciljna cijena; pozicija cijene naspram zone je činjenica, zaključak je čitateljev.*
+
+---
+
+## Dodatak (FAZA SOTP, 16.07.2026.) — razdvajanje kaskade za matice
+
+Napomena: brojke ispod su NAKON primjene v3 faza K–S i SOTP pravila
+(komponente su već rekalibrirane); u v2 stanju uvezeni dio je bio veći
+(CROS zona ~pola tržišta prelijevala se u ADRS kroz fer-procjenu kćeri).
+Metoda: zona matice s kćerima po NAŠOJ fer-procjeni naspram zone s
+kćerima po TRŽIŠNOJ kapitalizaciji (obje brojke postoje u SOTP raspisu:
+`sotp_fair` / `sotp_market`); razlika = uvezeni dio raskoraka.
+
+| Matica | Cijena | Zona-mid (kćeri naša procjena) | Zona-mid (kćeri po tržištu) | Ukupni raskorak | UVEZENI dio | VLASTITI dio (standalone + diskont) |
+|--------|-------:|------------------------------:|----------------------------:|----------------:|------------:|------------------------------------:|
+| KOEI   | 1.040,00 | 847,0 | 960,5 | +22,8% | **+14,5 p.b.** | +8,3 p.b. |
+| ADRS   | 160,00 | 79,4 | 90,1 | +101,6% | **+24,1 p.b.** | +77,5 p.b. |
+
+Čitanje: kod KOEI-ja je ~2/3 raskoraka uvezeno iz raskoraka uvrštenih
+kćeri (KODT, DLKV) — potvrda hipoteze o kaskadi. Kod ADRS-a uvezeni dio
+postoji (+24 p.b.), ali dominira vlastiti: tržište plaća premiju i na NAV
+s kćerima po tržišnim cijenama (holding diskont, multiple neuvrštenih,
+premija glasa redovne klase — vidi FAZU S). SOTP komponente sada:
+KPT po knjigovodstvenoj vrijednosti iz bilješke 16 (44,2 M€, uz vidljivu
+napomenu da JV godišnje donosi ~43,6 M€ udjela u dobiti), KOEI standalone
+"u obradi" (nekonsolidirani izvještaj izdan zasebno, nije u bazi — ne
+aproksimira se).

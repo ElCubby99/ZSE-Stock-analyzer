@@ -218,7 +218,32 @@ def d_sust(conn, company_id: int, ni_ttm: float | None) -> dict | None:
         (company_id, company_id))
     last = cur.fetchall()
     announced = sum(a * s for a, s, _ in last if a and s) or None
-    coverage = (ni_ttm / announced) if announced else None
+    # v3 FAZA SOTP (točka 6): pokrivenost najave MATICE uključuje očekivane
+    # priljeve dividendi od kćeri — ČINJENIČNO iz njihove povijesti isplata
+    # (zadnja izglasana isplata kćeri × naš udio; bez procjena)
+    inflows = 0.0
+    inflow_notes = []
+    cur.execute(
+        """SELECT h.held_name, h.ownership_pct::float, h.held_company_id
+           FROM holdings h
+           WHERE h.parent_company_id=%s AND h.held_company_id IS NOT NULL""",
+        (company_id,))
+    for held_name, own_pct, held_cid in cur.fetchall():
+        cur.execute(
+            """SELECT SUM(d.amount_eur *
+                          (sc.shares_issued - COALESCE(sc.treasury_shares,0)))::float
+               FROM dividends d JOIN share_classes sc ON sc.id=d.share_class_id
+               WHERE d.company_id=%s AND d.div_type NOT ILIKE '%%rijedlog%%'
+                 AND d.fiscal_year = (SELECT MAX(fiscal_year) FROM dividends
+                                      WHERE company_id=%s
+                                        AND div_type NOT ILIKE '%%rijedlog%%')""",
+            (held_cid, held_cid))
+        tot = (cur.fetchone() or [None])[0]
+        if tot and own_pct:
+            inflows += tot * own_pct
+            inflow_notes.append(f"{held_name}: {tot * own_pct:,.0f} €")
+    base_for_coverage = ni_ttm + inflows if inflows else ni_ttm
+    coverage = (base_for_coverage / announced) if announced else None
     if coverage is not None and coverage < 1.0:
         flags.append("najava nije pokrivena tekućom dobiti po našim ulazima "
                      f"(pokrivenost {coverage:.2f}) — koristi se medijan")
@@ -237,6 +262,12 @@ def d_sust(conn, company_id: int, ni_ttm: float | None) -> dict | None:
         "coverage_announced": round(coverage, 3) if coverage is not None else None,
         "flags": flags,
         "excluded_years": sorted(excluded),
+        "subsidiary_inflows": (
+            {"total_eur": round(inflows, 0), "per_holding": inflow_notes,
+             "note": ("pokrivenost najave matice uključuje očekivane priljeve "
+                      "dividendi kćeri — činjenično iz zadnje izglasane "
+                      "isplate kćeri × naš udio (v3 FAZA SOTP)")}
+            if inflows else None),
         "note": ("D_sust = održivi payout × normalizirana dobit (TTM) / broj "
                  "dionica; jednokratne isplate NE ulaze u bazu"),
     }
