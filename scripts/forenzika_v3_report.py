@@ -68,7 +68,7 @@ w("1. **r-stack naplaćuje Hrvatsku dvaput** (FAZA K). rf = 3,61% je prinos HR "
   "— rizik zemlje je time u r-u ugrađen DVA puta, a CRP je uz to skriven "
   "unutar ERP-a (nije zasebna, vidljiva komponenta). Uz β=1 to daje r=9,31%; "
   "konzistentan stack (EUR bezrizični + zreli ERP + JEDAN mali CRP primjeren "
-  "'A-' eurozoni) bio bi ~8,2–8,5%.")
+  "'A-' eurozoni) bio bi ~8,3–8,4% (2,6–2,7 + 4,23 + ≤1,5).")
 n_ttm0 = len(J["ttm_coverage"])
 n_cap_anchor = sum(1 for t in ORDER
                    if R[t]["anchor"] in ("justified_pb_roe", "residual_income"))
@@ -306,7 +306,7 @@ w("2. **Premija nelikvidnosti je primijenjena ISPRAVNO po tekućim (Z1) "
 w("3. **Kvantifikacija double counta**: uz β=1 danas r = 3,61 + 5,70 = "
   "9,31%. Konzistentan stack: EUR bezrizični (10g Bund, ~2,6–2,7% u 2026.) "
   "+ zreli ERP 4,23% + JEDAN eksplicitni CRP ≤1,5 p.b. (HR je 'A-'/A3, "
-  "eurozona, investment grade) → r(β=1) ≈ 8,2–8,5%. Razlika ~0,8–1,1 p.b. "
+  "eurozona, investment grade) → r(β=1) = 8,33–8,43%. Razlika ~0,9–1,0 p.b. "
   "sustavno tereti SVAKO ime; uz β>1 (KOEI grupa 1,46–1,57) klin se "
   "množi.")
 w("4. Damodaranove tablice su u kodu označene `exact_unverified` (egress "
@@ -400,7 +400,7 @@ w("## 8. Mapa: nalaz → faza koja ga rješava")
 w("")
 w("| Nalaz | Faza | Očekivani smjer |")
 w("|-------|------|-----------------|")
-w("| rizik zemlje dvaput (HR rf + CRP u ERP-u), CRP skriven | **K** | r(β=1) 9,31% → ~8,2–8,5%; raspis rf+β×ERP+CRP+nelikv. vidljiv po dionici |")
+w("| rizik zemlje dvaput (HR rf + CRP u ERP-u), CRP skriven | **K** | r(β=1) 9,31% → ~8,3–8,4%; raspis rf+β×ERP+CRP+nelikv. vidljiv po dionici |")
 w(f"| trailing godišnje umjesto TTM ({n_ttm0} firmi ima kvartale) | **G** | ROE/NI/prihod na TTM; badge `godišnji podatak` gdje kvartala nema |")
 w(f"| kapitalne metode bez faze rasta (sidro {n_cap_anchor}/{len(ORDER)} imena) | **G** | g1 iz 3g CAGR-a s capom i fadeom; ROE pravilo max(3g medijan, TTM×0,9) |")
 w("| sirova zadnja dividenda u DDM (jednokratne iskrivljuju) | **DIV** | D_sust (održivi payout × normalizirana dobit), pokrivenost najave |")

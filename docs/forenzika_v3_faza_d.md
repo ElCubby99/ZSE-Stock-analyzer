@@ -8,7 +8,7 @@ Reproducira se s: `python scripts/forenzika_v3.py && python scripts/forenzika_v3
 
 Od 15 najprometnijih dionica njih **7/15 (47%) ima |raskorak| > 30%** naspram sredine fer-zone — prag distribucijskog alarma iz FAZE P (>40% top imena) danas bi se aktivirao. ZABA (kontrola) je u zoni. Problem je potvrđen kao SUSTAVAN i ima tri uzroka koja se međusobno POJAČAVAJU:
 
-1. **r-stack naplaćuje Hrvatsku dvaput** (FAZA K). rf = 3,61% je prinos HR 10g obveznice — on VEĆ SADRŽI hrvatski spread naspram njemačkog Bunda. ERP = 5,7% je Damodaranov zreli ERP 4,23% + CRP za Moody's A3 (~1,5 p.b.) — rizik zemlje je time u r-u ugrađen DVA puta, a CRP je uz to skriven unutar ERP-a (nije zasebna, vidljiva komponenta). Uz β=1 to daje r=9,31%; konzistentan stack (EUR bezrizični + zreli ERP + JEDAN mali CRP primjeren 'A-' eurozoni) bio bi ~8,2–8,5%.
+1. **r-stack naplaćuje Hrvatsku dvaput** (FAZA K). rf = 3,61% je prinos HR 10g obveznice — on VEĆ SADRŽI hrvatski spread naspram njemačkog Bunda. ERP = 5,7% je Damodaranov zreli ERP 4,23% + CRP za Moody's A3 (~1,5 p.b.) — rizik zemlje je time u r-u ugrađen DVA puta, a CRP je uz to skriven unutar ERP-a (nije zasebna, vidljiva komponenta). Uz β=1 to daje r=9,31%; konzistentan stack (EUR bezrizični + zreli ERP + JEDAN mali CRP primjeren 'A-' eurozoni) bio bi ~8,3–8,4% (2,6–2,7 + 4,23 + ≤1,5).
 2. **Trailing godišnje bez TTM-a i bez rasta u kapitalnim metodama** (FAZA G). Sva imena vrednujemo iz zadnjeg GODIŠNJEG izvješća (FY2025), iako u bazi za 65 firmi postoje kvartali (zadnji: Q1 FY2026, s dobiti, prihodom i kapitalom). Opravdani P/B i RI — sidro za 7/17 analiziranih — povrh toga NEMAJU fazu rasta: trailing ROE i trajni g=2,5% kažnjavaju svaku firmu čija dobit raste.
 3. **Dogma jednog sidra** (FAZA A). Zona = raspon JEDNE metode po hijerarhiji arhetipa. Potvrdne metode koje konvergiraju prema tržištu vidljive su, ali zonu ne pomiču (HT: DCF 61,1 € vs sidro 22,8 €; CROS: DDM 2.396 / RI 1.939 / comps 3.038 vs sidro 1.349). Za HT/CROS/SPAN/HPB/ZABA/INA comps je uz to placeholder (conf 0,3 — nema peer skupa) pa po postojećim pravilima ništa ne može 'preglasati' sidro.
 
@@ -123,7 +123,7 @@ Posljedica ne-TTM-a je asimetrična: firme kojima dobit raste (većina univerzum
 
 1. ERP=5,7% = zreli 4,23% + CRP za Moody's A3 (~1,47 p.b.) — CRP je SKRIVEN u ERP-u, nije zasebna komponenta. Nelikvidnosna premija se dodaje ZASEBNO (samo ispod Z1 praga) pa formalnog double counta CRP+CRP nema, ali: (a) CRP nije vidljiv u raspisu; (b) rf je HR 10g (3,61%) koji VEĆ NOSI hrvatski spread naspram Bunda — zemlja se naplaćuje i u rf i u ERP-u = DOUBLE COUNT rizika zemlje; (c) A3/A- eurozona 2026. ne opravdava CRP iz starijih tablica.
 2. **Premija nelikvidnosti je primijenjena ISPRAVNO po tekućim (Z1) pravilima**: nijedno od 15 likvidnih imena je NEMA (svi prolaze prag); nose je samo CROS i INA (+1,0 p.b.), koji prag likvidnosti doista ne prolaze. Zahtjev K.3 je dakle već zadovoljen — u FAZI K treba samo test koji to trajno čuva.
-3. **Kvantifikacija double counta**: uz β=1 danas r = 3,61 + 5,70 = 9,31%. Konzistentan stack: EUR bezrizični (10g Bund, ~2,6–2,7% u 2026.) + zreli ERP 4,23% + JEDAN eksplicitni CRP ≤1,5 p.b. (HR je 'A-'/A3, eurozona, investment grade) → r(β=1) ≈ 8,2–8,5%. Razlika ~0,8–1,1 p.b. sustavno tereti SVAKO ime; uz β>1 (KOEI grupa 1,46–1,57) klin se množi.
+3. **Kvantifikacija double counta**: uz β=1 danas r = 3,61 + 5,70 = 9,31%. Konzistentan stack: EUR bezrizični (10g Bund, ~2,6–2,7% u 2026.) + zreli ERP 4,23% + JEDAN eksplicitni CRP ≤1,5 p.b. (HR je 'A-'/A3, eurozona, investment grade) → r(β=1) = 8,33–8,43%. Razlika ~0,9–1,0 p.b. sustavno tereti SVAKO ime; uz β>1 (KOEI grupa 1,46–1,57) klin se množi.
 4. Damodaranove tablice su u kodu označene `exact_unverified` (egress 403 na pages.stern.nyu.edu) — FAZA K zadržava praksu ručnog unosa s datumom i flagom.
 
 ## 6. Puni raspis po dionici (svi ulazi, sve metode, sidro i zašto)
@@ -429,7 +429,7 @@ Posljedica ne-TTM-a je asimetrična: firme kojima dobit raste (većina univerzum
 
 | Nalaz | Faza | Očekivani smjer |
 |-------|------|-----------------|
-| rizik zemlje dvaput (HR rf + CRP u ERP-u), CRP skriven | **K** | r(β=1) 9,31% → ~8,2–8,5%; raspis rf+β×ERP+CRP+nelikv. vidljiv po dionici |
+| rizik zemlje dvaput (HR rf + CRP u ERP-u), CRP skriven | **K** | r(β=1) 9,31% → ~8,3–8,4%; raspis rf+β×ERP+CRP+nelikv. vidljiv po dionici |
 | trailing godišnje umjesto TTM (65 firmi ima kvartale) | **G** | ROE/NI/prihod na TTM; badge `godišnji podatak` gdje kvartala nema |
 | kapitalne metode bez faze rasta (sidro 7/17 imena) | **G** | g1 iz 3g CAGR-a s capom i fadeom; ROE pravilo max(3g medijan, TTM×0,9) |
 | sirova zadnja dividenda u DDM (jednokratne iskrivljuju) | **DIV** | D_sust (održivi payout × normalizirana dobit), pokrivenost najave |
