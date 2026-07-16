@@ -386,7 +386,7 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.."
+        "txt": "Procjena počiva na označenim pretpostavkama: godišnji podatak; komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -2804,13 +2804,19 @@
         "rf": "rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u",
         "erp": "ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true",
         "crp": "CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede",
-        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
+        "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=14.96 (n=3), P/B=1.43 (n=3), EV/EBITDA=6.36 (n=3). Skup ['ATGR', 'PODR', 'TOK'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.93 P/B=1.43; PODR P/E=8.41 P/B=1.56; TOK P/E=14.96 P/B=1.31"
       }
     },
     "assumption_flags": [
+      {
+        "key": "annual_data",
+        "label": "godišnji podatak",
+        "status": "pretpostavka",
+        "why": "TTM se ne gradi: nema prošlogodišnjeg q1 interima za usporedbu — TTM se ne gradi — vrednuje se iz zadnjeg godišnjeg izvješća"
+      },
       {
         "key": "r_components",
         "label": "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.",
@@ -2822,9 +2828,9 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 17.36720827837748,
-        "base": 20.432009739267624,
-        "high": 23.496811200157765,
+        "low": 17.41859015982767,
+        "base": 20.492459011561966,
+        "high": 23.56632786329626,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
@@ -2836,10 +2842,10 @@
             },
             "pb": {
               "mult": 1.43,
-              "per_share": 20.4
+              "per_share": 20.53
             }
           },
-          "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 9.6% / peer medijan 8.8% -> faktor 1.00 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
+          "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 9.5% / peer medijan 8.8% -> faktor 1.00 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
           "carrier": "pe",
           "carrier_reason": "nositelj po arhetipu 'industrial_noforward' (v2 §2)",
           "intra_spread": {
@@ -2854,20 +2860,21 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 18.266028373142188,
-        "base": 22.294324845497517,
-        "high": 28.602081639520183,
+        "low": 18.227713600906686,
+        "base": 22.247560329361352,
+        "high": 28.54208598961247,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "roe": 0.0958,
+          "roe": 0.0953,
           "r": 0.0703443,
           "g": 0.025,
-          "bvps": 14.27,
+          "bvps": 14.35,
           "placeholder": false,
+          "roe_rule": "ROE 9.5% iz zadnjeg GODIŠNJEG (kvartali nedostupni/nekonzistentni — TTM se ne gradi)",
           "sources": {
             "r": "r=0.0703 = rf 2.70% + β 0.74×ERP 4.23% + CRP 1.2 p.b. (v3 FAZA K raspis). rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u. ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede. beta=0.74: IZMJERENA regresijom (OLS tjednih log-prinosa ZITO vs CROBEX, 2025-07-28..2026-07-14, n=50 tj., R²=0.091) uz Blume prilagodbu 0,67·0.613 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 235/251 trgovanih dana (94%), prosj. promet 74,241 €/dan.",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
+            "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
       }
@@ -2895,8 +2902,8 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 17.36720827837748,
-      "zone_high": 23.496811200157765,
+      "zone_low": 17.41859015982767,
+      "zone_high": 23.56632786329626,
       "dispersion": 0.2608695652173913,
       "divergent": false,
       "archetype": "industrial_noforward",
@@ -2913,21 +2920,21 @@
         "justified_pb_roe": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.09114693708523314
+          "vs_zone_pct": 0.08564620365028675
         }
       },
       "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
-      "all_methods_low": 20.432009739267624,
-      "all_methods_high": 22.294324845497517,
-      "dispersion_all": 0.08353314662524977,
+      "all_methods_low": 20.492459011561966,
+      "all_methods_high": 22.247560329361352,
+      "dispersion_all": 0.07888960820045877,
       "method_bases": {
-        "comps": 20.432009739267624,
-        "justified_pb_roe": 22.294324845497517
+        "comps": 20.492459011561966,
+        "justified_pb_roe": 22.247560329361352
       },
       "qa_flags": [],
-      "vs_market_pct": -9.0,
+      "vs_market_pct": -9.2,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 20.43 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) +9% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije dovoljna serija objavljenih brojki, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 20.49 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) +9% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
       "red_rules": [],
       "market_implied": null
     },
@@ -2953,6 +2960,7 @@
       }
     ],
     "limitations": [
+      "godišnji podatak — TTM se ne gradi: nema prošlogodišnjeg q1 interima za usporedbu — TTM se ne gradi — vrednuje se iz zadnjeg godišnjeg izvješća",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
     ],
     "changelog": [

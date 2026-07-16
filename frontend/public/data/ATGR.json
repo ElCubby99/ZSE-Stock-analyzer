@@ -388,11 +388,11 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.."
+        "txt": "Procjena počiva na označenim pretpostavkama: TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); kratka serija (rast); ROE pravilo (TTM + 3g medijan); komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.."
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -9–33 € (raspon 126%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -15–34 € (raspon 143%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -4650,13 +4650,31 @@
         "rf": "rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u",
         "erp": "ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true",
         "crp": "CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede",
-        "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
+        "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=13.6 (n=3), P/B=1.31 (n=3), EV/EBITDA=5.97 (n=2). Skup ['PODR', 'ZITO', 'TOK'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: PODR P/E=8.41 P/B=1.56; ZITO P/E=13.6 P/B=1.3; TOK P/E=14.96 P/B=1.31"
       }
     },
     "assumption_flags": [
+      {
+        "key": "ttm",
+        "label": "TTM podaci (FY2025 + q1 FY2026 − q1 FY2025)",
+        "status": "izvor",
+        "why": "zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali) — v3 FAZA G; kvartalni izvještaji su nerevidirani"
+      },
+      {
+        "key": "short_series",
+        "label": "kratka serija (rast)",
+        "status": "pretpostavka",
+        "why": "u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G"
+      },
+      {
+        "key": "roe_rule",
+        "label": "ROE pravilo (TTM + 3g medijan)",
+        "status": "izvor",
+        "why": "ROE pravilo (v3 G): TTM 7.6%×0,9 = 6.8% (nema 3g serije za medijan)"
+      },
       {
         "key": "r_components",
         "label": "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b.",
@@ -4668,9 +4686,9 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 28.107891932599347,
-        "base": 33.068108155999234,
-        "high": 38.028324379399116,
+        "low": 29.22198081785649,
+        "base": 34.37880096218411,
+        "high": 39.53562110651172,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
@@ -4678,27 +4696,27 @@
           "lenses": {
             "pe": {
               "mult": 13.6,
-              "per_share": 32.82
+              "per_share": 37.66
             },
             "ev_ebitda": {
               "mult": 5.97,
-              "per_share": 36.34
+              "per_share": 33.24
             },
             "ev_ebit": {
               "mult": 10.46,
-              "per_share": 30.11
+              "per_share": 28.76
             },
             "pb": {
-              "mult": 0.93,
-              "per_share": 33.0
+              "mult": 1.04,
+              "per_share": 37.86
             }
           },
-          "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 6.8% / peer medijan 9.6% -> faktor 0.71 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
-          "ev_ebitda_carrier_ban": "EV/EBITDA ne smije biti nositelj: neto dug/EBITDA=1.43, D&A/EBITDA=0.5 — multipl laska firmama s visokim D&A/dugom (v2 §2)",
-          "carrier": "pb",
-          "carrier_reason": "nositelj po arhetipu 'cyclical' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
+          "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 7.6% / peer medijan 9.6% -> faktor 0.79 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
+          "ev_ebitda_carrier_ban": "EV/EBITDA ne smije biti nositelj: neto dug/EBITDA=2.06, D&A/EBITDA=0.48 — multipl laska firmama s visokim D&A/dugom (v2 §2)",
+          "carrier": "ev_ebit",
+          "carrier_reason": "nositelj po arhetipu 'industrial_forward' (v2 §2); EV/EBITDA isključen (poluga/D&A)",
           "intra_spread": {
-            "spread_pct": 21.0,
+            "spread_pct": 32.0,
             "rule": "leće konzistentne (<40%) -> prosjek"
           },
           "sources": {
@@ -4709,41 +4727,21 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -9.16691966004199,
-        "base": -8.51893730917877,
-        "high": -7.3462983822275705,
-        "confidence": 0.6,
+        "low": -15.31394538958688,
+        "base": -14.679083370536098,
+        "high": -13.530207818297859,
+        "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "wacc": 0.0747012,
           "g_terminal": 0.04,
-          "g1_explicit": null,
-          "model": "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)",
-          "growth_source": null,
+          "g1_explicit": 0.0315,
+          "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
+          "growth_source": "g1=3.1% = min(TTM vs zadnje godišnje = +3.1%, cap 8%) — KRATKA SERIJA (nema 3 godišnja izvješća u bazi); v3 FAZA G",
           "placeholder": false,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
-          }
-        }
-      },
-      {
-        "key": "justified_pb_roe",
-        "label": "Opravdani P/B (ROE)",
-        "low": 25.61126137190689,
-        "base": 30.764308254458392,
-        "high": 38.51327006278116,
-        "confidence": 0.7,
-        "no_value": false,
-        "assumptions": {
-          "roe": 0.0682,
-          "r": 0.0747012,
-          "g": 0.025,
-          "bvps": 35.37,
-          "placeholder": false,
-          "sources": {
-            "r": "r=0.0747 = rf 2.70% + β 0.84×ERP 4.23% + CRP 1.2 p.b. (v3 FAZA K raspis). rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u. ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede. beta=0.84: IZMJERENA regresijom (OLS tjednih log-prinosa ATGR vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.146) uz Blume prilagodbu 0,67·0.767 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 228/251 trgovanih dana (91%), prosj. promet 32,648 €/dan.",
-            "g": "M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
+            "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
       }
@@ -4753,6 +4751,11 @@
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
         "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
+      },
+      {
+        "key": "justified_pb_roe",
+        "label": "Opravdani P/B (ROE)",
+        "reason": "arhetip 'industrial_forward': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
       },
       {
         "key": "residual_income",
@@ -4766,62 +4769,54 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 25.61126137190689,
-      "zone_high": 38.51327006278116,
-      "dispersion": 0.33500164150804335,
-      "divergent": true,
-      "archetype": "cyclical",
+      "zone_low": 29.22198081785649,
+      "zone_high": 39.53562110651172,
+      "dispersion": 0.26086956521739124,
+      "divergent": false,
+      "archetype": "industrial_forward",
       "anchor_methods": [
-        "justified_pb_roe",
         "comps"
       ],
       "method_roles": {
         "comps": {
-          "role": "anchor_alt",
-          "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.03137153336331755
+          "role": "anchor",
+          "note": null,
+          "vs_zone_pct": null
         },
         "dcf_fcf": {
           "role": "anchor_excluded",
           "note": "sidrena metoda ISKLJUČENA iz zone — nepozitivna baza (jednogodišnji ulaz)",
           "vs_zone_pct": null
-        },
-        "justified_pb_roe": {
-          "role": "anchor",
-          "note": null,
-          "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
-      "all_methods_low": -8.51893730917877,
-      "all_methods_high": 33.068108155999234,
-      "dispersion_all": 1.257617922047145,
+      "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
+      "all_methods_low": -14.679083370536098,
+      "all_methods_high": 34.37880096218411,
+      "dispersion_all": 1.4269806671466743,
       "method_bases": {
-        "comps": 33.068108155999234,
-        "dcf_fcf": -8.51893730917877,
-        "justified_pb_roe": 30.764308254458392
+        "comps": 34.37880096218411,
+        "dcf_fcf": -14.679083370536098
       },
       "qa_flags": [
-        "metode se međusobno razilaze 126% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +58% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 143% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": 57.5,
+      "vs_market_pct": 46.9,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije cijela trogodišnja serija prihoda ni forward procjena, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 9 € operativne zarade (EBITDA marža 8.8%). Firma ima 469 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 6.8% godišnje — manje od 7.5% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 30.76 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +3% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+7.3% trajnog rasta godišnje / multipl P/E 20.9×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +3.1% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje 9 € operativne zarade (EBITDA marža 9.0%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBIT kao sektorski primjerena — sidro je 34.38 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+7.3% trajnog rasta godišnje / multipl P/E 18.2×; naš izvedeni rast (iz objavljenih brojki) je +3.1% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 7.3,
         "implied_g_note": "uz naš r=7.5% cijena implicira trajni rast FCF-a ~+7.3% godišnje",
-        "implied_pe": 20.9,
+        "implied_pe": 18.2,
         "peer_pe": 13.6,
-        "implied_pe_note": "cijena implicira P/E 20.9× vs peer medijan 13.6×",
-        "narrative": "Tržišna cijena implicira ~+7.3% trajnog rasta godišnje / multipl P/E 20.9×; forward signal još nije ekstrahiran — razlika je neprovjerljiva bez forward signala jer nema kvantificiranog forward signala. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "implied_pe_note": "cijena implicira P/E 18.2× vs peer medijan 13.6×",
+        "narrative": "Tržišna cijena implicira ~+7.3% trajnog rasta godišnje / multipl P/E 18.2×; naš izvedeni rast (iz objavljenih brojki) je +3.1% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       }
     },
     "sotp": null
   },
   "methodology": {
-    "story": "Atlantic Grupa d.d. je ciklična firma (niža profitabilnost kapitala ili poluga): zarada zna varirati kroz ciklus, pa je sidro opravdani P/B — guidance-DCF kad uprava daje brojke, inače knjiga kapitala; peer usporedba je kontrola, a EV/EBITDA se izbjegava jer laska zaduženima.",
+    "story": "Atlantic Grupa d.d. ima kvantificirani signal budućeg posla (backlog/guidance), pa je sidro DCF s rastom izvedenim iz tog signala. Peer usporedba je kontrola.",
     "parameters": [
       {
         "k": "Trošak kapitala r",
@@ -4841,7 +4836,7 @@
     ],
     "limitations": [
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
-      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
+      "kratka serija (rast) — u bazi nema tri godišnja izvješća pa je stopa rasta izvedena iz zadnjih 12 mjeseci naspram prošle godine (cap 8%) — v3 FAZA G",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
     ],
     "changelog": [

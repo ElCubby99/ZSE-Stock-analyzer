@@ -73,6 +73,28 @@ metoda razvukla zonu u beskorisno.
   trošak kapitala dodaje se +1,0 do +2,0 postotna boda (stupnjevano po
   likvidnosti): izlazak iz slabo trgovane pozicije nosi stvaran trošak.
   Prikazana je kao zasebna komponenta u pretpostavkama.
+- **Svježina ulaza — TTM (v3)**: gdje firma objavljuje kvartalne izvještaje,
+  zarada, prihodi i ROE računaju se na **zadnjih 12 mjeseci** (zadnje
+  godišnje + ovogodišnji kvartali − lanjski kvartali; kvartalni izvještaji
+  su kumulativni i nerevidirani). Strogi gateovi: ako je kvartalna serija
+  nekonzistentna s revidiranim godišnjim izvješćem (odstupanje > 5%) ili
+  nema lanjske usporedbe, TTM se NE gradi — koristi se godišnje uz vidljivu
+  oznaku `godišnji podatak` s razlogom. Bilančne stavke (kapital, dug)
+  uzimaju se sa zadnjeg objavljenog datuma.
+- **Faza rasta (g1) — isključivo iz objavljenih brojki (v3)**: g1 =
+  min(trogodišnji CAGR prihoda — odnosno zarade gdje prihodna serija ne
+  postoji — iz naše baze, **cap 10%**), pa linearni fade prema terminalnom
+  g kroz 5 godina. Gdje trogodišnje serije nema: min(rast zadnjih 12
+  mjeseci naspram prošle godine, **cap 8%**) uz oznaku `kratka serija`.
+  Ručne "forward procjene" (backlog, guidance, očekivanja uprave) se za
+  stopu rasta **ne koriste** — brojčani guidance smije poslužiti jedino
+  kao zamjenski ulaz za novčani tok kad izvještaj o novčanom toku nije
+  objavljen, i tada je jasno označen.
+- **ROE za kapitalne metode (v3)**: koristi se **viši od (trogodišnji
+  medijan godišnjih ROE, TTM ROE × 0,9)** — medijan stabilizira jednu
+  netipičnu godinu (npr. COVID ili jednokratni dobitak), a faktor 0,9
+  zadržava oprez prema svježoj, nerevidiranoj brojci. Bez kvartala:
+  godišnji ROE.
 - **Dugoročni rast (g)** — vezan uz gospodarstvo, ne uz želje: 4% nominalno
   za DCF terminal (realni rast + inflacija), konzervativnijih 2,5% za
   kapitalne metode. Nijedna firma ne može "zauvijek" rasti brže od
@@ -132,6 +154,16 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v3 — faza G (16.07.2026.)**: TTM i rast iz podataka — priznata greška:
+  sve se vrednovalo iz zadnjeg GODIŠNJEG izvješća iako za većinu firmi u
+  bazi postoje kvartali, a kapitalne metode (opravdani P/B, rezidualni
+  dohodak) nisu imale nikakvu fazu rasta — firme s rastućom dobiti bile su
+  sustavno podcijenjene, a jednokratni dobici u prošloj godini precijenjeni.
+  Novo: TTM za zaradu/prihode/ROE gdje kvartali postoje (uz stroge gateove
+  konzistentnosti), stopa rasta isključivo izvedena iz objavljenih brojki
+  (3g CAGR uz cap 10%, odnosno kratka serija uz cap 8% — ručne forward
+  procjene ukinute), ROE pravilo max(3g medijan, TTM×0,9). Svaka firma bez
+  kvartala nosi oznaku `godišnji podatak`.
 - **v3 — faza K (16.07.2026.)**: rekalibracija troška kapitala — priznata
   greška: **rizik Hrvatske bio je uračunat dvaput** — nerizična stopa bila
   je hrvatska 10-godišnja obveznica (koja već nosi hrvatski spread), a

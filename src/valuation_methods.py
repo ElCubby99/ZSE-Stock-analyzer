@@ -87,6 +87,10 @@ class Ctx:
     ni_parent_of: Optional[Callable[[int], Optional[float]]] = None
     # v2 §2/§4: 'operating' (integrirani parent, KOEI tip) ili 'passive' (ADRS)
     holding_type: str = "passive"
+    # v3 FAZA G: osnova po stavci ('ttm'/'interim'/'annual' + period/razlog)
+    ttm_meta: dict = field(default_factory=dict)
+    # v3 FAZA G: ROE pravilo za kapitalne metode — max(3g medijan, TTM×0,9)
+    roe_hint: Optional[dict] = None
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -402,10 +406,10 @@ def compute_dcf(c: Ctx) -> ValueRange:
     src = {k: p.sources[k] for k in ("wacc", "g") if p.sources.get(k)}
     if src:
         assum["sources"] = src
-    # v2: forward rast iz izvješća + izmjerena beta smanjuju najveću DCF
-    # nesigurnost -> 0,7 (prag confidence gatea za rekurzivni SOTP)
+    # v3 G: eksplicitna faza rasta IZ PODATAKA + izmjerena beta smanjuju
+    # najveću DCF nesigurnost -> 0,7 (prag confidence gatea za rek. SOTP)
     conf = (0.7 if (p.rates_calibrated and getattr(p, "beta_calibrated", False)
-                    and gh.get("forward")) else
+                    and gh.get("g1") is not None) else
             0.6 if p.rates_calibrated else 0.4)
     return ValueRange(lo or base, base, hi or base, assum, conf)
 
@@ -465,7 +469,9 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
     bvps = _per_share(eq, c)
     if bvps is None:
         return _missing(c, "shares_ex_treasury")
-    roe = ni / eq
+    # v3 FAZA G: ROE pravilo — max(3g medijan, TTM×0,9) kad TTM postoji
+    rh = getattr(c, "roe_hint", None)
+    roe = rh["used"] if (rh and rh.get("used") is not None) else ni / eq
     if roe <= p.perpetual_growth:
         # (ROE−g)/(r−g) ≤ 0: fer P/B negativan/nula — metoda za going concern
         # s pozitivnom knjigom NIJE definirana (M20: izvor negativnih zona)
@@ -486,6 +492,8 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
     lo, hi = v(p.cost_of_equity + 0.01), v(p.cost_of_equity - 0.01)
     assum = {"roe": round(roe, 4), "r": p.cost_of_equity, "g": p.perpetual_growth,
              "bvps": round(bvps, 2), "placeholder": p.placeholder}
+    if rh:
+        assum["roe_rule"] = rh["rule"]
     src = {k: p.sources[k] for k in ("r", "g") if p.sources.get(k)}
     if src:
         assum["sources"] = src
@@ -736,7 +744,9 @@ def compute_residual_income(c: Ctx) -> ValueRange:
     bvps = _per_share(eq, c)
     if bvps is None:
         return _missing(c, "shares_ex_treasury")
-    roe0 = ni / eq
+    # v3 FAZA G: isto ROE pravilo kao opravdani P/B (konzistentnost sidra)
+    rh = getattr(c, "roe_hint", None)
+    roe0 = rh["used"] if (rh and rh.get("used") is not None) else ni / eq
     g = p.perpetual_growth
 
     def v(coe):
@@ -755,6 +765,7 @@ def compute_residual_income(c: Ctx) -> ValueRange:
     lo, hi = v(p.cost_of_equity + 0.01), v(p.cost_of_equity - 0.01)
     assum = {
         "roe0": round(roe0, 4), "r": p.cost_of_equity, "g": p.perpetual_growth,
+        "roe_rule": (rh["rule"] if rh else None),
         "fade_years": FADE_YEARS, "bvps": round(bvps, 2),
         "terminal": "0 (ROE se u zadnjoj godini stapa s COE — RI iščezava)",
         "equivalence_note": ("jednostupanjski RI ≡ opravdani P/B ((ROE−g)/(COE−g)); "
@@ -818,7 +829,9 @@ def archetype_v2(c: Ctx) -> str:
     if (roe is not None and roe < c.params.cost_of_equity) or (lev is not None and lev > 2.5):
         return "cyclical"
     gh = c.growth_hint or {}
-    return "industrial_forward" if gh.get("forward") else "industrial_noforward"
+    # v3 FAZA G: "forward" arhetip = postoji IZVEDENA faza rasta iz
+    # objavljenih brojki (3g CAGR / kratka serija), ne ručna procjena
+    return "industrial_forward" if gh.get("g1") is not None else "industrial_noforward"
 
 
 HIERARCHY_V2 = {
@@ -955,17 +968,19 @@ def _market_implied(c: Ctx, results: dict, rec: dict) -> dict:
                                   f"medijan {p.peer_pe}×"
                                   + ("" if p.peers_calibrated else " (placeholder)"))
     gh = c.growth_hint or {}
-    fw = (f"naš forward signal ({gh.get('drivers')}) sugerira {gh['g1']:+.1%}"
-          if gh.get("forward") else "forward signal još nije ekstrahiran")
+    fw = (f"naš izvedeni rast (iz objavljenih brojki) je {gh['g1']:+.1%}"
+          if gh.get("g1") is not None else
+          "izvedena stopa rasta nije dostupna (nema serije u bazi)")
     g_imp_v = out.get("implied_g_pct")
-    if g_imp_v is not None and gh.get("forward"):
+    if g_imp_v is not None and gh.get("g1") is not None:
         diff_ok = abs(g_imp_v / 100 - gh["g1"]) <= 0.03
         verdict = "plauzibilna" if diff_ok else "upitna"
-        why = ("implicirani rast blizu forward signala"
+        why = ("implicirani rast blizu izvedene stope iz podataka"
                if diff_ok else "implicirani rast se bitno razlikuje od "
-               "backloga/guidance-a iz izvješća")
+               "stope izvedene iz objavljenih brojki")
     else:
-        verdict, why = "neprovjerljiva bez forward signala", "nema kvantificiranog forward signala"
+        verdict, why = ("neprovjerljiva bez izvedene stope rasta",
+                        "u bazi nema serije za izvod stope rasta")
     out["narrative"] = (
         "Tržišna cijena implicira "
         + (f"~{g_imp_v:+.1f}% trajnog rasta godišnje" if g_imp_v is not None else "")
@@ -999,21 +1014,18 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
     gh = c.growth_hint or {}
     prim = (rec.get("anchor_methods") or [None])[0]
     parts = []
-    if gh.get("forward"):
-        parts.append(f"Očekivani rast {gh['g1']:+.1%} godišnje procijenjen je iz "
-                     f"zadnjeg izvješća — {gh.get('drivers', 'forward signali')}"
-                     + (f"; povijesni prosjek ({gh['rev_cagr_3y']:+.1%} godišnje) "
-                        f"služi samo kao kontekst"
-                        if gh.get("rev_cagr_3y") is not None else ""))
-    elif gh.get("rev_cagr_3y") is not None:
-        parts.append(f"Prihodi su zadnje tri godine rasli u prosjeku "
-                     f"{gh['rev_cagr_3y']:+.1%} godišnje (izračun iz objavljenih "
-                     f"izvješća; forward procjena iz backloga/guidance-a još "
-                     f"nije izvedena)")
+    if gh.get("g1") is not None and gh.get("rev_cagr_3y") is not None:
+        parts.append(f"Rast {gh['g1']:+.1%} godišnje izveden je iz objavljenih "
+                     f"brojki (trogodišnji prosjek {gh['rev_cagr_3y']:+.1%}, "
+                     f"ograničen na najviše 10% — nijedna procjena 'iz glave')")
+    elif gh.get("g1") is not None:
+        parts.append(f"Rast {gh['g1']:+.1%} godišnje izveden je iz zadnjih 12 "
+                     f"mjeseci naspram prošle godine (kratka serija u bazi, "
+                     f"ograničeno na najviše 8%)")
     else:
-        parts.append("Stopu rasta ne možemo izračunati — u bazi još nije cijela "
-                     "trogodišnja serija prihoda ni forward procjena, pa računamo "
-                     "oprezno, bez faze rasta")
+        parts.append("Stopu rasta ne možemo izračunati — u bazi još nije "
+                     "dovoljna serija objavljenih brojki, pa računamo oprezno, "
+                     "bez faze rasta")
     rev, ebd = c.val("revenue"), c.val("ebitda")
     if rev and ebd is not None:
         parts.append(f"Od svakih 100 € prihoda firmi ostaje {ebd / rev * 100:,.0f} € "
@@ -1345,11 +1357,42 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     except Exception:  # noqa: BLE001 — kolona je opcionalna nadogradnja
         conn.rollback()
 
+    # --- v3 FAZA G: TTM sloj -------------------------------------------
+    # FLOW stavke: TTM = zadnje godišnje + YTD zadnjeg interima − YTD istog
+    # perioda prošle godine (ZSE interimi su KUMULATIVNI). BALANCE stavke:
+    # zadnji interim (point-in-time) ako je noviji od godišnjeg. STROGI
+    # GATEOVI (radije godišnje s razlogom nego kriva brojka):
+    #   - interim FY mora biti > annual FY i mora postojati prošlogodišnji
+    #     interim ISTOG tipa perioda;
+    #   - konzistencija: ako postoji q4 kumulativ za istu FY kao godišnje i
+    #     odstupa > 5% od godišnjeg -> interim serija te stavke se NE
+    #     koristi (nerevidirano/druga definicija);
+    #   - sanity: TTM pozitivne stavke mora biti u [0,4×, 2,5×] godišnjeg.
+    # ttm_meta[item] bilježi osnovu za badge na stranici.
+    _PERIOD_MONTHS = {"q1": 3, "h1": 6, "9m": 9, "q4": 12}
+    _FLOW_ITEMS = {"net_income_parent", "net_income", "revenue",
+                   "total_operating_income", "ebitda", "ebit",
+                   "depreciation_amortization", "operating_cf", "capex",
+                   "free_cash_flow"}
+    _BALANCE_ITEMS = {"total_equity", "equity_parent", "net_debt",
+                      "cash_and_equivalents", "total_assets",
+                      "short_term_debt", "long_term_debt", "total_debt"}
+    ttm_meta: dict = {}
+
+    def _interim_rows(item: str):
+        cur.execute(
+            """SELECT f.period_type, f.fiscal_year, fin.value_eur, fin.confidence
+               FROM financials fin JOIN filings f ON f.id = fin.filing_id
+               WHERE f.company_id = %s AND fin.item = %s
+                     AND f.period_type <> 'annual' AND f.basis = 'consolidated'
+                     AND fin.value_eur IS NOT NULL""", (company_id, item))
+        return cur.fetchall()
+
     def data(item: str):
         # zadnja (najnovija) annual/consolidated vrijednost + confidence iz financials
         cur.execute(
             """
-            SELECT fin.value_eur, fin.confidence
+            SELECT fin.value_eur, fin.confidence, f.fiscal_year
             FROM   financials fin
             JOIN   filings f ON f.id = fin.filing_id
             WHERE  f.company_id = %s AND fin.item = %s
@@ -1361,7 +1404,59 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         )
         r = cur.fetchone()
         if r is not None and r[0] is not None:
-            return (float(r[0]), float(r[1]) if r[1] is not None else 0.0)
+            val_a = float(r[0])
+            conf_a = float(r[1]) if r[1] is not None else 0.0
+            fy_a = r[2]
+            if item in _FLOW_ITEMS or item in _BALANCE_ITEMS:
+                rows = _interim_rows(item)
+                newer = [x for x in rows if x[1] > fy_a]
+                if item in _BALANCE_ITEMS and newer:
+                    # point-in-time: zadnji interim (najkasniji period u FY)
+                    pt, fy_i, v_i, c_i = max(
+                        newer, key=lambda x: (x[1], _PERIOD_MONTHS.get(x[0], 0)))
+                    ttm_meta[item] = {"basis": "interim",
+                                      "period": f"{pt} FY{fy_i}"}
+                    return (float(v_i),
+                            min(conf_a, float(c_i) if c_i is not None else 0.0))
+                if item in _FLOW_ITEMS and newer:
+                    pt, fy_i, v_i, c_i = max(
+                        newer, key=lambda x: (x[1], _PERIOD_MONTHS.get(x[0], 0)))
+                    prev = next((x for x in rows
+                                 if x[0] == pt and x[1] == fy_i - 1), None)
+                    q4_same = next((x for x in rows
+                                    if x[0] == "q4" and x[1] == fy_a), None)
+                    inconsistent = (
+                        q4_same is not None and val_a
+                        and abs(float(q4_same[2]) / val_a - 1) > 0.05)
+                    if inconsistent:
+                        ttm_meta[item] = {
+                            "basis": "annual", "fy": fy_a,
+                            "reason": ("interim serija nekonzistentna s "
+                                       "godišnjim izvješćem (q4 kumulativ "
+                                       f"odstupa {abs(float(q4_same[2]) / val_a - 1):.0%})")}
+                        return (val_a, conf_a)
+                    if prev is not None:
+                        ttm = val_a + float(v_i) - float(prev[2])
+                        if val_a > 0 and not (0.4 * val_a <= ttm <= 2.5 * val_a):
+                            ttm_meta[item] = {
+                                "basis": "annual", "fy": fy_a,
+                                "reason": (f"TTM izvan sanity raspona "
+                                           f"({ttm / val_a:.1f}× godišnjeg) — "
+                                           "koristi se godišnje")}
+                            return (val_a, conf_a)
+                        c_i_f = float(c_i) if c_i is not None else 0.0
+                        c_p_f = float(prev[3]) if prev[3] is not None else 0.0
+                        ttm_meta[item] = {"basis": "ttm",
+                                          "period": f"FY{fy_a} + {pt} FY{fy_i} − {pt} FY{fy_i - 1}"}
+                        return (ttm, min(conf_a, c_i_f, c_p_f))
+                    ttm_meta[item] = {
+                        "basis": "annual", "fy": fy_a,
+                        "reason": (f"nema prošlogodišnjeg {pt} interima za "
+                                   "usporedbu — TTM se ne gradi")}
+                    return (val_a, conf_a)
+                ttm_meta[item] = {"basis": "annual", "fy": fy_a,
+                                  "reason": "nema novijih interima od godišnjeg"}
+            return (val_a, conf_a)
         if item == "dps":
             # fallback: STVARNA zadnja dividenda iz dividends tablice (ZSE
             # stranica papira / EHO) — izvješća često ne nose dps kao stavku,
@@ -1450,56 +1545,130 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         r = cur.fetchone()
         return float(r[0]) if r and r[0] is not None else None
 
-    # M13 (Korak 2): rast eksplicitne faze PRIMARNO iz FORWARD signala zadnjeg
-    # izvješća (backlog, book-to-bill, guidance — tablica growth_estimates,
-    # verified seed s citatima); trailing 3g CAGR je samo POMOĆNI kontekst i
-    # fallback kad forward procjene nema. Cap [0, 20%] vrijedi za obje rute.
+    # v3 FAZA G: faza rasta ISKLJUČIVO iz objavljenih brojki u bazi — NIKAD
+    # ručne forward procjene. Primarno: g1 = min(3g CAGR prihoda, cap 10%);
+    # bez pune prihodne serije fallback na 3g CAGR zarade (isti cap); bez
+    # ijedne 3g serije: TTM vs zadnje godišnje, cap 8%, oznaka `kratka
+    # serija`. Guidance signali iz growth_estimates služe SAMO guidance-DCF
+    # FCF proxyju (v2 §9.2, kad CF izvještaj fali) — g1 NE određuju.
+    GROWTH_CAP, SHORT_CAP = 0.10, 0.08
     rev_item = "total_operating_income" if sector == "bank" else "revenue"
-    cur.execute(
-        """SELECT f.fiscal_year, fin.value_eur FROM financials fin
-           JOIN filings f ON f.id = fin.filing_id
-           WHERE f.company_id=%s AND fin.item=%s AND f.period_type='annual'
-                 AND f.basis='consolidated' AND fin.value_eur IS NOT NULL
-           ORDER BY f.fiscal_year DESC LIMIT 3""", (company_id, rev_item))
-    revs = cur.fetchall()
-    trailing = None
-    if len(revs) >= 3 and revs[-1][1] and float(revs[-1][1]) > 0:
-        yrs = revs[0][0] - revs[-1][0]
-        trailing = (float(revs[0][1]) / float(revs[-1][1])) ** (1 / yrs) - 1
+
+    def _cagr3(item):
+        cur.execute(
+            """SELECT f.fiscal_year, fin.value_eur FROM financials fin
+               JOIN filings f ON f.id = fin.filing_id
+               WHERE f.company_id=%s AND fin.item=%s AND f.period_type='annual'
+                     AND f.basis='consolidated' AND fin.value_eur IS NOT NULL
+               ORDER BY f.fiscal_year DESC LIMIT 3""", (company_id, item))
+        rows = cur.fetchall()
+        if len(rows) >= 3 and rows[-1][1] and float(rows[-1][1]) > 0 \
+                and float(rows[0][1]) > 0:
+            yrs = rows[0][0] - rows[-1][0]
+            if yrs > 0:
+                return ((float(rows[0][1]) / float(rows[-1][1])) ** (1 / yrs) - 1,
+                        rows[-1][0], rows[0][0])
+        return None
+
     growth_hint = None
+    trailing = None
+    c3 = _cagr3(rev_item)
+    c3_src_item = "prihoda"
+    if c3 is None:
+        c3 = _cagr3("net_income_parent")
+        c3_src_item = "zarade (net_income_parent)"
+    if c3 is not None:
+        trailing, fy0, fy1 = c3
+        g1 = max(0.0, min(GROWTH_CAP, trailing))
+        growth_hint = {
+            "g1": round(g1, 4), "rev_cagr_3y": round(trailing, 4),
+            "archetype": "growth" if g1 > 0.08 else "mature",
+            "source": (f"g1={g1:.1%} = min(3g CAGR {c3_src_item} FY{fy0}->"
+                       f"FY{fy1} iz baze = {trailing:+.1%}, cap {GROWTH_CAP:.0%})"
+                       " — v3 FAZA G: rast isključivo iz objavljenih brojki "
+                       "(bez ručnih forward procjena); eksplicitna faza 5 g s "
+                       "linearnim fadeom prema terminalnom g"),
+        }
+    else:
+        # kratka serija: TTM vs zadnje godišnje (cap 8%) — samo ako TTM
+        # stvarno postoji za prihodnu stavku
+        cur.execute(
+            """SELECT fin.value_eur FROM financials fin
+               JOIN filings f ON f.id = fin.filing_id
+               WHERE f.company_id=%s AND fin.item=%s AND f.period_type='annual'
+                     AND f.basis='consolidated' AND fin.value_eur IS NOT NULL
+               ORDER BY f.fiscal_year DESC LIMIT 1""", (company_id, rev_item))
+        r_ann = cur.fetchone()
+        ttm_rev = data(rev_item)
+        if (r_ann and r_ann[0] and float(r_ann[0]) > 0 and ttm_rev
+                and ttm_rev[0] is not None
+                and ttm_meta.get(rev_item, {}).get("basis") == "ttm"):
+            gr = float(ttm_rev[0]) / float(r_ann[0]) - 1
+            g1 = max(0.0, min(SHORT_CAP, gr))
+            growth_hint = {
+                "g1": round(g1, 4), "rev_cagr_3y": None, "short_series": True,
+                "archetype": "mature",
+                "source": (f"g1={g1:.1%} = min(TTM vs zadnje godišnje = "
+                           f"{gr:+.1%}, cap {SHORT_CAP:.0%}) — KRATKA SERIJA "
+                           "(nema 3 godišnja izvješća u bazi); v3 FAZA G"),
+            }
+    # guidance signali (SAMO za guidance-DCF FCF proxy, v2 §9.2 — ne za g1)
     try:
         cur.execute(
-            """SELECT g1, rule, drivers, basis, fiscal_year, signals
-               FROM growth_estimates
+            """SELECT rule, drivers, signals FROM growth_estimates
                WHERE company_id=%s AND method='forward_signals'
                ORDER BY fiscal_year DESC, created_at DESC LIMIT 1""", (company_id,))
         fw = cur.fetchone()
     except Exception:  # noqa: BLE001 — tablica je opcionalna nadogradnja
         conn.rollback()
         fw = None
-    if fw and fw[0] is not None:
-        g1 = max(0.0, min(0.20, float(fw[0])))
-        growth_hint = {
-            "g1": round(g1, 4), "forward": True, "rule": fw[1],
-            "drivers": fw[2],
-            "guidance_signals": fw[5] or {},  # v2: guidance-DCF ulazi (R0)
-            "rev_cagr_3y": round(trailing, 4) if trailing is not None else None,
-            "archetype": "growth" if g1 > 0.08 else "mature",
-            "source": (f"g1={g1:.1%}: FORWARD procjena iz GI FY{fw[4]} "
-                       f"(pravilo {fw[1]}; {fw[2]}). {fw[3]}"
-                       + (f" Trailing 3g CAGR {trailing:+.1%} je pomoćni kontekst."
-                          if trailing is not None else
-                          " Trailing 3g serije u bazi nema — forward je jedini signal.")),
-        }
-    elif trailing is not None:
-        g1 = max(0.0, min(0.20, trailing))
-        growth_hint = {"g1": round(g1, 4), "rev_cagr_3y": round(trailing, 4),
-                       "archetype": "growth" if trailing > 0.08 else "mature",
-                       "source": (f"g1={g1:.1%}: CAGR prihoda FY{revs[-1][0]}->"
-                                  f"FY{revs[0][0]} iz baze (cap 0-20%) — POVIJESNI "
-                                  "proxy jer forward procjena (backlog/guidance) "
-                                  "još nije ekstrahirana; eksplicitna faza 5 g s "
-                                  "fadeom prema terminalnom g")}
+    if fw and fw[0] == "R0" and (fw[2] or {}):
+        if growth_hint is None:
+            growth_hint = {"g1": None, "source": "guidance-DCF ulazi bez g1 serije"}
+        growth_hint["rule"] = fw[0]
+        growth_hint["guidance_signals"] = fw[2] or {}
+        growth_hint.setdefault("drivers", fw[1])
+
+    # v3 FAZA G: ROE pravilo za kapitalne metode (opravdani P/B, RI) —
+    # koristi se VIŠI od (3g medijan godišnjih ROE, TTM ROE × 0,9).
+    # Medijan stabilizira jednu netipičnu godinu; faktor 0,9 na TTM čuva
+    # konzervativnost svježe brojke. Bez TTM-a: godišnji ROE (status quo).
+    roe_hint = None
+    _ni = data("net_income_parent")
+    _eq = data("equity_parent") or data("total_equity")
+    if _ni and _ni[0] is not None and _eq and _eq[0]:
+        cur_roe = _ni[0] / _eq[0] if _eq[0] > 0 else None
+        cur_basis = ttm_meta.get("net_income_parent", {}).get("basis", "annual")
+        cur.execute(
+            """SELECT f.fiscal_year,
+                      MAX(fin.value_eur) FILTER (WHERE fin.item='net_income_parent'),
+                      MAX(fin.value_eur) FILTER (WHERE fin.item IN
+                          ('equity_parent','total_equity'))
+               FROM financials fin JOIN filings f ON f.id = fin.filing_id
+               WHERE f.company_id=%s AND f.period_type='annual'
+                     AND f.basis='consolidated'
+               GROUP BY f.fiscal_year ORDER BY f.fiscal_year DESC LIMIT 3""",
+            (company_id,))
+        hist = [float(n) / float(e) for _, n, e in cur.fetchall()
+                if n is not None and e and float(e) > 0]
+        med3 = sorted(hist)[len(hist) // 2] if len(hist) >= 3 else None
+        if cur_roe is not None:
+            if cur_basis == "ttm" and med3 is not None:
+                used = max(med3, cur_roe * 0.9)
+                rule = (f"ROE pravilo (v3 G): max(3g medijan {med3:.1%}, "
+                        f"TTM {cur_roe:.1%}×0,9) = {used:.1%}")
+            elif cur_basis == "ttm":
+                used = cur_roe * 0.9
+                rule = (f"ROE pravilo (v3 G): TTM {cur_roe:.1%}×0,9 = {used:.1%} "
+                        "(nema 3g serije za medijan)")
+            else:
+                used = cur_roe
+                rule = (f"ROE {cur_roe:.1%} iz zadnjeg GODIŠNJEG (kvartali "
+                        "nedostupni/nekonzistentni — TTM se ne gradi)")
+            roe_hint = {"used": round(used, 6), "ttm_or_annual": round(cur_roe, 6),
+                        "basis": cur_basis, "median_3y": (round(med3, 6)
+                                                          if med3 is not None else None),
+                        "rule": rule}
 
     def ni_parent_of(cid):
         cur.execute(
@@ -1561,7 +1730,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         own_market_cap=market_cap_of(company_id),
         market_cap_of=market_cap_of, segment_ebitda_of=segment_ebitda_of,
         fair_equity_of=fair_equity_of, growth_hint=growth_hint,
-        ni_parent_of=ni_parent_of, holding_type=holding_type, params=params,
+        ni_parent_of=ni_parent_of, holding_type=holding_type,
+        ttm_meta=ttm_meta, roe_hint=roe_hint, params=params,
     )
 
 

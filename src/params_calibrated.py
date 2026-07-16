@@ -82,11 +82,14 @@ def _calibration(key: str):
 
 G = 0.025
 G_TERMINAL = 0.04
-G_SRC = ("M11 dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: "
-         "realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 iz 3g CAGR-a "
-         "prihoda IZ BAZE (cap 0-20%, fade 5 g); kapitalni g=2,5% za opravdani "
-         "P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); "
-         "g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)")
+G_SRC = ("dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni "
+         "BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta "
+         "g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade "
+         "iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs "
+         "zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE "
+         "koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji "
+         "— kapital ne smije perpetuirati ciklus); g<r zadovoljeno "
+         "(min r ~6,9% uz β=0,7 po v3 K-stacku)")
 
 DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holdinge "
                 "(nelikvidnost, dvostruko oporezivanje, trošak centra); "

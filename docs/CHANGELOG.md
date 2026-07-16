@@ -82,3 +82,43 @@ ATGR 22,1–31,1 → 25,6–38,5; HPB 309,8–431,9 → 360,2–536,6; KOEI 880�
 (iznad/unutar/ispod). NAPOMENA: ovo je 1. od 4 računske faze v3 — TTM i
 rast (G), održiva dividenda (DIV) i medijan-sidro (A) tek slijede;
 raskoraci se NE fitaju na tržište.
+
+## 2026-07-16 — Metodologija v3, FAZA G: TTM + rast iz podataka + ROE pravilo
+
+Nalaz FAZE D: sve se vrednovalo iz zadnjeg godišnjeg (65 firmi ima
+kvartale u bazi), kapitalne metode bez ikakve faze rasta, g1 se uzimao iz
+ručnih forward procjena.
+
+Promjene (src/valuation_methods.py build_ctx):
+- TTM sloj u data(): flow stavke = FY + YTD interim − YTD lanjski interim
+  (ZSE interimi su kumulativni); bilančne stavke = zadnji interim
+  (point-in-time). STROGI GATEOVI: q4 kumulativ vs godišnje >5% razlike →
+  TTM se NE gradi (nekonzistentna serija, npr. PODR revenue +9,3%); bez
+  lanjskog para → godišnje; TTM izvan [0,4×, 2,5×] godišnjeg → godišnje.
+  Sve s razlogom u ttm_meta → badge na stranici.
+- g1 isključivo iz objavljenih brojki: min(3g CAGR prihoda/zarade, cap
+  10%); kratka serija: min(TTM vs zadnje godišnje, cap 8%) + badge. Ručne
+  forward procjene UKINUTE za rast (growth_estimates služi još samo
+  guidance-DCF FCF proxyju kad CF izvještaj ne postoji). Arhetip
+  industrial_forward sada znači "ima izvedenu fazu rasta iz podataka".
+- ROE pravilo za opravdani P/B i RI: max(3g medijan godišnjih ROE,
+  TTM ROE × 0,9); bez TTM-a godišnji ROE.
+- UI badgevi: `TTM podaci (period)`, `godišnji podatak` (s razlogom),
+  `kratka serija`, `ROE pravilo` — u karticama pretpostavki.
+
+Čuvari (tests/test_ttm_growth.py, 4 testa): TTM formula neovisno
+reproducirana SQL-om (HT); nekonzistentan q4 blokira TTM (PODR); g1 cap i
+zabrana forward signala; ROE pravilo.
+
+Učinak (scripts/apply_v3_g.py; valuation_changelog kind='methodology'):
+39 zona pomaknuto >10% — u OBA smjera, kako i treba: TTM izbacuje lanjske
+jednokratne dobitke (PODR 246–333 → 149–202, sada −9% od sredine — bio
++200% pa −45%; IKBA −21%; VDZG −44%), a diže gdje je ovogodišnja dobit
+porasla (INA +51%, AUHR +36%, GARB +20%). ZABA kontrola: +1,3% pomaka
+(cijena 2,7% ispod donjeg ruba — "blizu", prati se). Temperatura CROBEX:
+13/4/5 → 12/6/4. Top-15 distribucija: i dalje 7/15 s |raskorakom|>30%,
+ali SASTAV promijenjen — preostali su upravo slučajevi za faze koje
+slijede: ADRS (klase → S), DLKV/RIVP/SPAN/ERNT/HT (dogma jednog sidra →
+A; ERNT/HT DCF sidro sada strši NAVIŠE dok potvrdne metode stoje niže —
+medijan kvalificiranih metoda u FAZI A to izravnava), CROS (D_sust → DIV).
+Raskoraci se NE fitaju na tržište.

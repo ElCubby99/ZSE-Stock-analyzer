@@ -1372,6 +1372,38 @@ def build_stock_json(conn, ticker: str) -> dict:
             {"key": "illiq", "label": f"premija nelikvidnosti "
              f"+{params.illiq_premium * 100:.1f} p.b.", "status": "izvor",
              "why": getattr(params, "illiq_src", "") or ""})
+    # v3 FAZA G: osnova ključnih ulaza (TTM / godišnje) + izvor rasta —
+    # badge `godišnji podatak` kad se TTM ne gradi, `kratka serija` za
+    # fallback rast; sve s razlogom (radije oznaka nego kriva brojka)
+    tm = getattr(ctx, "ttm_meta", {}) or {}
+    _ni_m = tm.get("net_income_parent") or {}
+    if _ni_m.get("basis") == "ttm":
+        assumption_flags.append(
+            {"key": "ttm", "label": f"TTM podaci ({_ni_m.get('period')})",
+             "status": "izvor",
+             "why": ("zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci "
+                     "(zadnje godišnje + ovogodišnji kvartali − lanjski "
+                     "kvartali) — v3 FAZA G; kvartalni izvještaji su "
+                     "nerevidirani")})
+    elif _ni_m.get("basis") == "annual" and _ni_m.get("reason"):
+        assumption_flags.append(
+            {"key": "annual_data", "label": "godišnji podatak",
+             "status": "pretpostavka",
+             "why": (f"TTM se ne gradi: {_ni_m['reason']} — vrednuje se iz "
+                     "zadnjeg godišnjeg izvješća")})
+    _gh = ctx.growth_hint or {}
+    if _gh.get("short_series"):
+        assumption_flags.append(
+            {"key": "short_series", "label": "kratka serija (rast)",
+             "status": "pretpostavka",
+             "why": ("u bazi nema tri godišnja izvješća pa je stopa rasta "
+                     "izvedena iz zadnjih 12 mjeseci naspram prošle godine "
+                     "(cap 8%) — v3 FAZA G")})
+    _rh = getattr(ctx, "roe_hint", None)
+    if _rh and _rh.get("basis") == "ttm":
+        assumption_flags.append(
+            {"key": "roe_rule", "label": "ROE pravilo (TTM + 3g medijan)",
+             "status": "izvor", "why": _rh["rule"]})
     # v3 FAZA K: rf/ERP/CRP su ručni unosi s datumom (exact_unverified) —
     # eksplicitna oznaka nesigurnosti, ista praksa kao dosad za ERP
     if getattr(params, "crp", None) is not None:
