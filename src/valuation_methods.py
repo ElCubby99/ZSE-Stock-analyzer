@@ -93,6 +93,8 @@ class Ctx:
     roe_hint: Optional[dict] = None
     # v3 FAZA DIV: raspis održive dividende (D_sust) za DDM i prikaz
     dsust_hint: Optional[dict] = None
+    # v3 FAZA A (INA-tip): free float proxy = 100 − Σ top-10 dioničara (%)
+    free_float_proxy: Optional[float] = None
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -1173,15 +1175,57 @@ def reconcile(results: dict, sector: Optional[str] = None,
             anchors = anchors[1:]
             continue
         break
+    # v3 FAZA A: KVALIFICIRANE metode = pozitivna baza + conf >= 0,5 +
+    # ne-degenerirana osjetljivost (raspon <= 100% baze). Zona nastaje iz
+    # MEDIJANA kvalificiranih baza (triangulacija umjesto dogme jednog
+    # sidra); primarno sidro (hijerarhija arhetipa) i dalje daje OBLIK
+    # osjetljivosti (relativni low/high) i naraciju.
+    def _degen(k):
+        vr_k = results[k]["range"]
+        lo_k = vr_k.low or bases[k]
+        hi_k = vr_k.high or bases[k]
+        return bases[k] > 0 and (hi_k - lo_k) / bases[k] > 1.0
+
+    qualified = sorted(k for k in bases
+                       if bases[k] > 0
+                       and results[k]["range"].confidence >= 0.5
+                       and not _degen(k))
     if anchors:
         prim = anchors[0]              # primarno sidro (redoslijed arhetipa)
         vr = results[prim]["range"]
-        zone_low = vr.low or bases[prim]
-        zone_high = vr.high or bases[prim]
-        zone_note = (f"zona = {prim} ± osjetljivost na ključnu pretpostavku "
-                     f"(r/wacc ±1 p.b.); ostala sidra su potvrda")
+        q_bases = sorted(bases[k] for k in qualified) or [bases[prim]]
+        n_q = len(q_bases)
+        med = (q_bases[n_q // 2] if n_q % 2 else
+               (q_bases[n_q // 2 - 1] + q_bases[n_q // 2]) / 2)
+        # oblik osjetljivosti primarnog sidra, skaliran na medijan
+        rel_lo = (vr.low or bases[prim]) / bases[prim]
+        rel_hi = (vr.high or bases[prim]) / bases[prim]
+        zone_low, zone_high = med * rel_lo, med * rel_hi
+        zone_note = (f"zona = MEDIJAN kvalificiranih metoda "
+                     f"({', '.join(qualified)}) ± osjetljivost primarnog "
+                     f"sidra '{prim}' (r/wacc ±1 p.b.) — v3 triangulacija")
+        # v3 A.2 demote pravilo: >=2 kvalificirane NE-sidrene metode
+        # konvergiraju (±20%) a sidro divergira >30% od njihove sredine ->
+        # sidro gubi primat (medijan ionako preuzima; ovo je vidljiv zapis)
+        others = [k for k in qualified if k != prim]
+        for i, a in enumerate(others):
+            hit = False
+            for b in others[i + 1:]:
+                va, vb = bases[a], bases[b]
+                if vb and abs(va / vb - 1) <= 0.20:
+                    pair_mid = (va + vb) / 2
+                    if pair_mid and abs(bases[prim] / pair_mid - 1) > 0.30:
+                        zone_note += (
+                            f"; DEMOTE (v3 A.2): {a} i {b} konvergiraju "
+                            f"(±20%) a sidro '{prim}' divergira "
+                            f"{bases[prim] / pair_mid - 1:+.0%} — sidro gubi "
+                            "primat, medijan preuzima")
+                        hit = True
+                        break
+            if hit:
+                break
         if dropped:
-            zone_note += (f"; isključeno (nepozitivna baza): {', '.join(dropped)}")
+            zone_note += (f"; isključeno (nepozitivna baza/conf): {', '.join(dropped)}")
         if degenerate:
             zone_note += ("; isključeno sidro s degeneriranom osjetljivošću "
                           f"(raspon > 100% baze): {', '.join(degenerate)}")
@@ -1256,7 +1300,43 @@ def reconcile(results: dict, sector: Optional[str] = None,
             roles[k] = {"role": "secondary", "note": h["secondary_note"],
                         "vs_zone_pct": 0.0}
 
+    # v3 A.3: dividendni sanity flag — NAD D_sust (nikad sirova isplata).
+    # Prinos iz održive dividende na donjem rubu zone > r − g_terminal =>
+    # zona matematički ne može biti fer (Gordon donja granica) -> zona se
+    # NE objavljuje kao mjerodavna ("u rekalibraciji").
+    recalibrating = None
+    dh = getattr(ctx, "dsust_hint", None) if ctx is not None else None
+    if ctx is not None and dh and dh.get("d_sust_ps"):
+        r_ = ctx.params.cost_of_equity
+        gT = ctx.params.terminal_growth
+        d_ps = dh["d_sust_ps"]
+        if zone_low > 0 and d_ps / zone_low > (r_ - gT):
+            recalibrating = (
+                f"zona vjerojatno PRENISKA — održive dividende je ne "
+                f"podržavaju: D_sust {d_ps:,.2f} € na donjem rubu "
+                f"{zone_low:,.2f} € implicira prinos {d_ps / zone_low:.1%} "
+                f"> r − g_terminal = {r_ - gT:.1%} (Gordonova donja granica); "
+                "zona se ne objavljuje dok se ulazi ne razriješe")
+        elif (zone_high > 0 and (dh.get("payout_used") or 0) >= 0.9
+              and d_ps / zone_high < 0.5 * (r_ - gT)):
+            recalibrating = (
+                f"zona vjerojatno PREVISOKA — uz payout ~100% održiva "
+                f"dividenda {d_ps:,.2f} € na gornjem rubu {zone_high:,.2f} € "
+                f"implicira prinos {d_ps / zone_high:.1%} < ½(r − g_terminal) "
+                "— zona se ne objavljuje dok se ulazi ne razriješe")
+    # v3 A.4 (INA-tip): zanemariv free float -> raskorak nije informativan
+    low_float_note = None
+    ff = getattr(ctx, "free_float_proxy", None) if ctx is not None else None
+    if ff is not None and ff < 10:
+        low_float_note = (
+            f"free float ~{ff:.0f}% (proxy: 100 − zbroj top-10 dioničara) — "
+            "cijena se formira pod dominantnim vlasnicima uz zanemariv "
+            "float; raskorak cijene i fer-zone NIJE informativan")
+
     return {
+        "qualified_methods": qualified,
+        "recalibrating": recalibrating,
+        "low_float_note": low_float_note,
         "method_bases": {k: r["range"].base for k, r in results.items()},
         "archetype": arche,
         "anchor_methods": anchors,
@@ -1763,6 +1843,20 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     # snapshot pa lijeni prvi poziv ne bi stigao u polje
     data("dps")
 
+    # v3 A.4: free float proxy iz zadnjeg top-10 snapshota dioničara
+    free_float_proxy = None
+    try:
+        cur.execute(
+            """SELECT 100.0 - SUM(s.pct)::float FROM shareholders s
+               WHERE s.company_id=%s AND s.snapshot_date = (
+                   SELECT MAX(snapshot_date) FROM shareholders
+                   WHERE company_id=%s)""", (company_id, company_id))
+        r_ff = cur.fetchone()
+        if r_ff and r_ff[0] is not None:
+            free_float_proxy = max(0.0, float(r_ff[0]))
+    except Exception:  # noqa: BLE001 — tablica je opcionalna
+        conn.rollback()
+
     return Ctx(
         ticker=ticker, sector=sector, is_group=is_group,
         holdings=holdings, has_segments=has_segments, data=data,
@@ -1772,7 +1866,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         fair_equity_of=fair_equity_of, growth_hint=growth_hint,
         ni_parent_of=ni_parent_of, holding_type=holding_type,
         ttm_meta=ttm_meta, roe_hint=roe_hint,
-        dsust_hint=dsust_holder.get("hint"), params=params,
+        dsust_hint=dsust_holder.get("hint"),
+        free_float_proxy=free_float_proxy, params=params,
     )
 
 
