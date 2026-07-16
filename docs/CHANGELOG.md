@@ -36,3 +36,16 @@ crveno pravilo (v2.3, `src/valuation_methods.py::reconcile`): sidro s
 rasponom > 100% baze pada na sljedeći pristup u hijerarhiji, uz vidljivu
 napomenu. Učinak na univerzum: promijenjena SAMO PODR zona (14–53 → 246–333,
 sidro comps). ADRS=PODR=160,00 € potvrđeno kao slučajnost — nije dirano.
+
+### R5: sitemap encoding (P3)
+
+Lokalno je `dist/sitemap.xml` čisti, nekomprimirani XML — gzip dodaje
+Vercel na serviranju (standardno, s `Content-Encoding: gzip` headerom kad
+klijent šalje `Accept-Encoding`). Produkcijska potvrda iz Claude Code
+okruženja nije moguća (burzovnilist.com nije na mrežnoj allowlisti; proxy
+vraća 403) — provjera za Borisa s vlastitog stroja:
+`curl -sI https://burzovnilist.com/sitemap.xml` (Content-Type xml +
+eventualni Content-Encoding) i `curl -s --compressed .../sitemap.xml`
+(mora vratiti čitljiv XML). Autoritativna potvrda: GSC → Sitemaps status.
+Vanjski alat koji prijavljuje "binarni sadržaj" najvjerojatnije ne šalje
+Accept-Encoding a dobiva gzip, ili ne dekomprimira — problem alata.
