@@ -248,14 +248,46 @@ docs/    specifikacija ekstrakcije i validacije
    jednostavno ne prikazuju (promjena handlea = samo env update, bez
    promjene koda).
 
-## Dnevni pipeline na GitHub Actions (M32)
+## Dnevni pipeline na GitHub Actions (M32 → M34: satni pokušaji)
 
 `src/daily.py` se više NE vrti na lokalnom stroju/VPS-u — workflow
-`.github/workflows/daily-eod.yml` ga pokreće **radnim danima u 16:20
-Europe/Zagreb** (ZSE zatvara u 16:00). Dva cron unosa pokrivaju ljetno i
-zimsko računanje vremena; DST guard korak propušta samo onaj koji padne u
-lokalni prozor 16–17 h. `concurrency: daily-eod` garantira da se dva runa
-nikad ne izvršavaju paralelno.
+`.github/workflows/daily-eod.yml` ga pokreće **radnim danima svaki sat
+od 16:20 do 22:20 Europe/Zagreb** (ZSE zatvara u 16:00, ali tečajnica
+zna kasniti satima — incident 16.07.2026.: objava tek nakon 19 h, a stari
+dizajn s jednim runom u 16:20 i retryjem do 18:00 ostavio bi jučerašnje
+podatke 24 sata). Dva satna cron raspona pokrivaju ljetno i zimsko
+računanje vremena; DST guard propušta samo runove u lokalnom prozoru
+16–23 h (namjerno širok: GitHub cronovi znaju kasniti i >1 h — uski
+prozor 16–17 h je 16.07. preskočio SVE zakazane runove). `concurrency:
+daily-eod` garantira da se dva runa nikad ne izvršavaju paralelno.
+
+Svaki satni run je kratak i BEZ spavanja (čekanje rade cron termini):
+1. **Idempotentni guard**: današnji EOD već kompletan u bazi (udio live
+   klasa s današnjim zapisom ≥ `EOD_COMPLETE_MIN_SHARE`, zadano 0,5)?
+   → log "already done", nula posla, nula deploya (~10–30 s).
+2. **Jedan pokušaj dohvata**: izvor još nema današnju tečajnicu →
+   **SUCCESS** s logom `podaci još nisu objavljeni, pokušaj N od M` —
+   to je NORMALAN ishod satne serije, ne greška (zeleni Actions tab).
+3. **S podacima**: backfill jučerašnje rupe ako je izvor nudi (log
+   `backfill {datum}` — serija ne smije trajno imati rupu), pa puni
+   prolaz (watcher → extract → recompute → regen → commit exporta →
+   deploy hook) točno JEDNOM taj dan; kasniji runovi = no-op.
+4. **Alarm**: SAMO zadnji dnevni pokušaj (lokalno ≥ `EOD_FINAL_HOUR`,
+   zadano 22 h) bez podataka vraća exit 3 → run failure + Issue
+   `pipeline-fail` + GitHubov mail. Jedan alarm dnevno, ne po satu.
+   Napomena: burzovni praznik radnim danom također okine alarm — takav
+   issue samo zatvori.
+5. **Shema**: na početku svakog runa primjenjuje se idempotentna
+   migracija `db/zse_schema_v3_1.sql` (IF NOT EXISTS) — lokalna i
+   produkcijska baza ne mogu razjahati (uzrok pada 16.07.).
+
+Semantika statusa u Actions tabu: SUCCESS s "not yet published" ili
+"already done" u logu je normalan rad; FAILURE znači ili "dan bez
+objave do 22:20" ili stvaran pad koda (issue nosi link na run).
+
+Ručna nadoknada bilo kojeg dana: Actions → daily-eod → **Run workflow**
+(dispatch preskače DST guard; uspješan run sam backfilla jučerašnju rupu
+ako je izvor još nudi taj datum).
 
 Model stanja (runner je efemeran — ništa ne preživljava run):
 - **Postgres stanje** (companies, filings, financials, prices_eod,
@@ -265,14 +297,6 @@ Model stanja (runner je efemeran — ništa ne preživljava run):
   **commitaju natrag u repo** (`[skip ci]` u poruci da ne okinu novi
   workflow); Vercel build ih čita iz repoa — zato deploy hook ima smisla
   tek NAKON pusha.
-- Readiness/retry: tečajnica za danas se čeka do 18:00 (retry svakih 10
-  min; `EOD_RETRY_DEADLINE`/`EOD_RETRY_INTERVAL_MIN` env). Istek bez
-  podataka NE dira postojeće stanje (sajt ostaje na zadnjem datumu) i
-  označava run neuspješnim -> notifikacija.
-- Neuspjeh runa: GitHub automatski mailira vlasnika na failed run, a
-  workflow dodatno otvara Issue s labelom `pipeline-fail` (trajni trag +
-  link na run). Napomena: burzovni praznik radnim danom također istekne
-  readiness — takav issue samo zatvori.
 
 ### Ručni koraci za Borisa (M32)
 
@@ -291,11 +315,11 @@ Model stanja (runner je efemeran — ništa ne preživljava run):
    NIŠTA od ovoga ne ide u repo.
 3. **Stari cron na tvom stroju**: obriši ga ako je ikad bio postavljen
    (`crontab -e`); ako nije bio — ništa.
-4. **Prvi tjedan**: Actions tab nakon 16:20 — pogledaj trajanje runova i
-   je li retry bio potreban. Ako tečajnica redovito kasni, pomakni cron na
-   16:45/17:00 (jedna linija u workflowu; prozor DST guarda tada proširi).
-   Ručno pokretanje/nadoknada: Actions → daily-eod → **Run workflow**.
-5. **Minute**: privatni repo ima 2.000 besplatnih minuta/mj. Tipičan run
-   bez retryja je procijenjen na ~3–5 min (≈ 65–110 min/mj); s retryjima
-   do 18:00 teoretski max ~130 min/run. Nakon prvog tjedna upiši ovdje
-   stvarnu brojku iz Actions taba.
+4. **Prvi tjedan**: Actions tab — pogledaj u koliko sati prvi run nađe
+   podatke (kalibrira koliko su satni termini stvarno potrebni) i koliko
+   traju no-op runovi. Ručno pokretanje/nadoknada: Actions → daily-eod →
+   **Run workflow**.
+5. **Minute** (procjena M34 — nakon prvog tjedna upiši stvarnu brojku iz
+   Actions taba): no-op run ~10–30 s × do 6 runova/dan + jedan puni run
+   ~3–5 min ⇒ ~5–8 min/dan ≈ **110–175 min/mj** — daleko ispod besplatne
+   kvote (2.000 min/mj za privatni repo).

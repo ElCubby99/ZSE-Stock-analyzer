@@ -1,5 +1,57 @@
 # Changelog (tehnički — interni)
 
+## 2026-07-16 — M34: satni EOD pokušaji + forenzika incidenta
+
+### Forenzika 16.07. (cijene nisu osvježene do ~19:00)
+
+Tri neovisna uzroka, svaki dokumentiran iz Actions logova i baze:
+
+1. **GitHub cron kasni + preuzak DST guard**: cron `20 14` (16:20 CEST)
+   ispalio je tek u 17:49 lokalno (kašnjenje ~1,5 h), cron `20 15` u
+   18:44; DST guard je propuštao samo lokalni sat "16", pa su OBA
+   zakazana runa završila kao no-op "izvan prozora — preskačem"
+   (runovi 29512853277 i 29516824533, oba SUCCESS bez posla).
+   **Nijedan zakazani run danas nije ni pokušao dohvat.**
+2. **Podaci SU bili dostupni najkasnije u 19:08**: Borisov ručni
+   dispatch (19:07:54) povukao je 65/69 EOD zapisa u PRVOM pokušaju
+   (run 29518493362). Točno vrijeme ZSE objave nepoznato je jer nijedan
+   raniji run nije provjeravao — kalibracija: satni termini 16:20–22:20
+   pokrivaju i ovakva kašnjenja.
+3. **Dispatch run je svejedno pao (exit 1) u regen fazi** — produkcijska
+   Supabase baza NEMA v3 shemu (stupci `dividends.payout_type` i dr.
+   dodavani su runtime DDL-om samo u lokalnoj bazi):
+   `scripts.build_dividende` pao je na nepostojećem stupcu;
+   u `build_ctx` je SQL greška ostavila transakciju aborted, per-ticker
+   handler NIJE radio rollback pa je `log()` digao
+   `InFailedSqlTransaction` i srušio cijeli run prije regena/commita
+   (zato je `pipeline_runs` za daily-2026-07-16 prazan — rollback outer
+   transakcije). Cijene su preživjele (zaseban connection u
+   `fetch_zse_json`), ali exporti/deploy nisu — sajt ostao na 15.07.
+   Bonus nalaz: watcher pao na `credit balance too low` (Anthropic API).
+
+### Novi dizajn (M34)
+
+- Workflow: satni cronovi `20 14-20` (CEST) + `20 15-21` (CET) radnim
+  danima; DST guard proširen na lokalno 16–23 h; `workflow_dispatch`
+  ostaje; concurrency nepromijenjen; timeout 130 → 30 min.
+- `src/daily.py`: (1) `ensure_schema` — idempotentna migracija
+  `db/zse_schema_v3_1.sql` na početku svakog runa (konsolidiran SAV
+  runtime DDL; produkcija se sama zakrpa); (2) `eod_already_done`
+  guard (udio klasa ≥ 0,5); (3) `stage_prices` = JEDAN pokušaj bez
+  sleep petlje (interna retry-do-18:00 petlja UKLONJENA — čekanje rade
+  cronovi); (4) "not yet" = exit 0 + log "pokušaj N od M" (SUCCESS,
+  bez lažnih alarma); (5) exit 3 SAMO kad zadnji pokušaj (≥22 h) nema
+  podatke → issue + mail, jednom dnevno; (6) backfill prethodnog
+  trgovinskog dana u istom uspješnom runu; (7) watcher/extract/regen
+  se rade samo u runu koji je našao podatke; (8) rollback higijena:
+  per-ticker regen rollback + `log()` otporan na aborted transakciju.
+- Workflow koraci nakon daily.py gate-ani na `did_work` (no-op run ne
+  troši API pozive za vijesti niti dira commit/deploy).
+- Testovi: `tests/test_eod_hourly.py` (10 simulacija po acceptance
+  kriterijima; stari `test_daily_readiness.py` uklonjen s dizajnom).
+- Procjena minuta: ~5–8 min/dan (~110–175 min/mj) — u README-u,
+  stvarna potrošnja se upisuje nakon prvog tjedna.
+
 ## 2026-07-16 — Metodologija v3.1: dividendni pod + kompozitni g1
 
 ### DIO 1 — dividendni pod (sanity test iz veta u ULAZ)

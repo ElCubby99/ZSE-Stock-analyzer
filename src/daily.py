@@ -7,12 +7,19 @@ idempotentno (dedup po ID-evima, ON CONFLICT), validate gate uvijek.
 Detekcija promjene layouta: previše low-confidence klasifikacija u istom runu
 -> alert u digestu + pauza auto-akcija (auto-promocija ovdje ionako ne postoji).
 
-M32 readiness/retry: EOD tečajnica za danas se objavljuje nakon zatvaranja
-trgovine (16:00). Ako feed još nema današnje zapise, cijene se ponavljaju
-svakih EOD_RETRY_INTERVAL_MIN minuta do EOD_RETRY_DEADLINE (zadano 18:00
-Europe/Zagreb). Istek bez podataka NE dira postojeće stanje (exporti se ne
-prepisuju polovičnima, deploy se ne okida) i vraća exit kod 3 — workflow na
-to podiže notifikaciju. Runner je efemeran: sve trajno stanje živi u
+M34 satni pokušaji (zamjena za M32 retry-sleep): workflow pokreće run
+SVAKI SAT 16:20 -> 22:20 Europe/Zagreb. Svaki run je kratak i bez spavanja:
+  1. idempotentni guard — današnji EOD već kompletan u bazi? -> "already
+     done", exit 0, nula posla i nula deploya;
+  2. jedan pokušaj dohvata tečajnice — nema podataka? -> "not yet
+     published", exit 0 (neutralno; čekanje rade cron termini). SAMO
+     zadnji dnevni pokušaj (lokalno >= EOD_FINAL_HOUR, zadano 22) bez
+     podataka vraća exit 3 -> workflow failure + issue + mail (jedan
+     alarm dnevno);
+  3. s podacima: backfill jučerašnje rupe ako je izvor nudi, pa puni
+     prolaz (watcher/extract/recompute/regen) točno JEDNOM taj dan.
+Istek bez podataka NE dira postojeće stanje (exporti se ne prepisuju,
+deploy se ne okida). Runner je efemeran: sve trajno stanje živi u
 Postgresu (ZSE_DSN -> Supabase) i u exportima commitanima u repo.
 
 CLI:  python -m src.daily            # puni prolaz
@@ -33,13 +40,38 @@ LAYOUT_ALERT_LOW_CONF = 5   # >=N low-conf klasifikacija u runu -> alert
 
 def _logger(conn, run_id):
     def log(stage, company_id, status, message):
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO pipeline_runs (run_id, stage, company_id, status, message) "
-                "VALUES (%s,%s,%s,%s,%s)",
-                (run_id, stage, company_id, status, str(message)[:1500]))
+        # Log NIKAD ne smije srušiti run (incident 16.07.2026.: aborted
+        # transakcija -> log() digao InFailedSqlTransaction i ubio prolaz).
+        # Na grešku: rollback pa jedan retry; ako ni to ne prođe, samo print.
+        for _ in range(2):
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "INSERT INTO pipeline_runs (run_id, stage, company_id, status, message) "
+                        "VALUES (%s,%s,%s,%s,%s)",
+                        (run_id, stage, company_id, status, str(message)[:1500]))
+                break
+            except Exception:  # noqa: BLE001
+                try:
+                    conn.rollback()
+                except Exception:  # noqa: BLE001
+                    break
         print(f"[{stage}] {status}: {str(message)[:150]}")
     return log
+
+
+def ensure_schema(conn) -> None:
+    """Primijeni idempotentnu shemu (db/zse_schema_v3_1.sql) na početku runa.
+
+    Lokalni razvoj dodaje stupce/tablice — bez ovoga produkcijska baza
+    razjaše od koda (incident 16.07.2026.: regen pao na stupcima koji su
+    postojali samo lokalno). IF NOT EXISTS => no-op kad je sve već tu."""
+    import pathlib
+    sql = (pathlib.Path(__file__).resolve().parents[1]
+           / "db" / "zse_schema_v3_1.sql").read_text(encoding="utf-8")
+    with conn.cursor() as cur:
+        cur.execute(sql)
+    conn.commit()
 
 
 def stage_extract_queue(conn, run_id, log) -> list[int]:
@@ -210,55 +242,96 @@ def _zagreb_now():
     return datetime.now(ZoneInfo("Europe/Zagreb"))
 
 
-def stage_prices(conn, run_id, log) -> tuple[int, bool]:
-    """Dohvat današnjih EOD zapisa s readiness/retry logikom (M32).
-
-    Vraća (broj_zapisa, readiness_timeout). Tečajnica za danas izlazi nakon
-    zatvaranja trgovine (16:00); ako još nije objavljena, ponavljamo do
-    deadlinea (zadano 18:00 Europe/Zagreb). Istek bez podataka NIŠTA ne
-    prepisuje — postojeći podaci ostaju, deploy se ne okida."""
-    import time as _time
-    from .prices import fetch_zse_json
-
+def _live_class_tickers(conn) -> list[str]:
     with conn.cursor() as cur:
         cur.execute(
             """SELECT COALESCE(sc.ticker, c.ticker)
                FROM companies c LEFT JOIN share_classes sc ON sc.company_id=c.id
                WHERE c.is_live ORDER BY 1""")
-        tickers = [r[0] for r in cur.fetchall()]
+        return [r[0] for r in cur.fetchall()]
+
+
+# Kompletan dan = udio live linija s današnjim zapisom >= prag. Tečajnica
+# se objavljuje ODJEDNOM (jedan JSON za sve papire), pa je stvarni ishod
+# binaran: ~0% ili ~90%+ (netrgovani papiri nemaju close). Prag 0,5 je
+# sigurnosna margina, ne fina granica.
+EOD_COMPLETE_MIN_SHARE = float(os.getenv("EOD_COMPLETE_MIN_SHARE", "0.5"))
+
+
+def eod_already_done(conn, day: date | None = None) -> bool:
+    """Idempotentni guard (prvi korak svakog satnog runa): ima li baza VEĆ
+    kompletan EOD za zadani (default današnji) trgovinski dan?"""
+    day = day or date.today()
+    with conn.cursor() as cur:
+        cur.execute("SELECT COUNT(*) FROM companies WHERE is_live")
+        if not cur.fetchone()[0]:
+            return False
+        cur.execute(
+            """SELECT COUNT(*) FROM (
+                 SELECT COALESCE(sc.ticker, c.ticker) AS t
+                 FROM companies c LEFT JOIN share_classes sc ON sc.company_id=c.id
+                 WHERE c.is_live) live""")
+        n_live = cur.fetchone()[0]
+        cur.execute(
+            """SELECT COUNT(DISTINCT (p.company_id, COALESCE(p.share_class_id, 0)))
+               FROM prices_eod p JOIN companies c ON c.id=p.company_id
+               WHERE c.is_live AND p.trade_date=%s""", (day,))
+        n_have = cur.fetchone()[0]
+    return n_live > 0 and n_have / n_live >= EOD_COMPLETE_MIN_SHARE
+
+
+def previous_trading_day(day: date) -> date:
+    """Prethodni radni dan (pon-pet). Praznike ne modeliramo — rupa zbog
+    praznika se ne backfilla jer izvor za taj dan nema tečajnicu."""
+    from datetime import timedelta
+    d = day - timedelta(days=1)
+    while d.weekday() >= 5:   # 5=subota, 6=nedjelja
+        d -= timedelta(days=1)
+    return d
+
+
+def stage_prices(conn, run_id, log, fetch=None) -> tuple[int, bool]:
+    """JEDAN kratki pokušaj dohvata današnje tečajnice (bez spavanja —
+    čekanje na kasnu ZSE objavu rade satni cron termini, ne runner).
+
+    Vraća (broj_zapisa, not_ready). not_ready=True znači: izvor još nema
+    današnje podatke — pozivatelj izlazi neutralno (job SUCCESS), a failure
+    podiže SAMO zadnji dnevni pokušaj. Uz uspješan dohvat dodatno zakrpa
+    rupu za PRETHODNI trgovinski dan ako je izvor nudi (backfill)."""
+    if fetch is None:
+        from .prices import fetch_zse_json as fetch
+
+    tickers = _live_class_tickers(conn)
     if not tickers:
         log("prices", None, "skipped", "nema live firmi — cijene se ne dohvaćaju")
         return 0, False
 
-    deadline_txt = os.getenv("EOD_RETRY_DEADLINE", "18:00")
-    interval_min = int(os.getenv("EOD_RETRY_INTERVAL_MIN", "10"))
-    dl_h, dl_m = (int(x) for x in deadline_txt.split(":"))
-    today = date.today().isoformat()
-
-    attempt = 0
-    while True:
-        attempt += 1
-        try:
-            n = fetch_zse_json(tickers, [today])
-        except Exception as e:  # noqa: BLE001
-            n = 0
-            log("prices", None, "failed",
-                f"pokušaj {attempt}: {type(e).__name__}: {e}")
-        if n:
-            log("prices", None, "ok",
-                f"{n} EOD zapisa za {len(tickers)} live linija (pokušaj {attempt})")
-            return n, False
-        now = _zagreb_now()
-        deadline = now.replace(hour=dl_h, minute=dl_m, second=0, microsecond=0)
-        if now >= deadline:
-            log("prices", None, "failed",
-                f"readiness istekao ({deadline_txt} Europe/Zagreb) bez današnjih "
-                "zapisa — stari podaci ostaju netaknuti (praznik/kašnjenje ZSE?)")
-            return 0, True
+    today = date.today()
+    try:
+        n = fetch(tickers, [today.isoformat()])
+    except Exception as e:  # noqa: BLE001
+        log("prices", None, "failed", f"dohvat pao: {type(e).__name__}: {e}")
+        return 0, True
+    if not n:
         log("prices", None, "skipped",
-            f"tečajnica za {today} još nije objavljena — retry za {interval_min} min "
-            f"(pokušaj {attempt}, deadline {deadline_txt})")
-        _time.sleep(interval_min * 60)
+            f"tečajnica za {today} još nije objavljena — sljedeći pokušaj "
+            "radi sljedeći satni cron")
+        return 0, True
+
+    log("prices", None, "ok", f"{n} EOD zapisa za {len(tickers)} live linija")
+    # Backfill: jučerašnja rupa (npr. dan kad ZSE ništa nije objavio do
+    # 22:20) — ako izvor sad nudi i taj datum, serija ne ostaje šupljikava.
+    prev = previous_trading_day(today)
+    if not eod_already_done(conn, prev):
+        try:
+            n_prev = fetch(tickers, [prev.isoformat()])
+            log("prices", None, "ok" if n_prev else "skipped",
+                f"backfill {prev}: {n_prev} EOD zapisa"
+                if n_prev else f"backfill {prev}: izvor nema tečajnicu za taj dan")
+        except Exception as e:  # noqa: BLE001
+            log("prices", None, "failed",
+                f"backfill {prev} pao: {type(e).__name__}: {e}")
+    return n, False
 
 
 def stage_blog(log) -> None:
@@ -312,6 +385,9 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             log("regen", None, "ok", f"{t}.json regeneriran")
         except Exception as e:  # noqa: BLE001
+            # rollback OBAVEZAN: pola izvršenog SQL-a ostavlja transakciju
+            # aborted i ruši SVE sljedeće tickere (incident 16.07.2026.)
+            conn.rollback()
             log("regen", None, "failed", f"{t}: {type(e).__name__}: {e}")
     # M32: overview.json (naslovnica/screener/usporedba + datum svježine u
     # headeru i prerenderu) MORA pratiti nove cijene — bez ovoga bi datum
@@ -407,8 +483,21 @@ def build_digest(conn, run_id: str) -> str:
     return "\n".join(lines)
 
 
+def _attempt_no() -> tuple[int, int]:
+    """(N, M) za log "pokušaj N od M" — iz lokalnog sata (termini 16:20 →
+    22:20, svaki sat => 7 pokušaja; N clipan u [1, 7])."""
+    h = _zagreb_now().hour
+    return max(1, min(7, h - 15)), 7
+
+
+def _is_final_attempt() -> bool:
+    """Zadnji dnevni pokušaj = lokalni sat >= EOD_FINAL_HOUR (zadano 22).
+    Samo on smije failati kad podataka nema (jedan alarm dnevno, ne po satu)."""
+    return _zagreb_now().hour >= int(os.getenv("EOD_FINAL_HOUR", "22"))
+
+
 def main(argv=None) -> int:
-    p = argparse.ArgumentParser(description="dnevni prolaz (M6/M32)")
+    p = argparse.ArgumentParser(description="dnevni prolaz (M6/M32; satni pokušaji)")
     p.add_argument("--digest-only", default=None, help="samo digest za run_id")
     a = p.parse_args(argv)
 
@@ -418,6 +507,45 @@ def main(argv=None) -> int:
             return 0
         run_id = f"daily-{date.today().isoformat()}"
         log = _logger(conn, run_id)
+
+        # 0. shema: idempotentne migracije — lokalna i produkcijska baza
+        #    ne smiju razjahati (uzrok pada 16.07.2026.)
+        try:
+            ensure_schema(conn)
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("schema", None, "failed", f"{type(e).__name__}: {e}")
+
+        # 1. idempotentni guard: dan već kompletan -> no-op od par sekundi
+        #    (satna serija je sigurna: nakon prvog uspjeha ostali runovi
+        #    tog dana ne rade ništa i NE diraju exporte/deploy)
+        if eod_already_done(conn):
+            log("prices", None, "skipped",
+                "already done — današnji EOD je već kompletan u bazi")
+            print("already done")
+            return 0
+
+        # 2. kratki pokušaj povlačenja (bez spavanja — čekanje rade cronovi)
+        n_prices, not_ready = stage_prices(conn, run_id, log)
+        if not_ready:
+            n_att, m_att = _attempt_no()
+            if _is_final_attempt():
+                # 3. alarm SAMO na zadnjem dnevnom pokušaju (exit 3 ->
+                #    workflow failure + issue + mail; raniji pokušaji šute)
+                log("prices", None, "failed",
+                    f"EOD za {date.today()} nije objavljen do zadnjeg "
+                    f"pokušaja ({n_att}/{m_att}) — zadržano prethodno stanje")
+                conn.commit()
+                return 3
+            log("prices", None, "skipped",
+                f"podaci još nisu objavljeni, pokušaj {n_att} od {m_att} — "
+                "izlazim neutralno (SUCCESS), sljedeći cron ponavlja")
+            conn.commit()
+            print("not yet published")
+            return 0
+
+        # 3. podaci su tu -> puni prolaz (watcher/extract/recompute se rade
+        #    JEDNOM dnevno, u runu koji je našao podatke — ne 7x)
         from .watcher import run_watcher
         try:
             stats = run_watcher(conn, run_id, log)
@@ -428,7 +556,6 @@ def main(argv=None) -> int:
             log("watcher", None, "failed", f"{type(e).__name__}: {e}")
         touched = stage_extract_queue(conn, run_id, log)
         stage_recompute(conn, run_id, log, touched)
-        n_prices, readiness_timeout = stage_prices(conn, run_id, log)
         # M-IDX: indeksi (vrijednosti + sastavnice) — rupa: do M-IDX se
         # index_eod nikad nije ažurirao u dnevnom prolazu
         try:
@@ -459,9 +586,9 @@ def main(argv=None) -> int:
             f.write(digest)
         print("\n" + digest)
         print(f"\n(digest spremljen u {path})")
-    # exit 3 = readiness istekao bez današnjih podataka (workflow na to
-    # podiže notifikaciju; stanje NIJE dirano, sljedeći uspješan run nadoknadi)
-    return 3 if (readiness_timeout and not touched) else 0
+    # exit 3 se vraća RANIJE, samo iz zadnjeg dnevnog pokušaja bez podataka;
+    # dovde stižemo isključivo s uspješno povučenim cijenama -> 0
+    return 0
 
 
 if __name__ == "__main__":

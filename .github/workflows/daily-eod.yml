@@ -1,7 +1,11 @@
-# M32: dnevni EOD pipeline na GitHub Actions — 16:20 Europe/Zagreb, radnim
-# danima (ZSE zatvara u 16:00). Nema always-on stroja: trajno stanje živi u
-# Supabase Postgresu (secret ZSE_DSN), exporti se commitaju natrag u repo,
-# deploy hook se okida TEK nakon potvrđenih novih podataka i pusha.
+# M34: EOD pipeline sa SATNIM pokušajima — 16:20 -> 22:20 Europe/Zagreb,
+# radnim danima (ZSE zatvara u 16:00, ali tečajnica zna kasniti satima;
+# incident 16.07.2026.). Svaki run je kratak (bez sleep petlje): guard
+# "already done" -> no-op; izvor bez podataka -> SUCCESS s "not yet" logom
+# (čekanje rade cron termini); SAMO zadnji dnevni pokušaj bez podataka
+# faila i alarmira (exit 3 iz daily.py). Nema always-on stroja: trajno
+# stanje živi u Supabase Postgresu (secret ZSE_DSN), exporti se commitaju
+# natrag u repo, deploy hook se okida TEK nakon potvrđenih novih podataka.
 #
 # Secreti (Settings -> Secrets and variables -> Actions; upisuje Boris,
 # popis i upute u README):
@@ -14,9 +18,12 @@ name: daily-eod
 
 on:
   schedule:
-    - cron: '20 14 * * 1-5'   # 16:20 CEST (ljetno računanje)
-    - cron: '20 15 * * 1-5'   # 16:20 CET (zimsko računanje)
-  workflow_dispatch: {}        # ručno pokretanje (test / nadoknada dana)
+    # Satni pokušaji 16:20 -> 22:20 lokalno, za OBA DST offseta; DST guard
+    # ispod propušta samo runove u lokalnom prozoru 16:00-23:00 (kombinacija
+    # dvaju raspona pokriva i CEST i CET bez ručnog prebacivanja).
+    - cron: '20 14-20 * * 1-5'   # 16:20-22:20 CEST (ljetno, UTC+2)
+    - cron: '20 15-21 * * 1-5'   # 16:20-22:20 CET (zimsko, UTC+1)
+  workflow_dispatch: {}           # ručno pokretanje (test / nadoknada dana)
 
 concurrency:
   group: daily-eod
@@ -29,21 +36,23 @@ permissions:
 jobs:
   daily:
     runs-on: ubuntu-latest
-    timeout-minutes: 130       # pokriva readiness retry do 18:00
+    timeout-minutes: 30        # bez sleep petlje: no-op ~10-30 s, puni prolaz < 25 min
     steps:
-      # DST guard: dva crona postoje jer se UTC offset mijenja (CET/CEST);
-      # jedan od njih je uvijek "krivi" za sat. Izvrši se samo onaj koji
-      # padne u lokalni prozor 16:00-17:00. Ručni dispatch preskače guard.
-      - name: DST guard (prozor 16-17h Europe/Zagreb)
+      # DST guard: dva cron raspona postoje jer se UTC offset mijenja
+      # (CET/CEST) — dio termina je uvijek "krivi" za sat. Izvrši se samo
+      # run koji padne u lokalni prozor 16:00-23:00 (širok namjerno:
+      # GitHub cronovi kasne i do ~1,5 h — 16.07.2026. je zbog uskog
+      # prozora 16-17h preskočen SVAKI zakazani run). Dispatch preskače guard.
+      - name: DST guard (prozor 16-23h Europe/Zagreb)
         id: guard
         run: |
           H=$(TZ=Europe/Zagreb date +%H)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$H" = "16" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || { [ "$H" -ge 16 ] && [ "$H" -le 22 ]; }; then
             echo "run=true" >> "$GITHUB_OUTPUT"
             echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') — pokrećem"
           else
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') izvan prozora — preskačem"
+            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') izvan prozora 16-23h — čisti izlaz bez posla"
           fi
 
       - name: Checkout
@@ -63,19 +72,32 @@ jobs:
         if: steps.guard.outputs.run == 'true'
         run: pip install -r requirements.txt
 
-      # daily.py: watcher -> extract -> recompute -> prices (retry do 18:00)
-      # -> regen exporta. VERCEL_DEPLOY_HOOK_URL se OVDJE NE postavlja:
-      # exporti su na runneru lokalni dok se ne pushaju, pa hook okida
-      # zaseban korak TEK nakon commita (deploy samo nakon potvrde).
+      # daily.py: guard (already done?) -> jedan pokušaj cijena (bez
+      # spavanja) -> uz podatke: backfill + watcher/extract/recompute +
+      # regen exporta. Izlazi: "already done" / "not yet published" su
+      # SUCCESS s did_work=false (normalno stanje satne serije, ne alarm);
+      # exit 3 = zadnji dnevni pokušaj bez podataka -> failure + issue.
+      # VERCEL_DEPLOY_HOOK_URL se OVDJE NE postavlja: exporti su na runneru
+      # lokalni dok se ne pushaju, pa hook okida zaseban korak TEK nakon
+      # commita (deploy samo nakon potvrde).
       - name: Dnevni prolaz (daily.py)
         if: steps.guard.outputs.run == 'true'
+        id: daily
         env:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python -m src.daily
+        run: |
+          set -o pipefail
+          python -m src.daily | tee daily-run.log
+          if grep -qE '^(already done|not yet published)$' daily-run.log; then
+            echo "did_work=false" >> "$GITHUB_OUTPUT"
+            echo "no-op run (guard/not-yet) — koraci nakon ovog se preskaču"
+          else
+            echo "did_work=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Auto-vijesti (draftovi u news_items, dedup)
-        if: steps.guard.outputs.run == 'true'
+        if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
         env:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -83,7 +105,7 @@ jobs:
         run: python scripts/generate_news.py --lookback-days 3
 
       - name: Digest artefakt
-        if: steps.guard.outputs.run == 'true' && always()
+        if: always() && steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work != 'false'
         uses: actions/upload-artifact@v4
         with:
           name: digest
@@ -95,7 +117,7 @@ jobs:
       # |raskorak| > 30%, otvara se issue s labelom calibration-review
       # (banner na /metodologija dolazi iz overview.json calibration_alert)
       - name: Distribucijski alarm (calibration-review)
-        if: steps.guard.outputs.run == 'true'
+        if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
         run: |
           ACTIVE=$(python -c "import json;print(json.load(open('frontend/public/data/overview.json')).get('calibration_alert',{}).get('active',False))" 2>/dev/null || echo False)
           echo "CAL_ALERT=$ACTIVE" >> "$GITHUB_ENV"
@@ -117,7 +139,7 @@ jobs:
       # Exporti natrag u repo: [skip ci] sprječava petlju workflowa; Vercel
       # build svejedno okida deploy hook korak ispod (jedan, kontrolirani).
       - name: Commit exporta (ako ima promjena)
-        if: steps.guard.outputs.run == 'true'
+        if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
         id: commit
         run: |
           git config user.name "daily-eod bot"
@@ -145,8 +167,10 @@ jobs:
           echo "Vercel build pokrenut"
 
       # Notifikacija: GitHub ionako mailira vlasnika na failed run; issue
-      # ostavlja trajni trag (label pipeline-fail). Pokriva i pad joba i
-      # readiness istek (daily.py tada vraća exit 3 -> korak je "failed").
+      # ostavlja trajni trag (label pipeline-fail). Failure nastaje SAMO iz
+      # (a) zadnjeg dnevnog pokušaja bez podataka (daily.py exit 3) ili
+      # (b) stvarnog pada koda — "not yet" satni pokušaji su SUCCESS i ne
+      # alarmiraju (najviše jedan alarm dnevno).
       - name: Issue na neuspjeh
         if: failure()
         uses: actions/github-script@v7
@@ -158,8 +182,9 @@ jobs:
               repo: context.repo.repo,
               title: `daily-eod pao — ${d}`,
               labels: ['pipeline-fail'],
-              body: `Dnevni EOD run nije uspio (pad ili readiness istekao bez podataka).\n\n` +
+              body: `EOD za ${d} nije objavljen do zadnjeg pokušaja (22:20) ili je run pao — ` +
+                `zadržano prethodno stanje na sajtu.\n\n` +
                 `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n` +
-                `Stanje na sajtu NIJE dirano (ostaje zadnji uspješan datum). ` +
-                `Nadoknada: Actions tab -> daily-eod -> Run workflow.`,
+                `Nadoknada: Actions tab -> daily-eod -> Run workflow (dispatch preskače guard; ` +
+                `uspješan run sam backfilla jučerašnju rupu ako je izvor nudi).`,
             })

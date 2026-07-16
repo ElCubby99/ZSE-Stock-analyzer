@@ -53,9 +53,9 @@ metoda razvukla zonu u beskorisno.
   tržišta (bez premije zemlje); **CRP** je mala, zasebna premija rizika
   Hrvatske primjerena investment-grade eurozoni ('A-'/A3), ograničena na
   ≤ 1,5 postotna boda i dodana točno jednom (ne množi se betom). Rizik
-  zemlje se time računa na JEDNOM mjestu — do metodologije v3 bio je
-  nenamjerno uračunat dvaput (u nerizičnoj stopi i unutar premije
-  tržišta), što je sustavno snižavalo procjene; vidi „Priznate greške".
+  zemlje se time računa na JEDNOM mjestu — ranije je bio nenamjerno
+  uračunat dvaput (u nerizičnoj stopi i unutar premije tržišta), što je
+  sustavno snižavalo procjene; vidi „Naučene lekcije" niže.
   Svaka komponenta na stranici dionice nosi vlastiti izvor i datum unosa.
   *Planirano, još nije aktivno: izvoznicima koji većinu prihoda ostvaruju
   na razvijenim tržištima pripada niži CRP — ponderirat ćemo premiju po
@@ -242,123 +242,54 @@ prosjek i TTM usporedba ostaju na stranici kao kontekst.
   slaže se u slojeve (npr. popust se ne dodaje na već konzervativne procjene
   kćeri).
 
-## Evolucija i priznate greške
+## Naučene lekcije — trenutno važeće pretpostavke
 
-Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
+Metodologiju razvijamo javno i iterativno. Umjesto kronologije revizija,
+ovdje stoje zaključci koje su te iteracije ostavile — pretpostavke po
+kojima se fer-zone računaju DANAS:
 
-- **v1 (lipanj–početak srpnja 2026.)**: fer-zona je bila raspon svih metoda,
-  rast se izvodio iz povijesnog prosjeka (ili nikako), peer multipli su bili
-  placeholderi. Posljedica: **sustavno podcjenjivanje rasta** — u jednom
-  trenutku je 78% praćenih dionica "trgovalo iznad fer-zone", što je bio
-  signal greške u modelu, ne u tržištu.
-- **v2 (12.–13.07.2026.)**: rast iz forward signala izvješća (backlog,
-  guidance) umjesto povijesti; peer multipli kalibrirani iz baze; zona =
-  sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
-  izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
-  pravila koja zadržavaju analizu dok se problem ne riješi.
-- **v3.1 (16.07.2026.)**: dividendni pod + kompozitna stopa rasta — dvije
-  priznate greške. Prva: **suspenzija zone bila je dizajnerska greška —
-  najtvrđi dokaz treba ulaziti u procjenu, ne gasiti je**. Kad zona ne bi
-  prošla test održive dividende, povlačili smo je s oznakom "u
-  rekalibraciji" — čitatelj je ostajao bez ikakve procjene upravo tamo
-  gdje postoji najčvršći dokaz (stvarno isplaćivana, održiva dividenda).
-  Novo: Gordonova vrijednost održive dividende V_div = D_sust ÷ (r − g)
-  ulazi među kvalificirane metode s visokom pouzdanošću, donji rub zone
-  se podiže barem do V_div (dividendni pod) i test se ponavlja nad novom
-  zonom; suspenzija kao ishod više ne postoji. Druga: kratka serija je
-  stopu rasta izvodila iz JEDNE godišnje usporedbe (TTM naspram lani) —
-  jedna godina mjeri jednokratne i bazne efekte, ne stopu rasta. Novo: g1
-  je kompozit (medijan) triju signala — serija ≥3 godine, održivi rast iz
-  zadržane dobiti (ROE × neisplaćeni dio dobiti) i terminalno sidro — uz
-  cap nakon medijana i tvrdi strop 0,5 p.b. ispod troška kapitala; TTM
-  usporedba ostaje samo kontekst.
-- **v3 — SAŽETAK (16.07.2026.)**: sustavna rekalibracija u šest faza —
-  priznata greška v2 pristupa u cjelini: **trailing godišnje brojke bez
-  faze rasta + rizik zemlje naplaćen dvaput + dogma jednog sidra + sirove
-  zadnje dividende + jedna zona za dvije klase** zajedno su proizvodili
-  sustavno preniske fer-zone (u forenzici 16.07.: 47% najlikvidnijih
-  dionica "iznad zone" uz implicirani trošak kapitala tržišta 5,5–7,5%
-  naspram naših 8–11%). Svaka faza ispravlja jedan dokazani uzrok (vidi
-  unose ispod); distribucija naspram tržišta ostaje dijagnostika s
-  automatskim alarmom — zone se provjeravaju, nikad ne prilagođavaju
-  cijenama.
-- **v3 — faza P (16.07.2026.)**: prezentacija i alarmi — okvir "što
-  tržišna cijena implicira" (činjenična implikacija umjesto alarmantnog
-  postotka) na svakoj dionici s raskorakom većim od 30%; automatski
-  distribucijski alarm (>40% top-20 likvidnih s raskorakom >30% → interna
-  provjera + vidljiv banner ovdje na Metodologiji); changelog v3 po
-  dionici staro→novo u internom dnevniku promjena.
-- **v3 — faza SOTP (16.07.2026.)**: matice — priznate greške: standalone
-  dio matice aproksimirao se iz KONSOLIDIRANIH brojki (rizik dvostrukog
-  brojanja i krive baze) — sada isključivo nekonsolidirani izvještaji ili
-  "u obradi"; zajednički pothvat (KPT) vrednovao se multiplikatorom na
-  dobit umjesto po knjigovodstvenoj vrijednosti iz bilješki (novo pravilo
-  smanjilo je KOEI zonu ~15%, uz vidljivu napomenu koliko JV godišnje
-  donosi); preračun sada ide redoslijedom ovisnosti (kćeri prije matica).
-- **v3 — faza S (16.07.2026.)**: klase dionica — priznata greška: obje
-  klase iste firme uspoređivale su se s JEDNOM zonom, pa je redovna
-  (s premijom glasa) izgledala "+58% iznad" dok je povlaštena bila "u
-  zoni" — ista firma, dvije priče. Novo: vrijednost firme se raspoređuje
-  na klase tržišnim medijanom omjera cijena; svaka klasa ima svoju zonu.
-- **v3 — faza A (16.07.2026.)**: triangulacija umjesto dogme jednog sidra —
-  priznata greška: fer-zona je bila raspon JEDNE metode po tipu firme, pa
-  su potvrde koje konvergiraju prema drugačijoj vrijednosti bile vidljive
-  ali bez utjecaja (Croatia osiguranje: dividendni model, rezidualni
-  dohodak i peer usporedba stajali su 40–120% iznad sidra), a promjena
-  sidra znala je preko noći prebaciti dionicu s "duboko iznad" na "duboko
-  ispod" zone (Podravka). Novo: zona = medijan kvalificiranih metoda,
-  vidljivo demote pravilo, test održive dividende s oznakom
-  "u rekalibraciji" i napomena o zanemarivom free floatu.
-- **v3 — faza DIV (16.07.2026.)**: održiva dividenda — priznata greška:
-  dividendni model je računao nad sirovom zadnjom isplatom, pa bi
-  jednokratna isplata (npr. iz zadržane dobiti) lažno podigla procjenu, a
-  propuštena godina lažno je srušila. Novo: klasifikacija svih povijesnih
-  isplata (redovna / izvanredna / iz zadržane dobiti, s "% dobiti" prema
-  točnoj fiskalnoj godini), očekivana održiva dividenda D_sust (održivi
-  payout × normalizirana dobit) i pokrivenost najave — model računa nad
-  D_sust, jednokratne isplate ne ulaze u bazu.
-- **v3 — faza G (16.07.2026.)**: TTM i rast iz podataka — priznata greška:
-  sve se vrednovalo iz zadnjeg GODIŠNJEG izvješća iako za većinu firmi u
-  bazi postoje kvartali, a kapitalne metode (opravdani P/B, rezidualni
-  dohodak) nisu imale nikakvu fazu rasta — firme s rastućom dobiti bile su
-  sustavno podcijenjene, a jednokratni dobici u prošloj godini precijenjeni.
-  Novo: TTM za zaradu/prihode/ROE gdje kvartali postoje (uz stroge gateove
-  konzistentnosti), stopa rasta isključivo izvedena iz objavljenih brojki
-  (3g CAGR uz cap 10%, odnosno kratka serija uz cap 8% — ručne forward
-  procjene ukinute), ROE pravilo max(3g medijan, TTM×0,9). Svaka firma bez
-  kvartala nosi oznaku `godišnji podatak`.
-- **v3 — faza K (16.07.2026.)**: rekalibracija troška kapitala — priznata
-  greška: **rizik Hrvatske bio je uračunat dvaput** — nerizična stopa bila
-  je hrvatska 10-godišnja obveznica (koja već nosi hrvatski spread), a
-  premija tržišta je dodatno sadržavala premiju zemlje. Uz to je premija
-  zemlje bila skrivena unutar premije tržišta umjesto vidljiva. Novi
-  raspis: rf = 10g njemački Bund, ERP = zrela premija tržišta, CRP =
-  zasebna mala premija Hrvatske (≤ 1,5 p.b., 'A-'/A3 eurozona), premija
-  nelikvidnosti samo ispod praga likvidnosti. Učinak: r se uz β=1 spušta
-  s 9,31% na 8,13%, fer-zone se pomiču naviše; svaka promjena zabilježena
-  u povijesti procjene dionice. Sustavni pregled uzroka: interna
-  forenzika v3 (faza D), sažeta u ovom changelogu kroz faze v3.
-- **v2.3 (16.07.2026.)**: crveno pravilo za degenerirano sidro — priznata
-  greška: sidrena metoda čiji je vlastiti raspon osjetljivosti širi od 100%
-  baze (npr. DCF u godini izvanrednog capexa/akvizicije) davala je besmisleno
-  široke fer-zone (Podravka: 14–53 € uz potvrdne metode 3–5× više). Takvo
-  sidro sada pada na sljedeći pristup u hijerarhiji, ostaje prikazano s
-  razlogom isključenja. Namjerno se NE uspoređuje sidro s ostalim metodama
-  kao kriterij (kod holdinga SOTP legitimno odstupa od operativnih leća).
-- **v2.2 (15.07.2026.)**: disciplina bete — priznata greška: regresijske
-  bete nelikvidnih dionica (npr. serija s ~40% trgovanih dana) statistički
-  su nepouzdane i umjetno su SNIŽAVALE trošak kapitala. Uvedeni prag
-  likvidnosti, sektorske bete (Damodaran), Blumeova prilagodba, granice
-  [0,7, 1,8] i premija nelikvidnosti. Učinak: 47 od 64 fer-zona pomaknuto
-  (prosječni pomak 20%, pretežno naniže — strože), svaka promjena
-  zabilježena u povijesti procjene te dionice.
-- **v2.1 (14.07.2026.)**: pokrivenost cijele burze standardiziranim
-  obrascima, dividendni kalendar iz službenih stranica papira, ovaj sloj
-  transparentnosti (povijest promjena procjene po dionici).
+- **Fer-zona je medijan kvalificiranih metoda, ne raspon jedne.** Dogma
+  jednog sidra pokazala se lomljivom: potvrde koje konvergiraju drugdje
+  moraju utjecati na zonu, a promjena sidra ne smije preko noći prebaciti
+  dionicu s "iznad" na "ispod". Sidro i dalje daje oblik osjetljivosti;
+  sidro čiji je vlastiti raspon širi od 100% baze gubi primat (vidljivo,
+  s razlogom).
+- **Rast se izvodi isključivo iz objavljenih brojki, kao kompozit.**
+  Povijesni prosjek sam po sebi je loš prognozer, ručne forward procjene
+  su izmišljanje, a jedna godišnja usporedba mjeri jednokratne i bazne
+  efekte — zato je g1 medijan tri signala (višegodišnja serija, održivi
+  rast iz zadržane dobiti, terminalno sidro), ograničen odozgo i uvijek
+  ispod troška kapitala.
+- **Svaki rizik se naplaćuje točno jednom.** Trošak kapitala je vidljiv
+  raspis rf (njemački Bund) + β×ERP (zrelo tržište) + CRP (mala, zasebna
+  premija Hrvatske) + premija nelikvidnosti samo ispod praga likvidnosti;
+  bete nelikvidnih serija ne ulaze sirove (sektorske bete, granice).
+  Konzervativnost se također primjenjuje jednom, ne u slojevima.
+- **Dividende: računa se nad ODRŽIVOM dividendom, a najtvrđi dokaz ulazi
+  u procjenu.** Isplate se klasificiraju (redovna/izvanredna/iz zadržane
+  dobiti); jednokratne ne ulaze u bazu. Kad Gordonova vrijednost održive
+  dividende premašuje donji rub zone, ona ULAZI u zonu (dividendni pod) —
+  procjena se ne suspendira, jer bi čitatelj ostao bez informacije upravo
+  tamo gdje je dokaz najčvršći.
+- **Svježina prije revizije, uz stroge gateove.** Gdje kvartali postoje,
+  zarada/prihodi/ROE se računaju na zadnjih 12 mjeseci (TTM) uz provjere
+  konzistentnosti; gdje ne postoje, stoji oznaka `godišnji podatak`.
+  Radije prazno polje s razlogom nego kriva brojka.
+- **Svaka klasa dionice ima svoju zonu.** Vrijednost firme raspoređuje se
+  na klase tržišnim omjerom cijena — jedna zona za dvije klase davala je
+  dvije priče o istoj firmi.
+- **Matice: dijelovi se vrednuju iz pravih izvora.** Standalone biznis
+  isključivo iz nekonsolidiranih izvještaja (nikad aproksimacija iz
+  konsolidiranih), zajednički pothvati po knjigovodstvenoj vrijednosti iz
+  bilješki, preračun redoslijedom ovisnosti (kćeri prije matica).
+- **Distribucija naspram tržišta je dijagnostika, nikad kalibracijska
+  meta.** Kad prevelik dio likvidnih imena završi na istoj strani zone,
+  automatski alarm traži provjeru NAŠIH ulaza — zone se provjeravaju, ne
+  prilagođavaju cijenama.
 
 Nismo nepogrešivi ni sada — zato svaka dionica ima vidljivu povijest
 promjena svoje zone s razlogom, a distribuciju naših zona prema tržištu
-mjerimo kontinuirano (alarm ako >70% završi na istoj strani).
+mjerimo kontinuirano.
 
 ## Obveznice
 
