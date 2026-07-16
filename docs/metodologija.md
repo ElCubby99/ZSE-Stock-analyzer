@@ -99,6 +99,29 @@ metoda razvukla zonu u beskorisno.
   za DCF terminal (realni rast + inflacija), konzervativnijih 2,5% za
   kapitalne metode. Nijedna firma ne može "zauvijek" rasti brže od
   gospodarstva u kojem posluje.
+- **Fer-zona = medijan kvalificiranih metoda (v3)**: zona više nije raspon
+  jedne "glavne" metode. Kvalificirana je svaka metoda s pozitivnom
+  vrijednošću, dovoljnom pouzdanošću ulaza i stabilnom osjetljivošću;
+  sredina zone je **medijan** njihovih vrijednosti, a širina dolazi iz
+  osjetljivosti primarnog sidra (r ± 1 postotni bod). Ako se dvije metode
+  međusobno slažu (±20%) a dosadašnje sidro od njih bitno odstupa (>30%),
+  sidro gubi primat — to je vidljivo zabilježeno uz procjenu.
+- **Test održive dividende (v3)**: za isplatitelje dividendi zona mora
+  proći unutarnju kontrolu — prinos iz **održive** dividende na donjem rubu
+  zone ne smije biti veći od r − g (Gordonova donja granica: ako sama
+  dividenda na nekoj cijeni nosi više nego što ulagač traži za rizik, ta je
+  cijena preniska da bi bila fer). U pragu se koristi ista stopa rasta
+  kojom je zona i izračunata (2,5% za kapitalne metode, 4% za DCF/DDM
+  sidra) — prag s drugačijom stopom lažno bi pobijao zonu zbog razlike
+  naših vlastitih pretpostavki. Zona koja test ne prolazi nosi oznaku
+  **"u rekalibraciji"** i ne prikazuje se kao mjerodavna dok se ulazi ne
+  razriješe; puni raspis testa s brojkama te dionice stoji na njezinoj
+  stranici. Analogno postoji i obrnuti test (previsoka zona uz payout
+  ~100%).
+- **Zanemariv free float (v3)**: kad top-10 dioničara drži >90% (npr.
+  INA), cijena se formira u zanemarivom prometu pod dominantnim vlasnicima
+  — raskorak cijene i zone tada NIJE informativan, nosi istaknutu napomenu
+  i ne ulazi u agregat "temperatura tržišta".
 - **Dividende — klasifikacija isplata i održiva dividenda (v3)**: svaka
   povijesna isplata nosi činjeničnu oznaku tipa — **redovna**;
   **izvanredna** (iznos veći od 150% medijana prethodnih redovnih isplata
@@ -172,6 +195,15 @@ Metodologiju razvijamo javno i s verzijama — i bilježimo što je bilo krivo:
   sidro ± osjetljivost; taksonomija diskonta (integrirani parent bez popusta,
   izmjereni P/NAV); tri pristupa umjesto "zoološkog vrta" metoda; crvena
   pravila koja zadržavaju analizu dok se problem ne riješi.
+- **v3 — faza A (16.07.2026.)**: triangulacija umjesto dogme jednog sidra —
+  priznata greška: fer-zona je bila raspon JEDNE metode po tipu firme, pa
+  su potvrde koje konvergiraju prema drugačijoj vrijednosti bile vidljive
+  ali bez utjecaja (Croatia osiguranje: dividendni model, rezidualni
+  dohodak i peer usporedba stajali su 40–120% iznad sidra), a promjena
+  sidra znala je preko noći prebaciti dionicu s "duboko iznad" na "duboko
+  ispod" zone (Podravka). Novo: zona = medijan kvalificiranih metoda,
+  vidljivo demote pravilo, test održive dividende s oznakom
+  "u rekalibraciji" i napomena o zanemarivom free floatu.
 - **v3 — faza DIV (16.07.2026.)**: održiva dividenda — priznata greška:
   dividendni model je računao nad sirovom zadnjom isplatom, pa bi
   jednokratna isplata (npr. iz zadržane dobiti) lažno podigla procjenu, a

@@ -1197,13 +1197,26 @@ def reconcile(results: dict, sector: Optional[str] = None,
         n_q = len(q_bases)
         med = (q_bases[n_q // 2] if n_q % 2 else
                (q_bases[n_q // 2 - 1] + q_bases[n_q // 2]) / 2)
+        # v2 §3 duh i ovdje: kod TOČNO DVIJE kvalificirane metode "medijan"
+        # je aritmetička sredina, pa jedan outlier razvlači zonu (KODT:
+        # comps 3x DCF-a). Razmaknute > 40% se NE prosječe — sredinu nosi
+        # primarno sidro, druga metoda ostaje potvrda s razlogom.
+        two_spread = (n_q == 2 and q_bases[0] > 0
+                      and q_bases[1] / q_bases[0] - 1 > 0.40)
+        if two_spread:
+            med = bases[prim]
         # oblik osjetljivosti primarnog sidra, skaliran na medijan
         rel_lo = (vr.low or bases[prim]) / bases[prim]
         rel_hi = (vr.high or bases[prim]) / bases[prim]
         zone_low, zone_high = med * rel_lo, med * rel_hi
-        zone_note = (f"zona = MEDIJAN kvalificiranih metoda "
-                     f"({', '.join(qualified)}) ± osjetljivost primarnog "
-                     f"sidra '{prim}' (r/wacc ±1 p.b.) — v3 triangulacija")
+        zone_note = ((f"zona = MEDIJAN kvalificiranih metoda "
+                      f"({', '.join(qualified)}) ± osjetljivost primarnog "
+                      f"sidra '{prim}' (r/wacc ±1 p.b.) — v3 triangulacija")
+                     if not two_spread else
+                     (f"dvije kvalificirane metode razmaknute "
+                      f"{q_bases[1] / q_bases[0] - 1:.0%} > 40% — NE prosječi "
+                      f"(v2 §3): sredinu nosi sidro '{prim}', druga metoda "
+                      "je kontekst — v3 triangulacija"))
         # v3 A.2 demote pravilo: >=2 kvalificirane NE-sidrene metode
         # konvergiraju (±20%) a sidro divergira >30% od njihove sredine ->
         # sidro gubi primat (medijan ionako preuzima; ovo je vidljiv zapis)
@@ -1301,29 +1314,77 @@ def reconcile(results: dict, sector: Optional[str] = None,
                         "vs_zone_pct": 0.0}
 
     # v3 A.3: dividendni sanity flag — NAD D_sust (nikad sirova isplata).
-    # Prinos iz održive dividende na donjem rubu zone > r − g_terminal =>
-    # zona matematički ne može biti fer (Gordon donja granica) -> zona se
-    # NE objavljuje kao mjerodavna ("u rekalibraciji").
+    # Gordonova donja granica: fer vrijednost >= D_sust/(r − g), pa prinos
+    # iz održive dividende na donjem rubu zone ne smije premašiti r − g.
+    # ODLUKA (opcija 1, 16.07.2026.): g u pragu je KONZISTENTAN sa sidrom
+    # zone — kapitalna sidra (opravdani P/B, RI) i comps/SOTP računaju s
+    # konzervativnim trajnim g (2,5%), pa i prag koristi r − 2,5%; DCF/DDM
+    # sidra koriste terminalni g (4%) pa i prag r − 4%. Prag s "tuđim" g-om
+    # lažno bi pobijao zonu zbog razlike naših vlastitih pretpostavki.
     recalibrating = None
+    dividend_sanity = None
     dh = getattr(ctx, "dsust_hint", None) if ctx is not None else None
-    if ctx is not None and dh and dh.get("d_sust_ps"):
+    if ctx is not None and dh and dh.get("d_sust_ps") and zone_low > 0:
         r_ = ctx.params.cost_of_equity
-        gT = ctx.params.terminal_growth
+        prim_anchor = (anchors or [None])[0]
+        if prim_anchor in ("dcf_fcf", "ddm_gordon"):
+            g_prag = ctx.params.terminal_growth
+            g_src = f"terminalni g {g_prag:.1%} (sidro zone je {prim_anchor})"
+        else:
+            g_prag = ctx.params.perpetual_growth
+            g_src = (f"kapitalni trajni g {g_prag:.1%} (sidro zone je "
+                     f"{prim_anchor or 'fallback'} — ista pretpostavka rasta "
+                     "kojom je zona izračunata)")
         d_ps = dh["d_sust_ps"]
-        if zone_low > 0 and d_ps / zone_low > (r_ - gT):
+        y_low = d_ps / zone_low
+        prag = r_ - g_prag
+        preniska = y_low > prag
+        previsoka = (not preniska and zone_high > 0
+                     and (dh.get("payout_used") or 0) >= 0.9
+                     and d_ps / zone_high < 0.5 * prag)
+        # v3 (Borisov zahtjev): puni for-dummies raspis testa — izvozi se
+        # za SVAKOG isplatitelja s D_sust, ne samo kad flag padne
+        dividend_sanity = {
+            "d_sust_ps": round(d_ps, 4),
+            "zone_low": round(zone_low, 2), "zone_high": round(zone_high, 2),
+            "implied_yield_low": round(y_low, 4),
+            "threshold": round(prag, 4), "r": round(r_, 4),
+            "g_used": round(g_prag, 4), "g_source": g_src,
+            "passes": not (preniska or previsoka),
+            "verdict": ("preniska" if preniska else
+                        "previsoka" if previsoka else "prolazi"),
+            "plain": (
+                f"Test održive dividende: procjenjujemo da firma može trajno "
+                f"isplaćivati {d_ps:,.2f} € po dionici godišnje (održivi "
+                f"payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne "
+                f"ulaze). Tko bi dionicu kupio po donjem rubu naše zone "
+                f"({zone_low:,.2f} €), samo od te dividende dobivao bi "
+                f"{y_low:.1%} godišnje. Fer cijena to ne dopušta iznad "
+                f"{prag:.1%} (traženi prinos {r_:.1%} minus trajni rast "
+                f"dividende {g_prag:.1%}) — jer ako sama dividenda nosi više "
+                f"nego što ulagač traži za rizik, cijena je preniska da bi "
+                f"bila fer i zona se sama pobija. Rezultat: "
+                + ("prinos {:.1%} > prag {:.1%} — donji rub je vjerojatno "
+                   "PRENIZAK, zona ide u rekalibraciju.".format(y_low, prag)
+                   if preniska else
+                   "prinos je unutar dopuštenog — zona prolazi test."
+                   if not previsoka else
+                   "uz payout ~100% prinos na gornjem rubu je premalen — "
+                   "zona je vjerojatno PREVISOKA i ide u rekalibraciju.")),
+        }
+        if preniska:
             recalibrating = (
                 f"zona vjerojatno PRENISKA — održive dividende je ne "
                 f"podržavaju: D_sust {d_ps:,.2f} € na donjem rubu "
-                f"{zone_low:,.2f} € implicira prinos {d_ps / zone_low:.1%} "
-                f"> r − g_terminal = {r_ - gT:.1%} (Gordonova donja granica); "
-                "zona se ne objavljuje dok se ulazi ne razriješe")
-        elif (zone_high > 0 and (dh.get("payout_used") or 0) >= 0.9
-              and d_ps / zone_high < 0.5 * (r_ - gT)):
+                f"{zone_low:,.2f} € implicira prinos {y_low:.1%} > r − g = "
+                f"{prag:.1%} ({g_src}); zona se ne objavljuje dok se ulazi "
+                "ne razriješe")
+        elif previsoka:
             recalibrating = (
                 f"zona vjerojatno PREVISOKA — uz payout ~100% održiva "
                 f"dividenda {d_ps:,.2f} € na gornjem rubu {zone_high:,.2f} € "
-                f"implicira prinos {d_ps / zone_high:.1%} < ½(r − g_terminal) "
-                "— zona se ne objavljuje dok se ulazi ne razriješe")
+                f"implicira prinos {d_ps / zone_high:.1%} < ½(r − g) — zona "
+                "se ne objavljuje dok se ulazi ne razriješe")
     # v3 A.4 (INA-tip): zanemariv free float -> raskorak nije informativan
     low_float_note = None
     ff = getattr(ctx, "free_float_proxy", None) if ctx is not None else None
@@ -1336,6 +1397,7 @@ def reconcile(results: dict, sector: Optional[str] = None,
     return {
         "qualified_methods": qualified,
         "recalibrating": recalibrating,
+        "dividend_sanity": dividend_sanity,
         "low_float_note": low_float_note,
         "method_bases": {k: r["range"].base for k, r in results.items()},
         "archetype": arche,

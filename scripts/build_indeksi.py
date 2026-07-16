@@ -101,7 +101,11 @@ def main() -> int:
     above = below = inside = np = 0
     for t in members:
         s = zones.get(t)
-        if not s or s.get("zone_low") is None or not s.get("price"):
+        # v3 A.4: zanemariv free float (INA-tip) — raskorak nije
+        # informativan pa NE ulazi u temperaturu; isto vrijedi za zone
+        # "u rekalibraciji" (zone_low je tada None)
+        if not s or s.get("zone_low") is None or not s.get("price") \
+                or s.get("low_float"):
             np += 1
             continue
         if s["price"] > s["zone_high"]:

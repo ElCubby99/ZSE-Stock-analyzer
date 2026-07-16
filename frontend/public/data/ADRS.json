@@ -8161,9 +8161,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 88.56654265857927,
-      "zone_high": 93.22793964060976,
-      "dispersion": 0.050000000000000086,
+      "zone_low": 77.33498947184887,
+      "zone_high": 81.4052520756304,
+      "dispersion": 0.050000000000000114,
       "divergent": false,
       "archetype": "holding_passive",
       "anchor_methods": [
@@ -8173,7 +8173,7 @@
         "comps": {
           "role": "secondary",
           "note": "operativna leća strukturno podcjenjuje pasivni holding čiji udjeli imaju tržišnu cijenu",
-          "vs_zone_pct": -0.23398838476266337
+          "vs_zone_pct": -0.12273860950636484
         },
         "sotp_nav": {
           "role": "anchor",
@@ -8181,7 +8181,7 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, sotp_nav) ± osjetljivost primarnog sidra 'sotp_nav' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 67.84300039788478,
       "all_methods_high": 90.89724114959452,
       "dispersion_all": 0.2536297082302875,
@@ -8190,9 +8190,9 @@
         "sotp_nav": 90.89724114959452
       },
       "qa_flags": [
-        "fer-zona odstupa +76% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +102% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 76.0,
+      "vs_market_pct": 101.6,
       "anchor_inconsistency": [],
       "reasoning": "Rast +9.4% godišnje izveden je iz objavljenih brojki (trogodišnji prosjek +9.4%, ograničen na najviše 10% — nijedna procjena 'iz glave'). Od svakih 100 € prihoda firmi ostaje 42 € operativne zarade (EBITDA marža 41.9%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,480 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa se popust klampa na 0 (v2 §4); sidro je 90.90 € po dionici. Tržište te iste kćeri trenutačno vrednuje 13.5% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~+5.5% trajnog rasta godišnje / multipl P/E 31.6×; naš izvedeni rast (iz objavljenih brojki) je +9.4% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
@@ -8203,7 +8203,26 @@
         "peer_pe": 15.5,
         "implied_pe_note": "cijena implicira P/E 31.6× vs peer medijan 15.5×",
         "narrative": "Tržišna cijena implicira ~+5.5% trajnog rasta godišnje / multipl P/E 31.6×; naš izvedeni rast (iz objavljenih brojki) je +9.4% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      },
+      "qualified_methods": [
+        "comps",
+        "sotp_nav"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 3.2771,
+        "zone_low": 77.33,
+        "zone_high": 81.41,
+        "implied_yield_low": 0.0424,
+        "threshold": 0.0569,
+        "r": 0.0819,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je sotp_nav — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 3.28 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (77.33 €), samo od te dividende dobivao bi 4.2% godišnje. Fer cijena to ne dopušta iznad 5.7% (traženi prinos 8.2% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": null
     },
     "sotp": {
       "parts": [
@@ -8367,6 +8386,15 @@
       "SOTP dijelovi na pretpostavljenim multiplama: Cromaris, Energetika, HUP-Zagreb — default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 88.56654265857927,
+        "old_high": 93.22793964060976,
+        "new_low": 77.33498947184887,
+        "new_high": 81.4052520756304,
+        "reason": "Metodologija v3 — faza A: fer-zona = MEDIJAN kvalificiranih metoda (triangulacija umjesto jednog sidra) ± osjetljivost primarnog sidra; test održive dividende (Gordonova donja granica) s oznakom 'u rekalibraciji'; napomena o zanemarivom free floatu. Detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-13",
         "old_low": 43.53488372093024,

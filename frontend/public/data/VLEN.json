@@ -809,9 +809,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 1.327552517347431,
-      "zone_high": 1.5529463094802938,
-      "dispersion": 0.1451394621674285,
+      "zone_low": 1.5819770038576868,
+      "zone_high": 1.8505673543764918,
+      "dispersion": 0.14513946216742846,
       "divergent": false,
       "archetype": "cyclical",
       "anchor_methods": [
@@ -832,10 +832,10 @@
         "justified_pb_roe": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.36436692439010376
+          "vs_zone_pct": 0.14493999637342037
         }
       },
-      "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): comps",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (dcf_fcf, justified_pb_roe) ± osjetljivost primarnog sidra 'dcf_fcf' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): comps",
       "all_methods_low": 1.4205383524734305,
       "all_methods_high": 4.602938766378678,
       "dispersion_all": 0.6913844774887095,
@@ -845,15 +845,12 @@
         "justified_pb_roe": 1.9650286625341225
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: justified_pb_roe +36% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
         "metode se međusobno razilaze 69% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +185% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +139% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 184.7,
-      "anchor_inconsistency": [
-        "justified_pb_roe +36% vs primarno sidro"
-      ],
-      "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje 14 € operativne zarade (EBITDA marža 14.3%). Firma je lani stvorila 0.6 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 9.7%, uz izračunati rast 0.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 1.42 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) +36% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je. Tržišna cijena implicira ~+8.5% trajnog rasta godišnje / multipl P/E 18.8×; naš izvedeni rast (iz objavljenih brojki) je +0.0% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "vs_market_pct": 138.9,
+      "anchor_inconsistency": [],
+      "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje 14 € operativne zarade (EBITDA marža 14.3%). Firma je lani stvorila 0.6 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 9.7%, uz izračunati rast 0.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 1.42 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) +14% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira ~+8.5% trajnog rasta godišnje / multipl P/E 18.8×; naš izvedeni rast (iz objavljenih brojki) je +0.0% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 8.5,
@@ -862,7 +859,14 @@
         "peer_pe": 12.0,
         "implied_pe_note": "cijena implicira P/E 18.8× vs peer medijan 12.0× (placeholder)",
         "narrative": "Tržišna cijena implicira ~+8.5% trajnog rasta godišnje / multipl P/E 18.8×; naš izvedeni rast (iz objavljenih brojki) je +0.0% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      },
+      "qualified_methods": [
+        "dcf_fcf",
+        "justified_pb_roe"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": null,
+      "low_float_note": "free float ~9% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null
   },
@@ -886,7 +890,6 @@
       }
     ],
     "limitations": [
-      "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
       "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
       "β = 0.90 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
@@ -896,6 +899,15 @@
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 1.327552517347431,
+        "old_high": 1.5529463094802938,
+        "new_low": 1.5819770038576868,
+        "new_high": 1.8505673543764918,
+        "reason": "Metodologija v3 — faza A: fer-zona = MEDIJAN kvalificiranih metoda (triangulacija umjesto jednog sidra) ± osjetljivost primarnog sidra; test održive dividende (Gordonova donja granica) s oznakom 'u rekalibraciji'; napomena o zanemarivom free floatu. Detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-16",
         "old_low": 1.5913569783587018,

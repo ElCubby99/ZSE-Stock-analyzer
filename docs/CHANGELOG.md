@@ -152,3 +152,35 @@ Raskoraci se NE fitaju na tržište.
   pokrivenošću <1,0 pada na medijan; ZABA regulatorni flag; DDM ulaz =
   D_sust. Playwright: HPB (izvanredna badge, D_sust potisnut), HT (redovne,
   D_sust prikazan), /dividende (stupac, legenda, filter 44→8 redaka).
+
+## 2026-07-16 — Metodologija v3, FAZA A: triangulacija sidra + sanity testovi
+
+- Zona = MEDIJAN kvalificiranih metoda (base>0, conf≥0,5, ne-degenerirane)
+  × oblik osjetljivosti primarnog sidra. Kod TOČNO 2 kvalificirane metode
+  razmaknute >40% se NE prosječi (v2 §3 duh — KODT slučaj: comps 3× DCF-a
+  bi razvukao zonu); sredinu tada nosi sidro. DEMOTE zapis kad ≥2 metode
+  konvergiraju ±20% a sidro divergira >30%.
+- Test održive dividende (Borisov test, formaliziran; ODLUKA opcija 1):
+  prinos iz D_sust na donjem rubu zone ne smije premašiti r − g, gdje je g
+  ISTA stopa kojom je zona izračunata (kapitalna sidra 2,5%; DCF/DDM 4%) —
+  prag s tuđim g-om lažno bi pobijao zonu. Pad testa → zona "u
+  rekalibraciji" (ne objavljuje se kao mjerodavna): trenutačno ATGR, HT,
+  QTLG, RIVP, ZB. Obrnuti flag (previsoka uz payout≥90%) analogno.
+  ZABA kontrola: PROLAZI (5,4% < 5,8%), zona nepromijenjena.
+- Borisov zahtjev: for-dummies blok "Test održive dividende — običnim
+  jezikom" na stranici svake dionice gdje je test primjenjiv — 4 kartice
+  (D_sust s objašnjenjem kako je izračunata; prinos na donjem rubu s
+  brojkama te dionice; prag r−g s Gordonovom logikom; verdikt) + LEGENDA
+  POJMOVA dopunjena s 12 pojmova (r, rf, ERP, CRP, TTM, g, g1, CAGR,
+  payout, D_sust, "u rekalibraciji", medijan).
+- INA-tip (A.4): free float proxy (100 − Σ top-10) < 10% → napomena
+  "raskorak nije informativan" + isključenje iz temperature tržišta;
+  temperatura sada 4/5/3 uz np=10 (isključeni low-float + rekalibracije) —
+  pošteniji, uži agregat.
+- CROS acceptance: zona 1.491–2.041 → 1.823–2.496 (medijan DDM 2.762 /
+  RI 2.107 / jPB 1.723) — pomiruje metode, znatno bliže DDM-u; raskorak
+  +113% (faza D) → +54%. Pomaci >10%: 6 imena (SNBA −75% — medijan od
+  {DDM 14, RI 92, jPB 364} legitimno bira srednju; IKBA −17%; ADRS −13%
+  prosjek comps+SOTP unutar 40%; KODT +0% zahvaljujući ne-prosječi pravilu).
+- Testovi: tests/test_reconcile_v3.py (7 sintetičkih), pytest 66/66;
+  Playwright: header + banner + sanity blok + screener oznake + legenda.

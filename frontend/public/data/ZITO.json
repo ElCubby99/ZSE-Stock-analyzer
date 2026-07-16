@@ -2922,9 +2922,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 17.41859015982767,
-      "zone_high": 23.56632786329626,
-      "dispersion": 0.2608695652173913,
+      "zone_low": 18.164508219892408,
+      "zone_high": 24.575511121030907,
+      "dispersion": 0.26086956521739135,
       "divergent": false,
       "archetype": "industrial_noforward",
       "anchor_methods": [
@@ -2940,10 +2940,10 @@
         "justified_pb_roe": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.08564620365028675
+          "vs_zone_pct": 0.041064588759296416
         }
       },
-      "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, justified_pb_roe) ± osjetljivost primarnog sidra 'comps' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 20.492459011561966,
       "all_methods_high": 22.247560329361352,
       "dispersion_all": 0.07888960820045877,
@@ -2952,11 +2952,30 @@
         "justified_pb_roe": 22.247560329361352
       },
       "qa_flags": [],
-      "vs_market_pct": -9.2,
+      "vs_market_pct": -13.0,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije dovoljna serija objavljenih brojki, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 20.49 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) +9% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije dovoljna serija objavljenih brojki, pa računamo oprezno, bez faze rasta. Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 20.49 € po dionici. Kontrolne metode uz sidro: Opravdani P/B (ROE) +4% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko su odabrane usporedive firme zaista usporedive.",
       "red_rules": [],
-      "market_implied": null
+      "market_implied": null,
+      "qualified_methods": [
+        "comps",
+        "justified_pb_roe"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 0.61,
+        "zone_low": 18.16,
+        "zone_high": 24.58,
+        "implied_yield_low": 0.0336,
+        "threshold": 0.0453,
+        "r": 0.0703,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je comps — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.61 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (18.16 €), samo od te dividende dobivao bi 3.4% godišnje. Fer cijena to ne dopušta iznad 4.5% (traženi prinos 7.0% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": null
     },
     "sotp": null
   },

@@ -5086,7 +5086,7 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps) ± osjetljivost primarnog sidra 'comps' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): dcf_fcf",
       "all_methods_low": -16.257928180391154,
       "all_methods_high": 4.049173546789479,
       "dispersion_all": 5.015122590455968,
@@ -5107,7 +5107,25 @@
         "peer_pe": 15.5,
         "implied_pe_note": "cijena implicira P/E 31.9× vs peer medijan 15.5×",
         "narrative": "Tržišna cijena implicira multipl P/E 31.9×; naš izvedeni rast (iz objavljenih brojki) je +0.5% — razlika je neprovjerljiva bez izvedene stope rasta jer u bazi nema serije za izvod stope rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      },
+      "qualified_methods": [
+        "comps"
+      ],
+      "recalibrating": "zona vjerojatno PRENISKA — održive dividende je ne podržavaju: D_sust 0.21 € na donjem rubu 3.44 € implicira prinos 6.0% > r − g = 4.7% (kapitalni trajni g 2.5% (sidro zone je comps — ista pretpostavka rasta kojom je zona izračunata)); zona se ne objavljuje dok se ulazi ne razriješe",
+      "dividend_sanity": {
+        "d_sust_ps": 0.2076,
+        "zone_low": 3.44,
+        "zone_high": 4.66,
+        "implied_yield_low": 0.0603,
+        "threshold": 0.0472,
+        "r": 0.0722,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je comps — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": false,
+        "verdict": "preniska",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.21 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (3.44 €), samo od te dividende dobivao bi 6.0% godišnje. Fer cijena to ne dopušta iznad 4.7% (traženi prinos 7.2% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos 6.0% > prag 4.7% — donji rub je vjerojatno PRENIZAK, zona ide u rekalibraciju."
+      },
+      "low_float_note": null
     },
     "sotp": null
   },

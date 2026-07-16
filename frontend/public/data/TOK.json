@@ -2072,9 +2072,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 10.539255556979677,
-      "zone_high": 14.283218454663395,
-      "dispersion": 0.2621231979030142,
+      "zone_low": 12.640274793384076,
+      "zone_high": 17.13060331678872,
+      "dispersion": 0.2621231979030143,
       "divergent": false,
       "archetype": "cyclical",
       "anchor_methods": [
@@ -2085,7 +2085,7 @@
         "comps": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.36688365167932924
+          "vs_zone_pct": 0.13968535947067506
         },
         "dcf_fcf": {
           "role": "anchor_excluded",
@@ -2098,7 +2098,7 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): dcf_fcf",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, justified_pb_roe) ± osjetljivost primarnog sidra 'justified_pb_roe' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): dcf_fcf",
       "all_methods_low": -41.02510664488018,
       "all_methods_high": 16.964716960374968,
       "dispersion_all": 3.4182606017361703,
@@ -2108,16 +2108,32 @@
         "justified_pb_roe": 12.128886862708132
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: comps +37% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
         "metode se međusobno razilaze 342% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": 37.0,
-      "anchor_inconsistency": [
-        "comps +37% vs primarno sidro"
-      ],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije dovoljna serija objavljenih brojki, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 7 € operativne zarade (EBITDA marža 7.0%). Firma ima 54 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 8.5% godišnje — manje od 9.1% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 12.13 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +37% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "vs_market_pct": 14.2,
+      "anchor_inconsistency": [],
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije dovoljna serija objavljenih brojki, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 7 € operativne zarade (EBITDA marža 7.0%). Firma ima 54 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 8.5% godišnje — manje od 9.1% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 12.13 € po dionici. Kontrolne metode uz sidro: Peer usporedba (comps) +14% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
-      "market_implied": null
+      "market_implied": null,
+      "qualified_methods": [
+        "comps",
+        "justified_pb_roe"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 0.37,
+        "zone_low": 12.64,
+        "zone_high": 17.13,
+        "implied_yield_low": 0.0293,
+        "threshold": 0.0663,
+        "r": 0.0913,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je justified_pb_roe — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.37 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (12.64 €), samo od te dividende dobivao bi 2.9% godišnje. Fer cijena to ne dopušta iznad 6.6% (traženi prinos 9.1% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": null
     },
     "sotp": null
   },
@@ -2141,13 +2157,21 @@
       }
     ],
     "limitations": [
-      "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
       "β = 1.00 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "godišnji podatak — TTM se ne gradi: nema prošlogodišnjeg q1 interima za usporedbu — TTM se ne gradi — vrednuje se iz zadnjeg godišnjeg izvješća",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 10.539255556979677,
+        "old_high": 14.283218454663395,
+        "new_low": 12.640274793384076,
+        "new_high": 17.13060331678872,
+        "reason": "Metodologija v3 — faza A: fer-zona = MEDIJAN kvalificiranih metoda (triangulacija umjesto jednog sidra) ± osjetljivost primarnog sidra; test održive dividende (Gordonova donja granica) s oznakom 'u rekalibraciji'; napomena o zanemarivom free floatu. Detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-16",
         "old_low": 9.22763849012931,

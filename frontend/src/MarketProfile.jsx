@@ -23,7 +23,20 @@ export function SectionRule({ n, title }) {
 }
 
 /* mini fer-zona traka u headeru: pojas zone + okomita crta cijene */
-function GapBand({ zone, price, pref }) {
+function GapBand({ zone, price, pref, recal }) {
+  /* v3 A: zona "u rekalibraciji" — ne prikazuje se kao mjerodavna */
+  if (recal) {
+    return (
+      <div>
+        <div className="prof-klabel">RASKORAK NASPRAM FER-ZONE</div>
+        <div className="prof-band-sub" title={recal}>
+          <span className="flag">fer-zona u rekalibraciji</span> — naš vlastiti
+          test (održiva dividenda) trenutačno pobija zonu; detalji na kartici
+          Analiza vrijednosti
+        </div>
+      </div>
+    )
+  }
   if (!zone || price === null || price === undefined) return null
   const [lo, hi] = zone
   const d0m = Math.min(lo, price); const d1m = Math.max(hi, price)
@@ -48,7 +61,7 @@ function GapBand({ zone, price, pref }) {
   )
 }
 
-export function ProfileHeader({ data, zone }) {
+export function ProfileHeader({ data, zone, recal }) {
   const sum = data.price_summary?.classes || []
   const primary = data.share_classes.find((c) => c.is_primary) || data.share_classes[0]
   return (
@@ -88,9 +101,10 @@ export function ProfileHeader({ data, zone }) {
             </div>
           )
         })}
-        {zone && primary && (
+        {(zone || recal) && primary && (
           <GapBand
             zone={zone}
+            recal={recal}
             price={sum.find((s) => s.class_ticker === primary.ticker)?.last?.close_eur ?? null}
             pref={false}
           />

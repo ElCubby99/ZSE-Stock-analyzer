@@ -226,6 +226,17 @@ export function SiteFooter() {
 
 /* raskorak-motiv iz dizajna: pojas fer-zone + okomita crta cijene */
 export function GapCell({ s }) {
+  /* v3 A: zona "u rekalibraciji" — naš vlastiti test (održiva dividenda)
+     trenutačno pobija zonu pa je ne prikazujemo kao mjerodavnu */
+  if (s.zone_status === 'u_rekalibraciji') {
+    return (
+      <div className="mk-gap">
+        <span className="np" title={'fer-zona u rekalibraciji — unutarnji test modela (održiva dividenda) trenutačno pobija zonu; detalji na stranici dionice'}>
+          u rekalibraciji
+        </span>
+      </div>
+    )
+  }
   if (s.zone_low === null || s.zone_low === undefined || !s.price) {
     return <div className="mk-gap"><span className="np">n/p</span></div>
   }

@@ -1009,7 +1009,23 @@
         "peer_pe": 12.0,
         "implied_pe_note": "cijena implicira P/E 17.6× vs peer medijan 12.0× (placeholder)",
         "narrative": "Tržišna cijena implicira multipl P/E 17.6×; naš izvedeni rast (iz objavljenih brojki) je +0.4% — razlika je neprovjerljiva bez izvedene stope rasta jer u bazi nema serije za izvod stope rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      },
+      "qualified_methods": [],
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 2.0704,
+        "zone_low": 86.25,
+        "zone_high": 90.67,
+        "implied_yield_low": 0.024,
+        "threshold": 0.0858,
+        "r": 0.1108,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je fallback — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 2.07 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (86.25 €), samo od te dividende dobivao bi 2.4% godišnje. Fer cijena to ne dopušta iznad 8.6% (traženi prinos 11.1% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": "free float ~2% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null
   },

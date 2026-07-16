@@ -3554,8 +3554,8 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 611.828764814199,
-      "zone_high": 821.3053598032254,
+      "zone_low": 508.450305457416,
+      "zone_high": 682.5324095256916,
       "dispersion": 0.25505324236434357,
       "divergent": false,
       "archetype": "bank",
@@ -3567,12 +3567,12 @@
         "comps": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": 0.022251799206460587
+          "vs_zone_pct": 0.23009672513602974
         },
         "ddm_gordon": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": -0.6519844956217065
+          "vs_zone_pct": -0.5812257483287226
         },
         "justified_pb_roe": {
           "role": "anchor",
@@ -3582,10 +3582,10 @@
         "residual_income": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": -0.18672113446987793
+          "vs_zone_pct": -0.02136472649152188
         }
       },
-      "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (ddm_gordon, justified_pb_roe, residual_income) ± osjetljivost primarnog sidra 'justified_pb_roe' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 212.92589617996174,
       "all_methods_high": 839.5808817567568,
       "dispersion_all": 0.7463902516045493,
@@ -3598,11 +3598,31 @@
       "qa_flags": [
         "metode se međusobno razilaze 75% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": -21.2,
+      "vs_market_pct": -5.1,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Firma ima 84 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 12.2% godišnje — više od 9.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 701.26 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -19% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
+      "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Firma ima 84 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 12.2% godišnje — više od 9.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 701.26 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -2% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
-      "market_implied": null
+      "market_implied": null,
+      "qualified_methods": [
+        "ddm_gordon",
+        "justified_pb_roe",
+        "residual_income"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 12.0,
+        "zone_low": 508.45,
+        "zone_high": 682.53,
+        "implied_yield_low": 0.0236,
+        "threshold": 0.0684,
+        "r": 0.0934,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je justified_pb_roe — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 12.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (508.45 €), samo od te dividende dobivao bi 2.4% godišnje. Fer cijena to ne dopušta iznad 6.8% (traženi prinos 9.3% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": null
     },
     "sotp": null
   },
@@ -3633,6 +3653,15 @@
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 611.828764814199,
+        "old_high": 821.3053598032254,
+        "new_low": 508.450305457416,
+        "new_high": 682.5324095256916,
+        "reason": "Metodologija v3 — faza A: fer-zona = MEDIJAN kvalificiranih metoda (triangulacija umjesto jednog sidra) ± osjetljivost primarnog sidra; test održive dividende (Gordonova donja granica) s oznakom 'u rekalibraciji'; napomena o zanemarivom free floatu. Detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-16",
         "old_low": 773.6144469566807,

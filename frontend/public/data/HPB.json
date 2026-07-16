@@ -4885,9 +4885,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 308.9397104645434,
-      "zone_high": 460.22019488404095,
-      "dispersion": 0.32871326834672004,
+      "zone_low": 279.1650095131289,
+      "zone_high": 415.8655256384805,
+      "dispersion": 0.32871326834672,
       "divergent": true,
       "archetype": "bank",
       "anchor_methods": [
@@ -4908,10 +4908,10 @@
         "residual_income": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": -0.2239817029247274
+          "vs_zone_pct": -0.14121447945163135
         }
       },
-      "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (justified_pb_roe, residual_income) ± osjetljivost primarnog sidra 'justified_pb_roe' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 298.4410799635931,
       "all_methods_high": 392.41158956103,
       "dispersion_all": 0.23946925141165354,
@@ -4921,11 +4921,18 @@
         "residual_income": 298.4410799635931
       },
       "qa_flags": [],
-      "vs_market_pct": -13.2,
+      "vs_market_pct": -3.9,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Firma ima 590 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 9.9% godišnje — više od 7.6% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 369.70 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -22% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva.",
+      "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Firma ima 590 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 9.9% godišnje — više od 7.6% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 369.70 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -14% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva.",
       "red_rules": [],
-      "market_implied": null
+      "market_implied": null,
+      "qualified_methods": [
+        "justified_pb_roe",
+        "residual_income"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": null,
+      "low_float_note": "free float ~6% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null
   },

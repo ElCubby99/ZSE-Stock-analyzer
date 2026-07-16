@@ -66,7 +66,7 @@ export default function Screener() {
               </div>
             ))}
             <div className="mk-legend">
-              <span>RASKORAK = položaj tržišne cijene naspram fer-zone · negativno = ispod, pozitivno = iznad · n/p = analiza u obradi ili bez zone</span>
+              <span>RASKORAK = položaj tržišne cijene naspram fer-zone · negativno = ispod, pozitivno = iznad · n/p = analiza u obradi ili bez zone · "u rekalibraciji" = unutarnji test modela (održiva dividenda) trenutačno pobija zonu pa je ne prikazujemo kao mjerodavnu</span>
             </div>
           </div>
         </div>

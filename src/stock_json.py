@@ -1313,6 +1313,13 @@ def build_stock_json(conn, ticker: str) -> dict:
         "red_rules": rec.get("red_rules") or [],
         "market_implied": json.loads(json.dumps(rec.get("market_implied"), default=_f))
         if rec.get("market_implied") else None,
+        # v3 FAZA A: triangulacija + sanity testovi
+        "qualified_methods": rec.get("qualified_methods") or [],
+        "recalibrating": rec.get("recalibrating"),
+        "dividend_sanity": json.loads(json.dumps(rec.get("dividend_sanity"),
+                                                 default=_f))
+        if rec.get("dividend_sanity") else None,
+        "low_float_note": rec.get("low_float_note"),
     })
 
     shares = _f(ctx.shares_ex_treasury)

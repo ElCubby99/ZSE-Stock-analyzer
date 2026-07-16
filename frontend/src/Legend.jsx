@@ -18,7 +18,19 @@ export const TERMS = {
   'fer-zona': 'Naša procjena vrijednosti dionice. Cijena iznad zone znači da tržište plaća više nego što fundamenti govore; ispod — obrnuto. Zaključak je vaš.',
   sidro: 'Glavna metoda procjene za tip firme (holding → SOTP, banka → kapital, industrija → DCF); ostale metode služe kao kontrola.',
   beta: 'Koliko dionica njiše u odnosu na tržište: 1 = kao tržište, više = jače njihanje (rizičnije), manje = mirnije.',
-  'trošak kapitala': 'Prinos koji ulagač razumno traži za rizik ove dionice; veći trošak = stroža (niža) procjena vrijednosti.',
+  'trošak kapitala': 'Prinos koji ulagač razumno traži za rizik ove dionice; veći trošak = stroža (niža) procjena vrijednosti. Oznaka: r.',
+  r: 'Trošak kapitala — prinos koji ulagač razumno traži za rizik ove dionice. Slaže se kao zbroj: rf + β×ERP + CRP (+ premija nelikvidnosti). Veći r = stroža (niža) procjena.',
+  rf: 'Bezrizični prinos — prinos "bez rizika" u euru (10-godišnja njemačka državna obveznica, Bund). Temelj od kojeg svaki traženi prinos kreće; rizik Hrvatske NIJE ovdje nego u CRP-u.',
+  ERP: 'Premija rizika tržišta dionica (equity risk premium) — koliko ulagači povrh bezrizičnog prinosa traže za ulaganje u dionice općenito (zrelo tržište, bez premije zemlje). Množi se betom dionice.',
+  CRP: 'Premija rizika zemlje (country risk premium) — mali dodatak na traženi prinos zbog ulaganja u Hrvatsku; primjeren investment-grade eurozoni i računa se točno jednom (nije skriven ni u rf-u ni u ERP-u).',
+  TTM: 'Zadnjih 12 mjeseci (trailing twelve months) — zarada/prihodi zbrojeni kroz posljednja četiri kvartala umjesto iz zadnjeg godišnjeg izvješća; svježija slika poslovanja.',
+  g: 'Stopa rasta — koliko firma (ili njezina dividenda) raste godišnje. Trajni g je rast "zauvijek" i drži se konzervativno: 2,5% za kapitalne metode, 4% terminalno za DCF/DDM.',
+  g1: 'Stopa rasta eksplicitne faze (prvih 5 godina) — izvodi se isključivo iz objavljenih brojki (trogodišnji prosjek rasta, ograničen na najviše 10%), zatim postupno pada prema trajnom g.',
+  CAGR: 'Prosječna godišnja stopa rasta kroz više godina (compound annual growth rate) — npr. "3g CAGR prihoda" je prosječni godišnji rast prihoda u zadnje tri godine.',
+  payout: 'Udio dobiti koji firma isplati kao dividendu — npr. payout 60% znači da od svakih 100 € dobiti dioničarima ode 60 €.',
+  D_sust: 'Naša procjena ODRŽIVE godišnje dividende po dionici: održivi payout (medijan povijesnih payouta, samo redovne isplate — jednokratne ne ulaze; kod banaka najviše 70%) × dobit zadnjih 12 mjeseci ÷ broj dionica.',
+  'u rekalibraciji': 'Oznaka da našu fer-zonu trenutačno pobija vlastiti test (npr. održiva dividenda implicira prinos veći od dopuštenog) — zonu ne prikazujemo kao mjerodavnu dok se ulazi ne razriješe.',
+  medijan: 'Srednja vrijednost po redoslijedu — pola vrijednosti je iznad, pola ispod; otporniji na ekstremne vrijednosti od običnog prosjeka.',
 }
 
 /* Pojam s tooltipom — točkasto podcrtan; definicija na hover (title). */

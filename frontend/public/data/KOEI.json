@@ -329,7 +329,7 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri +9.1% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri +8.9% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
@@ -5029,9 +5029,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 963.7454533872207,
-        "base": 989.107175844779,
-        "high": 1014.4688983023375,
+        "low": 965.8238921606364,
+        "base": 991.2403103753902,
+        "high": 1016.6567285901436,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -5045,7 +5045,7 @@
           "parts": [
             {
               "name": "Dalekovod (DLKV)",
-              "value_eur": 174662860.0,
+              "value_eur": 180290220.0,
               "value_market_eur": 530542020.0,
               "fair_basis": "our_estimate",
               "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–7 €/dionici × 41,247,193 dionica × 0.7500",
@@ -5089,13 +5089,13 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 2410912491.0,
-          "nav_total_eur": 2609334728.0,
+          "nav_gross_eur": 2416539851.0,
+          "nav_total_eur": 2614962088.0,
           "identity": [
             {
               "item": "Dalekovod (DLKV)",
-              "eur": 174662860.0,
-              "per_share": 67.90621273743555,
+              "eur": 180290220.0,
+              "per_share": 70.09404308276561,
               "basis": "our_estimate",
               "pct": 0.75
             },
@@ -5128,15 +5128,15 @@
             },
             {
               "item": "holding diskont (2% sredina)",
-              "eur": -65233368.0,
-              "per_share": -25.36172245755844,
+              "eur": -65374052.0,
+              "per_share": -25.416418214753595,
               "basis": "v2 §4 taksonomija"
             }
           ],
           "identity_note": "Σ stavki = sidro po dionici (v2 §5); svaka stavka s osnovom: our_estimate / market_fallback / multiple",
           "sotp_fair": {
-            "nav_eur": 2609334728.0,
-            "base_per_share": 989.107175844779,
+            "nav_eur": 2614962088.0,
+            "base_per_share": 991.2403103753902,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
@@ -5144,15 +5144,15 @@
             "base_per_share": 1079.3682562832776,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": 9.1,
+          "market_vs_fair_pct": 8.9,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
             "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji"
           },
           "market_check": {
             "own_market_cap_eur": 2675003760.0,
-            "nav_pre_discount_eur": 2609334728.0,
-            "price_vs_nav_pct": 2.5,
+            "nav_pre_discount_eur": 2614962088.0,
+            "price_vs_nav_pct": 2.3,
             "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
           },
           "market_based_share_of_gross": 1.0
@@ -5177,9 +5177,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 964.3794964486596,
-      "zone_high": 1013.8348552408984,
-      "dispersion": 0.04878048780487793,
+      "zone_low": 965.8238921606364,
+      "zone_high": 1016.6567285901438,
+      "dispersion": 0.050000000000000135,
       "divergent": false,
       "archetype": "holding_operating",
       "anchor_methods": [
@@ -5190,12 +5190,12 @@
         "comps": {
           "role": "secondary",
           "note": "integrirani operativni parent: SOTP BEZ holding diskonta; konsolidirani DCF je potvrda (v2 §2/§4)",
-          "vs_zone_pct": -0.12170407638211289
+          "vs_zone_pct": -0.12301757346601971
         },
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.3146878644390041
+          "vs_zone_pct": 0.3118586755417647
         },
         "sotp_nav": {
           "role": "anchor",
@@ -5203,31 +5203,39 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = sotp_nav ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, dcf_fcf, sotp_nav) ± osjetljivost primarnog sidra 'sotp_nav' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 847.0105805515283,
       "all_methods_high": 1300.367200712667,
       "dispersion_all": 0.34863738481920825,
       "method_bases": {
         "comps": 847.0105805515283,
         "dcf_fcf": 1300.367200712667,
-        "sotp_nav": 989.107175844779
+        "sotp_nav": 991.2403103753902
       },
       "qa_flags": [
         "ULAZI NEKONZISTENTNI: dcf_fcf +31% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
       ],
-      "vs_market_pct": 5.1,
+      "vs_market_pct": 4.9,
       "anchor_inconsistency": [
         "dcf_fcf +31% vs primarno sidro"
       ],
-      "reasoning": "Rast +2.1% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,609 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 989.11 € po dionici. Tržište te iste kćeri trenutačno vrednuje 9.1% više nego mi. Kontrolne metode uz sidro: DCF (FCF) +31% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +2.1% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,615 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 991.24 € po dionici. Tržište te iste kćeri trenutačno vrednuje 8.9% više nego mi. Kontrolne metode uz sidro: DCF (FCF) +31% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
-      "market_implied": null
+      "market_implied": null,
+      "qualified_methods": [
+        "comps",
+        "dcf_fcf",
+        "sotp_nav"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": null,
+      "low_float_note": null
     },
     "sotp": {
       "parts": [
         {
           "name": "Dalekovod (DLKV)",
-          "value_eur": 174662860.0,
+          "value_eur": 180290220.0,
           "value_market_eur": 530542020.0,
           "fair_basis": "our_estimate",
           "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–7 €/dionici × 41,247,193 dionica × 0.7500",
@@ -5267,8 +5275,8 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 2410912491.0,
-      "nav_total_eur": 2609334728.0,
+      "nav_gross_eur": 2416539851.0,
+      "nav_total_eur": 2614962088.0,
       "holding_discount_range": [
         0.0,
         0.05
@@ -5276,13 +5284,13 @@
       "holding_discount_reason": "integrirani operativni parent (v2 §4): kontrola + konsolidacija iste djelatnosti -> diskont 0–5%, NE tretira se kao pasivni holding",
       "market_check": {
         "own_market_cap_eur": 2675003760.0,
-        "nav_pre_discount_eur": 2609334728.0,
-        "price_vs_nav_pct": 2.5,
+        "nav_pre_discount_eur": 2614962088.0,
+        "price_vs_nav_pct": 2.3,
         "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
       },
       "sotp_fair": {
-        "nav_eur": 2609334728.0,
-        "base_per_share": 989.107175844779,
+        "nav_eur": 2614962088.0,
+        "base_per_share": 991.2403103753902,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
@@ -5290,7 +5298,7 @@
         "base_per_share": 1079.3682562832776,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": 9.1,
+      "market_vs_fair_pct": 8.9,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
       "missing": [
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
@@ -5298,8 +5306,8 @@
       "identity": [
         {
           "item": "Dalekovod (DLKV)",
-          "eur": 174662860.0,
-          "per_share": 67.90621273743555,
+          "eur": 180290220.0,
+          "per_share": 70.09404308276561,
           "basis": "our_estimate",
           "pct": 0.75
         },
@@ -5332,8 +5340,8 @@
         },
         {
           "item": "holding diskont (2% sredina)",
-          "eur": -65233368.0,
-          "per_share": -25.36172245755844,
+          "eur": -65374052.0,
+          "per_share": -25.416418214753595,
           "basis": "v2 §4 taksonomija"
         }
       ],
@@ -5371,6 +5379,15 @@
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 964.3794964486596,
+        "old_high": 1013.8348552408984,
+        "new_low": 1267.0244519764447,
+        "new_high": 1333.7099494488891,
+        "reason": "Metodologija v3 — faza A: fer-zona = MEDIJAN kvalificiranih metoda (triangulacija umjesto jednog sidra) ± osjetljivost primarnog sidra; test održive dividende (Gordonova donja granica) s oznakom 'u rekalibraciji'; napomena o zanemarivom free floatu. Detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-16",
         "old_low": 880.2567750029609,

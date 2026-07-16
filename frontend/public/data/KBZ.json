@@ -1633,7 +1633,7 @@
           "vs_zone_pct": 0.21297507571411978
         }
       },
-      "zone_note": "zona = justified_pb_roe ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (ddm_gordon, justified_pb_roe, residual_income) ± osjetljivost primarnog sidra 'justified_pb_roe' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 23.199629758510532,
       "all_methods_high": 50.88325656056266,
       "dispersion_all": 0.544061616203796,
@@ -1648,7 +1648,27 @@
       "anchor_inconsistency": [],
       "reasoning": "Rast +0.0% godišnje izveden je iz zadnjih 12 mjeseci naspram prošle godine (kratka serija u bazi, ograničeno na najviše 8%). Firma ima 74 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 9.6% godišnje — manje od 10.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 30.19 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) +21% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva.",
       "red_rules": [],
-      "market_implied": null
+      "market_implied": null,
+      "qualified_methods": [
+        "ddm_gordon",
+        "justified_pb_roe",
+        "residual_income"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 1.551,
+        "zone_low": 26.77,
+        "zone_high": 34.6,
+        "implied_yield_low": 0.0579,
+        "threshold": 0.0784,
+        "r": 0.1034,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je justified_pb_roe — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 1.55 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (26.77 €), samo od te dividende dobivao bi 5.8% godišnje. Fer cijena to ne dopušta iznad 7.8% (traženi prinos 10.3% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": "free float ~8% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null
   },

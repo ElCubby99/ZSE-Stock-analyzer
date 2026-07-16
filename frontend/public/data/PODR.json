@@ -5040,9 +5040,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 149.4153856733656,
-      "zone_high": 202.15022767572992,
-      "dispersion": 0.2608695652173913,
+      "zone_low": 163.75438755849615,
+      "zone_high": 221.55005375561245,
+      "dispersion": 0.26086956521739135,
       "divergent": false,
       "archetype": "industrial_noforward",
       "anchor_methods": [
@@ -5058,15 +5058,15 @@
         "dcf_fcf": {
           "role": "secondary",
           "note": "bez forward signala sidro je peer usporedba; opravdani P/B je potvrda (v2 §2)",
-          "vs_zone_pct": -0.5881079190721619
+          "vs_zone_pct": -0.6241748691731773
         },
         "justified_pb_roe": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.19193474380846998
+          "vs_zone_pct": 0.0875640775121731
         }
       },
-      "zone_note": "zona = comps ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, justified_pb_roe) ± osjetljivost primarnog sidra 'comps' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 61.54301412763804,
       "all_methods_high": 209.5216346395609,
       "dispersion_all": 0.7062689290606662,
@@ -5078,11 +5078,30 @@
       "qa_flags": [
         "metode se međusobno razilaze 71% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": -9.0,
+      "vs_market_pct": -16.9,
       "anchor_inconsistency": [],
-      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije dovoljna serija objavljenih brojki, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 17 € operativne zarade (EBITDA marža 17.3%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBIT kao sektorski primjerena — sidro je 175.78 € po dionici. Leće se razilaze (81%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 2.1); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: Opravdani P/B (ROE) +19% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
+      "reasoning": "Stopu rasta ne možemo izračunati — u bazi još nije dovoljna serija objavljenih brojki, pa računamo oprezno, bez faze rasta. Od svakih 100 € prihoda firmi ostaje 17 € operativne zarade (EBITDA marža 17.3%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi EV/EBIT kao sektorski primjerena — sidro je 175.78 € po dionici. Leće se razilaze (81%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 2.1); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: Opravdani P/B (ROE) +9% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
-      "market_implied": null
+      "market_implied": null,
+      "qualified_methods": [
+        "comps",
+        "justified_pb_roe"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 2.3157,
+        "zone_low": 163.75,
+        "zone_high": 221.55,
+        "implied_yield_low": 0.0141,
+        "threshold": 0.0463,
+        "r": 0.0713,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je comps — ista pretpostavka rasta kojom je zona izračunata)",
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 2.32 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (163.75 €), samo od te dividende dobivao bi 1.4% godišnje. Fer cijena to ne dopušta iznad 4.6% (traženi prinos 7.1% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": null
     },
     "sotp": null
   },

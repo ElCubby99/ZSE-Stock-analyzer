@@ -821,9 +821,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 247.28325951662853,
+      "zone_low": 247.2832595166285,
       "zone_high": 344.9851268066836,
-      "dispersion": 0.283206027443622,
+      "dispersion": 0.2832060274436221,
       "divergent": false,
       "archetype": "cyclical",
       "anchor_methods": [
@@ -847,7 +847,7 @@
           "vs_zone_pct": -0.9789943145415605
         }
       },
-      "zone_note": "zona = dcf_fcf ± osjetljivost na ključnu pretpostavku (r/wacc ±1 p.b.); ostala sidra su potvrda; isključeno (nepozitivna baza): comps",
+      "zone_note": "dvije kvalificirane metode razmaknute 4541% > 40% — NE prosječi (v2 §3): sredinu nosi sidro 'dcf_fcf', druga metoda je kontekst — v3 triangulacija; isključeno (nepozitivna baza/conf): comps",
       "all_methods_low": 6.2205017150425155,
       "all_methods_high": 288.717756715475,
       "dispersion_all": 0.9784547310639689,
@@ -874,7 +874,14 @@
         "peer_pe": 12.0,
         "implied_pe_note": "cijena implicira P/E 43.4× vs peer medijan 12.0× (placeholder)",
         "narrative": "Tržišna cijena implicira ~-3.1% trajnog rasta godišnje / multipl P/E 43.4×; naš izvedeni rast (iz objavljenih brojki) je +4.0% — razlika je upitna jer implicirani rast se bitno razlikuje od stope izvedene iz objavljenih brojki. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
-      }
+      },
+      "qualified_methods": [
+        "dcf_fcf",
+        "justified_pb_roe"
+      ],
+      "recalibrating": null,
+      "dividend_sanity": null,
+      "low_float_note": "free float ~4% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null
   },
@@ -907,6 +914,15 @@
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-16",
+        "old_low": 247.28325951662853,
+        "old_high": 344.9851268066836,
+        "new_low": 126.30552192314633,
+        "new_high": 176.2089620713322,
+        "reason": "Metodologija v3 — faza A: fer-zona = MEDIJAN kvalificiranih metoda (triangulacija umjesto jednog sidra) ± osjetljivost primarnog sidra; test održive dividende (Gordonova donja granica) s oznakom 'u rekalibraciji'; napomena o zanemarivom free floatu. Detalji na stranici Metodologija.",
+        "kind": "methodology"
+      },
       {
         "date": "2026-07-16",
         "old_low": 208.4544756457161,

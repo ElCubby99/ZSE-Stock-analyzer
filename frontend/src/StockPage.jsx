@@ -495,6 +495,78 @@ function Metrics({ data }) {
   )
 }
 
+/* v3 A (Borisov zahtjev): test održive dividende — for-dummies raspis s
+   brojkama OVE dionice, kod svake dionice gdje je test primjenjiv.
+   Struktura: što je D_sust -> što je donji rub -> što je implicirani
+   prinos -> koji je prag i zašto (Gordonova logika) -> verdikt. */
+function DividendSanity({ rec }) {
+  const ds = rec?.dividend_sanity
+  if (!ds) return null
+  const ok = ds.verdict === 'prolazi'
+  return (
+    <section>
+      <div className="sec-label">Test održive dividende — običnim jezikom</div>
+      <div className="controls">
+        <div className="ctrl">
+          <div className="top">
+            <span className="name">Održiva dividenda (D_sust)</span>
+            <span className="out mono">{num(ds.d_sust_ps, 2)} €</span>
+          </div>
+          <div className="plain">
+            Naša procjena dividende koju firma može isplaćivati <b>trajno</b> —
+            ne zadnja isplaćena, nego: održivi udio dobiti koji ide dioničarima
+            (medijan povijesnih isplata, računan samo nad redovnima — jednokratne
+            i isplate iz zadržane dobiti ne ulaze; kod banaka najviše 70%) ×
+            dobit zadnjih 12 mjeseci ÷ broj dionica.
+          </div>
+        </div>
+        <div className="ctrl">
+          <div className="top">
+            <span className="name">Prinos na donjem rubu zone</span>
+            <span className="out mono">{num(ds.implied_yield_low * 100, 1)} %</span>
+          </div>
+          <div className="plain">
+            Donji rub je najniža cijena koju naš model još smatra fer
+            ({num(ds.zone_low, 2)} €). Tko bi dionicu kupio baš po toj cijeni,
+            samo od održive dividende dobivao bi {num(ds.d_sust_ps, 2)} € /
+            {' '}{num(ds.zone_low, 2)} € = <b>{num(ds.implied_yield_low * 100, 1)} %</b> godišnje.
+          </div>
+        </div>
+        <div className="ctrl">
+          <div className="top">
+            <span className="name">Dopušteni prag (r − g)</span>
+            <span className="out mono">{num(ds.threshold * 100, 1)} %</span>
+          </div>
+          <div className="plain">
+            Ako dividenda trajno raste stopom g, vrijednost dionice ne može biti
+            manja od D ÷ (r − g) — jer već sama dividenda na toj cijeni
+            isporučuje prinos r koji ulagač traži za rizik. Obrnuto: prinos iz
+            održive dividende na fer cijeni ne smije biti veći od r − g.
+            Ovdje: traženi prinos r = {num(ds.r * 100, 2)} % minus {ds.g_source}
+            {' '}= <b>{num(ds.threshold * 100, 1)} %</b>.
+          </div>
+        </div>
+        <div className="ctrl">
+          <div className="top">
+            <span className="name">Rezultat testa</span>
+            <span className="out">{ok
+              ? <span className="okflag">PROLAZI</span>
+              : <span className="flag">U REKALIBRACIJI ({ds.verdict.toUpperCase()})</span>}</span>
+          </div>
+          <div className="plain">
+            {ok
+              ? `Prinos ${num(ds.implied_yield_low * 100, 1)} % je unutar dopuštenog (${num(ds.threshold * 100, 1)} %) — održiva dividenda ne pobija zonu.`
+              : ds.verdict === 'preniska'
+                ? `Prinos ${num(ds.implied_yield_low * 100, 1)} % je VEĆI od praga ${num(ds.threshold * 100, 1)} % — model bi tvrdio apsurd ("kupi po ${num(ds.zone_low, 2)} € i sama dividenda ti nosi više nego što tražiš za rizik"), pa je donji rub vjerojatno prenizak i zonu ne objavljujemo dok se ulazi ne razriješe.`
+                : 'Uz payout blizu 100% prinos na gornjem rubu je premalen — zona je vjerojatno previsoka i ne objavljujemo je dok se ulazi ne razriješe.'}
+            {' '}Test je činjenična unutarnja kontrola modela, ne preporuka.
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Assumptions({ valuation }) {
   const p = valuation.params
   /* dvorazinski princip: jedna rečenica OBIČNIM jezikom vidljiva,
@@ -873,13 +945,15 @@ export default function StockPage() {
       {data && (() => {
         const marketOnly = data.data_status === 'market_only'
         const rec = data.valuation?.reconciliation
-        const zone = rec && rec.zone_low !== null && rec.zone_high !== null
+        /* v3 A: "u rekalibraciji" — zonu ne prikazujemo kao mjerodavnu */
+        const recal = rec?.recalibrating || null
+        const zone = !recal && rec && rec.zone_low !== null && rec.zone_high !== null
           ? [rec.zone_low, rec.zone_high] : null
         return (
         <>
           {/* ============ GORE · TRŽIŠNI PROFIL ============ */}
           <ProfileHeader data={{ ...data, sector_hr: SECTOR_HR[data.sector] || data.sector }}
-            zone={zone} />
+            zone={zone} recal={recal} />
           {data.business_profile?.activity && (
             <div className="prof-activity">
               <div className="prof-klabel">PROFIL POSLOVANJA</div>
@@ -914,10 +988,17 @@ export default function StockPage() {
             <AnalysisUnavailable note={data.data_note} />
           ) : (
           <>
+          {recal && (
+            <section className="prof-illiq" style={{ marginTop: 10 }}>
+              <span className="prof-illiq-t">FER-ZONA U REKALIBRACIJI</span>
+              <span className="prof-illiq-n">{recal}</span>
+            </section>
+          )}
           <AnchorPanel data={data} />
           <SecondaryList data={data} />
           <Risks risks={data.risks} />
           <Assumptions valuation={data.valuation} />
+          <DividendSanity rec={rec} />
 
           <section>
             <div className="sec-label">Vrednovanje — što kaže svaka metoda</div>
