@@ -120,8 +120,19 @@ def stage_extract_queue(conn, run_id, log) -> list[int]:
 
 def stage_recompute(conn, run_id, log, company_ids: list[int]) -> None:
     from .params_calibrated import build_params
+    from .sotp_order import CycleError, ordered_tickers
     from .valuation_methods import build_ctx, value_company
-    for cid in sorted(set(company_ids)):
+    # v3 FAZA SOTP: preračun topološkim redom (kćeri prije matica)
+    with conn.cursor() as cur:
+        cur.execute("SELECT id, ticker FROM companies WHERE id = ANY(%s)",
+                    (sorted(set(company_ids)),))
+        id_of = {t: i for i, t in cur.fetchall()}
+    try:
+        ordered = ordered_tickers(conn, sorted(id_of))
+    except CycleError as e:
+        log("recompute", None, "failed", str(e))
+        raise
+    for cid in [id_of[t] for t in ordered]:
         try:
             with conn.cursor() as cur:
                 cur.execute("SELECT ticker FROM companies WHERE id=%s", (cid,))
@@ -282,10 +293,17 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
     if not changed:
         log("regen", None, "skipped", "ništa se nije promijenilo")
         return
+    from .sotp_order import CycleError, ordered_tickers
     from .stock_json import build_stock_json
     with conn.cursor() as cur:
         cur.execute("SELECT ticker FROM companies WHERE is_live ORDER BY ticker")
         tickers = [r[0] for r in cur.fetchall()]
+    # v3 FAZA SOTP: kćeri PRIJE matica (topološki red); ciklus = greška
+    try:
+        tickers = ordered_tickers(conn, tickers)
+    except CycleError as e:
+        log("regen", None, "failed", str(e))
+        raise
     os.makedirs("frontend/public/data", exist_ok=True)
     for t in tickers:
         try:
