@@ -163,16 +163,19 @@ def apply() -> int:
                     (cid, doc_type, fy, pt, basis, *attrs))
                 fid = cur.fetchone()[0]
                 stats["filings_new"] += 1
-            # financials: lokalna verzija je istina — zamijeni u cijelosti
+            # financials: lokalna verzija je istina — zamijeni u cijelosti.
+            # execute_values: 24k pojedinačnih INSERT-a preko mreže traje
+            # >15 min (Supabase RTT po upitu) — batch spušta na sekunde.
+            from psycopg2.extras import execute_values
             cur.execute("DELETE FROM financials WHERE filing_id=%s", (fid,))
-            for fin in frec["fin"]:
-                cur.execute(
+            if frec["fin"]:
+                execute_values(
+                    cur,
                     f"""INSERT INTO financials (filing_id, company_id,
                           fiscal_year, period_type, basis,
-                          {', '.join(FIN_COLS)})
-                        VALUES (%s,%s,%s,%s,%s,{', '.join(['%s'] * len(FIN_COLS))})""",
-                    (fid, cid, fy, pt, basis, *fin))
-                stats["fin_rows"] += 1
+                          {', '.join(FIN_COLS)}) VALUES %s""",
+                    [(fid, cid, fy, pt, basis, *fin) for fin in frec["fin"]])
+                stats["fin_rows"] += len(frec["fin"])
 
         for row in d["dividends"]:
             ct, ex_date, amount, ptype, pratio, reason = row
