@@ -94,24 +94,61 @@ def import_rows(conn, rows: list[dict], source: str) -> int:
 def fetch_hanfa(conn, log=print) -> int:
     """Dohvat zadnjih objavljenih vrijednosti jedinica s HANFA-e.
     Pokreće se iz MJESEČNOG workflowa (GitHub Actions — otvorena mreža).
-    STROG parser: nepoznat format -> RuntimeError s uputom (nikad kriva
-    brojka). Vraća broj NOVIH zapisa (0 = nema novih objava, idempotentno)."""
+    STROG parser redova (nikad kriva brojka), ali TOLERANTAN prema
+    strukturi stranice: HANFA datoteke poslužuje kroz /getfile/?fileId=N
+    (bez .xlsx u URL-u; prvi run 17.07.2026. pao na 404 stare putanje i
+    krivom href obrascu). Kandidati se probaju redom dok jedan ne prođe
+    parser; nijedan -> RuntimeError s razlogom.
+    Vraća broj NOVIH zapisa (0 = nema novih objava, idempotentno)."""
     import requests
-    listing = "https://www.hanfa.hr/publiciranje/statistika/"
-    r = requests.get(listing, timeout=90)
-    r.raise_for_status()
-    # tražimo XLSX poveznice sa statistikom mirovinskih fondova
-    links = re.findall(r'href="([^"]+\.xlsx[^"]*)"', r.text, re.I)
-    cand = [l for l in links if re.search(r"mirovin", l, re.I)]
-    if not cand:
+    listings = (
+        "https://www.hanfa.hr/statistika/mirovinski-fondovi/",
+        "https://www.hanfa.hr/statistika/",
+    )
+    html, listing = None, None
+    for cand_listing in listings:
+        try:
+            r = requests.get(cand_listing, timeout=90,
+                             headers={"User-Agent": "Mozilla/5.0 (podaci; burzovnilist.com)"})
+            r.raise_for_status()
+            html, listing = r.text, cand_listing
+            break
+        except Exception as e:  # noqa: BLE001 — probaj sljedeći listing
+            log(f"[hanfa] {cand_listing}: {type(e).__name__}: {e}")
+    if html is None:
         raise RuntimeError(
-            "HANFA: nije pronađen XLSX sa statistikom mirovinskih fondova na "
-            f"{listing} — provjeri strukturu stranice i prilagodi fetch_hanfa() "
-            "(vidi docs/data_sources.md, sekcija Mirovinski fondovi)")
-    url = cand[0] if cand[0].startswith("http") else f"https://www.hanfa.hr{cand[0]}"
-    raw = requests.get(url, timeout=120).content
-    rows = parse_hanfa_xlsx(raw)
-    return import_rows(conn, rows, f"HANFA statistika ({url})")
+            "HANFA: nijedna listing stranica nije dostupna "
+            f"({', '.join(listings)}) — provjeri strukturu sajta")
+    # <a href="..."> čiji href ILI tekst upućuje na statistiku mirovinskih
+    # fondova; datoteke su .xlsx ILI /getfile/?fileId=N
+    cands = []
+    for m in re.finditer(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', html, re.I | re.S):
+        href, text = m.group(1), re.sub(r"<[^>]+>", " ", m.group(2))
+        if not re.search(r"\.xlsx|/getfile/", href, re.I):
+            continue
+        blob = f"{href} {text}"
+        if re.search(r"mirovin|omf|mirex|obra[čc]unsk", blob, re.I):
+            cands.append(href if href.startswith("http")
+                         else f"https://www.hanfa.hr{href}")
+    if not cands:
+        raise RuntimeError(
+            f"HANFA: nijedna XLSX/getfile poveznica s 'mirovin' na {listing} "
+            "— provjeri strukturu stranice i prilagodi fetch_hanfa()")
+    errors = []
+    for url in cands[:6]:
+        try:
+            raw = requests.get(url, timeout=120).content
+            if not raw.startswith(b"PK"):     # XLSX = zip; sve drugo preskoči
+                errors.append(f"{url}: nije XLSX (magic bytes)")
+                continue
+            rows = parse_hanfa_xlsx(raw)
+            log(f"[hanfa] parsirano {len(rows)} redova iz {url}")
+            return import_rows(conn, rows, f"HANFA statistika ({url})")
+        except Exception as e:  # noqa: BLE001 — probaj sljedeći kandidat
+            errors.append(f"{url}: {type(e).__name__}: {str(e)[:120]}")
+    raise RuntimeError(
+        "HANFA: nijedan od kandidata nije prošao strogi parser:\n  "
+        + "\n  ".join(errors))
 
 
 def parse_hanfa_xlsx(raw: bytes) -> list[dict]:
