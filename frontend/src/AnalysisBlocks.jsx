@@ -1,23 +1,17 @@
 import React from 'react'
-import { dash, eur, num } from './format.js'
+import { useLang } from './i18n/LangContext.jsx'
+import { tx } from './i18n/dataText.mjs'
+import { dash, num } from './format.js'
 import { Term } from './Legend.jsx'
 
 /* QA flag (tehnički) -> jedna rečenica običnim jezikom; tehnički original
-   ostaje dostupan iza klika (dvorazinski princip, ne mijenja izračun). */
-export function plainFlag(f) {
-  if (f.startsWith('ULAZI NEKONZISTENTNI')) {
-    return ('Neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu '
-      + 'podataka još fali kalibracija (npr. multiplikatori usporedivih firmi). '
-      + 'Razliku bilježimo, ne skrivamo je.')
-  }
-  if (f.startsWith('metode se međusobno razilaze')) {
-    return ('Različite metode daju vrlo različite brojke — to je signal za provjeru '
-      + 'ulaznih podataka, ne za izbor najljepše brojke.')
-  }
-  if (f.startsWith('fer-zona odstupa')) {
-    return ('Naša procjena je daleko od tržišne cijene — to je pitanje za provjeru '
-      + 'pretpostavki, ne zaključak da je tržište u krivu.')
-  }
+   ostaje dostupan iza klika (dvorazinski princip, ne mijenja izračun).
+   Prefiksi usporedbe su HR podatkovne konstante iz exporta — dijakritici
+   idu unicode escapeom (i18n lint), a prijevod rečenica kroz t(). */
+export function plainFlag(f, t) {
+  if (f.startsWith('ULAZI NEKONZISTENTNI')) return t('ab.qa1')
+  if (f.startsWith('metode se me\u0111usobno razilaze')) return t('ab.qa2')
+  if (f.startsWith('fer-zona odstupa')) return t('ab.qa3')
   return f
 }
 
@@ -30,13 +24,16 @@ const PINE = '#1F6E5A'
 const OX = '#9E2B25'
 const STEEL = '#2F5D86'
 
-const METHOD_SHORT = {
-  sotp_nav: 'SOTP / NAV', residual_income: 'REZIDUALNI DOHODAK',
-  justified_pb_roe: 'OPRAVDANI P/B', dcf_fcf: 'DCF',
-  comps: 'PEER USPOREDBA (COMPS)',
-  multiples_relative: 'RELATIVNI MULTIPLI', ev_ebitda: 'EV/EBITDA',
-  ddm_gordon: 'DIVIDENDNI DISKONT',
+/* metoda -> i18n ključ kratkog naziva (t()) */
+const METHOD_SHORT_KEY = {
+  sotp_nav: 'ab.m.sotp_nav', residual_income: 'ab.m.residual_income',
+  justified_pb_roe: 'ab.m.justified_pb_roe', dcf_fcf: 'ab.m.dcf_fcf',
+  comps: 'ab.m.comps',
+  multiples_relative: 'ab.m.multiples_relative', ev_ebitda: 'ab.m.ev_ebitda',
+  ddm_gordon: 'ab.m.ddm_gordon',
 }
+const methodShort = (key, t, fallback) =>
+  (METHOD_SHORT_KEY[key] ? t(METHOD_SHORT_KEY[key]) : (fallback || key))
 
 /* metoda -> pojam iz legende (tooltip na nazivu metode) */
 const METHOD_TERM = {
@@ -45,6 +42,7 @@ const METHOD_TERM = {
 }
 
 export function AnchorPanel({ data }) {
+  const { lang, t } = useLang()
   const rec = data.valuation?.reconciliation
   if (!rec || rec.zone_low === null) return null
   // v2 §8 RED RULES: analiza ne ide live dok se pravila ne razriješe
@@ -52,14 +50,13 @@ export function AnchorPanel({ data }) {
     return (
       <div className="anch anch-held">
         <div className="anch-head">
-          <span className="anch-tag" style={{ color: OX }}>ANALIZA ZADRŽANA — CRVENO PRAVILO</span>
+          <span className="anch-tag" style={{ color: OX }}>{t('ab.held')}</span>
         </div>
         <p className="anch-plain">
-          Fer-zona se ne objavljuje dok se ne razriješe pravila kvalitete
-          (doktrina v2 §8):
+          {t('ab.heldNote')}
         </p>
         <ul className="anch-red-list">
-          {rec.red_rules.map((r, i) => <li key={i}>{r}</li>)}
+          {rec.red_rules.map((r, i) => <li key={i}>{tx(r, lang)}</li>)}
         </ul>
       </div>
     )
@@ -68,7 +65,7 @@ export function AnchorPanel({ data }) {
   const classes = (data.share_classes || [])
     .map((c) => ({
       t: c.ticker,
-      lbl: c.class_type === 'ordinary' ? 'redovna' : 'povlaštena',
+      lbl: c.class_type === 'ordinary' ? t('ab.ordinary') : t('ab.preferred'),
       pref: c.class_type !== 'ordinary',
       p: sum.find((s) => s.class_ticker === c.ticker)?.last?.close_eur ?? null,
     }))
@@ -79,32 +76,30 @@ export function AnchorPanel({ data }) {
   const pad = (d1m - d0m) * 0.14 || d1m * 0.05
   const d0 = d0m - pad; const d1 = d1m + pad
   const P = (v) => Math.max(1.5, Math.min(98.5, ((v - d0) / (d1 - d0)) * 100))
-  const pos = (p) => (p > hi ? `${num((p / hi - 1) * 100, 1)}% iznad zone`
-    : p < lo ? `${num((1 - p / lo) * 100, 1)}% ispod zone` : 'unutar zone')
+  const pos = (p) => (p > hi ? `${num((p / hi - 1) * 100, 1)}${t('ab.pctAboveZone')}`
+    : p < lo ? `${num((1 - p / lo) * 100, 1)}${t('ab.pctBelowZone')}` : t('ab.insideZone'))
   const sotp = data.valuation?.sotp
   // M12: primarno sidro nosi zonu; ostala sidra istog arhetipa su potvrda
   const roles = rec.method_roles || {}
   const prim = Object.keys(roles).find((k) => roles[k].role === 'anchor')
   const alts = Object.keys(roles).filter((k) => roles[k].role === 'anchor_alt')
   const anchorName = prim
-    ? (METHOD_SHORT[prim] || prim)
-    : (rec.anchor_methods || []).map((k) => METHOD_SHORT[k] || k).join(' + ')
+    ? methodShort(prim, t)
+    : (rec.anchor_methods || []).map((k) => methodShort(k, t)).join(' + ')
 
   return (
     <div className="anch">
       <div className="anch-head">
-        <span className="anch-tag"><Term t="sidro">SIDRO</Term> · {anchorName || dash}</span>
+        <span className="anch-tag"><Term t="sidro">{t('ab.anchorTag')}</Term> · {anchorName || dash}</span>
         <span className="anch-sub">
           {alts.length
-            ? `zona = sidro ± osjetljivost; potvrda: ${alts.map((k) => METHOD_SHORT[k] || k).join(', ')}`
-            : 'glavna fer-zona — sve metode se mjere prema njoj'}
+            ? `${t('ab.subConfirm')} ${alts.map((k) => methodShort(k, t)).join(', ')}`
+            : t('ab.subMain')}
         </span>
       </div>
       <div className="anch-zone">{num(lo, 2)}–{num(hi, 2)} €</div>
       <p className="anch-plain">
-        <Term t="fer-zona">Fer-zona</Term> je naša procjena vrijednosti dionice.
-        Cijena iznad zone znači da tržište plaća više nego što fundamenti govore;
-        ispod zone — obrnuto. Zaključak je vaš.
+        <Term t="fer-zona">{t('ab.ferZonaWord')}</Term> {t('ab.plainZone')}
       </p>
       <div className="anch-band">
         <div className="anch-axis" />
@@ -130,50 +125,52 @@ export function AnchorPanel({ data }) {
       </div>
       {rec.reasoning && (
         <div className="anch-chain">
-          <div className="prof-klabel">KAKO SMO DOŠLI DO SIDRA</div>
-          <p>{rec.reasoning}</p>
-          {rec.zone_note && <div className="anch-chain-note">{rec.zone_note}</div>}
+          <div className="prof-klabel">{t('ab.howAnchor')}</div>
+          <p>{tx(rec.reasoning, lang)}</p>
+          {rec.zone_note && <div className="anch-chain-note">{tx(rec.zone_note, lang)}</div>}
         </div>
       )}
       {(rec.qa_flags || []).length > 0 && (
         <div className="anch-qa">
-          {rec.qa_flags.map((f, i) => (
-            <div className="anch-qa-row" key={i}>
-              <span className="flag">QA</span> {plainFlag(f)}
-              {plainFlag(f) !== f && (
-                <details className="anch-qa-tech">
-                  <summary>tehnički zapis</summary>
-                  {f}
-                </details>
-              )}
-            </div>
-          ))}
+          {rec.qa_flags.map((f, i) => {
+            const pf = plainFlag(f, t)
+            return (
+              <div className="anch-qa-row" key={i}>
+                <span className="flag">QA</span> {pf === f ? tx(f, lang) : pf}
+                {pf !== f && (
+                  <details className="anch-qa-tech">
+                    <summary>{t('ab.techRecord')}</summary>
+                    {f}
+                  </details>
+                )}
+              </div>
+            )
+          })}
         </div>
       )}
       {sotp && sotp.sotp_fair && sotp.sotp_market && (
         <div className="anch-sotp2">
           <div>
-            <div className="prof-klabel">SOTP PO NAŠOJ PROCJENI</div>
+            <div className="prof-klabel">{t('ab.sotpFair')}</div>
             <div className="anch-sotp2-v" style={{ color: PINE }}>
               {num(sotp.sotp_fair.base_per_share, 2)} €
             </div>
-            <div className="anch-sotp2-n">{sotp.sotp_fair.note} · sidro fer-zone</div>
+            <div className="anch-sotp2-n">{tx(sotp.sotp_fair.note, lang)} {t('ab.sotpAnchor')}</div>
           </div>
           <div>
-            <div className="prof-klabel">SOTP PO TRŽIŠTU</div>
+            <div className="prof-klabel">{t('ab.sotpMarket')}</div>
             <div className="anch-sotp2-v">{num(sotp.sotp_market.base_per_share, 2)} €</div>
-            <div className="anch-sotp2-n">{sotp.sotp_market.note}</div>
+            <div className="anch-sotp2-n">{tx(sotp.sotp_market.note, lang)}</div>
           </div>
           {sotp.market_vs_fair_pct !== null && sotp.market_vs_fair_pct !== undefined && (
             <div>
-              <div className="prof-klabel">SIGNAL RAZLIKE</div>
+              <div className="prof-klabel">{t('ab.diffSignal')}</div>
               <div className="anch-sotp2-v" style={{
                 color: sotp.market_vs_fair_pct > 0 ? OX : PINE }}>
                 {sotp.market_vs_fair_pct > 0 ? '+' : ''}{num(sotp.market_vs_fair_pct, 1)}%
               </div>
               <div className="anch-sotp2-n">
-                tržište vrednuje uvrštene kćeri {sotp.market_vs_fair_pct > 0 ? 'iznad' : 'ispod'} naše
-                procjene — činjenica, ne preporuka
+                {t('ab.mvf1')} {sotp.market_vs_fair_pct > 0 ? t('ab.above') : t('ab.below')} {t('ab.mvf2')}
               </div>
             </div>
           )}
@@ -184,6 +181,7 @@ export function AnchorPanel({ data }) {
 }
 
 export function SecondaryList({ data }) {
+  const { lang, t } = useLang()
   const rec = data.valuation?.reconciliation
   if (!rec?.method_roles) return null
   const ran = (data.valuation.ran || []).filter((m) => !m.no_value)
@@ -194,7 +192,7 @@ export function SecondaryList({ data }) {
   if (!secs.length) return null
   return (
     <div className="sec-list">
-      <div className="sec-list-h">SEKUNDARNE METODE — ZAŠTO ODSTUPAJU OD SIDRA</div>
+      <div className="sec-list-h">{t('ab.secondaryH')}</div>
       {secs.map((m) => {
         const r = rec.method_roles[m.key]
         const dev = r.vs_zone_pct
@@ -202,14 +200,14 @@ export function SecondaryList({ data }) {
           <div className="sec-list-row" key={m.key}>
             <span className="sec-list-name">
               {METHOD_TERM[m.key]
-                ? <Term t={METHOD_TERM[m.key]}>{METHOD_SHORT[m.key] || m.label}</Term>
-                : (METHOD_SHORT[m.key] || m.label)}
+                ? <Term t={METHOD_TERM[m.key]}>{methodShort(m.key, t, tx(m.label, lang))}</Term>
+                : methodShort(m.key, t, tx(m.label, lang))}
             </span>
             <span className="sec-list-val">
               {num(m.base, 2)} €{dev ? ` (${dev > 0 ? '+' : ''}${num(dev * 100, 0)}%)` : ''}
             </span>
             <span className="sec-list-note">
-              {r.role === 'anchor_excluded' ? r.note : r.note}
+              {tx(r.note, lang)}
             </span>
           </div>
         )
@@ -219,16 +217,17 @@ export function SecondaryList({ data }) {
 }
 
 export function Risks({ risks }) {
+  const { lang, t } = useLang()
   if (!risks || !risks.cards.length) return null
   return (
     <>
-      <h3 className="prof-h3" style={{ marginBottom: 4 }}>Rizici i kontekst</h3>
-      <p className="risk-sub">{risks.note}</p>
+      <h3 className="prof-h3" style={{ marginBottom: 4 }}>{t('ab.risksH')}</h3>
+      <p className="risk-sub">{tx(risks.note, lang)}</p>
       <div className="risk-grid">
         {risks.cards.map((c) => (
           <div className="risk-card" key={c.l}>
-            <div className="risk-l">{c.l}</div>
-            <div className="risk-t">{c.txt}</div>
+            <div className="risk-l">{tx(c.l, lang)}</div>
+            <div className="risk-t">{tx(c.txt, lang)}</div>
           </div>
         ))}
       </div>
@@ -238,6 +237,7 @@ export function Risks({ risks }) {
 
 /* graf financija po dizajnu: prihod = obrisi barova (steel), EBITDA = linija (borova) */
 export function FinChart({ trend }) {
+  const { lang, t } = useLang()
   if (!trend || !trend.series.length) return null
   const s = trend.series
   const vals = s.flatMap((r) => [r.revenue, r.ebitda]).filter((v) => v !== null)
@@ -251,10 +251,10 @@ export function FinChart({ trend }) {
   return (
     <div className="prof-panel" style={{ marginBottom: 0 }}>
       <div className="prof-panel-head">
-        <span className="prof-klabel">{trend.revenue_label.toUpperCase()} I EBITDA · MLN €</span>
+        <span className="prof-klabel">{tx(trend.revenue_label, lang).toUpperCase()} {t('ab.andEbitdaMln')}</span>
         <span className="prof-legend" style={{ fontSize: 10 }}>
           <i style={{ display: 'inline-block', width: 12, height: 8,
-            background: 'rgba(47,93,134,0.28)', border: `1px solid ${STEEL}` }} /> {trend.revenue_label.toLowerCase()}
+            background: 'rgba(47,93,134,0.28)', border: `1px solid ${STEEL}` }} /> {tx(trend.revenue_label, lang).toLowerCase()}
           <i style={{ display: 'inline-block', width: 14, height: 2, background: PINE, marginLeft: 8 }} /> <Term t="EBITDA">EBITDA</Term>
         </span>
       </div>
@@ -284,7 +284,7 @@ export function FinChart({ trend }) {
         ))}
       </svg>
       <div className="prof-panel-note" style={{ borderTop: '1px solid rgba(38,46,51,0.15)', paddingTop: 10 }}>
-        {trend.narration}
+        {tx(trend.narration, lang)}
       </div>
     </div>
   )

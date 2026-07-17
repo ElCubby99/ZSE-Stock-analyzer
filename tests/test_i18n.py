@@ -35,6 +35,9 @@ I18N_CLEAN = [
     "src/MethodologyNote.jsx",
     "src/VerdictSpread.jsx",
     "src/MarketProfile.jsx",
+    "src/AnalysisBlocks.jsx",
+    "src/consent.jsx",
+    "src/StockPage.jsx",
     "src/i18n/LangContext.jsx",
 ]
 
