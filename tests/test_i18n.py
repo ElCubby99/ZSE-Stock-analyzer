@@ -187,9 +187,61 @@ def test_data_tekstovi_pokriveni():
         strings.update((gp.get("levels_hr") or {}).values())
         if (d.get("news") or {}).get("note"):
             strings.add(d["news"]["note"])
-        ps = ((d.get("valuation") or {}).get("params") or {}).get("sources") or {}
+        v = d.get("valuation") or {}
+        ps = (v.get("params") or {}).get("sources") or {}
         if ps.get("peers"):
             strings.add(ps["peers"])
+        # ---- StockPage familija: svi templatirani podatkovni tekstovi ----
+        def _add(*vals):
+            for x in vals:
+                if x:
+                    strings.add(str(x))
+        tr = d.get("trend") or {}
+        _add(tr.get("narration"), tr.get("note"), tr.get("revenue_label"))
+        f3 = d.get("financials_3y") or {}
+        _add(f3.get("note"), *[r["label"] for r in f3.get("rows") or []])
+        b = d.get("balance") or {}
+        lev = b.get("leverage") or {}
+        _add(b.get("leverage_note"), lev.get("components_note"),
+             lev.get("current_ratio_note"))
+        segrec = (d.get("segments") or {}).get("reconciliation") or {}
+        _add(segrec.get("note"), segrec.get("revenue_note"))
+        bk = d.get("bank_kpi") or {}
+        _add(bk.get("note"), *[k.get("label") for k in bk.get("kpis") or []])
+        _add(*[k.get("basis") for k in bk.get("kpis") or []])
+        own = d.get("ownership") or {}
+        t10 = own.get("top10") or {}
+        _add(own.get("note"), own.get("liquidity_link"),
+             t10.get("source_label"), t10.get("prev_source_label"),
+             t10.get("note"), t10.get("custody_note"))
+        m = d.get("metrics") or {}
+        _add(m.get("basis_note"), m.get("dps_label"))
+        for meth in (v.get("ran") or []) + (v.get("skipped") or []):
+            _add(meth.get("label"), meth.get("reason"))
+        for fl in v.get("assumption_flags") or []:
+            _add(fl.get("label"), fl.get("why"), fl.get("status"))
+        vb = v.get("value_vs_book") or {}
+        _add(vb.get("title"), vb.get("plain"))
+        rec = v.get("reconciliation") or {}
+        _add(rec.get("zone_note"))
+        ds_ = rec.get("dividend_sanity") or {}
+        _add(ds_.get("g_source"), ds_.get("verdict"))
+        mi = rec.get("market_implied") or {}
+        _add(mi.get("implied_g_note"), mi.get("implied_r_note"), mi.get("narrative"))
+        gr = (v.get("params") or {}).get("growth") or {}
+        _add(gr.get("origin"), *(gr.get("badges") or []))
+        sotp = v.get("sotp") or {}
+        _add(sotp.get("identity_note"), sotp.get("holding_discount_reason"),
+             (sotp.get("market_check") or {}).get("note"),
+             (sotp.get("net_cash") or {}).get("basis"),
+             *[r.get("item") for r in sotp.get("identity") or []],
+             *(sotp.get("missing") or []))
+        risks = d.get("risks") or {}
+        _add(risks.get("note"), *[c.get("l") for c in risks.get("cards") or []])
+        _add(*[c.get("txt") for c in risks.get("cards") or []])
+        liq = d.get("liquidity") or {}
+        _add(liq.get("note"), *[c.get("note") for c in liq.get("classes") or []])
+        _add(d.get("data_note"), d.get("mar_note"))
     assert len(strings) > 100, f"sumnjivo malo podatkovnih tekstova ({len(strings)})"
     script = (
         "import { readFileSync } from 'fs';"
