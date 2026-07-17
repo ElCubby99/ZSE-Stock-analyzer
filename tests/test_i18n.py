@@ -23,6 +23,7 @@ SITE = "https://www.burzovnilist.com"
 I18N_CLEAN = [
     "src/Financije.jsx",
     "src/Vijesti.jsx",
+    "src/Dividende.jsx",
     "src/i18n/LangContext.jsx",
 ]
 
