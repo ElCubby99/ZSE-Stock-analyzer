@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """M-FOND: frontend/public/data/fondovi.json — vrijednosti jedinica OMF-ova
-s prinosima (YTD/1g/3g/5g IZ POVIJESTI jedinica; bez podataka -> null i
-poštena napomena) + Mirex + SINERGIJA s našim podacima o dioničarima:
-u kojim se ZSE top-10 popisima pojavljuju OMF-ovi (iz shareholders tablice,
-matching pravila u src/pension_funds.py). BEZ rangiranja fondova —
-redoslijed je abecedni po obitelji pa kategoriji."""
+s prinosima (YTD/1g/3g/5g/10g IZ POVIJESTI jedinica; bez podataka -> null i
+poštena napomena) + Mirex (isti set prinosa) + SINERGIJA s našim podacima o
+dioničarima: u kojim se ZSE top-10 popisima pojavljuju OMF-ovi (iz
+shareholders tablice, matching pravila u src/pension_funds.py). BEZ
+rangiranja fondova — redoslijed je abecedni po obitelji pa kategoriji.
+
+M-FOND2: + fondovi_series.json za graf usporedbe — po seriji (12 OMF + 3
+Mirex) mjesečne točke CIJELE povijesti (zadnja vrijednost u mjesecu) i
+dnevne točke zadnjih ~400 dana; frontend bira granulaciju po rasponu.
+Ništa se ne interpolira — samo stvarne objavljene vrijednosti."""
 import datetime as dt
 import json
 import pathlib
@@ -17,6 +22,7 @@ from src.pension_funds import CATEGORIES, FUNDS, ensure_tables, match_omf  # noq
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "frontend" / "public" / "data" / "fondovi.json"
+OUT_SERIES = ROOT / "frontend" / "public" / "data" / "fondovi_series.json"
 
 
 def _return(series, years):
@@ -47,8 +53,37 @@ def _ytd(series):
     return (last_v / prev - 1) if prev else None
 
 
+def _returns(series):
+    """Standardni set prinosa iz povijesti (None gdje serija ne seže)."""
+    return {
+        "ytd": _ytd(series), "y1": _return(series, 1),
+        "y3": _return(series, 3), "y5": _return(series, 5),
+        "y10": _return(series, 10),
+    }
+
+
+def _monthly(series):
+    """Zadnja vrijednost u svakom mjesecu (za dugačke raspone grafa)."""
+    out = []
+    for d, v in series:
+        key = (d.year, d.month)
+        if out and out[-1][0] == key:
+            out[-1] = (key, d, v)
+        else:
+            out.append((key, d, v))
+    return [[d.isoformat(), round(v, 4)] for _, d, v in out]
+
+
+def _daily_tail(series, days=400):
+    """Dnevne točke zadnjih ~400 dana (za YTD/1g raspon grafa)."""
+    if not series:
+        return []
+    cut = series[-1][0] - dt.timedelta(days=days)
+    return [[d.isoformat(), round(v, 4)] for d, v in series if d >= cut]
+
+
 def main() -> int:
-    units, mirex, synergy = [], [], []
+    units, mirex, synergy, chart_series = [], [], [], []
     with get_conn() as conn, conn.cursor() as cur:
         ensure_tables(conn)
         for fund in sorted(FUNDS):
@@ -65,9 +100,14 @@ def main() -> int:
                     "fund": fund, "category": cat,
                     "unit_value": last[1] if last else None,
                     "value_date": last[0].isoformat() if last else None,
-                    "ytd": _ytd(series), "y1": _return(series, 1),
-                    "y3": _return(series, 3), "y5": _return(series, 5),
+                    **_returns(series),
                 })
+                if series:
+                    chart_series.append({
+                        "id": f"{fund}-{cat}", "fund": fund, "category": cat,
+                        "kind": "omf", "m": _monthly(series),
+                        "d": _daily_tail(series),
+                    })
         for cat in CATEGORIES:
             cur.execute("""SELECT value_date, value::float FROM mirex
                            WHERE category=%s ORDER BY value_date""", (cat,))
@@ -75,7 +115,12 @@ def main() -> int:
             mirex.append({"category": cat,
                           "value": s[-1][1] if s else None,
                           "value_date": s[-1][0].isoformat() if s else None,
-                          "ytd": _ytd(s)})
+                          **_returns(s)})
+            if s:
+                chart_series.append({
+                    "id": f"MIREX-{cat}", "fund": "Mirex", "category": cat,
+                    "kind": "mirex", "m": _monthly(s), "d": _daily_tail(s),
+                })
 
         # sinergija: zadnji snapshot top-10 po firmi -> OMF-ovi u njemu
         cur.execute(
@@ -108,8 +153,17 @@ def main() -> int:
                    "činjenični prikaz, nije investicijski savjet."),
     }
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    series_out = {
+        "as_of": max((s["m"][-1][0] for s in chart_series), default=None),
+        "note": ("Stvarne objavljene vrijednosti (HANFA), bez interpolacije; "
+                 "m = zadnja vrijednost u mjesecu, d = dnevne točke ~400 dana."),
+        "series": chart_series,
+    }
+    OUT_SERIES.write_text(json.dumps(series_out, ensure_ascii=False),
+                          encoding="utf-8")
     print(f"[fondovi] jedinice: {'DA' if has_units else 'čeka prvi HANFA uvoz'}, "
-          f"sinergija: {len(synergy)} OMF pozicija u top-10 -> {OUT}")
+          f"sinergija: {len(synergy)} OMF pozicija u top-10 -> {OUT}; "
+          f"graf: {len(chart_series)} serija -> {OUT_SERIES}")
     return 0
 
 

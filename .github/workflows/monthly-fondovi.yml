@@ -41,15 +41,17 @@ jobs:
           NOVO=$(python -m src.pension_funds | grep -oE 'novo: [0-9]+' | grep -oE '[0-9]+')
           echo "novo=$NOVO" >> "$GITHUB_OUTPUT"
           echo "novih zapisa: $NOVO"
+      # ručni dispatch UVIJEK regenerira (npr. nova struktura exporta) —
+      # inače samo kad uvoz nađe nove HANFA zapise
       - name: Regen fondovi.json + commit (samo ako ima novih podataka)
-        if: steps.uvoz.outputs.novo != '0'
+        if: steps.uvoz.outputs.novo != '0' || github.event_name == 'workflow_dispatch'
         env:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
         run: |
           python -m scripts.build_fondovi
           git config user.name "monthly-fondovi bot"
           git config user.email "noreply@burzovnilist.com"
-          git add frontend/public/data/fondovi.json
+          git add frontend/public/data/fondovi.json frontend/public/data/fondovi_series.json
           if git diff --cached --quiet; then echo "bez promjena"; exit 0; fi
           git commit -m "Fondovi $(date +%Y-%m): HANFA mjesečni uvoz [skip ci]"
           for i in 1 2 3 4; do
