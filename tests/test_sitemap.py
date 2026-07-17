@@ -87,6 +87,8 @@ def test_sitemap_nema_mrtvih_ni_noindex_urlova(dist):
 
 FOOTER_LINKS = ["/impressum", "/politika-privatnosti", "/uvjeti-koristenja",
                 "/politika-kolacica"]
+# M38: EN stranice nose EN pravne linkove (impressum ostaje zajednički)
+FOOTER_LINKS_EN = ["/impressum", "/en/privacy", "/en/terms", "/en/cookies"]
 TABLE_ROUTES = {  # ruta -> minimalan broj redaka podataka
     f"{SITE}/screener": 60,
     f"{SITE}/usporedba": 60,
@@ -133,7 +135,8 @@ def test_content_markeri_nijedna_ruta_nije_prazna_ljuska(dist):
             problems.append(f"{url}: samo {len(text)} znakova teksta (< {need})")
         if "<h1>" not in html:
             problems.append(f"{url}: nema <h1>")
-        for link in FOOTER_LINKS:
+        is_en = url.startswith(f"{SITE}/en")
+        for link in (FOOTER_LINKS_EN if is_en else FOOTER_LINKS):
             if f'href="{link}"' not in html:
                 problems.append(f"{url}: footer bez {link}")
         rows_min = TABLE_ROUTES.get(url)

@@ -8,3 +8,16 @@ export const SECTOR_HR = {
   transport: 'Promet', construction: 'Graditeljstvo', real_estate: 'Nekretnine',
   other: 'Ostalo',
 }
+
+/* M38: engleski nazivi sektora — isti ključevi kao SECTOR_HR */
+export const SECTOR_EN = {
+  holding: 'Holding', insurance: 'Insurance', tourism: 'Tourism',
+  consumer: 'Consumer', industrial: 'Industrials', bank: 'Bank',
+  telecom: 'Telecommunications', technology: 'Technology', energy: 'Energy',
+  shipping: 'Shipping', aquaculture: 'Aquaculture', fund: 'Fund (closed-end)',
+  transport: 'Transport', construction: 'Construction', real_estate: 'Real estate',
+  other: 'Other',
+}
+
+export const sectorLabel = (key, lang) =>
+  ((lang === 'en' ? SECTOR_EN : SECTOR_HR)[key]) || key || null

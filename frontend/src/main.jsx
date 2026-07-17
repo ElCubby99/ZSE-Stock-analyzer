@@ -5,6 +5,7 @@ import {
 } from 'react-router-dom'
 import StockPage from './StockPage.jsx'
 import FinancijePage from './Financije.jsx'
+import { LangProvider, langFromPath } from './i18n/LangContext.jsx'
 import Alati from './Alati.jsx'
 import Trziste from './Trziste.jsx'
 import Screener from './Screener.jsx'
@@ -40,9 +41,10 @@ function RootLayout() {
     pushEvent('spa_page_view', {
       page_path: loc.pathname,
       page_title: document.title,
+      language: langFromPath(loc.pathname), // M38: GA4 custom dimension
     })
   }, [loc.pathname])
-  return <Outlet />
+  return <LangProvider><Outlet /></LangProvider>
 }
 
 /* SEO higijena: vlastita 404 s linkom na popis dionica (bez redirecta na /) */
@@ -95,11 +97,14 @@ const COMPONENTS = {
   PolitikaPrivatnosti: <PolitikaPrivatnosti />,
 }
 
-const routeChildren = ROUTES.map((r) => {
+const routeChildren = ROUTES.flatMap((r) => {
   if (!COMPONENTS[r.component]) {
     throw new Error(`ruta ${r.path}: komponenta '${r.component}' nije u COMPONENTS mapi (main.jsx)`)
   }
-  return { path: r.path, element: COMPONENTS[r.component] }
+  const out = [{ path: r.path, element: COMPONENTS[r.component] }]
+  // M38: EN par rute iz registryja — isti component, jezik dolazi iz rute
+  if (r.en) out.push({ path: r.en.path, element: COMPONENTS[r.component] })
+  return out
 })
 
 const router = createBrowserRouter([

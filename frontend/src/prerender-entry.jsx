@@ -7,6 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom/server'
 import { ImpressumContent } from './Impressum.jsx'
 import {
+  EnCookiesContent, EnPrivacyContent, EnTermsContent,
   PolitikaKolacicaContent, PolitikaPrivatnostiContent, UvjetiKoristenjaContent,
 } from './Legal.jsx'
 
@@ -15,6 +16,10 @@ const CONTENT = {
   '/uvjeti-koristenja': UvjetiKoristenjaContent,
   '/politika-privatnosti': PolitikaPrivatnostiContent,
   '/politika-kolacica': PolitikaKolacicaContent,
+  // M38: engleske pravne stranice (pun prijevod + prevails klauzula)
+  '/en/terms': EnTermsContent,
+  '/en/privacy': EnPrivacyContent,
+  '/en/cookies': EnCookiesContent,
 }
 
 export function renderStatic(route) {
