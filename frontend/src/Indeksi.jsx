@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import { num } from './format.js'
+import { useLang } from './i18n/LangContext.jsx'
+import { t as tGlobal } from './i18n/strings.mjs'
 
 /* M-IDX: /indeksi (kartice svih ZSE indeksa + temperatura tržišta) i
    /indeks/<slug> (graf + sastavnice s težinama). Podaci: /data/indeksi.json
@@ -86,7 +88,7 @@ export function IndexChart({ series, label }) {
       </svg>
       <div className="prof-panel-foot">
         <span>{fmtHr(clipped[0].date)} – {fmtHr(last.date)}</span>
-        <span className="prof-legend">službene ZSE vrijednosti (EOD)</span>
+        <span className="prof-legend">{tGlobal('idx.legendOfficial', document.documentElement.lang || 'hr')}</span>
       </div>
     </div>
   )
@@ -110,51 +112,53 @@ function Sparkline({ series }) {
 
 /* Temperatura tržišta — stacked bar u gramatici fer-zona prikaza */
 export function TemperatureBar({ t }) {
+  const { lang, t: tr } = useLang()
   if (!t || !t.total) return null
   const seg = (n, col) => (n > 0
     ? <div style={{ flex: n, background: col, minWidth: 2 }} /> : null)
   const pctTxt = (n) => `${Math.round((n / t.total) * 100)} %`
   return (
     <div className="idx-temp">
-      <div className="sec-label">Temperatura tržišta · sastavnice {t.index}-a naspram fer-zona</div>
+      <div className="sec-label">{tr('idx.tempTitle')} {t.index} {tr('idx.tempVsZones')}</div>
       <div className="idx-temp-bar" role="img"
-        aria-label={`${t.above} iznad, ${t.inside} u zoni, ${t.below} ispod fer-zone`}>
+        aria-label={`${t.above} ${tr('idx.above')}, ${t.inside} ${tr('idx.inside')}, ${t.below} ${tr('idx.below')}`}>
         {seg(t.above, 'rgba(158,43,37,0.75)')}
         {seg(t.inside, 'rgba(31,110,90,0.55)')}
         {seg(t.below, 'rgba(47,93,134,0.65)')}
         {seg(t.np, 'rgba(38,46,51,0.15)')}
       </div>
       <div className="idx-temp-leg">
-        <span><i style={{ background: 'rgba(158,43,37,0.75)' }} /> iznad zone: {t.above} ({pctTxt(t.above)})</span>
-        <span><i style={{ background: 'rgba(31,110,90,0.55)' }} /> u zoni: {t.inside} ({pctTxt(t.inside)})</span>
-        <span><i style={{ background: 'rgba(47,93,134,0.65)' }} /> ispod zone: {t.below} ({pctTxt(t.below)})</span>
-        {t.np > 0 && <span><i style={{ background: 'rgba(38,46,51,0.15)' }} /> n/p: {t.np}</span>}
+        <span><i style={{ background: 'rgba(158,43,37,0.75)' }} /> {tr('idx.above')}: {t.above} ({pctTxt(t.above)})</span>
+        <span><i style={{ background: 'rgba(31,110,90,0.55)' }} /> {tr('idx.inside')}: {t.inside} ({pctTxt(t.inside)})</span>
+        <span><i style={{ background: 'rgba(47,93,134,0.65)' }} /> {tr('idx.below')}: {t.below} ({pctTxt(t.below)})</span>
+        {t.np > 0 && <span><i style={{ background: 'rgba(38,46,51,0.15)' }} /> {tr('common.na')}: {t.np}</span>}
       </div>
-      <p className="fund-src">{t.note}.</p>
+      {lang !== 'en' && <p className="fund-src">{t.note}.</p>}
     </div>
   )
 }
 
 export function IndeksiIndex() {
   const d = useIndeksi()
-  useEffect(() => { document.title = 'Indeksi Zagrebačke burze · Burzovni list' }, [])
+  const { lang, t } = useLang()
+  useEffect(() => { document.title = `${t('idx.title')} · Burzovni list` }, [lang])
   return (
     <div className="shellpg">
       <SiteHeader />
       <main className="wrap-wide">
-        <div className="mk-title"><h1>Indeksi Zagrebačke burze</h1>
-          <span>službene vrijednosti · ažurira se nakon zatvaranja trgovine (16:00)</span></div>
-        {!d ? <div className="loading">učitavam…</div> : (
+        <div className="mk-title"><h1>{t('idx.title')}</h1>
+          <span>{t('idx.subtitle')}</span></div>
+        {!d ? <div className="loading">{t('common.loading')}</div> : (
           <>
             <TemperatureBar t={d.temperature} />
             <div className="idx-grid">
               {d.indices.map((ix) => (
-                <Link to={`/indeks/${ix.slug}`} key={ix.slug} className="idx-card">
+                <Link to={lang === 'en' ? `/en/index/${ix.slug}` : `/indeks/${ix.slug}`} key={ix.slug} className="idx-card">
                   <div className="prof-klabel">{ix.name}</div>
                   <div className="mk-idx-v">{num(ix.value, 2)}</div>
                   <Sparkline series={ix.series} />
                   <div className="idx-card-rows mono">
-                    <span style={{ color: chgCol(ix.change_pct) }}>dan {chg(ix.change_pct)}</span>
+                    <span style={{ color: chgCol(ix.change_pct) }}>{t('idx.day')} {chg(ix.change_pct)}</span>
                     <span style={{ color: chgCol(ix.ytd_pct) }}>YTD {chg(ix.ytd_pct)}</span>
                     <span style={{ color: chgCol(ix.y1_pct) }}>1g {chg(ix.y1_pct)}</span>
                   </div>
@@ -163,8 +167,7 @@ export function IndeksiIndex() {
               ))}
             </div>
             <div className="disc" style={{ marginTop: 28 }}>
-              Informativni prikaz službenih vrijednosti indeksa — nije
-              investicijski savjet ni preporuka.
+              {t('idx.disc')} {t('common.notAdvice')}
             </div>
           </>
         )}
@@ -177,60 +180,61 @@ export function IndeksiIndex() {
 export function IndeksDetail() {
   const { slug } = useParams()
   const d = useIndeksi()
+  const { lang, t } = useLang()
   const ix = d?.indices?.find((x) => x.slug === slug)
   useEffect(() => {
-    if (ix) document.title = `${ix.name} danas — vrijednost, sastav i povijest · Burzovni list`
-  }, [ix])
+    if (ix) document.title = `${ix.name} — ${t('idx.detailSubtitle')} · Burzovni list`
+  }, [ix, lang])
   return (
     <div className="shellpg">
       <SiteHeader />
       <main className="wrap-wide">
-        {!d ? <div className="loading">učitavam…</div>
+        {!d ? <div className="loading">{t('common.loading')}</div>
           : !ix ? (
-            <section><div className="mk-title"><h1>Indeks nije pronađen</h1></div>
-              <p className="imp-p"><Link to="/indeksi">← svi indeksi</Link></p></section>
+            <section><div className="mk-title"><h1>{t('idx.notFound')}</h1></div>
+              <p className="imp-p"><Link to={lang === 'en' ? '/en/indices' : '/indeksi'}>← {t('idx.allIndices')}</Link></p></section>
           ) : (
             <>
               <div className="mk-title">
-                <h1>{ix.name} — vrijednost, sastav i povijest</h1>
-                <span>{ix.description} · službeni EOD za {fmtHr(ix.date)}</span>
+                <h1>{ix.name} — {t('idx.detailSubtitle')}</h1>
+                <span>{lang === 'en' ? '' : `${ix.description} · `}{t('idx.officialEodFor')} {fmtHr(ix.date)}</span>
               </div>
               <div className="mk-idx" style={{ marginBottom: 16 }}>
                 <div className="mk-idx-c">
-                  <div className="prof-klabel">VRIJEDNOST</div>
+                  <div className="prof-klabel">{t('idx.value')}</div>
                   <div className="mk-idx-v">{num(ix.value, 2)}</div>
                   <div className="mono" style={{ color: chgCol(ix.change_pct), fontSize: 12 }}>{chg(ix.change_pct)}</div>
                 </div>
                 <div className="mk-idx-c"><div className="prof-klabel">YTD</div>
                   <div className="mk-idx-v" style={{ color: chgCol(ix.ytd_pct) }}>{chg(ix.ytd_pct)}</div></div>
-                <div className="mk-idx-c"><div className="prof-klabel">1 GODINA</div>
+                <div className="mk-idx-c"><div className="prof-klabel">{t('idx.oneYear')}</div>
                   <div className="mk-idx-v" style={{ color: chgCol(ix.y1_pct) }}>{chg(ix.y1_pct)}</div></div>
               </div>
-              <IndexChart series={ix.series} label={`${ix.name} · VRIJEDNOST`} />
+              <IndexChart series={ix.series} label={`${ix.name} · ${t('idx.value')}`} />
               {ix.constituents?.length > 0 && (
                 <section style={{ marginTop: 24 }}>
-                  <div className="sec-label">Sastavnice ({ix.constituents.length})
-                    {ix.constituents[0]?.as_of ? ` · stanje ${fmtHr(ix.constituents[0].as_of)}` : ''}</div>
+                  <div className="sec-label">{t('idx.constituents')} ({ix.constituents.length})
+                    {ix.constituents[0]?.as_of ? ` · ${t('idx.asOf')} ${fmtHr(ix.constituents[0].as_of)}` : ''}</div>
                   <table>
-                    <thead><tr><th>Ticker</th><th>Naziv</th><th className="r">Težina</th></tr></thead>
+                    <thead><tr><th>{t('common.ticker')}</th><th>{t('idx.colName')}</th><th className="r">{t('idx.colWeight')}</th></tr></thead>
                     <tbody>
                       {ix.constituents.map((c) => (
                         <tr key={c.ticker}>
                           <td>{c.company
-                            ? <Link to={`/dionica/${c.company.toLowerCase()}`}>{c.ticker}</Link>
+                            ? <Link to={lang === 'en' ? `/en/stock/${c.company.toLowerCase()}` : `/dionica/${c.company.toLowerCase()}`}>{c.ticker}</Link>
                             : c.ticker}</td>
                           <td>{c.name}</td>
                           <td className="r mono">{c.weight_pct !== null && c.weight_pct !== undefined
-                            ? `${num(c.weight_pct, 2)} %` : 'n/p'}</td>
+                            ? `${num(c.weight_pct, 2)} %` : t('common.na')}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                  <p className="fund-src">Izvor sastavnica i težina: ZSE (IndexComposition).</p>
+                  <p className="fund-src">{t('idx.constSource')}</p>
                 </section>
               )}
               <div className="disc" style={{ marginTop: 28 }}>
-                Informativni prikaz — nije investicijski savjet ni preporuka.
+                {t('common.notAdvice')}
               </div>
             </>
           )}
