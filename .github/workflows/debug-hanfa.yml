@@ -1,0 +1,23 @@
+# Jednokratni forenzički workflow: ispis stvarne strukture HANFA objava u
+# log (hanfa.hr nije dostupna iz razvojnog okruženja). Bez pisanja u bazu,
+# bez commita — samo čitanje i ispis. Ukloniti kad parser proradi.
+name: debug-hanfa
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install requests openpyxl
+      - run: python scripts/debug_hanfa.py
