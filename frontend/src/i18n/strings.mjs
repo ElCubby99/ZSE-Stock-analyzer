@@ -375,6 +375,64 @@ export const STR = {
     en: 'bond — yield to maturity (YTM), coupon and maturity',
   },
   'fund.title': { hr: 'Mirovinski fondovi (OMF)', en: 'Mandatory pension funds' },
+  'fund.pageTitle': {
+    hr: 'Mirovinski fondovi (OMF) — obračunske jedinice i prinosi',
+    en: 'Pension funds (OMF) — unit values and returns',
+  },
+  'fund.docTitle': {
+    hr: 'Mirovinski fondovi (OMF) — jedinice i prinosi',
+    en: 'Pension funds (OMF) — unit values and returns',
+  },
+  'fund.subtitle': {
+    hr: 'izvor: HANFA javne objave · mjesečni ritam · bez rangiranja (abecedno)',
+    en: 'source: HANFA public releases · monthly cadence · no ranking (alphabetical)',
+  },
+  'fund.category': { hr: 'Kategorija', en: 'Category' },
+  'fund.catLabel': { hr: 'kategorija', en: 'category' },
+  'fund.fund': { hr: 'Fond', en: 'Fund' },
+  'fund.unit': { hr: 'Jedinica', en: 'Unit value' },
+  'fund.date': { hr: 'Datum', en: 'Date' },
+  'fund.awaitingImport': { hr: 'čeka uvoz', en: 'awaiting import' },
+  'fund.compare': { hr: 'usporedba', en: 'benchmark' },
+  'fund.y1': { hr: '1g', en: '1y' },
+  'fund.y3': { hr: '3g', en: '3y' },
+  'fund.y5': { hr: '5g', en: '5y' },
+  'fund.firstImportNote': {
+    hr: 'Prvi mjesečni uvoz HANFA podataka još nije obavljen — vrijednosti jedinica i prinosi pojavit će se nakon prve objave koju sustav povuče.',
+    en: 'The first monthly import of HANFA data has not yet run — unit values and returns will appear after the first release the system pulls.',
+  },
+  'fund.synergyTitle': {
+    hr: 'ZSE dionice s OMF-ovima među top 10 dioničara',
+    en: 'ZSE stocks with pension funds among their top 10 shareholders',
+  },
+  'fund.snapshot': { hr: 'snapshot', en: 'snapshot' },
+  'fund.stock': { hr: 'Dionica', en: 'Stock' },
+  'fund.fundCat': { hr: 'Fond (kategorija)', en: 'Fund (category)' },
+  'fund.share': { hr: 'Udjel', en: 'Stake' },
+  'fund.noPositions': {
+    hr: 'nema OMF pozicija u dostupnim top-10 popisima',
+    en: 'no pension-fund positions in the available top-10 lists',
+  },
+  'fund.synergySrc': {
+    hr: 'Iz naših podataka o top 10 dioničara (ZSE/SKDD snapshoti); pravila prepoznavanja OMF računa dokumentirana su u izvorima podataka. Zbroj = ukupni udjel svih OMF kategorija u firmi.',
+    en: 'From our top 10 shareholder data (ZSE/SKDD snapshots); the rules for recognising pension-fund accounts are documented in the data sources. Total = combined stake of all OMF categories in the company.',
+  },
+  'fund.disc': {
+    hr: 'Podaci o jedinicama dolaze iz HANFA javnih objava u mjesečnom ritmu; prinosi su izračunati iz povijesti jedinica. Bez rangiranja i bez preporuka — činjenični prikaz. Nije investicijski savjet.',
+    en: 'Unit values come from monthly HANFA public releases; returns are computed from the unit-value history. No ranking and no recommendations — a factual view. Not investment advice.',
+  },
+  'fund.holdersTitle': {
+    hr: 'Mirovinski fondovi među dioničarima',
+    en: 'Pension funds among shareholders',
+  },
+  'fund.holdersSrc': {
+    hr: 'Iz top 10 dioničara (ZSE/SKDD); više na',
+    en: 'From the top 10 shareholders (ZSE/SKDD); more on the',
+  },
+  'fund.fundsPage': {
+    hr: 'stranici mirovinskih fondova',
+    en: 'pension funds page',
+  },
   'news.title': { hr: 'Vijesti', en: 'News' },
   'news.intro': {
     hr: 'Kratke obavijesti o novim izvješćima, dividendama i ažuriranjima analiza — svaka vodi na postojeću stranicu s podacima i izvorima.',

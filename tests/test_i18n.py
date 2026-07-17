@@ -29,6 +29,7 @@ I18N_CLEAN = [
     "src/Usporedba.jsx",
     "src/Indeksi.jsx",
     "src/Obveznice.jsx",
+    "src/MirovinskiFondovi.jsx",
     "src/i18n/LangContext.jsx",
 ]
 
