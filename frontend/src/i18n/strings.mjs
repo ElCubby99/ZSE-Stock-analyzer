@@ -192,6 +192,17 @@ export const STR = {
   'bond.title': { hr: 'Obveznice na Zagrebačkoj burzi', en: 'Bonds on the Zagreb Stock Exchange' },
   'fund.title': { hr: 'Mirovinski fondovi (OMF)', en: 'Mandatory pension funds' },
   'news.title': { hr: 'Vijesti', en: 'News' },
+  'news.intro': {
+    hr: 'Kratke obavijesti o novim izvješćima, dividendama i ažuriranjima analiza — svaka vodi na postojeću stranicu s podacima i izvorima.',
+    en: 'Short notices about new financial reports, dividends and analysis updates — each links to the page with the underlying data and sources.',
+  },
+  'news.empty': {
+    hr: 'Trenutno nema objavljenih vijesti. Vijesti o novim izvješćima i dividendama objavljuju se automatski uz dnevno ažuriranje podataka (radnim danom nakon zatvaranja burze).',
+    en: 'There are no published news items at the moment. News about new reports and dividends is published automatically with the daily data update (business days, after market close).',
+  },
+  'news.notFound': { hr: 'Vijest nije pronađena', en: 'News item not found' },
+  'news.all': { hr: 'sve vijesti', en: 'all news' },
+  'news.dataPage': { hr: 'pogledaj stranicu s podacima', en: 'open the data page' },
   'mkt.temperature': { hr: 'Temperatura tržišta', en: 'Market temperature' },
 
   /* ---------- kategorije vijesti ---------- */

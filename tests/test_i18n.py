@@ -22,6 +22,7 @@ SITE = "https://www.burzovnilist.com"
 # Svaka novokonvertirana komponenta se DODAJE ovdje; cilj je cijeli EN opseg.
 I18N_CLEAN = [
     "src/Financije.jsx",
+    "src/Vijesti.jsx",
     "src/i18n/LangContext.jsx",
 ]
 
