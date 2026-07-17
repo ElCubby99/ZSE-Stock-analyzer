@@ -228,14 +228,14 @@
       {
         "class_ticker": "JDPL",
         "last_trade": {
-          "date": "2026-07-16",
-          "close_eur": 12.9,
-          "volume": 1500.0,
-          "turnover_eur": 19350.0
+          "date": "2026-07-17",
+          "close_eur": 13.0,
+          "volume": 496.0,
+          "turnover_eur": 6448.0
         },
-        "days_since_trade": 1,
+        "days_since_trade": 0,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-16: 1500 kom / 19,350 € prometa (1 d)"
+        "note": "zadnja trgovina 2026-07-17: 496 kom / 6,448 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -395,9 +395,9 @@
       "is_primary": true,
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 5020); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
-        "close_eur": 12.9,
-        "trade_date": "2026-07-16",
-        "volume": 1500.0,
+        "close_eur": 13.0,
+        "trade_date": "2026-07-17",
+        "volume": 496.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -409,14 +409,14 @@
     "dps": null,
     "dps_label": null,
     "shares_ex_treasury": 1636674.0,
-    "market_cap_eur": 21113094.6,
+    "market_cap_eur": 21276762.0,
     "ebitda_eur": 2068376.0,
     "per_class": [
       {
         "class_ticker": "JDPL",
-        "price": 12.9,
+        "price": 13.0,
         "pe": null,
-        "pb": 1.328490304291691,
+        "pb": 1.3387886787435646,
         "div_yield": null,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
@@ -599,11 +599,11 @@
       {
         "class_ticker": "JDPL",
         "last": {
-          "date": "2026-07-16",
-          "close_eur": 12.9
+          "date": "2026-07-17",
+          "close_eur": 13.0
         },
-        "prev_close_eur": 12.3,
-        "change_pct": 0.04878048780487809,
+        "prev_close_eur": 12.9,
+        "change_pct": 0.007751937984496138,
         "high_52w_eur": 14.0,
         "low_52w_eur": 5.6,
         "avg_turnover_20d_eur": 11072.335,
@@ -3381,6 +3381,14 @@
       "volume": 1500.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "JDPL",
+      "trade_date": "2026-07-17",
+      "close_eur": 13.0,
+      "volume": 496.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -3406,7 +3414,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.1151 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b. (v3 FAZA K raspis). rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u. ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede. beta=3.04: SEKTORSKA unlevered 0.9 (Shipbuilding & Marine) relevered s D/E=2.90 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 188/251 trgovanih dana (75%), prosj. promet 3,098 €/dan). sektorske unlevered/levered bete: Damodaran (pages.stern.nyu.edu, Europe, tablica siječanj 2026); TOČAN REDAK NEPROVJEREN (egress 403) — sector_beta_exact_unverified=true. CLAMP: izračunata beta 3.04 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8.",
+        "r": "r=0.1151 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b. (v3 FAZA K raspis). rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u. ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true. CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede. beta=3.02: SEKTORSKA unlevered 0.9 (Shipbuilding & Marine) relevered s D/E=2.88 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 188/247 trgovanih dana (76%), prosj. promet 3,098 €/dan). sektorske unlevered/levered bete: Damodaran (pages.stern.nyu.edu, Europe, tablica siječanj 2026); TOČAN REDAK NEPROVJEREN (egress 403) — sector_beta_exact_unverified=true. CLAMP: izračunata beta 3.02 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8.",
         "rf": "rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos 16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR 10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u",
         "erp": "ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje — CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki count). TOČAN REDAK NEPROVJEREN (egress 403) — erp_exact_unverified=true",
         "crp": "CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala komponenta primjerena investment-grade eurozoni — Moody's A3 (stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz metodologije v3; ručni unos 16.07.2026 — crp_exact_unverified=true. Dodaje se ravno na r (ne množi se betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede",
@@ -3584,7 +3592,7 @@
       "qa_flags": [
         "metode se međusobno razilaze 592% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": -15.3,
+      "vs_market_pct": -14.7,
       "anchor_inconsistency": [],
       "reasoning": "Sidro nije dostupno — vidi preskočene metode i razloge.",
       "red_rules": [],
@@ -3656,37 +3664,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.37234042553191493,
+            "v": 0.30000000000000004,
             "unit": "%",
-            "basis": "EOD do 2026-07-16",
+            "basis": "EOD do 2026-07-17",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.7432432432432432,
+            "v": 0.7567567567567566,
             "unit": "%",
-            "basis": "EOD do 2026-07-16",
+            "basis": "EOD do 2026-07-17",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": 1.047619047619048,
+            "v": 1.08,
             "unit": "%",
-            "basis": "EOD do 2026-07-16",
+            "basis": "EOD do 2026-07-17",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
-            "v": 1.0975609756097562,
+            "v": 1.113821138211382,
             "unit": "%",
-            "basis": "EOD do 2026-07-16",
+            "basis": "EOD do 2026-07-17",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": 0.7793103448275862,
+            "v": 0.7105263157894737,
             "unit": "%",
-            "basis": "EOD do 2026-07-16",
+            "basis": "EOD do 2026-07-17",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
@@ -3719,7 +3727,7 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": 21113094.6,
+            "v": 21276762.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase",
@@ -3727,7 +3735,7 @@
           },
           {
             "k": "EV",
-            "v": 81018514.6,
+            "v": 81182182.0,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
             "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli",
@@ -3735,7 +3743,7 @@
           },
           {
             "k": "EV/Prihod",
-            "v": 3.0000430500369846,
+            "v": 3.006103507307916,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / Prihod",
@@ -3743,7 +3751,7 @@
           },
           {
             "k": "EV/EBITDA",
-            "v": 22.660613637844754,
+            "v": 22.706390874502596,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBITDA",
@@ -3767,7 +3775,7 @@
           },
           {
             "k": "P/S",
-            "v": 0.7817989879501369,
+            "v": 0.7878594452210682,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / prihod",
@@ -3807,7 +3815,7 @@
           },
           {
             "k": "P/B",
-            "v": 1.270225777664618,
+            "v": 1.2800724891193824,
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)",
