@@ -51,10 +51,14 @@ def _fmt_amount(v) -> str:
 
 
 def collect_filing_news(cur, date_from: date) -> list[dict]:
+    # fiscal_year gate: povijesni BACKFILL (M35: FY2022-2024 unatrag) ima
+    # svjež ingested_at, ali NIJE novost — vijest "novo izvješće" smije
+    # nastati samo za tekuću i prošlu fiskalnu godinu
     cur.execute(
         """SELECT f.id, c.ticker, c.name, f.fiscal_year, f.period_type
            FROM filings f JOIN companies c ON c.id = f.company_id
            WHERE f.doc_type = 'financial_report' AND f.ingested_at >= %s
+             AND f.fiscal_year >= EXTRACT(YEAR FROM CURRENT_DATE)::int - 1
            ORDER BY f.ingested_at""", (date_from,))
     items = []
     for fid, ticker, name, fy, period in cur.fetchall():
@@ -79,6 +83,9 @@ def collect_dividend_news(cur, date_from: date) -> list[dict]:
            FROM dividends d JOIN companies c ON c.id = d.company_id
            WHERE d.created_at >= %s AND d.amount_eur IS NOT NULL
              AND (d.div_type IS NULL OR d.div_type NOT ILIKE '%%izvedeno%%')
+             AND COALESCE(d.fiscal_year,
+                          EXTRACT(YEAR FROM CURRENT_DATE)::int)
+                 >= EXTRACT(YEAR FROM CURRENT_DATE)::int - 1
            ORDER BY d.created_at""", (date_from,))
     items = []
     for did, ticker, name, amount in cur.fetchall():

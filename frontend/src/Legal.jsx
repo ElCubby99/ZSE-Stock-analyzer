@@ -8,7 +8,7 @@ import { CONSENT_VERSION, useConsent } from './consent.jsx'
    bez pristanka na kolačiće. Tablica kolačića odražava STVARNO stanje
    (bl_consent, sb-* auth, lastTicker; analitika još nije uvedena). */
 
-const UPDATED = '15.07.2026.'
+const UPDATED = '17.07.2026.'
 
 function LegalPage({ title, children }) {
   useEffect(() => { document.title = `${title} · Burzovni list` }, [title])
@@ -72,6 +72,7 @@ export function PolitikaKolacicaContent({ openSettings }) {
 
       <section>
         <div className="sec-label">Tablica kolačića i lokalne pohrane</div>
+        <div className="mk-scroll">
         <table>
           <thead><tr><th>Naziv</th><th>Svrha</th><th>Kategorija</th>
             <th>Trajanje</th><th>Prva/treća strana</th></tr></thead>
@@ -87,6 +88,7 @@ export function PolitikaKolacicaContent({ openSettings }) {
             ))}
           </tbody>
         </table>
+        </div>
         <p className="imp-p" style={{ marginTop: 10 }}>
           <b>Analitika (Google Tag Manager uz Google Consent Mode v2)</b>:
           prije vašeg pristanka svi su načini pohrane postavljeni na
@@ -301,9 +303,11 @@ export function PolitikaPrivatnostiContent() {
         <div className="sec-label">Obrađivači i lokacija obrade</div>
         <p className="imp-p"><b>Supabase</b> — autentikacija korisničkih
         računa i baza portfelja; projekt je smješten u regiji{' '}
-        <b>eu-central-1 (Frankfurt, EU)</b>. <b>Hostinger</b> — najam
-        poslužitelja (VPS) na kojem se stranica poslužuje i na kojem nastaju
-        server logovi; obrada unutar EU/EEA. <b>Google</b> (Google Ireland
+        <b>eu-central-1 (Frankfurt, EU)</b>. <b>Vercel Inc.</b> (SAD) —
+        hosting i posluživanje stranice preko globalne CDN mreže; kod
+        Vercela nastaju server logovi. Prijenos podataka u SAD temelji se
+        na EU–US okviru za privatnost podataka (Data Privacy Framework) i
+        standardnim ugovornim klauzulama. <b>Google</b> (Google Ireland
         Ltd.) — web analitika kroz Google Tag Manager, isključivo uz vašu
         privolu; Google može podatke obrađivati i izvan EU/EEA na temelju
         EU–US okvira za privatnost podataka (Data Privacy Framework) i

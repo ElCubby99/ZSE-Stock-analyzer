@@ -65,7 +65,10 @@ export function VijestiIndex() {
         ažuriranjima analiza — svaka vodi na postojeću stranicu s podacima i
         izvorima. <XFollow /></p>
         {items === null ? <div className="loading">učitavam…</div>
-          : !items.length ? <div className="prof-empty-box">Trenutno nema objavljenih vijesti.</div>
+          : !items.length ? <div className="prof-empty-box">Trenutno nema
+            objavljenih vijesti. Vijesti o novim izvješćima i dividendama
+            objavljuju se automatski uz dnevno ažuriranje podataka (radnim
+            danom nakon zatvaranja burze).</div>
             : [...byDay.entries()].map(([day, list]) => (
               <section key={day}>
                 <div className="sec-label">{fmtDay(day)}</div>

@@ -49,6 +49,7 @@ export default function MirovinskiFondovi() {
             {['A', 'B', 'C'].map((cat) => (
               <section key={cat} style={{ marginTop: 14 }}>
                 <div className="sec-label">Kategorija {cat}</div>
+                <div className="mk-scroll">
                 <table>
                   <thead><tr><th>Fond</th><th className="num">Jedinica</th>
                     <th className="num">YTD</th><th className="num">1g</th>
@@ -81,6 +82,7 @@ export default function MirovinskiFondovi() {
                     })()}
                   </tbody>
                 </table>
+                </div>
               </section>
             ))}
             {!d.units_available && (

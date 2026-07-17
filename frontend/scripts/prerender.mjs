@@ -21,7 +21,10 @@ import { SECTOR_HR } from '../src/sectorLabels.mjs'
 import { renderStatic } from '../dist-ssr/prerender-entry.js'
 
 const DIST = path.resolve(process.cwd(), 'dist')
-const SITE = 'https://burzovnilist.com'
+// Kanonska domena je www (site se i poslužuje na www; non-www 308-a na www) —
+// canonical/sitemap/robots MORAJU biti na istoj varijanti, inače crawl put
+// ide kroz nepotrebnu redirekciju i signali se miješaju.
+const SITE = 'https://www.burzovnilist.com'
 
 const template = await fs.readFile(path.join(DIST, 'index.html'), 'utf8')
 const overview = JSON.parse(await fs.readFile(path.join(DIST, 'data/overview.json'), 'utf8'))
@@ -55,7 +58,8 @@ const staticFooter = () => `
     Izvor: ZSE službeni EOD · podaci se ažuriraju nakon zatvaranja burze</p>
   </footer>`
 
-function page({ title, description, canonical, robots, extraHead = '', body = '' }) {
+function page({ title, description, canonical, robots, extraHead = '', body = '',
+  ogType = 'website', published = null, modified = null }) {
   let html = template
   html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
   html = html.replace(/<meta name="description" content="[^"]*" \/>/,
@@ -63,7 +67,12 @@ function page({ title, description, canonical, robots, extraHead = '', body = ''
   const head = [
     `<link rel="canonical" href="${canonical}" />`,
     robots ? `<meta name="robots" content="${robots}" />` : '',
-    `<meta property="og:type" content="website" />`,
+    `<meta property="og:type" content="${ogType}" />`,
+    // og:type=article nosi i datume objave/izmjene (blog i vijesti)
+    ogType === 'article' && published
+      ? `<meta property="article:published_time" content="${esc(published)}" />` : '',
+    ogType === 'article' && (modified || published)
+      ? `<meta property="article:modified_time" content="${esc(modified || published)}" />` : '',
     `<meta property="og:site_name" content="Burzovni list" />`,
     `<meta property="og:title" content="${esc(title)}" />`,
     `<meta property="og:description" content="${esc(description)}" />`,
@@ -230,6 +239,8 @@ for (const p of posts) {
       title: `${post.title} | Burzovni list`,
       description: (post.excerpt || post.title).slice(0, 155),
       canonical,
+      ogType: 'article',
+      published: post.date || null,
       body: `<main><h1>${esc(post.title)}</h1>${post.html || ''}</main>`,
     }))
     urls.push({ loc: canonical, lastmod: post.date || null })
@@ -288,6 +299,8 @@ async function buildNewsPages() {
       title: `${n.headline} | Burzovni list`,
       description: n.headline.slice(0, 155),
       canonical,
+      ogType: 'article',
+      published: n.published_at || null,
       body: `<main><h1>${esc(n.headline)}</h1>${paras}
         <p><a href="${esc(n.link_path)}">Pogledaj stranicu s podacima</a> · <a href="/vijesti">Sve vijesti</a></p></main>`,
     }))
@@ -596,6 +609,23 @@ for (const r of ROUTES) {
   if (r.indexable) urls.push({ loc: canonical, lastmod: eod })
   nStatic += 1
 }
+
+/* ---------- 404.html (pravi HTTP 404 umjesto soft-404) ----------
+   Vercel za putanje bez odgovarajuće statičke datoteke (i bez rewritea)
+   poslužuje dist/404.html sa STATUSOM 404 — nepostojeće rute (npr.
+   /dionica/nepostojeca, /en) više ne vraćaju 200 sa SPA ljuskom.
+   SPA fallback rewrite postoji SAMO za rute s prerender: false u
+   registryju (auth/admin) — vidi frontend/vercel.json. */
+await fs.writeFile(path.join(DIST, '404.html'), page({
+  title: '404 — stranica nije pronađena | Burzovni list',
+  description: 'Tražena stranica ne postoji. Pogledajte popis svih dionica ili naslovnicu.',
+  canonical: `${SITE}/`,
+  robots: 'noindex',
+  body: `<main><h1>404 — stranica nije pronađena</h1>
+    <p>Tražena adresa ne postoji ili je uklonjena.</p>
+    <p><a href="/">Naslovnica</a> · <a href="/screener">Sve dionice</a> ·
+    <a href="/dividende">Dividende</a> · <a href="/metodologija">Metodologija</a></p></main>`,
+}))
 
 /* ---------- sitemap ---------- */
 const sm = `<?xml version="1.0" encoding="UTF-8"?>

@@ -13,7 +13,8 @@ import pytest
 
 FRONT = pathlib.Path("frontend")
 DIST = FRONT / "dist"
-SITE = "https://burzovnilist.com"
+# kanonska domena je www — canonical/sitemap/robots na istoj varijanti
+SITE = "https://www.burzovnilist.com"
 
 
 def test_router_i_prerender_citaju_samo_registry():
@@ -148,3 +149,39 @@ def test_screener_sadrzi_puna_imena_firmi(dist):
     for frag in ("Podravka d.d.", "Zagrebačka banka d.d."):
         assert frag in scr, f"screener bez imena: {frag}"
         assert frag in home, f"naslovnica bez imena: {frag}"
+
+
+# ---------- soft-404 brana: nepostojeće rute moraju vraćati pravi 404 ----------
+
+def test_vercel_bez_catch_all_rewritea_i_spa_rute_pokrivene():
+    """Catch-all rewrite na index.html pretvara SVAKU nepostojeću putanju u
+    HTTP 200 (soft-404). Dopušteni su SAMO rewritei za rute koje se svjesno
+    ne prerenderaju (prerender: false u registryju) — svaka takva ruta mora
+    imati svoj rewrite, i nijedan rewrite ne smije biti catch-all."""
+    import json
+    vj = json.loads((FRONT / "vercel.json").read_text(encoding="utf-8"))
+    rewrites = {r["source"] for r in vj.get("rewrites", [])}
+    assert not any("(.*)" in s or s in ("/:path*", "/(.*)") for s in rewrites), \
+        f"catch-all rewrite vraća soft-404: {rewrites}"
+    registry = (FRONT / "src/routes/registry.mjs").read_text(encoding="utf-8")
+    # rute s prerender: false (nema statičkog HTML-a -> treba SPA fallback)
+    spa_only = re.findall(
+        r"path:\s*['\"]([^'\"]+)['\"][^}]*?prerender:\s*false", registry, re.S)
+    for p in spa_only:
+        assert p in rewrites, \
+            f"ruta {p} (prerender: false) nema rewrite u vercel.json -> 404"
+
+
+def test_404_stranica_generirana(dist):
+    """dist/404.html mora postojati — Vercel je poslužuje sa statusom 404
+    za putanje bez statičke datoteke."""
+    f = dist / "404.html"
+    assert f.exists(), "dist/404.html nedostaje (prerender je ne generira?)"
+    html = f.read_text(encoding="utf-8")
+    assert "noindex" in html and "404" in html
+
+
+def test_robots_sitemap_na_kanonskoj_domeni():
+    robots = (FRONT / "public/robots.txt").read_text(encoding="utf-8")
+    assert f"Sitemap: {SITE}/sitemap.xml" in robots, \
+        "robots.txt mora pokazivati sitemap na kanonskoj (www) domeni"

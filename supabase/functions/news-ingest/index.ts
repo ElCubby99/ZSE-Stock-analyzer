@@ -3,8 +3,12 @@
 // Secret: BLOG_API_KEY (isti kao blog-publish — jedan ključ za agent/pipeline).
 //
 // Pipeline NEMA direktan write pristup bazi — samo ovaj endpoint. Ključ se
-// provjerava PRIJE ičega; service role SAMO unutar functiona. Sve vijesti
-// ulaze kao DRAFT (nikad auto-publish — admin pregledava prije objave).
+// provjerava PRIJE ičega; service role SAMO unutar functiona.
+// Objava: ČINJENIČNE kategorije (novo_izvjesce, dividenda) se objavljuju
+// automatski — sadržaj je deterministički generiran iz službenih objava
+// (naslov + link na stranicu s podacima, bez komentara i bez preporuka),
+// pa /vijesti ne stoji prazan do ručnog pregleda. Slobodne kategorije
+// (opce, promjena_cijene) i dalje ulaze kao DRAFT za admin pregled.
 // Dedup po auto_source_ref (unique indeks): ponovni run istog pipelinea
 // preskače postojeće zapise umjesto da ih duplicira.
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -19,6 +23,8 @@ const json = (status: number, body: unknown) =>
     { status, headers: { ...CORS, "Content-Type": "application/json" } });
 
 const CATEGORIES = ["novo_izvjesce", "dividenda", "promjena_cijene", "opce"];
+// deterministički generirane iz službenih objava -> smiju odmah na /vijesti
+const AUTO_PUBLISH = new Set(["novo_izvjesce", "dividenda"]);
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -66,7 +72,9 @@ Deno.serve(async (req) => {
       link_path,
       source_type: "auto",
       auto_source_ref,
-      status: "draft", // NIKAD auto-publish
+      // činjenične kategorije odmah published; ostalo draft (admin pregled)
+      status: AUTO_PUBLISH.has(category) ? "published" : "draft",
+      published_at: AUTO_PUBLISH.has(category) ? new Date().toISOString() : null,
     });
     if (error) {
       // 23505 = unique violation (utrka s paralelnim runom) -> dedup, ne greška
