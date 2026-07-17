@@ -28,6 +28,7 @@ I18N_CLEAN = [
     "src/Screener.jsx",
     "src/Usporedba.jsx",
     "src/Indeksi.jsx",
+    "src/Obveznice.jsx",
     "src/i18n/LangContext.jsx",
 ]
 
