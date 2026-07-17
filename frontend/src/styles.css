@@ -724,3 +724,57 @@ td.pos{color:var(--zone)} td.neg{color:var(--ordinary)}
 .th-sort{border:none; background:transparent; cursor:pointer; padding:0; text-align:inherit;
   font-family:inherit; font-size:inherit; letter-spacing:inherit; text-transform:inherit; color:inherit}
 .th-sort:hover{color:var(--ink)}
+
+/* ===== M37: tab FINANCIJE (as-reported izvještaji) ===== */
+.fin-crumbs{font-family:"IBM Plex Mono",monospace; font-size:11.5px; margin:4px 0 2px;
+  color:rgba(38,46,51,0.6)}
+.fin-crumbs a{color:var(--steel,#2F5D86); text-decoration:none}
+.fin-controls{display:flex; justify-content:space-between; align-items:center; gap:14px;
+  flex-wrap:wrap; margin:14px 0 6px}
+.fin-subtabs,.fin-kind{display:flex; gap:0; border:1px solid var(--hair-strong)}
+.fin-subtabs button,.fin-kind button{font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+  letter-spacing:.06em; text-transform:uppercase; padding:8px 14px; background:none;
+  border:none; border-right:1px solid var(--hair); cursor:pointer; color:rgba(38,46,51,0.65)}
+.fin-subtabs button:last-child,.fin-kind button:last-child{border-right:none}
+.fin-subtabs button.on,.fin-kind button.on{background:#262E33; color:#FAF7F2}
+.fin-right{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.fin-csv{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.06em;
+  text-transform:uppercase; padding:8px 14px; border:1.5px solid #1F6E5A; color:#1F6E5A;
+  background:none; cursor:pointer}
+.fin-activeview{font-family:"IBM Plex Mono",monospace; font-size:11px;
+  color:rgba(38,46,51,0.55); margin-bottom:10px}
+.fin-table{border-collapse:collapse; min-width:640px; width:100%}
+.fin-table th,.fin-table td{padding:7px 12px; border-bottom:1px solid var(--hair);
+  font-size:13px; white-space:nowrap}
+.fin-table thead th{font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.08em; text-transform:uppercase; text-align:right;
+  border-bottom:2px solid rgba(38,46,51,0.4); vertical-align:bottom}
+.fin-table thead th a{color:var(--steel,#2F5D86); text-decoration:none;
+  border-bottom:1px dotted var(--steel,#2F5D86)}
+.fin-table td.num{font-family:"IBM Plex Mono",monospace; text-align:right;
+  font-variant-numeric:tabular-nums; position:relative}
+.fin-table tr.fin-bold td{font-weight:600}
+.fin-sticky{position:sticky; left:0; background:var(--paper); text-align:left;
+  z-index:1; max-width:270px; white-space:normal !important; min-width:180px}
+.fin-table thead .fin-sticky{text-align:left}
+.fin-unit{font-size:9.5px; letter-spacing:.04em; text-transform:none;
+  color:rgba(38,46,51,0.5); font-weight:400}
+.fin-badge{font-size:9px; letter-spacing:.03em; text-transform:none; color:#B26A16;
+  font-weight:400; margin-top:2px}
+.fin-restate{font-family:"IBM Plex Mono",monospace; font-size:9px; font-weight:700;
+  color:#FAF7F2; background:#B26A16; border:none; border-radius:2px; cursor:pointer;
+  margin-left:5px; padding:0 4px; line-height:14px; vertical-align:2px}
+.fin-restate-pop{position:absolute; right:6px; top:100%; z-index:5; background:#262E33;
+  color:#FAF7F2; font-size:11px; font-family:"IBM Plex Sans",sans-serif; padding:8px 10px;
+  border-radius:4px; white-space:nowrap; box-shadow:0 4px 14px rgba(0,0,0,0.25)}
+.fin-restate-pop a{color:#9DC8B4}
+.fin-note{max-width:76ch; margin-top:22px; font-size:12.5px; line-height:1.65;
+  color:rgba(38,46,51,0.75)}
+.fin-note .disc{color:rgba(38,46,51,0.55)}
+@media(max-width:768px){
+  .fin-sticky{min-width:130px; max-width:160px}
+  .fin-controls{flex-direction:column; align-items:flex-start}
+}
+.stab-link{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.06em;
+  text-transform:uppercase; padding:8px 14px; color:#1F6E5A; text-decoration:none;
+  border:1px solid #1F6E5A; margin-left:8px; align-self:center; white-space:nowrap}

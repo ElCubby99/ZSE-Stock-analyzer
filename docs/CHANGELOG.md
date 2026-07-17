@@ -1,5 +1,28 @@
 # Changelog (tehnički — interni)
 
+## 2026-07-17 — M37: tab FINANCIJE (as-reported izvještaji po dionici)
+
+- Nova javna ruta `/dionica/<ticker>/financije` (kroz route registry →
+  sitemap + content-marker testovi automatski; 65 stranica): RDG,
+  financijski položaj i novčani tok — SVI periodi iz baze, bez limita
+  i bez paywalla.
+- Prikaz je kanonska shema ekstrakcije (ne doslovni prijepis) — napomena
+  na tabu + link na izvorni dokument u zaglavlju SVAKE kolone.
+- Pravila: samo `is_reported=true` (izvedene veličine ostaju na Ključnim
+  pokazateljima); rupe su "—" (nikad 0); HRK periodi (do 2022.) nose
+  badge "preračunato iz HRK" (fiksni tečaj 7,5345 kroz ingest);
+  restatement (godišnja objava vs 4Q kumulativ, 409 ćelija) prikazuje
+  noviju vrijednost + badge K + stariju iza klika; interim = kumulativi
+  od početka godine, kako su objavljeni.
+- UI: pod-tabovi Dobit i gubitak · Financijski položaj · Novčani tok;
+  Godišnje/Kvartalno; toggle kons./nekons. gdje oba postoje (KOEI);
+  sticky prva kolona; CSV download (identične brojke kao prikaz);
+  jedinica (tis./mil. EUR) dosljedna po firmi u zaglavlju.
+- Builder `scripts/build_financije.py` → `data/fin/<T>.json`, uključen
+  u dnevni regen; DIO 0 izvještaj sheme i pokrivenosti u
+  `data/reports/m37_dio0_financije.md`.
+
+
 ## 2026-07-16 — M34: satni EOD pokušaji + forenzika incidenta
 
 ### Forenzika 16.07. (cijene nisu osvježene do ~19:00)

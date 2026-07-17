@@ -1074,7 +1074,7 @@ export default function StockPage() {
           )}
           <IlliquidBanner liquidity={data.liquidity} />
 
-          <TabBar tab={tab} setTab={setTab} />
+          <TabBar tab={tab} setTab={setTab} ticker={data.ticker} />
 
           {/* ============ PREGLED ============ */}
           {tab === 'pregled' && (

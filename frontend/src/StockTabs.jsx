@@ -16,12 +16,18 @@ export const TABS = [
   ['novosti', 'NOVOSTI'],
 ]
 
-export function TabBar({ tab, setTab }) {
+export function TabBar({ tab, setTab, ticker }) {
   return (
     <div className="stab">
       {TABS.map(([k, l]) => (
         <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>
       ))}
+      {/* M37: FINANCIJE je zasebna ruta (as-reported izvještaji, SSG) */}
+      {ticker && (
+        <a className="stab-link" href={`/dionica/${String(ticker).toLowerCase()}/financije`}>
+          FINANCIJE ↗
+        </a>
+      )}
     </div>
   )
 }
@@ -137,6 +143,11 @@ export function IndicatorGroups({ indicators }) {
         Sve izvedenice su izračun iz objavljenih izvješća (kod), ne procjena —
         formula i obrazloženje "zašto baš ovako" (oznaka <sup>?</sup>) su u
         opisu svakog retka (hover / dodir). <span className="np">n/p</span> nosi razlog.
+        {indicators.ticker && (
+          <> Podloga za sve izračune: <a
+            href={`/dionica/${String(indicators.ticker).toLowerCase()}/financije`}>
+            puni izvještaji (as-reported) →</a></>
+        )}
       </div>
     </section>
   )

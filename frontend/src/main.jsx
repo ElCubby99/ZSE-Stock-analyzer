@@ -4,6 +4,7 @@ import {
   createBrowserRouter, Link, Outlet, RouterProvider, useLocation,
 } from 'react-router-dom'
 import StockPage from './StockPage.jsx'
+import FinancijePage from './Financije.jsx'
 import Alati from './Alati.jsx'
 import Trziste from './Trziste.jsx'
 import Screener from './Screener.jsx'
@@ -72,6 +73,7 @@ const COMPONENTS = {
   Screener: <Screener />,
   Portfelj: <Portfelj />,
   StockPage: <StockPage />,
+  FinancijePage: <FinancijePage />,
   BlogIndex: <BlogIndex />,
   BlogPost: <BlogPost />,
   Alati: <Alati />,

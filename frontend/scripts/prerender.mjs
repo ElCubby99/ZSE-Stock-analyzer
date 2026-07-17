@@ -184,6 +184,57 @@ for (const [company, s] of byCompany) {
 }
 }
 
+/* ---------- M37: financije (as-reported izvještaji) ---------- */
+let nFin = 0
+async function buildFinPages() {
+  const finFmt = (v, unit) => (v === null || v === undefined ? '—'
+    : (unit === 'mil' ? v / 1e6 : v / 1e3).toLocaleString('hr-HR',
+      { minimumFractionDigits: unit === 'mil' ? 1 : 0,
+        maximumFractionDigits: unit === 'mil' ? 1 : 0 }))
+  for (const [company] of byCompany) {
+    let fin = null
+    try {
+      fin = JSON.parse(await fs.readFile(path.join(DIST, `data/fin/${company}.json`), 'utf8'))
+    } catch { continue } // bez fin exporta nema stranice
+    const t = company.toLowerCase()
+    const basis = fin.bases[0]
+    const ann = fin.views[basis] && fin.views[basis].annual
+    if (!ann) continue
+    const canonical = `${SITE}/dionica/${t}/financije`
+    const unitTxt = fin.unit === 'mil' ? 'u milijunima EUR' : 'u tisućama EUR'
+    const tableFor = (st) => {
+      const tbl = ann.statements[st]
+      if (!tbl) return ''
+      const head = ann.periods.map((p) => `<th>${p.url
+        ? `<a href="${esc(p.url)}" rel="noopener noreferrer">${esc(p.label)}</a>` : esc(p.label)}${
+        p.hrk ? '<br /><small>preračunato iz HRK</small>' : ''}</th>`).join('')
+      const body = tbl.rows.map((r) => `<tr>
+        <td>${r.bold ? `<strong>${esc(r.label)}</strong>` : esc(r.label)}</td>
+        ${ann.periods.map((p) => `<td>${finFmt(r.values[p.key], fin.unit)}</td>`).join('')}</tr>`).join('')
+      return `<h2>${esc(tbl.label)} (godišnje, ${unitTxt})</h2>
+        <table><thead><tr><th>Stavka</th>${head}</tr></thead><tbody>${body}</tbody></table>`
+    }
+    const body = `<main>
+      <nav><a href="/">Naslovnica</a> › <a href="/dionica/${t}">${esc(company)}</a> › Financije</nav>
+      <h1>Financijski izvještaji — ${esc(fin.name)}</h1>
+      <p>As-reported financijski izvještaji (${esc(fin.name)}, ${esc(company)}):
+      račun dobiti i gubitka, financijski položaj i novčani tok — svi periodi iz
+      naše baze, ${unitTxt}. Stavke prema standardiziranoj shemi ekstrakcije;
+      originalne oznake u izvornim dokumentima (poveznice u zaglavljima kolona).</p>
+      ${tableFor('income')}${tableFor('balance')}${tableFor('cashflow')}
+      <p><a href="/dionica/${t}">Profil dionice i ključni pokazatelji</a> ·
+      <a href="/metodologija">Metodologija</a></p>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`
+    await write(`dionica/${t}/financije`, page({
+      title: `${company} financijski izvještaji — prihodi, dobit, bilanca | Burzovni list`,
+      description: `Financijski izvještaji ${fin.name} (${company}): prihodi, dobit, bilanca i novčani tok po godinama — as-reported, s poveznicama na izvorne dokumente.`.slice(0, 155),
+      canonical, body,
+    }))
+    urls.push({ loc: canonical, lastmod: eod })
+    nFin += 1
+  }
+}
+
 /* ---------- blog ---------- */
 let posts = []
 async function buildBlogPages() {
@@ -592,6 +643,7 @@ let nStatic = 0
 for (const r of ROUTES) {
   if (r.prerender === false) continue // samo SPA fallback (admin, auth)
   if (r.expand === 'stocks') { await buildStockPages(); continue }
+  if (r.expand === 'stocks_fin') { await buildFinPages(); continue }
   if (r.expand === 'blog') { await buildBlogPages(); continue }
   if (r.expand === 'news') { await buildNewsPages(); continue }
   if (r.expand === 'indices') { await buildIndexPages(); continue }
@@ -635,4 +687,4 @@ ${urls.map((u) => `  <url><loc>${u.loc}</loc>${u.lastmod ? `<lastmod>${u.lastmod
 `
 await fs.writeFile(path.join(DIST, 'sitemap.xml'), sm)
 
-console.log(`[prerender] dionice=${nStocks}, blog=${posts.length}, vijesti=${newsItems.length}, statične=${nStatic}, sitemap=${urls.length} URL-ova`)
+console.log(`[prerender] dionice=${nStocks}, financije=${nFin}, blog=${posts.length}, vijesti=${newsItems.length}, statične=${nStatic}, sitemap=${urls.length} URL-ova`)
