@@ -45,6 +45,8 @@ HOLDING_COLS = ("ownership_pct", "listed", "valuation_basis", "segment_key",
                 "confidence", "associate_ni", "jv_book_value_eur",
                 "jv_book_source")
 DIV_COLS = ("payout_type", "payout_ratio", "classified_reason")
+SC_COLS = ("isin", "class_type", "shares_issued", "treasury_shares",
+           "has_voting", "dividend_note", "is_primary_line")
 
 
 def _j(v):
@@ -60,7 +62,7 @@ def _j(v):
 def dump() -> int:
     out = {"companies": [], "filings": [], "dividends": [], "holdings": [],
            "dividend_policies": [], "growth_estimates": [],
-           "valuation_changelog": []}
+           "valuation_changelog": [], "share_classes": []}
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(f"""SELECT ticker, {', '.join(COMPANY_COLS)}
                         FROM companies ORDER BY ticker""")
@@ -77,6 +79,11 @@ def dump() -> int:
                             WHERE filing_id=%s ORDER BY id""", (fid,))
             fins = [[_j(x) for x in r] for r in cur.fetchall()]
             out["filings"].append({"k": [_j(x) for x in attrs], "fin": fins})
+
+        # kanonski registar klasa (broj dionica, trezorske, prava) — kuriran
+        cur.execute(f"""SELECT ticker, {', '.join(SC_COLS)}
+                        FROM share_classes ORDER BY ticker""")
+        out["share_classes"] = [[_j(x) for x in r] for r in cur.fetchall()]
 
         cur.execute(f"""SELECT class_ticker, ex_date, amount_eur,
                                {', '.join(DIV_COLS)}
@@ -137,6 +144,13 @@ def apply() -> int:
             cur.execute(f"UPDATE companies SET {sets} WHERE ticker=%s",
                         (*vals, ticker))
             stats["companies"] += cur.rowcount
+
+        for row in d.get("share_classes", []):
+            ticker, *vals = row
+            sets = ", ".join(f"{c}=%s" for c in SC_COLS)
+            cur.execute(f"UPDATE share_classes SET {sets} WHERE ticker=%s",
+                        (*vals, ticker))
+            stats["share_classes"] = stats.get("share_classes", 0) + cur.rowcount
 
         for frec in d["filings"]:
             ticker, doc_type, fy, pt, basis, *attrs = frec["k"]
