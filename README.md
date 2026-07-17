@@ -161,8 +161,13 @@ docs/    specifikacija ekstrakcije i validacije
 ### Google Search Console
 1. Dodaj property `burzovnilist.com` (Domain — DNS TXT verifikacija na
    Cloudflareu).
-2. Submitaj sitemap: `https://burzovnilist.com/sitemap.xml`
+2. Submitaj sitemap: `https://www.burzovnilist.com/sitemap.xml`
    (generira se pri svakom buildu, lastmod = zadnji EOD).
+3. **M38 (nakon deploya EN verzije) — RUČNI KORAK**: ponovno submitaj
+   sitemap u GSC — sadrži i sve `/en/` rute s hreflang alternates
+   parovima (390 URL-ova). Kanonska domena je `www.` varijanta.
+4. GA4: dodaj custom dimension `language` (event-scoped, parametar
+   `language` s page_view eventa) za čiste izvještaje po jeziku.
 
 ### GA4 / Google Ads
 - GA4 Admin → Product links → poveži budući Google Ads račun.

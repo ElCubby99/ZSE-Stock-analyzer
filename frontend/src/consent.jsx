@@ -1,6 +1,8 @@
 import React, {
   createContext, useCallback, useContext, useEffect, useMemo, useState,
 } from 'react'
+import { langFromPath } from './i18n/LangContext.jsx'
+import { t as translate } from './i18n/strings.mjs'
 
 /* M24: GDPR/ePrivacy pristanak na kolačiće — vlastita komponenta, bez
    third-party consent SaaS-a.
@@ -100,15 +102,25 @@ const Ctx = createContext({
   consent: null, openSettings: () => {}, decide: () => {},
 })
 
+/* M38: ConsentProvider je IZVAN routera (main.jsx), pa jezik ne dolazi iz
+   LangProvider konteksta nego izravno iz putanje (/en/... -> 'en'). Banner
+   se renderira pri prvom učitavanju, panel pri otvaranju — putanja je tada
+   aktualna. Linkovi na politike su lang-aware (registry parovi). */
+function consentLang() {
+  const lang = langFromPath(typeof window !== 'undefined' ? window.location.pathname : '/')
+  return { lang, t: (k) => translate(k, lang) }
+}
+
 export const useConsent = () => useContext(Ctx)
 
 function CategoryRow({ title, desc, locked, checked, onChange }) {
+  const { t } = consentLang()
   return (
     <label className={`cc-cat${locked ? ' cc-locked' : ''}`}>
       <input type="checkbox" checked={checked} disabled={locked}
         onChange={(e) => onChange && onChange(e.target.checked)} />
       <span>
-        <b>{title}</b>{locked && <em className="cc-always">uvijek aktivni</em>}
+        <b>{title}</b>{locked && <em className="cc-always">{t('ck.alwaysActive')}</em>}
         <small>{desc}</small>
       </span>
     </label>
@@ -116,19 +128,19 @@ function CategoryRow({ title, desc, locked, checked, onChange }) {
 }
 
 function Banner({ onAcceptAll, onNecessary, onSettings }) {
+  const { lang, t } = consentLang()
+  const hrefCookies = lang === 'en' ? '/en/cookies' : '/politika-kolacica'
   return (
-    <div className="cc-bar" role="dialog" aria-label="Pristanak na kolačiće">
+    <div className="cc-bar" role="dialog" aria-label={t('ck.ariaBanner')}>
       <div className="cc-in">
         <p className="cc-txt">
-          Nužne kolačiće i pohranu koristimo da stranica radi (prijava,
-          pamćenje ovog izbora). Analitičke koristimo <b>samo uz vaš
-          pristanak</b> — bez njega se ništa ne-nužno ne učitava. Detalji:{' '}
-          <a href="/politika-kolacica">Politika kolačića</a>.
+          {t('ck.bannerTxt1')} <b>{t('ck.bannerTxt2')}</b> {t('ck.bannerTxt3')}{' '}
+          <a href={hrefCookies}>{t('footer.cookies')}</a>.
         </p>
         <div className="cc-btns">
-          <button type="button" className="cc-btn" onClick={onAcceptAll}>Prihvati sve</button>
-          <button type="button" className="cc-btn" onClick={onNecessary}>Samo nužni</button>
-          <button type="button" className="cc-btn" onClick={onSettings}>Postavke</button>
+          <button type="button" className="cc-btn" onClick={onAcceptAll}>{t('ck.acceptAll')}</button>
+          <button type="button" className="cc-btn" onClick={onNecessary}>{t('ck.necessaryOnly')}</button>
+          <button type="button" className="cc-btn" onClick={onSettings}>{t('ck.settings')}</button>
         </div>
       </div>
     </div>
@@ -136,46 +148,43 @@ function Banner({ onAcceptAll, onNecessary, onSettings }) {
 }
 
 function SettingsPanel({ current, onSave, onClose }) {
+  const { lang, t } = consentLang()
+  const hrefCookies = lang === 'en' ? '/en/cookies' : '/politika-kolacica'
+  const hrefPrivacy = lang === 'en' ? '/en/privacy' : '/politika-privatnosti'
   const [analytics, setAnalytics] = useState(!!current?.analytics)
   const [marketing, setMarketing] = useState(!!current?.marketing)
   return (
     <div className="cc-overlay" role="dialog" aria-modal="true"
-      aria-label="Postavke kolačića">
+      aria-label={t('footer.cookieSettings')}>
       <div className="cc-panel">
         <div className="cc-panel-head">
-          <span className="sec-label" style={{ margin: 0 }}>Postavke kolačića</span>
-          <button type="button" className="cc-x" onClick={onClose} aria-label="Zatvori">×</button>
+          <span className="sec-label" style={{ margin: 0 }}>{t('footer.cookieSettings')}</span>
+          <button type="button" className="cc-x" onClick={onClose} aria-label={t('ck.close')}>×</button>
         </div>
-        <CategoryRow locked checked title="Nužni"
-          desc="Prijava i sesija korisničkog računa (Supabase) te pohrana samog
-                izbora o kolačićima. Bez njih stranica ne radi; ne mogu se
-                isključiti." />
-        <CategoryRow title="Analitički" checked={analytics} onChange={setAnalytics}
-          desc="Web analitika posjeta (Google Tag Manager) — koje se stranice
-                čitaju. Učitava se tek nakon vašeg pristanka; možete ga povući
-                u svakom trenutku." />
+        <CategoryRow locked checked title={t('ck.catNecessary')}
+          desc={t('ck.catNecessaryDesc')} />
+        <CategoryRow title={t('ck.catAnalytics')} checked={analytics} onChange={setAnalytics}
+          desc={t('ck.catAnalyticsDesc')} />
         {MARKETING_ENABLED && (
-          <CategoryRow title="Marketinški" checked={marketing} onChange={setMarketing}
-            desc="Kolačići za oglašavanje. Trenutno ih ne koristimo." />
+          <CategoryRow title={t('ck.catMarketing')} checked={marketing} onChange={setMarketing}
+            desc={t('ck.catMarketingDesc')} />
         )}
         <div className="cc-btns cc-panel-btns">
           <button type="button" className="cc-btn"
             onClick={() => onSave(true, MARKETING_ENABLED ? marketing : false)}>
-            Prihvati sve
+            {t('ck.acceptAll')}
           </button>
           <button type="button" className="cc-btn" onClick={() => onSave(false, false)}>
-            Samo nužni
+            {t('ck.necessaryOnly')}
           </button>
           <button type="button" className="cc-btn"
             onClick={() => onSave(analytics, MARKETING_ENABLED ? marketing : false)}>
-            Spremi odabir
+            {t('ck.save')}
           </button>
         </div>
         <p className="cc-note">
-          Odbijanje ne ograničava korištenje stranice. Pristanak vrijedi
-          najviše 12 mjeseci; opoziv je uvijek dostupan kroz „Postavke
-          kolačića" u podnožju. <a href="/politika-kolacica">Politika
-          kolačića</a> · <a href="/politika-privatnosti">Politika privatnosti</a>
+          {t('ck.note1')} <a href={hrefCookies}>{t('footer.cookies')}</a>
+          {' '}· <a href={hrefPrivacy}>{t('footer.privacy')}</a>
         </p>
       </div>
     </div>

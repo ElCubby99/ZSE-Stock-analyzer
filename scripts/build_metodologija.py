@@ -15,22 +15,29 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from build_blog import md_to_html  # noqa: E402
 
-SRC = ROOT / "docs" / "metodologija.md"
-OUT = ROOT / "frontend" / "public" / "data" / "metodologija.json"
+# M38: dva jezika, isti mehanizam — EN je PUNI prijevod (trust dokument),
+# uređuje se SAMO u docs/ (docs/metodologija_en.md)
+DOCS = [
+    (ROOT / "docs" / "metodologija.md",
+     ROOT / "frontend" / "public" / "data" / "metodologija.json"),
+    (ROOT / "docs" / "metodologija_en.md",
+     ROOT / "frontend" / "public" / "data" / "metodologija_en.json"),
+]
 
 
 def main() -> int:
-    md = SRC.read_text(encoding="utf-8")
-    lines = md.split("\n")
-    title = lines[0].lstrip("# ").strip()
-    body = "\n".join(lines[1:])
-    OUT.write_text(json.dumps({
-        "title": title,
-        "version": "v2.3",
-        "updated": "2026-07-16",
-        "html": md_to_html(body),
-    }, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"[metodologija] zapisano {OUT}")
+    for src, out in DOCS:
+        md = src.read_text(encoding="utf-8")
+        lines = md.split("\n")
+        title = lines[0].lstrip("# ").strip()
+        body = "\n".join(lines[1:])
+        out.write_text(json.dumps({
+            "title": title,
+            "version": "v2.3",
+            "updated": "2026-07-17",
+            "html": md_to_html(body),
+        }, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(f"[metodologija] zapisano {out}")
     return 0
 
 

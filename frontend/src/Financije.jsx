@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
+import { useLang } from './i18n/LangContext.jsx'
+import { dash, num } from './format.js'
 
 /* M37: tab FINANCIJE — as-reported financijski izvještaji po dionici.
    Podaci: /data/fin/<TICKER>.json (scripts/build_financije.py). Pravila:
@@ -9,40 +11,32 @@ import { SiteFooter, SiteHeader } from './Shell.jsx'
    izvorni filing; HRK periodi nose badge; restatement ćelije nose badge
    i stariju vrijednost iza klika. */
 
-const BASIS_HR = { consolidated: 'konsolidirano', separate: 'nekonsolidirano' }
-const SUBTABS = [
-  ['income', 'Dobit i gubitak'],
-  ['balance', 'Financijski položaj'],
-  ['cashflow', 'Novčani tok'],
-]
+const SUBTAB_KEYS = [['income', 'fin.income'], ['balance', 'fin.balance'],
+  ['cashflow', 'fin.cashflow']]
 
 function fmtVal(v, unit) {
-  if (v === null || v === undefined) return '—'
-  const scaled = unit === 'mil' ? v / 1e6 : v / 1e3
-  return scaled.toLocaleString('hr-HR', {
-    minimumFractionDigits: unit === 'mil' ? 1 : 0,
-    maximumFractionDigits: unit === 'mil' ? 1 : 0,
-  })
+  if (v === null || v === undefined) return dash
+  return num(unit === 'mil' ? v / 1e6 : v / 1e3, unit === 'mil' ? 1 : 0)
 }
 
-function csvFor(view, st, unit, ticker) {
+function csvFor(view, st, unit, ticker, t) {
   const tbl = view.statements[st]
   if (!tbl) return ''
-  const head = ['Stavka', ...view.periods.map((p) => `${p.label}${p.hrk ? ' (preračunato iz HRK)' : ''}`)]
-  const unitNote = unit === 'mil' ? 'u milijunima EUR' : 'u tisućama EUR'
-  const lines = [`# ${ticker} — ${tbl.label} (${unitNote}; as-reported, standardizirana shema ekstrakcije)`,
+  const head = [t('fin.item'), ...view.periods.map((p) => `${p.label}${p.hrk ? ` (${t('fin.hrkBadge')})` : ''}`)]
+  const unitNote = unit === 'mil' ? t('fin.unitMillions') : t('fin.unitThousands')
+  const lines = [`# ${ticker} — ${t(`fin.${st}`)} (${unitNote}; as-reported)`,
     head.join(';')]
   for (const r of tbl.rows) {
-    lines.push([r.label, ...view.periods.map((p) => {
+    lines.push([t(`li.${r.item}`), ...view.periods.map((p) => {
       const v = r.values[p.key]
-      return v === null || v === undefined ? '—' : fmtVal(v, unit).replace(/ /g, '')
+      return v === null || v === undefined ? dash : fmtVal(v, unit).replace(/ /g, '')
     })].join(';'))
   }
   return lines.join('\n')
 }
 
-function downloadCsv(view, st, unit, ticker) {
-  const blob = new Blob(['﻿' + csvFor(view, st, unit, ticker)],
+function downloadCsv(view, st, unit, ticker, t) {
+  const blob = new Blob(['\ufeff' + csvFor(view, st, unit, ticker, t)],
     { type: 'text/csv;charset=utf-8' })
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
@@ -51,17 +45,17 @@ function downloadCsv(view, st, unit, ticker) {
   URL.revokeObjectURL(a.href)
 }
 
-function RestatePop({ meta, unit }) {
+function RestatePop({ meta, unit, t }) {
   return (
     <span className="fin-restate-pop">
-      Ranija objava ({meta.prev_label}): <b>{fmtVal(meta.prev, unit)}</b>
+      {t('fin.earlierPublication')} ({t('fin.prevQ4')}): <b>{fmtVal(meta.prev, unit)}</b>
       {meta.prev_url && <> · <a href={meta.prev_url} target="_blank"
-        rel="noopener noreferrer">dokument</a></>}
+        rel="noopener noreferrer">{t('common.sourceDoc')}</a></>}
     </span>
   )
 }
 
-function FinTable({ view, st, unit, ticker }) {
+function FinTable({ view, st, unit, t }) {
   const [openCell, setOpenCell] = useState(null)
   const tbl = view.statements[st]
   if (!tbl) return null
@@ -70,16 +64,16 @@ function FinTable({ view, st, unit, ticker }) {
       <table className="fin-table">
         <thead>
           <tr>
-            <th className="fin-sticky">{tbl.label}
-              <div className="fin-unit">{unit === 'mil' ? 'u milijunima EUR' : 'u tisućama EUR'}</div>
+            <th className="fin-sticky">{t(`fin.${st}`)}
+              <div className="fin-unit">{unit === 'mil' ? t('fin.unitMillions') : t('fin.unitThousands')}</div>
             </th>
             {view.periods.map((p) => (
               <th key={p.key} className="num">
                 {p.url
                   ? <a href={p.url} target="_blank" rel="noopener noreferrer"
-                      title={`Izvorni dokument${p.published ? ` (objava ${p.published})` : ''}`}>{p.label}</a>
+                      title={`${t('fin.sourceDocTitle')}${p.published ? ` (${t('fin.publication')} ${p.published})` : ''}`}>{p.label}</a>
                   : p.label}
-                {p.hrk && <div className="fin-badge">preračunato iz HRK</div>}
+                {p.hrk && <div className="fin-badge">{t('fin.hrkBadge')}</div>}
               </th>
             ))}
           </tr>
@@ -87,7 +81,7 @@ function FinTable({ view, st, unit, ticker }) {
         <tbody>
           {tbl.rows.map((r) => (
             <tr key={r.item} className={r.bold ? 'fin-bold' : ''}>
-              <td className="fin-sticky" style={{ paddingLeft: 10 + r.indent * 16 }}>{r.label}</td>
+              <td className="fin-sticky" style={{ paddingLeft: 10 + r.indent * 16 }}>{t(`li.${r.item}`)}</td>
               {view.periods.map((p) => {
                 const meta = r.restated && r.restated[p.key]
                 const cellKey = `${r.item}|${p.key}`
@@ -96,10 +90,10 @@ function FinTable({ view, st, unit, ticker }) {
                     {fmtVal(r.values[p.key], unit)}
                     {meta && (
                       <button type="button" className="fin-restate"
-                        title="korigirano u kasnijem izvješću — klik za raniju vrijednost"
+                        title={t('fin.restatedBadge')}
                         onClick={() => setOpenCell(openCell === cellKey ? null : cellKey)}>K</button>
                     )}
-                    {meta && openCell === cellKey && <RestatePop meta={meta} unit={unit} />}
+                    {meta && openCell === cellKey && <RestatePop meta={meta} unit={unit} t={t} />}
                   </td>
                 )
               })}
@@ -113,7 +107,9 @@ function FinTable({ view, st, unit, ticker }) {
 
 export default function FinancijePage() {
   const { ticker } = useParams()
+  const { lang, t } = useLang()
   const T = String(ticker || '').toUpperCase()
+  const stockHref = lang === 'en' ? `/en/stock/${T.toLowerCase()}` : `/dionica/${T.toLowerCase()}`
   const [data, setData] = useState(null)
   const [err, setErr] = useState(null)
   const [st, setSt] = useState('income')
@@ -129,9 +125,9 @@ export default function FinancijePage() {
   }, [T])
   useEffect(() => {
     if (data) {
-      document.title = `${data.ticker} financijski izvještaji — prihodi, dobit, bilanca | Burzovni list`
+      document.title = `${data.ticker} ${t('fin.docTitle')}`
     }
-  }, [data])
+  }, [data, lang])
 
   const view = useMemo(() => {
     if (!data) return null
@@ -145,87 +141,83 @@ export default function FinancijePage() {
       <main className="wrap-wide">
         {err && (
           <section>
-            <h1 className="page-h1">Financijski izvještaji — {T}</h1>
-            <div className="prof-empty-box">Za ovu dionicu još nemamo
-              ekstrahirane izvještaje u bazi. <Link to={`/dionica/${T.toLowerCase()}`}>Natrag na profil dionice</Link></div>
+            <h1 className="page-h1">{t('fin.title')} — {T}</h1>
+            <div className="prof-empty-box">{t('fin.noData')}{' '}
+              <Link to={stockHref}>{t('common.backToStock')}</Link></div>
           </section>
         )}
-        {!data && !err && <div className="loading">učitavam financije {T}…</div>}
+        {!data && !err && <div className="loading">{t('common.loading')}</div>}
         {data && (
           <>
             <nav className="fin-crumbs">
-              <Link to={`/dionica/${T.toLowerCase()}`}>← {data.ticker} — profil dionice</Link>
-              <span> · popis dokumenata: kartica IZVJEŠTAJI na profilu</span>
+              <Link to={stockHref}>← {data.ticker} — {t('common.backToStock')}</Link>
+              <span> · {t('fin.docsNote')}</span>
             </nav>
-            <h1 className="page-h1">Financijski izvještaji — {data.name}</h1>
+            <h1 className="page-h1">{t('fin.title')} — {data.name}</h1>
 
             <div className="fin-controls">
               <div className="fin-subtabs">
-                {SUBTABS.map(([k, l]) => (
+                {SUBTAB_KEYS.map(([k, key]) => (
                   <button key={k} type="button" className={st === k ? 'on' : ''}
-                    onClick={() => setSt(k)}>{l}</button>
+                    onClick={() => setSt(k)}>{t(key)}</button>
                 ))}
               </div>
               <div className="fin-right">
                 <div className="fin-kind">
                   <button type="button" className={kind === 'annual' ? 'on' : ''}
-                    onClick={() => setKind('annual')}>Godišnje</button>
+                    onClick={() => setKind('annual')}>{t('fin.annual')}</button>
                   <button type="button" className={kind === 'interim' ? 'on' : ''}
-                    onClick={() => setKind('interim')}>Kvartalno</button>
+                    onClick={() => setKind('interim')}>{t('fin.quarterly')}</button>
                 </div>
                 {data.bases.length > 1 && (
                   <div className="fin-kind">
                     {data.bases.map((b) => (
                       <button key={b} type="button" className={basis === b ? 'on' : ''}
-                        onClick={() => setBasis(b)}>{BASIS_HR[b] || b}</button>
+                        onClick={() => setBasis(b)}>{t(`fin.${b}`)}</button>
                     ))}
                   </div>
                 )}
                 {view && view.statements[st] && (
                   <button type="button" className="fin-csv"
-                    onClick={() => downloadCsv(view, st, data.unit, data.ticker)}>
-                    Preuzmi CSV
+                    onClick={() => downloadCsv(view, st, data.unit, data.ticker, t)}>
+                    {t('common.download')}
                   </button>
                 )}
               </div>
             </div>
             <div className="fin-activeview">
-              Prikaz: {BASIS_HR[data.views[basis] ? basis : data.bases[0]]}
-              {kind === 'interim' && ' · kumulativi od početka godine (kako su objavljeni)'}
+              {t('fin.view')}: {t(`fin.${data.views[basis] ? basis : data.bases[0]}`)}
+              {kind === 'interim' && ` · ${t('fin.cumulative')}`}
             </div>
 
             {view && view.statements[st]
-              ? <FinTable view={view} st={st} unit={data.unit} ticker={data.ticker} />
+              ? <FinTable view={view} st={st} unit={data.unit} t={t} />
               : (
                 <div className="prof-empty-box">
-                  {SUBTABS.find(([k]) => k === st)?.[1]} za ovaj prikaz nije u bazi
+                  {t(`fin.${st}`)} {t('fin.notInDb')}
                   {(data.missing.find((m) => m.statement === st) || {}).doc_url && (
-                    <> — izvorni dokument: <a
+                    <> — {t('common.sourceDoc')}: <a
                       href={data.missing.find((m) => m.statement === st).doc_url}
-                      target="_blank" rel="noopener noreferrer">poveznica</a></>
+                      target="_blank" rel="noopener noreferrer">→</a></>
                   )}.
                 </div>
               )}
 
             {data.missing.length > 0 && view && view.statements[st] && (
               <div className="subnote" style={{ marginTop: 10 }}>
-                Nije u bazi: {data.missing.map((m, i) => (
-                  <span key={m.statement}>{i > 0 && ' · '}{m.label}
+                {t('fin.missing')}: {data.missing.map((m, i) => (
+                  <span key={m.statement}>{i > 0 && ' · '}{t(`fin.${m.statement}`)}
                     {m.doc_url && <> (<a href={m.doc_url} target="_blank"
-                      rel="noopener noreferrer">izvorni dokument</a>)</>}</span>
+                      rel="noopener noreferrer">{t('common.sourceDoc')}</a>)</>}</span>
                 ))}
               </div>
             )}
 
             <div className="fin-note">
-              <p>{data.note}</p>
-              <p>Oznaka <b>K</b> uz vrijednost: korigirano u kasnijem izvješću —
-              klik otvara raniju objavljenu vrijednost. Izvedene veličine (TTM,
-              marže, po dionici) nalaze se na kartici Ključni pokazatelji na{' '}
-              <Link to={`/dionica/${T.toLowerCase()}`}>profilu dionice</Link>.</p>
-              <p className="disc">Prikazani podaci su informativni i analitički —
-              ne predstavljaju investicijski savjet, preporuku ni poticaj na
-              trgovanje. Zaključak je uvijek vaš.</p>
+              <p>{t('fin.schemaNote')}</p>
+              <p>{t('fin.restateNote')}{' '}
+              <Link to={stockHref}>{t('common.backToStock')}</Link>.</p>
+              <p className="disc">{t('common.disclaimerLong')}</p>
             </div>
           </>
         )}

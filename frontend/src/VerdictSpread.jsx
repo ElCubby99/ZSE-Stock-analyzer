@@ -1,4 +1,6 @@
 import React from 'react'
+import { useLang } from './i18n/LangContext.jsx'
+import { tx } from './i18n/dataText.mjs'
 import { num } from './format.js'
 
 const CLASS_COLORS = ['#9E2B25', '#2F5D86', '#6B4E8E', '#8A6D1F']
@@ -9,6 +11,7 @@ const CLASS_COLORS = ['#9E2B25', '#2F5D86', '#6B4E8E', '#8A6D1F']
  * Redovi dolaze ISKLJUČIVO iz podataka (CROS: bez SOTP reda jer nije pokrenut).
  */
 export default function VerdictSpread({ methods, classes, reconciliation, liquidity }) {
+  const { lang, t } = useLang()
   const rows = methods.filter((m) => !m.no_value)
   const liqBy = {}
   ;(liquidity?.classes || []).forEach((l) => { liqBy[l.class_ticker] = l.flag })
@@ -21,7 +24,7 @@ export default function VerdictSpread({ methods, classes, reconciliation, liquid
       illiquid: liqBy[c.ticker] === 'low' || liqBy[c.ticker] === 'very_low',
     }))
   if (!rows.length) {
-    return <p className="spread-note">Nema metoda s izračunatom vrijednošću — nedovoljno ulaza u bazi.</p>
+    return <p className="spread-note">{t('vs.noMethods')}</p>
   }
 
   const vals = [
@@ -52,7 +55,7 @@ export default function VerdictSpread({ methods, classes, reconciliation, liquid
 
   return (
     <>
-      <svg className="spread" viewBox={`0 0 1000 ${H}`} role="img" aria-label="Raspon vrijednosti po metodi">
+      <svg className="spread" viewBox={`0 0 1000 ${H}`} role="img" aria-label={t('vs.aria')}>
         <rect x={x(zLo)} y={topPad - 14} width={Math.max(2, x(zHi) - x(zLo))} height={axisY - topPad + 6}
           fill="#1F6E5A" opacity="0.08" />
         <line x1={X0} y1={axisY} x2={X1 + 30} y2={axisY} stroke="#C9CBC2" />
@@ -88,7 +91,7 @@ export default function VerdictSpread({ methods, classes, reconciliation, liquid
           return (
             <g key={m.key} opacity={op}>
               <text x="8" y={y + 4} fontFamily="IBM Plex Sans" fontSize="13" fill="#1B242E">
-                {m.label}{role && !isAnchor ? ' *' : ''}
+                {tx(m.label, lang)}{role && !isAnchor ? ' *' : ''}
               </text>
               <line x1={x(m.low)} y1={y} x2={x(m.high)} y2={y} stroke="#9AA4AF" strokeWidth="7" strokeLinecap="round" />
               <circle cx={x(m.base)} cy={y} r="6" fill={dotFill} />
@@ -105,27 +108,27 @@ export default function VerdictSpread({ methods, classes, reconciliation, liquid
             <div className="big">{num(reconciliation.zone_low, 0)}–{num(reconciliation.zone_high, 0)} €</div>
             <div className="lab">
               {reconciliation.anchor_methods?.length
-                ? 'fer-zona (raspon sidrenih metoda arhetipa)'
-                : 'zona preklapanja metoda (min–max baza; sidro nedostupno)'}
+                ? t('vs.zoneAnchored')
+                : t('vs.zoneOverlap')}
             </div>
           </div>
           <div>
             <div className="big">{num(reconciliation.dispersion * 100, 0)}%</div>
             <div className="lab">
-              disperzija sidra {reconciliation.divergent ? '(sidrene metode se razilaze)' : '(sidro usklađeno)'}
-              {reconciliation.method_roles ? ' · * = sekundarna leća, prigušena' : ''}
+              {t('vs.dispersion')} {reconciliation.divergent ? t('vs.divergent') : t('vs.aligned')}
+              {reconciliation.method_roles ? t('vs.secondaryNote') : ''}
             </div>
           </div>
         </div>
       )}
       <div className="legend">
-        <span><i className="swatch" style={{ background: '#9AA4AF' }} /> raspon metode (low–high)</span>
-        <span><i className="dot" style={{ background: '#2E3B49' }} /> središnja procjena</span>
-        <span><i className="swatch" style={{ background: '#1F6E5A', opacity: 0.5 }} /> zona</span>
+        <span><i className="swatch" style={{ background: '#9AA4AF' }} /> {t('vs.range')}</span>
+        <span><i className="dot" style={{ background: '#2E3B49' }} /> {t('vs.base')}</span>
+        <span><i className="swatch" style={{ background: '#1F6E5A', opacity: 0.5 }} /> {t('vs.zone')}</span>
         {prices.map((p) => (
           <span key={p.ticker}>
-            <i className="swatch" style={{ background: p.color }} /> {p.ticker} (cijena)
-            {p.illiquid ? ' — ⚠ niska likvidnost, indikativna (isprekidano)' : ''}
+            <i className="swatch" style={{ background: p.color }} /> {p.ticker} {t('vs.price')}
+            {p.illiquid ? t('vs.illiq') : ''}
           </span>
         ))}
       </div>

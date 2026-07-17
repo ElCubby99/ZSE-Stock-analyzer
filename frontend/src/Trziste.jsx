@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { GapCell, SiteFooter, SiteHeader, chg, chgCol, useOverview } from './Shell.jsx'
 import { TemperatureBar, useIndeksi } from './Indeksi.jsx'
-import { num } from './format.js'
+import { fmtDate as fmtD, num } from './format.js'
+import { useLang } from './i18n/LangContext.jsx'
 
 const eur0 = (v) => (v === null || v === undefined ? '—' : num(v, 2))
 
-function Movers({ title, list, nav }) {
+function Movers({ title, list, nav, stockPath }) {
   return (
     <div>
       <h2 className="mk-h2">{title}</h2>
       <div className="mk-movers">
         {list.map((s) => (
-          <div key={s.ticker} className="mk-mrow" onClick={() => nav(`/dionica/${String(s.company).toLowerCase()}`)}>
+          <div key={s.ticker} className="mk-mrow" onClick={() => nav(stockPath(s.company))}>
             <b>{s.ticker}</b>
             <span className="mk-nm">{s.name}</span>
             <span className="mono">{eur0(s.price)}</span>
@@ -27,24 +28,26 @@ function Movers({ title, list, nav }) {
 
 // Stupci tablice 'Sve dionice' — svi sortabilni klikom na zaglavlje (kao Screener)
 const MK_COLS = [
-  ['ticker', 'DIONICA', 'l'], ['price', 'ZADNJA €', 'r'], ['change_pct', 'PROMJENA', 'r'],
-  ['turnover', 'PROMET €', 'r'], ['zone', 'FER-ZONA €', 'r'], ['gap', 'RASKORAK', 'l'],
+  ['ticker', 'mkt.col.stock', 'l'], ['price', 'mkt.col.last', 'r'], ['change_pct', 'mkt.col.change', 'r'],
+  ['turnover', 'mkt.col.turnover', 'r'], ['zone', 'mkt.col.zone', 'r'], ['gap', 'mkt.col.gap', 'l'],
 ]
 
 export default function Trziste() {
   const ov = useOverview()
   const idx = useIndeksi() // M-IDX: temperatura tržišta na naslovnici
   const nav = useNavigate()
+  const { lang, t } = useLang()
+  const stockPath = (c) => (lang === 'en'
+    ? `/en/stock/${String(c).toLowerCase()}` : `/dionica/${String(c).toLowerCase()}`)
   // default: PROMET silazno (kao dosad); klik na isto zaglavlje obrće smjer
   const [sk, setSk] = useState('turnover'); const [dir, setDir] = useState(-1)
-  useEffect(() => { document.title = 'Tržište · Burzovni list' }, [])
-  if (!ov) return <div className="wrap"><SiteHeader /><div className="loading">učitavam…</div></div>
+  useEffect(() => { document.title = `${t('mkt.pageTitle')} · Burzovni list` }, [lang])
+  if (!ov) return <div className="wrap"><SiteHeader /><div className="loading">{t('common.loading')}</div></div>
   // zadnji trgovinski dan na tržištu (max datum EOD zapisa) — dobitnici i
   // gubitnici DANA smiju biti samo dionice stvarno trgovane TAJ dan (ustajala
   // promjena od prije nije "promjena dana")
   const latestDate = ov.stocks.reduce((m, s) => (s.date && s.date > m ? s.date : m), '')
-  const fmtDate = latestDate
-    ? `${latestDate.slice(8, 10)}.${latestDate.slice(5, 7)}.${latestDate.slice(0, 4)}.` : null
+  const dateTxt = latestDate ? fmtD(latestDate) : null
   const withChg = ov.stocks.filter((s) => s.change_pct !== null
     && s.change_pct !== undefined && s.date === latestDate)
   const gainers = [...withChg].sort((a, b) => b.change_pct - a.change_pct).slice(0, 4)
@@ -70,54 +73,51 @@ export default function Trziste() {
       <SiteHeader />
       <main className="wrap-wide">
         <div className="mk-title">
-          <h1>Analiza dionica Zagrebačke burze</h1>
+          <h1>{t('home.title')}</h1>
           {/* M32: svježina izvedena iz STVARNOG datuma exporta — ako pipeline
               jedan dan ne uspije, datum pošteno ostaje na zadnjem podatku */}
-          <span>fer vrijednost, CROBEX, dividende i pokazatelji · službeni
-            EOD{fmtDate ? ` za ${fmtDate}` : ''} · ažurira se nakon
-            zatvaranja trgovine (16:00)</span>
+          <span>{t('mkt.subtitle')}{dateTxt ? ` ${t('mkt.subtitleFor')} ${dateTxt}` : ''} · {t('mkt.subtitleUpdate')}</span>
         </div>
         <div className="mk-idx">
           {ov.indices.length ? ov.indices.map((ix) => (
-            <Link to="/indeksi" className="mk-idx-c mk-idx-link" key={ix.name}
-              title="Svi indeksi ZSE">
+            <Link to={lang === 'en' ? '/en/indices' : '/indeksi'} className="mk-idx-c mk-idx-link" key={ix.name}
+              title={t('mkt.allIndices')}>
               <div className="prof-klabel">{ix.name} →</div>
               <div className="mk-idx-v">{num(ix.value, 2)}</div>
               <div className="mono" style={{ color: chgCol(ix.change_pct), fontSize: 12 }}>{chg(ix.change_pct)}</div>
             </Link>
-          )) : <div className="mk-idx-c"><div className="prof-klabel">INDEKSI</div><div className="np">nema u bazi</div></div>}
+          )) : <div className="mk-idx-c"><div className="prof-klabel">{t('nav.indices').toUpperCase()}</div><div className="np">{t('mkt.indicesNone')}</div></div>}
           <div className="mk-idx-c">
-            <div className="prof-klabel">PRAĆENE DIONICE</div>
+            <div className="prof-klabel">{t('mkt.tracked')}</div>
             <div className="mk-idx-v">{ov.stocks.length}</div>
-            <div className="mono" style={{ fontSize: 12, color: 'rgba(38,46,51,0.6)' }}>klasa u sustavu</div>
+            <div className="mono" style={{ fontSize: 12, color: 'rgba(38,46,51,0.6)' }}>{t('mkt.classesInSystem')}</div>
           </div>
         </div>
         <TemperatureBar t={idx?.temperature} />
         <div className="mk-movers-grid">
-          <Movers title={`Najveći dobitnici${fmtDate ? ` · ${fmtDate}` : ''}`} list={gainers} nav={nav} />
-          <Movers title={`Najveći gubitnici${fmtDate ? ` · ${fmtDate}` : ''}`} list={losers} nav={nav} />
+          <Movers title={`${t('mkt.gainers')}${dateTxt ? ` · ${dateTxt}` : ''}`} list={gainers} nav={nav} stockPath={stockPath} />
+          <Movers title={`${t('mkt.losers')}${dateTxt ? ` · ${dateTxt}` : ''}`} list={losers} nav={nav} stockPath={stockPath} />
         </div>
         <div className="subnote" style={{ marginTop: 6 }}>
-          Promjene se odnose na trgovinski dan {fmtDate || '—'}; dionice koje taj dan
-          nisu trgovane nisu u dobitnicima/gubitnicima (njihova zadnja cijena je starija).
+          {t('mkt.moversNote1')} {dateTxt || '—'}; {t('mkt.moversNote2')}
         </div>
         <div className="mk-title2">
-          <h2 className="mk-h2">Sve dionice</h2>
-          <span className="subnote" style={{ margin: 0 }}>klik na zaglavlje sortira (ponovni klik obrće smjer)</span>
+          <h2 className="mk-h2">{t('common.allStocks')}</h2>
+          <span className="subnote" style={{ margin: 0 }}>{t('mkt.sortNote')}</span>
         </div>
         <div className="mk-scroll">
           <div className="mk-table">
             <div className="mk-hd">
-              {MK_COLS.map(([k, l, ta]) => (
+              {MK_COLS.map(([k, key, ta]) => (
                 <button key={k} className={ta} onClick={sort(k)}>
-                  {l}{sk === k ? (dir === 1 ? ' ↑' : ' ↓') : ''}
+                  {t(key)}{sk === k ? (dir === 1 ? ' ↑' : ' ↓') : ''}
                 </button>
               ))}
             </div>
             {list.map((s) => (
-              <div className="mk-row" key={s.ticker} onClick={() => nav(`/dionica/${String(s.company).toLowerCase()}`)}>
+              <div className="mk-row" key={s.ticker} onClick={() => nav(stockPath(s.company))}>
                 <span className="mk-name"><b>{s.ticker}</b><em>{s.name}</em>
-                  {s.illiquid && <i className="mk-ill">ILIKV.</i>}</span>
+                  {s.illiquid && <i className="mk-ill">{t('mkt.illiq')}</i>}</span>
                 <span className="r mono">{eur0(s.price)}</span>
                 <span className="r mono" style={{ color: chgCol(s.change_pct) }}>{chg(s.change_pct)}</span>
                 <span className="r mono dim">{s.turnover ? num(s.turnover, 0) : '—'}</span>
@@ -127,10 +127,10 @@ export default function Trziste() {
               </div>
             ))}
             <div className="mk-legend">
-              <span><i className="mk-sw-zone" />fer-zona (naša procjena)</span>
-              <span><i className="mk-sw-tick" style={{ background: '#9E2B25' }} />tržišna cijena</span>
-              <span><i className="mk-sw-tick" style={{ background: '#2F5D86' }} />povlaštena dionica</span>
-              <span>ILIKV. = rijetke transakcije, cijena indikativna · n/p = analiza u obradi</span>
+              <span><i className="mk-sw-zone" />{t('mkt.legendZone')}</span>
+              <span><i className="mk-sw-tick" style={{ background: '#9E2B25' }} />{t('mkt.legendPrice')}</span>
+              <span><i className="mk-sw-tick" style={{ background: '#2F5D86' }} />{t('mkt.legendPref')}</span>
+              <span>{t('mkt.legendIlliq')}</span>
             </div>
           </div>
         </div>

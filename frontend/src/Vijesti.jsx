@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
+import { useLang } from './i18n/LangContext.jsx'
+import { fmtDate } from './format.js'
 
 /* M30: /vijesti — kratke vijesti (auto iz pipelinea + ručne), grupirane po
    danu. Podaci dolaze iz statičnog /data/vijesti.json kojeg build (prerender)
@@ -8,13 +10,6 @@ import { SiteFooter, SiteHeader } from './Shell.jsx'
    anon ključ). Zadano je svaka vijest pokazivač na postojeću stranicu
    (link_path); detail ruta /vijesti/<slug> postoji samo kad vijest ima body
    (izbjegavamo duplicate content). */
-
-export const CATEGORY_HR = {
-  novo_izvjesce: 'NOVO IZVJEŠĆE',
-  dividenda: 'DIVIDENDA',
-  promjena_cijene: 'CIJENA',
-  opce: 'OPĆE',
-}
 
 export const XFollow = ({ compact }) => {
   const handle = (import.meta.env.VITE_X_HANDLE || '').replace(/^@/, '')
@@ -27,14 +22,10 @@ export const XFollow = ({ compact }) => {
   )
 }
 
-const fmtDay = (iso) => {
-  if (!iso) return '—'
-  const [y, m, d] = iso.slice(0, 10).split('-')
-  return `${Number(d)}.${Number(m)}.${y}.`
-}
 
-function NewsRow({ n }) {
-  const label = CATEGORY_HR[n.category] || 'OPĆE'
+
+function NewsRow({ n, t }) {
+  const label = t(`newscat.${n.category}`) || t('newscat.opce')
   const target = n.slug ? `/vijesti/${n.slug}` : n.link_path
   return (
     <Link to={target} className="news-row">
@@ -45,11 +36,12 @@ function NewsRow({ n }) {
 }
 
 export function VijestiIndex() {
+  const { lang, t } = useLang()
   const [items, setItems] = useState(null)
   useEffect(() => {
-    document.title = 'Vijesti · Burzovni list'
+    document.title = `${t('news.title')} · Burzovni list`
     fetch('/data/vijesti.json').then((r) => r.json()).then(setItems).catch(() => setItems([]))
-  }, [])
+  }, [lang])
   const byDay = new Map()
   for (const n of items || []) {
     const day = (n.published_at || '').slice(0, 10) || '—'
@@ -60,23 +52,18 @@ export function VijestiIndex() {
     <div className="shellpg">
       <SiteHeader />
       <main className="wrap">
-        <div className="mk-title"><h1>Vijesti</h1></div>
-        <p className="imp-p">Kratke obavijesti o novim izvješćima, dividendama i
-        ažuriranjima analiza — svaka vodi na postojeću stranicu s podacima i
-        izvorima. <XFollow /></p>
-        {items === null ? <div className="loading">učitavam…</div>
-          : !items.length ? <div className="prof-empty-box">Trenutno nema
-            objavljenih vijesti. Vijesti o novim izvješćima i dividendama
-            objavljuju se automatski uz dnevno ažuriranje podataka (radnim
-            danom nakon zatvaranja burze).</div>
+        <div className="mk-title"><h1>{t('news.title')}</h1></div>
+        <p className="imp-p">{t('news.intro')} <XFollow /></p>
+        {items === null ? <div className="loading">{t('common.loading')}</div>
+          : !items.length ? <div className="prof-empty-box">{t('news.empty')}</div>
             : [...byDay.entries()].map(([day, list]) => (
               <section key={day}>
-                <div className="sec-label">{fmtDay(day)}</div>
-                {list.map((n) => <NewsRow n={n} key={n.id} />)}
+                <div className="sec-label">{fmtDate(day)}</div>
+                {list.map((n) => <NewsRow n={n} t={t} key={n.id} />)}
               </section>
             ))}
         <div className="disc" style={{ marginTop: 32 }}>
-          Informativni sadržaj — nije investicijski savjet ni preporuka.
+          {t('common.notAdvice')}
         </div>
       </main>
       <SiteFooter />
@@ -85,6 +72,7 @@ export function VijestiIndex() {
 }
 
 export function VijestDetail() {
+  const { t } = useLang()
   const { slug } = useParams()
   const [items, setItems] = useState(null)
   useEffect(() => {
@@ -98,24 +86,24 @@ export function VijestDetail() {
     <div className="shellpg">
       <SiteHeader />
       <main className="wrap">
-        {items === null ? <div className="loading">učitavam…</div>
+        {items === null ? <div className="loading">{t('common.loading')}</div>
           : !n ? (
             <section>
-              <div className="mk-title"><h1>Vijest nije pronađena</h1></div>
-              <p className="imp-p"><Link to="/vijesti">← sve vijesti</Link></p>
+              <div className="mk-title"><h1>{t('news.notFound')}</h1></div>
+              <p className="imp-p"><Link to="/vijesti">← {t('news.all')}</Link></p>
             </section>
           ) : (
             <article className="blog-post">
               <div className="blog-meta">
-                {CATEGORY_HR[n.category] || 'OPĆE'}
-                {n.ticker ? ` · ${n.ticker}` : ''} · {fmtDay(n.published_at)}
-                {' · '}<Link to="/vijesti">← sve vijesti</Link>
+                {t(`newscat.${n.category}`)}
+                {n.ticker ? ` · ${n.ticker}` : ''} · {fmtDate(n.published_at)}
+                {' · '}<Link to="/vijesti">← {t('news.all')}</Link>
               </div>
               <h1 className="page-h1">{n.headline}</h1>
               {(n.body || '').split(/\n{2,}/).filter(Boolean).map((par) => (
                 <p className="imp-p" key={par.slice(0, 40)}>{par}</p>
               ))}
-              <p className="imp-p"><Link to={n.link_path}>→ pogledaj stranicu s podacima</Link></p>
+              <p className="imp-p"><Link to={n.link_path}>→ {t('news.dataPage')}</Link></p>
             </article>
           )}
       </main>

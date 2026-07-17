@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
-import { num } from './format.js'
+import { fmtDate, num } from './format.js'
+import { useLang } from './i18n/LangContext.jsx'
 
 /* M22: agregirani dividendni kalendar (/dividende) — činjenični pregled svih
    isplata i najava iz EHO objava. MAR: bez rankinga "najboljih" prinosa —
@@ -9,75 +10,76 @@ import { num } from './format.js'
    neizglasan. Podaci: /data/dividende.json (build_dividende.py). */
 
 const FILTERS = [
-  ['sve', 'SVE'], ['paid', 'ISPLAĆENO'], ['upcoming', 'NADOLAZEĆE'],
-  ['proposed', 'PRIJEDLOZI'],
+  ['sve', 'div.f.all'], ['paid', 'div.f.paid'], ['upcoming', 'div.f.upcoming'],
+  ['proposed', 'div.f.proposed'],
 ]
 
 const COLS = [
-  ['company', 'DIONICA', 'l'], ['amount_eur', 'IZNOS €', 'r'],
-  ['yield_now', 'PRINOS', 'r'], ['payout_ratio', '% DOBITI', 'r'],
-  ['continuity', 'KONTINUITET', 'r'],
-  ['ex_date', 'EX-DATUM', 'r'], ['payment_date', 'ISPLATA', 'r'],
-  ['status', 'STATUS', 'l'],
+  ['company', 'div.col.stock', 'l'], ['amount_eur', 'div.col.amount', 'r'],
+  ['yield_now', 'div.col.yield', 'r'], ['payout_ratio', 'div.col.payout', 'r'],
+  ['continuity', 'div.col.continuity', 'r'],
+  ['ex_date', 'div.col.ex', 'r'], ['payment_date', 'div.col.pay', 'r'],
+  ['status', 'common.status', 'l'],
 ]
 
 /* v3 DIV: filter po TIPU isplate (default: sve; jednokratne su vizualno
    označene badgeom u svakom retku) */
 const TYPE_FILTERS = [
-  ['sve', 'SVI TIPOVI'], ['redovna', 'REDOVNE'],
-  ['jednokratna', 'JEDNOKRATNE'], ['iz_zadrzane_dobiti', 'IZ ZADRŽANE DOBITI'],
+  ['sve', 'div.tf.all'], ['redovna', 'div.tf.regular'],
+  ['jednokratna', 'div.tf.oneoff'], ['iz_zadrzane_dobiti', 'div.tf.retained'],
 ]
 
-export function TypeBadge({ t }) {
-  if (!t || t === 'redovna') {
-    return t ? <span className="div-onoff reg">redovna</span> : null
+export function TypeBadge({ type, t }) {
+  if (!type || type === 'redovna') {
+    return type ? <span className="div-onoff reg">{t('div.type.regular')}</span> : null
   }
   return <span className="div-onoff">
-    {t === 'iz_zadrzane_dobiti' ? 'iz zadržane dobiti' : 'izvanredna'}</span>
+    {type === 'iz_zadrzane_dobiti' ? t('div.type.retained') : t('div.type.extraordinary')}</span>
 }
 
 /* % dobiti pripadne fiskalne godine; >100% eksplicitno; bez dobiti u bazi
    '—' s objašnjenjem (NIKAD prema krivoj godini) */
-export function PayoutCell({ r }) {
+export function PayoutCell({ r, t }) {
   if (r.payout_ratio === null || r.payout_ratio === undefined) {
-    return <i className="np" title={`dobit FY${r.fiscal_year ?? '?'} nije dostupna u bazi`}>—</i>
+    return <i className="np" title={`${t('div.payoutNa')} (FY${r.fiscal_year ?? '?'})`}>—</i>
   }
   if (r.payout_ratio > 1) {
-    return <span title={r.classified_reason || ''}>&gt; 100% (iz zadržane dobiti)</span>
+    return <span title={r.classified_reason || ''}>{t('div.payoutOver')}</span>
   }
   return <span title={r.classified_reason || ''}>{num(r.payout_ratio * 100, 0)} %</span>
 }
 
-function StatusBadge({ s }) {
-  if (s === 'paid') return <span className="okflag">ISPLAĆENA</span>
+function StatusBadge({ s, t }) {
+  if (s === 'paid') return <span className="okflag">{t('div.badge.paid')}</span>
   if (s === 'proposed') {
-    return <span className="flag">PRIJEDLOG — još nije izglasano</span>
+    return <span className="flag">{t('div.badge.proposed')}</span>
   }
-  return <span className="div-upcoming">IZGLASANA · NADOLAZEĆA</span>
+  return <span className="div-upcoming">{t('div.badge.upcoming')}</span>
 }
 
-const fmtD = (d) => (d ? `${d.slice(8, 10)}.${d.slice(5, 7)}.${d.slice(0, 4)}.` : '—')
-
-function Row({ r, nav, hist }) {
+function Row({ r, nav, hist, t, lang }) {
   const h = hist?.[r.company]
+  const target = lang === 'en'
+    ? `/en/stock/${String(r.company).toLowerCase()}`
+    : `/dionica/${String(r.company).toLowerCase()}`
   return (
-    <div className="mk-row div-row" onClick={() => nav(`/dionica/${String(r.company).toLowerCase()}`)}>
+    <div className="mk-row div-row" onClick={() => nav(target)}>
       <span className="mk-name"><b>{r.class_ticker}</b><em>{r.name}</em></span>
       <span className="r mono">{num(r.amount_eur, 2)}</span>
       <span className="r mono">{r.yield_now === null || r.yield_now === undefined
-        ? <i className="np">n/p</i> : `${num(r.yield_now * 100, 2)} %`}</span>
-      <span className="r mono" title={h ? `podaci od FY${h.coverage_from}; prosjek do 5 g.: ${num(h.avg_amount_5y, 2)} €` : undefined}>
+        ? <i className="np">{t('common.na')}</i> : `${num(r.yield_now * 100, 2)} %`}</span>
+      <span className="r mono" title={h ? `${t('div.histTitle')}: FY${h.coverage_from} / ${num(h.avg_amount_5y, 2)} €` : undefined}>
         {h ? `${h.paid_years_of_5}/5` : '—'}</span>
-      <span className="r mono"><PayoutCell r={r} /></span>
-      <span className="r mono">{fmtD(r.ex_date)}</span>
-      <span className="r mono dim">{fmtD(r.payment_date)}</span>
+      <span className="r mono"><PayoutCell r={r} t={t} /></span>
+      <span className="r mono">{fmtDate(r.ex_date)}</span>
+      <span className="r mono dim">{fmtDate(r.payment_date)}</span>
       <span>
-        <StatusBadge s={r.status} />
+        <StatusBadge s={r.status} t={t} />
         {' '}
-        <TypeBadge t={r.payout_type} />
+        <TypeBadge type={r.payout_type} t={t} />
         {' '}
         <a className="fund-src" href={r.source_url} target="_blank" rel="noreferrer"
-          onClick={(e) => e.stopPropagation()}>izvor</a>
+          onClick={(e) => e.stopPropagation()}>{t('common.source')}</a>
       </span>
     </div>
   )
@@ -85,14 +87,15 @@ function Row({ r, nav, hist }) {
 
 export default function Dividende() {
   const nav = useNavigate()
+  const { lang, t } = useLang()
   const [data, setData] = useState(null)
   const [filter, setFilter] = useState('sve')
   const [tfilter, setTfilter] = useState('sve')
   const [sk, setSk] = useState('ex_date'); const [dir, setDir] = useState(1)
   useEffect(() => {
     fetch('/data/dividende.json').then((r) => r.json()).then(setData).catch(() => setData({ rows: [] }))
-    document.title = 'Dividende · Burzovni list'
-  }, [])
+    document.title = `${t('nav.dividends')} · Burzovni list`
+  }, [lang])
   const today = new Date().toISOString().slice(0, 10)
 
   const rows = useMemo(() => {
@@ -129,71 +132,65 @@ export default function Dividende() {
   }, [data, today])
 
   const sort = (k) => () => { setDir(sk === k ? -dir : 1); setSk(k) }
-  if (!data) return <div className="shellpg"><SiteHeader /><div className="loading">učitavam…</div></div>
+  if (!data) return <div className="shellpg"><SiteHeader /><div className="loading">{t('common.loading')}</div></div>
   return (
     <div className="shellpg">
       <SiteHeader />
       <main className="wrap-wide">
         <div className="mk-title">
-          <h1>Dividendni kalendar</h1>
-          <span>isplate i najave iz službenih EHO objava · stanje {fmtD(data.as_of)}</span>
+          <h1>{t('div.pageTitle')}</h1>
+          <span>{t('div.subtitle')} {fmtDate(data.as_of)}</span>
         </div>
 
         {soon.length > 0 && (
           <section className="div-soon">
-            <div className="sec-label">Ex-datum u sljedećih 30 dana</div>
+            <div className="sec-label">{t('div.soon')}</div>
             <div className="mk-scroll"><div className="div-table">
               <div className="mk-hd div-hd-static">
-                <span>DIONICA</span><span className="r">IZNOS €</span><span className="r">PRINOS</span>
-                <span className="r">EX-DATUM</span><span className="r">ISPLATA</span><span>STATUS</span>
+                <span>{t('div.col.stock')}</span><span className="r">{t('div.col.amount')}</span><span className="r">{t('div.col.yield')}</span>
+                <span className="r">{t('div.col.ex')}</span><span className="r">{t('div.col.pay')}</span><span>{t('common.status')}</span>
               </div>
-              {soon.map((r, i) => <Row r={r} nav={nav} hist={data.history} key={i} />)}
+              {soon.map((r, i) => <Row r={r} nav={nav} hist={data.history} t={t} lang={lang} key={i} />)}
             </div></div>
-            <div className="subnote">
-              Tko drži dionicu na kraju dana prije ex-datuma ima pravo na isplatu;
-              na sam ex-datum dionica se trguje bez tog prava. Prijedlog postaje
-              isplata tek odlukom glavne skupštine.
-            </div>
+            <div className="subnote">{t('div.soonNote')}</div>
           </section>
         )}
 
         <div className="mk-title2">
-          <h2 className="mk-h2">Sve isplate i najave ({new Date().getFullYear()}.)</h2>
+          <h2 className="mk-h2">{t('div.allTitle')} ({new Date().getFullYear()})</h2>
           <div className="prof-chips">
-            {FILTERS.map(([k, l]) => (
+            {FILTERS.map(([k, key]) => (
               <button key={k} className={`prof-chip ${filter === k ? 'on' : ''}`}
-                onClick={() => setFilter(k)}>{l}</button>
+                onClick={() => setFilter(k)}>{t(key)}</button>
             ))}
             <span className="dim">·</span>
-            {TYPE_FILTERS.map(([k, l]) => (
+            {TYPE_FILTERS.map(([k, key]) => (
               <button key={k} className={`prof-chip ${tfilter === k ? 'on' : ''}`}
-                onClick={() => setTfilter(k)}>{l}</button>
+                onClick={() => setTfilter(k)}>{t(key)}</button>
             ))}
           </div>
         </div>
         <div className="mk-scroll">
           <div className="div-table">
             <div className="mk-hd">
-              {COLS.map(([k, l, ta]) => (
+              {COLS.map(([k, key, ta]) => (
                 <button key={k} className={ta} onClick={sort(k)}>
-                  {l}{sk === k ? (dir === 1 ? ' ↑' : ' ↓') : ''}
+                  {t(key)}{sk === k ? (dir === 1 ? ' ↑' : ' ↓') : ''}
                 </button>
               ))}
             </div>
-            {rows.length ? rows.map((r, i) => <Row r={r} nav={nav} hist={data.history} key={i} />)
-              : <div className="prof-empty-box">Nema zapisa za odabrani filter.</div>}
+            {rows.length ? rows.map((r, i) => <Row r={r} nav={nav} hist={data.history} t={t} lang={lang} key={i} />)
+              : <div className="prof-empty-box">{t('div.emptyFilter')}</div>}
             <div className="mk-legend">
-              <span>PRINOS = iznos / zadnja cijena te klase — informativan podatak, ne rang ni preporuka</span>
-              <span>% DOBITI = ukupna isplata firme za tu fiskalnu godinu / neto dobit iste godine; — = dobit te godine nije u bazi</span>
-              <span><b>redovna</b> = isplata u liniji s dosadašnjima · <b>izvanredna</b> = više od 150% medijana prethodnih redovnih · <b>iz zadržane dobiti</b> = ukupna isplata veća od dobiti godine iz koje se isplaćuje — činjenične oznake, ne ocjene</span>
-              <span>— = datum nije objavljen · n/p = nema cijene</span>
+              <span>{t('div.legendYield')}</span>
+              <span>{t('div.legendPayout')}</span>
+              <span>{t('div.legendTypes')}</span>
+              <span>{t('div.legendDash')}</span>
             </div>
           </div>
         </div>
         <div className="disc">
-          {data.note} Činjenični kalendar bez preporuka — visok prinos sam po
-          sebi nije "dobra" dionica (može odražavati pad cijene ili jednokratnu
-          isplatu); zaključak je čitateljev.
+          {lang === 'en' ? '' : data.note} {t('div.disc')}
         </div>
       </main>
       <SiteFooter />

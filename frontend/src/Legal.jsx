@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import { CONSENT_VERSION, useConsent } from './consent.jsx'
+import { useLang } from './i18n/LangContext.jsx'
 
 /* M24: tri pravne stranice — Politika kolačića, Uvjeti korištenja,
    Politika privatnosti. Isti layout kao Impressum. Dostupne bez prijave i
@@ -139,6 +140,14 @@ export function PolitikaKolacicaContent({ openSettings }) {
 
 export function PolitikaKolacica() {
   const { openSettings } = useConsent()
+  const { lang } = useLang()
+  if (lang === 'en') {
+    return (
+      <LegalPage title="Cookie Policy">
+        <EnCookiesContent openSettings={openSettings} />
+      </LegalPage>
+    )
+  }
   return (
     <LegalPage title="Politika kolačića">
       <PolitikaKolacicaContent openSettings={openSettings} />
@@ -242,6 +251,10 @@ export function UvjetiKoristenjaContent() {
 }
 
 export function UvjetiKoristenja() {
+  const { lang } = useLang()
+  if (lang === 'en') {
+    return <LegalPage title="Terms of Use"><EnTermsContent /></LegalPage>
+  }
   return (
     <LegalPage title="Uvjeti korištenja">
       <UvjetiKoristenjaContent />
@@ -352,9 +365,330 @@ export function PolitikaPrivatnostiContent() {
 }
 
 export function PolitikaPrivatnosti() {
+  const { lang } = useLang()
+  if (lang === 'en') {
+    return <LegalPage title="Privacy Policy"><EnPrivacyContent /></LegalPage>
+  }
   return (
     <LegalPage title="Politika privatnosti">
       <PolitikaPrivatnostiContent />
     </LegalPage>
+  )
+}
+
+/* ==================== M38: ENGLESKE VERZIJE (pun prijevod) ====================
+   Content komponente su čiste (bez hookova) — koristi ih SPA i prerender.
+   Svaka nosi "prevails" klauzulu: u slučaju spora mjerodavna je hrvatska
+   verzija. Prijevodi prate docs/glossary_hr_en.md. */
+
+const PrevailsNote = ({ hrPath }) => (
+  <section>
+    <div className="sec-label">Language</div>
+    <p className="imp-p">This is an English translation provided for
+    convenience. <b>In case of dispute, the Croatian version prevails</b>:{' '}
+    <Link to={hrPath}>Croatian version</Link>.</p>
+  </section>
+)
+
+const COOKIES_EN = [
+  { name: 'bl_consent',
+    purpose: 'remembers your cookie choice (policy version, date, selected categories)',
+    cat: 'strictly necessary', dur: '12 months', party: 'first party (localStorage)' },
+  { name: 'sb-<project>-auth-token',
+    purpose: 'logged-in user session (Supabase Auth) — exists only if you sign in',
+    cat: 'strictly necessary', dur: 'until sign-out / session expiry', party: 'first party (localStorage)' },
+  { name: 'lastTicker',
+    purpose: 'remembers the last opened stock for the header navigation shortcut',
+    cat: 'necessary (functional)', dur: 'until deleted from the browser', party: 'first party (localStorage)' },
+  { name: '_ga',
+    purpose: 'Google analytics (loaded via Google Tag Manager) — distinguishes visitors; set ONLY if you consent to analytics cookies',
+    cat: 'analytics', dur: 'up to 2 years', party: 'third party (Google)' },
+  { name: '_ga_*',
+    purpose: 'Google analytics — session state per measurement property; set ONLY if you consent to analytics cookies',
+    cat: 'analytics', dur: 'up to 2 years', party: 'third party (Google)' },
+]
+
+export function EnCookiesContent({ openSettings }) {
+  return (
+    <>
+      <section>
+        <div className="sec-label">What cookies are and who sets them</div>
+        <p className="imp-p">Cookies and related local-storage technologies
+        (localStorage) are small amounts of data your browser keeps on your
+        device. They are set by <b>Burzovni list</b> as the operator of this
+        site. The service currently uses exclusively the first-party storage
+        listed in the table — technically via the browser's localStorage, to
+        which the same consent rules apply as to cookies (storage on the
+        user's device).</p>
+      </section>
+
+      <section>
+        <div className="sec-label">Table of cookies and local storage</div>
+        <div className="mk-scroll">
+        <table>
+          <thead><tr><th>Name</th><th>Purpose</th><th>Category</th>
+            <th>Duration</th><th>First/third party</th></tr></thead>
+          <tbody>
+            {COOKIES_EN.map((c) => (
+              <tr key={c.name}>
+                <td><code>{c.name}</code></td>
+                <td>{c.purpose}</td>
+                <td>{c.cat}</td>
+                <td>{c.dur}</td>
+                <td className="fund-src">{c.party}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
+        <p className="imp-p" style={{ marginTop: 10 }}>
+          <b>Analytics (Google Tag Manager with Google Consent Mode v2)</b>:
+          before your consent, all storage modes are set to "denied" —
+          analytics cookies are NOT set. Only when you consent to the
+          "Analytics" category does storage switch to "granted" and the
+          cookies in the table get set. If you withdraw consent, storage
+          immediately returns to "denied" and existing{' '}
+          <code>_ga</code>/<code>_ga_*</code> cookies are deleted. We use no
+          marketing cookies.
+        </p>
+      </section>
+
+      <section>
+        <div className="sec-label">Managing your consent</div>
+        <p className="imp-p">You can change or withdraw your choice at any
+        time — as easily as it was given:{' '}
+        <button type="button" className="cc-inline-link" onClick={openSettings}>
+          open cookie settings
+        </button>{' '}
+        (the same link is permanently in the footer of every page). You can
+        also delete cookies and local storage in your browser: Settings →
+        Privacy → Cookies and site data (Chrome/Edge) or Settings → Privacy
+        &amp; Security (Firefox). Declining non-essential cookies does not
+        limit your use of the site.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">Legal basis</div>
+        <p className="imp-p">Strictly necessary cookies and storage: necessity
+        of providing the service you requested and the operator's legitimate
+        interest (Art. 6(1)(b) and (f) GDPR; Art. 5(3) of the ePrivacy
+        Directive — the strictly-necessary exemption). Analytics and
+        marketing cookies: exclusively your consent (Art. 6(1)(a) GDPR),
+        which you can withdraw at any time without consequences for using
+        the site.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">Version and changes</div>
+        <p className="imp-p">Policy version: <b>{CONSENT_VERSION}</b> · last
+        change: <b>{UPDATED}</b> If the policy changes, your recorded consent
+        expires and we will ask again on your next visit. Consent is in any
+        case valid for at most 12 months.</p>
+        <p className="imp-p">More about personal-data processing:{' '}
+        <Link to="/en/privacy">Privacy Policy</Link>.</p>
+      </section>
+      <PrevailsNote hrPath="/politika-kolacica" />
+    </>
+  )
+}
+
+export function EnTermsContent() {
+  return (
+    <>
+      <section>
+        <div className="sec-label">1. General provisions</div>
+        <p className="imp-p">These Terms of Use are applied by <b>Burzovni
+        list</b> (the "operator"), the provider of the informational service
+        at burzovnilist.com — a platform for the informational display of
+        data and analytical ranges for stocks listed on the Zagreb Stock
+        Exchange. Operator details and contact are in the{' '}
+        <a href="/impressum">Impressum</a>{' '}
+        (<a href="mailto:info@burzovnilist.com">info@burzovnilist.com</a>).
+        By using the site you accept these Terms.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">2. Informational nature of the content</div>
+        <p className="imp-p">The data, ranges and fair-value zones shown are
+        informational and analytical — they are not investment advice, a
+        recommendation, or a solicitation to buy or sell financial
+        instruments. Fair-value zones and ranges result from a publicly
+        described <Link to="/en/methodology">methodology</Link> with
+        assumptions stated next to every analysis; the conclusion is always
+        the reader's. Values of illiquid stocks are indicative and tagged as
+        such. The service publishes no target prices, ratings or
+        recommendations.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">3. Data sources and accuracy</div>
+        <p className="imp-p">The data is based on official end-of-day closes
+        of the Zagreb Stock Exchange (published after the close of trading; a
+        delay is possible, and every price carries the actual data date) and
+        issuers' publicly available reports (EHO/ZSE). The operator does not
+        guarantee completeness, accuracy or timeliness; missing data is shown
+        empty (n/a) and is never estimated. The issuers' source documents and
+        the exchange's official publications are authoritative.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">4. User accounts</div>
+        <p className="imp-p">Registration uses an email address and password.
+        The user is responsible for the confidentiality of their password and
+        for activity under their account. The operator may suspend or
+        terminate an account in case of abuse (including unauthorized-access
+        attempts, automated bulk downloading, or disrupting the service).
+        The portfolio feature is a record-keeping tool — it is based on the
+        user's manual entries, does not connect to brokerage accounts and
+        executes no transactions.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">5. Intellectual property</div>
+        <p className="imp-p">The site's content, methodology, analytical
+        texts, visualizations and database are the operator's property.
+        Personal, non-commercial use is permitted. Scraping, bulk
+        downloading, systematic copying and redistribution of data or
+        analyses without the operator's prior written permission are
+        prohibited. Third-party data (ZSE, issuers) is additionally subject
+        to those sources' rights.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">6. Limitation of liability</div>
+        <p className="imp-p">To the fullest extent permitted by applicable
+        law, the operator is not liable for decisions made on the basis of
+        the site's content, nor for any damage (direct or indirect) arising
+        from the use of, or inability to use, the site — including damage
+        due to inaccuracy, incompleteness or untimeliness of data and
+        temporary unavailability of the service. For investment, tax or
+        legal decisions, consult a licensed adviser.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">7. Changes to the Terms</div>
+        <p className="imp-p">The operator reserves the right to amend these
+        Terms. Amendments are published on this page with their effective
+        date. Continued use of the site after publication constitutes
+        acceptance of the amended Terms.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">8. Governing law and jurisdiction</div>
+        <p className="imp-p">These Terms are governed by the law of the
+        Republic of Croatia. The court with subject-matter jurisdiction in
+        Zagreb has jurisdiction over disputes.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">9. Effective date</div>
+        <p className="imp-p">These Terms take effect on <b>{UPDATED}</b></p>
+      </section>
+      <PrevailsNote hrPath="/uvjeti-koristenja" />
+    </>
+  )
+}
+
+export function EnPrivacyContent() {
+  return (
+    <>
+      <section>
+        <div className="sec-label">Controller</div>
+        <p className="imp-p"><b>Burzovni list</b>, operator of
+        burzovnilist.com (details in the <a href="/impressum">Impressum</a>).
+        Contact for all personal-data questions:{' '}
+        <a href="mailto:info@burzovnilist.com">info@burzovnilist.com</a>.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">What data we process and why</div>
+        <div className="mk-scroll">
+        <table>
+          <thead><tr><th>Data</th><th>Purpose</th><th>Legal basis</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>email address and password (stored exclusively as a hash)</td>
+              <td>user account: registration, sign-in, password recovery</td>
+              <td>performance of a contract (Art. 6(1)(b) GDPR)</td>
+            </tr>
+            <tr>
+              <td>portfolio data you enter yourself (ticker, quantity,
+                average price)</td>
+              <td>the "My portfolio" feature — a record you keep yourself</td>
+              <td>performance of a contract (Art. 6(1)(b) GDPR)</td>
+            </tr>
+            <tr>
+              <td>technical/analytics visit data (cookies — Google Tag
+                Manager / Google analytics)</td>
+              <td>web analytics — understanding how the site is used</td>
+              <td>consent (Art. 6(1)(a) GDPR) — strictly opt-in; nothing
+                loads without consent</td>
+            </tr>
+            <tr>
+              <td>server logs (IP address, user agent, request time)</td>
+              <td>security, abuse detection and troubleshooting</td>
+              <td>legitimate interest (Art. 6(1)(f) GDPR)</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <p className="imp-p" style={{ marginTop: 10 }}>We use email
+        exclusively for sign-in and password recovery — no newsletters, no
+        marketing. Note: the site's fonts load from Google Fonts servers;
+        when fetching a font your browser transmits your IP address to
+        Google (a technical necessity of resource loading).</p>
+      </section>
+
+      <section>
+        <div className="sec-label">Processors and processing location</div>
+        <p className="imp-p"><b>Supabase</b> — user-account authentication
+        and the portfolio database; the project is hosted in the{' '}
+        <b>eu-central-1 region (Frankfurt, EU)</b>. <b>Vercel Inc.</b>
+        (USA) — hosting and serving of the site via a global CDN; server
+        logs arise at Vercel. Transfers to the USA rely on the EU–US Data
+        Privacy Framework and standard contractual clauses. <b>Google</b>
+        (Google Ireland Ltd.) — web analytics via Google Tag Manager,
+        strictly with your consent; Google may process data outside the
+        EU/EEA on the basis of the EU–US Data Privacy Framework and standard
+        contractual clauses. We do not sell data, nor share it with third
+        parties for marketing purposes.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">Retention periods</div>
+        <p className="imp-p">Account and portfolio data is kept while the
+        account exists, and for at most 30 days after account deletion
+        (backups). Server logs are kept for at most 12 months. The cookie
+        consent record is valid for at most 12 months, after which consent
+        is requested again.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">Your rights</div>
+        <p className="imp-p">You have the right to: access your data,
+        rectification, erasure ("right to be forgotten"), restriction of
+        processing, data portability, objection to processing based on
+        legitimate interest, and withdrawal of consent at any time (without
+        affecting the lawfulness of processing before withdrawal). Cookie
+        consent is withdrawn via "Cookie settings" in the footer of every
+        page.</p>
+        <p className="imp-p">You exercise all rights by email to{' '}
+        <a href="mailto:info@burzovnilist.com">info@burzovnilist.com</a> —
+        we respond without undue delay, at the latest within 30 days. You
+        also have the right to complain to the supervisory authority: the
+        Croatian Personal Data Protection Agency (AZOP),{' '}
+        <a href="https://azop.hr" target="_blank" rel="noreferrer">azop.hr</a>.</p>
+      </section>
+
+      <section>
+        <div className="sec-label">Changes</div>
+        <p className="imp-p">Last change: <b>{UPDATED}</b> Changes to this
+        policy are published on this page; material changes will be
+        highlighted on your next visit. See also the{' '}
+        <Link to="/en/cookies">Cookie Policy</Link> and{' '}
+        <Link to="/en/terms">Terms of Use</Link>.</p>
+      </section>
+      <PrevailsNote hrPath="/politika-privatnosti" />
+    </>
   )
 }

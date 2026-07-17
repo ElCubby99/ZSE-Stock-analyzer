@@ -28,6 +28,13 @@ pushaj** — Vercel deploya automatski s `main`. Redoslijed:
 - Analitika se učitava isključivo kroz consent sustav (Consent Mode v2);
   GTM container i politika kolačića moraju ostati usklađeni — promjena
   kategorija kolačića = bump `CONSENT_VERSION` + ažuriranje politike.
+- **i18n (M38): svaki novi user-facing string ide kroz i18n rječnik**
+  (`frontend/src/i18n/strings.mjs`, ključ s OBA jezika) uz pojam u
+  `docs/glossary_hr_en.md`; **svaka nova ruta registrira HR i EN par u
+  registryju** (`en: {path, seo}`); content-marker testovi se izvršavaju
+  za oba jezika; formatiranje brojeva/valute/datuma ISKLJUČIVO kroz
+  `frontend/src/format.js` (locale iz rute). PR koji doda hardkodirani
+  string ili rutu bez para ne prolazi (tests/test_i18n.py).
 - **Svaka nova javna stranica/ruta ide isključivo kroz
   `frontend/src/routes/registry.mjs`** — nikad hardkodirana zasebno u
   routeru (main.jsx) i zasebno u sitemap generatoru (prerender.mjs); oba

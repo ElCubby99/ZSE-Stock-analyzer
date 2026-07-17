@@ -15,11 +15,22 @@
                  koju prerender širi po podacima (exporti dionica / postovi /
                  vijesti s bodyjem / indeksi)
    - prerender   false → stranica se NE prerendera (samo SPA fallback);
-                 podrazumijevano true za statičke rute */
+                 podrazumijevano true za statičke rute
+   - en          M38: engleski par rute {path, seo} — JEDINO mjesto gdje se
+                 definiraju HR↔EN parovi (router, prerender, sitemap,
+                 hreflang i jezični switcher čitaju odavde). Ruta bez
+                 'en' polja nema EN varijantu (blog, alati, admin...). */
 
 export const ROUTES = [
   {
     path: '/',
+    en: {
+      path: '/en',
+      seo: {
+        title: 'Zagreb Stock Exchange stocks — prices, valuation, fair-value zones | Burzovni list',
+        description: 'Fundamental analysis of Zagreb Stock Exchange (ZSE) stocks: prices, fair-value zones, key indicators, dividends and reports. Croatian stocks for international investors.',
+      },
+    },
     component: 'Trziste',
     indexable: true,
     seo: {
@@ -29,6 +40,13 @@ export const ROUTES = [
   },
   {
     path: '/screener',
+    en: {
+      path: '/en/screener',
+      seo: {
+        title: 'Croatian stocks screener — ZSE | Burzovni list',
+        description: 'Screen all Zagreb Stock Exchange stocks: fair-value zone, P/E, P/B, dividend yield, turnover and sector — sortable and filterable.',
+      },
+    },
     component: 'Screener',
     indexable: true,
     seo: {
@@ -38,18 +56,27 @@ export const ROUTES = [
   },
   {
     path: '/dionica/:ticker',
+    en: { path: '/en/stock/:ticker' },
     component: 'StockPage',
     indexable: true,
     expand: 'stocks',
   },
   {
     path: '/dionica/:ticker/financije',
+    en: { path: '/en/stock/:ticker/financials' },
     component: 'FinancijePage',
     indexable: true,
     expand: 'stocks_fin', // M37: as-reported izvještaji (data/fin/<T>.json)
   },
   {
     path: '/indeksi',
+    en: {
+      path: '/en/indices',
+      seo: {
+        title: 'Zagreb Stock Exchange indices — CROBEX, CROBEX10, CROBIS | Burzovni list',
+        description: 'All Zagreb Stock Exchange indices in one place: values, daily and yearly changes, constituents with weights and market temperature versus fair-value zones.',
+      },
+    },
     component: 'IndeksiIndex',
     indexable: true,
     seo: {
@@ -59,12 +86,20 @@ export const ROUTES = [
   },
   {
     path: '/indeks/:slug',
+    en: { path: '/en/index/:slug' },
     component: 'IndeksDetail',
     indexable: true,
     expand: 'indices',
   },
   {
     path: '/obveznice',
+    en: {
+      path: '/en/bonds',
+      seo: {
+        title: 'Croatian bonds — ZSE yields (YTM) and maturities | Burzovni list',
+        description: 'All bonds listed on the Zagreb Stock Exchange: government (retail), municipal and corporate — coupon, maturity, clean price, yield to maturity (YTM) and duration.',
+      },
+    },
     component: 'ObvezniceIndex',
     indexable: true,
     seo: {
@@ -74,12 +109,20 @@ export const ROUTES = [
   },
   {
     path: '/obveznica/:symbol',
+    en: { path: '/en/bond/:symbol' },
     component: 'ObveznicaDetail',
     indexable: true,
     expand: 'bonds',
   },
   {
     path: '/mirovinski-fondovi',
+    en: {
+      path: '/en/pension-funds',
+      seo: {
+        title: 'Croatian mandatory pension funds — unit values and returns | Burzovni list',
+        description: 'Accounting unit values of Croatian mandatory pension funds (AZ, Erste Plavi, PBZ CO, Raiffeisen; categories A/B/C), the Mirex benchmark and ZSE stocks where the funds are top-10 shareholders.',
+      },
+    },
     component: 'MirovinskiFondovi',
     indexable: true,
     seo: {
@@ -89,6 +132,13 @@ export const ROUTES = [
   },
   {
     path: '/usporedba',
+    en: {
+      path: '/en/comparison',
+      seo: {
+        title: 'Compare Zagreb Stock Exchange stocks — P/E, P/B, dividend yield | Burzovni list',
+        description: 'Compare all ZSE stocks: P/E, P/B, EV/EBITDA, earnings yield, dividend yield, payout and gap to fair-value zone — sorting, filters, up to 5 stocks side by side.',
+      },
+    },
     component: 'Usporedba',
     indexable: true,
     seo: {
@@ -98,6 +148,13 @@ export const ROUTES = [
   },
   {
     path: '/dividende',
+    en: {
+      path: '/en/dividends',
+      seo: {
+        title: 'ZSE dividend calendar — ex-dates, payments and yields | Burzovni list',
+        description: 'Zagreb Stock Exchange dividend calendar: amounts per share, ex-dates, payment dates and dividend yields for all companies. From official filings, updated daily.',
+      },
+    },
     component: 'Dividende',
     indexable: true,
     seo: {
@@ -107,6 +164,13 @@ export const ROUTES = [
   },
   {
     path: '/metodologija',
+    en: {
+      path: '/en/methodology',
+      seo: {
+        title: 'Methodology — how we estimate value | Burzovni list',
+        description: 'How we compute fair-value zones for Croatian stocks: methods by company archetype, data sources, parameters with citations. No recommendations — by design.',
+      },
+    },
     component: 'Metodologija',
     indexable: true,
     seo: {
@@ -131,6 +195,13 @@ export const ROUTES = [
   },
   {
     path: '/vijesti',
+    en: {
+      path: '/en/news',
+      seo: {
+        title: 'ZSE news — new reports, dividends and updates | Burzovni list',
+        description: 'Short news from the Zagreb Stock Exchange: new financial reports, announced dividends and analysis updates — each links to the page with data and sources.',
+      },
+    },
     component: 'VijestiIndex',
     indexable: true,
     seo: {
@@ -164,6 +235,13 @@ export const ROUTES = [
   },
   {
     path: '/uvjeti-koristenja',
+    en: {
+      path: '/en/terms',
+      seo: {
+        title: 'Terms of Use | Burzovni list',
+        description: 'Terms of Use of Burzovni list: informational nature of the content, accounts, intellectual property, liability. In case of dispute, the Croatian version prevails.',
+      },
+    },
     component: 'UvjetiKoristenja',
     indexable: true,
     seo: {
@@ -173,6 +251,13 @@ export const ROUTES = [
   },
   {
     path: '/politika-privatnosti',
+    en: {
+      path: '/en/privacy',
+      seo: {
+        title: 'Privacy Policy | Burzovni list',
+        description: 'Privacy Policy: what data we process, legal bases, processors, retention periods and your GDPR rights. In case of dispute, the Croatian version prevails.',
+      },
+    },
     component: 'PolitikaPrivatnosti',
     indexable: true,
     seo: {
@@ -182,6 +267,13 @@ export const ROUTES = [
   },
   {
     path: '/politika-kolacica',
+    en: {
+      path: '/en/cookies',
+      seo: {
+        title: 'Cookie Policy | Burzovni list',
+        description: 'Cookie Policy: table of cookies and local storage, consent management, legal basis. In case of dispute, the Croatian version prevails.',
+      },
+    },
     component: 'PolitikaKolacica',
     indexable: true,
     seo: {
@@ -211,3 +303,24 @@ export const ROUTES = [
     prerender: false, // samo SPA fallback; komponenta sama postavlja noindex
   },
 ]
+
+/* ---------- M38: HR↔EN mapiranje putanja (switcher + hreflang) ---------- */
+const _toRe = (pattern) => new RegExp(
+  `^${pattern.replace(/[.*+?^${}()|[\]\\]/g, (c) => (c === ':' ? c : `\\${c}`))
+    .replace(/:([A-Za-z]+)/g, '(?<$1>[^/]+)')}$`)
+
+const _fill = (pattern, params) =>
+  pattern.replace(/:([A-Za-z]+)/g, (_, name) => params[name] || '')
+
+/* pairPath('/dionica/koei') -> '/en/stock/koei'; pairPath('/en/screener')
+   -> '/screener'; ruta bez para -> null (switcher tada vodi na home). */
+export function pairPath(pathname) {
+  for (const r of ROUTES) {
+    if (!r.en) continue
+    let m = pathname.match(_toRe(r.path))
+    if (m) return _fill(r.en.path, m.groups || {})
+    m = pathname.match(_toRe(r.en.path))
+    if (m) return _fill(r.path, m.groups || {})
+  }
+  return null
+}
