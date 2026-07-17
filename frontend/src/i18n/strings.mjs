@@ -86,6 +86,10 @@ export const STR = {
 
   /* ---------- financije (M37) ---------- */
   'fin.title': { hr: 'Financijski izvještaji', en: 'Financial statements' },
+  'fin.docTitle': {
+    hr: 'financijski izvještaji — prihodi, dobit, bilanca | Burzovni list',
+    en: 'financial statements — revenue, profit, balance sheet | Burzovni list',
+  },
   'fin.income': { hr: 'Dobit i gubitak', en: 'Income statement' },
   'fin.balance': { hr: 'Financijski položaj', en: 'Balance sheet' },
   'fin.cashflow': { hr: 'Novčani tok', en: 'Cash flow' },

@@ -557,6 +557,8 @@ const temperatureHtml = () => {
 async function buildIndexPages() {
   for (const ix of indeksiData.indices) {
     const canonical = `${SITE}/indeks/${ix.slug}`
+    const canonicalEn = `${SITE}/en/index/${ix.slug}`
+    const alternates = { hr: canonical, en: canonicalEn }
     const pctTxt = (v) => (v === null || v === undefined ? 'n/p'
       : `${v >= 0 ? '+' : '−'}${num(Math.abs(v) * 100, 2)} %`)
     const consRows = (ix.constituents || []).map((c) => `<tr>
@@ -568,7 +570,7 @@ async function buildIndexPages() {
     await write(`indeks/${ix.slug}`, page({
       title: `${ix.name} danas — vrijednost, sastav i povijest | Burzovni list`,
       description: `${ix.name} (${ix.description}): ${num(ix.value, 2)} (${ix.date}), dnevna promjena ${pctTxt(ix.change_pct)}, YTD ${pctTxt(ix.ytd_pct)}. Sastavnice s težinama i povijest.`.slice(0, 155),
-      canonical,
+      canonical, alternates,
       body: `<main>
         <nav><a href="/">Naslovnica</a> › <a href="/indeksi">Indeksi</a> › ${esc(ix.name)}</nav>
         <h1>${esc(ix.name)} — vrijednost, sastav i povijest</h1>
@@ -581,8 +583,6 @@ async function buildIndexPages() {
         <p>Izvor sastavnica i težina: ZSE (IndexComposition).</p>` : ''}
         <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
     }))
-    const canonicalEn = `${SITE}/en/index/${ix.slug}`
-    const alternates = { hr: canonical, en: canonicalEn }
     PRLOC = 'en-GB'
     const pctTxtEn = (v) => (v === null || v === undefined ? 'n/a'
       : `${v >= 0 ? '+' : '−'}${num(Math.abs(v) * 100, 2)}%`)
@@ -641,12 +641,14 @@ async function buildBondPages() {
   for (const r of obveznice.rows) {
     const sym = r.symbol.toLowerCase()
     const canonical = `${SITE}/obveznica/${sym}`
+    const canonicalEn = `${SITE}/en/bond/${sym}`
+    const alternates = { hr: canonical, en: canonicalEn }
     const schedRows = (r.schedule || []).map((c) => `<tr><td>${esc(c.date)}</td>
       <td>${num(c.amount_pct, 3)}</td><td>${c.amount_pct > 90 ? 'kupon + glavnica' : 'kupon'}</td></tr>`).join('')
     await write(`obveznica/${sym}`, page({
       title: `${r.symbol} obveznica — prinos (YTM), kupon i dospijeće | Burzovni list`,
       description: `${r.symbol} (${r.issuer || 'izdavatelj u obradi'}, ${r.btype}): kupon ${bondPct(r.coupon_pct, 3)}, dospijeće ${r.maturity_date || 'n/p'}, YTM ${bondPct(r.ytm_pct)}. Čista cijena u % nominale.`.slice(0, 155),
-      canonical,
+      canonical, alternates,
       body: `<main>
         <nav><a href="/">Naslovnica</a> › <a href="/obveznice">Obveznice</a> › ${esc(r.symbol)}</nav>
         <h1>${esc(r.symbol)} — ${esc(r.issuer || 'izdavatelj u obradi')} (${esc(r.btype)} obveznica)</h1>
@@ -664,8 +666,6 @@ async function buildBondPages() {
         <p>Formule i konvencije: <a href="/metodologija">Metodologija — sekcija Obveznice</a>.</p>
         <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
     }))
-    const canonicalEn = `${SITE}/en/bond/${sym}`
-    const alternates = { hr: canonical, en: canonicalEn }
     PRLOC = 'en-GB'
     await write(`en/bond/${sym}`, page({
       title: `${r.symbol} bond — yield to maturity (YTM), coupon and maturity | Burzovni list`,
