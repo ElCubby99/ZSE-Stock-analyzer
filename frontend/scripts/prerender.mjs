@@ -627,6 +627,35 @@ function dividendeTable(lang = 'hr') {
 
 /* ---------- M-BOND: obveznice ---------- */
 let fondoviData = { units: [], mirex: [], synergy: [], units_available: false }
+/* M-FOND2: statička tablica jedinica i prinosa (YTD…10g) za SEO — Mirex
+   redovi uključeni; '—' gdje serija ne seže (ništa se ne procjenjuje) */
+const fndPct = (v) => (v === null || v === undefined ? '—'
+  : `${v >= 0 ? '+' : '−'}${num(Math.abs(v) * 100, 2)} %`)
+function fndUnitsTable(lang) {
+  const f = fondoviData
+  if (!f.units_available) return ''
+  const L = lang === 'en'
+    ? { fund: 'Fund', cat: 'Cat.', unit: 'Unit value', head: 'Unit values and returns' }
+    : { fund: 'Fond', cat: 'Kat.', unit: 'Jedinica', head: 'Obračunske jedinice i prinosi' }
+  const yl = lang === 'en' ? ['YTD', '1y', '3y', '5y', '10y'] : ['YTD', '1g', '3g', '5g', '10g']
+  const rows = []
+  for (const u of f.units || []) {
+    rows.push(`<tr><td>${esc(u.fund)} OMF</td><td>${esc(u.category)}</td>
+      <td>${u.unit_value === null ? '—' : num(u.unit_value, 4)}</td>
+      <td>${fndPct(u.ytd)}</td><td>${fndPct(u.y1)}</td><td>${fndPct(u.y3)}</td>
+      <td>${fndPct(u.y5)}</td><td>${fndPct(u.y10)}</td></tr>`)
+  }
+  for (const m of f.mirex || []) {
+    rows.push(`<tr><td>Mirex</td><td>${esc(m.category)}</td>
+      <td>${m.value === null ? '—' : num(m.value, 2)}</td>
+      <td>${fndPct(m.ytd)}</td><td>${fndPct(m.y1)}</td><td>${fndPct(m.y3)}</td>
+      <td>${fndPct(m.y5)}</td><td>${fndPct(m.y10)}</td></tr>`)
+  }
+  return `<h2>${L.head}</h2>
+  <table><thead><tr><th>${L.fund}</th><th>${L.cat}</th><th>${L.unit}</th>
+  ${yl.map((y) => `<th>${y}</th>`).join('')}</tr></thead>
+  <tbody>${rows.join('')}</tbody></table>`
+}
 try {
   fondoviData = JSON.parse(await fs.readFile(path.join(DIST, 'data/fondovi.json'), 'utf8'))
 } catch { /* bez podataka o fondovima */ }
@@ -780,6 +809,7 @@ const BODY_BUILDERS = {
       <p>Obvezni mirovinski fondovi (AZ, Erste Plavi, PBZ CO, Raiffeisen; kategorije A/B/C)
       i Mirex za usporedbu. Izvor: HANFA javne objave, mjesečni ritam. Bez rangiranja —
       redoslijed je abecedni. ${f.units_available ? '' : 'Prvi mjesečni uvoz HANFA podataka još nije obavljen — vrijednosti jedinica pojavit će se nakon prve objave.'}</p>
+      ${fndUnitsTable('hr')}
       <h2>ZSE dionice s OMF-ovima među top 10 dioničara</h2>
       <table><thead><tr><th>Dionica</th><th>Fond (kategorija)</th><th>Ukupni udjel</th></tr></thead>
       <tbody>${[...byT.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([t, info]) => `<tr>
@@ -898,6 +928,7 @@ const BODY_BUILDERS_EN = {
       <p>Mandatory pension funds (AZ, Erste Plavi, PBZ CO, Raiffeisen; categories A/B/C)
       and the Mirex benchmark. Source: HANFA public releases, monthly cadence. No ranking —
       the order is alphabetical.</p>
+      ${fndUnitsTable('en')}
       <h2>ZSE stocks with pension funds among the top-10 shareholders</h2>
       <table><thead><tr><th>Stock</th><th>Fund (category)</th><th>Total stake</th></tr></thead>
       <tbody>${[...byT.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([t2, info]) => `<tr>

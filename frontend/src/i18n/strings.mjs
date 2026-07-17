@@ -421,6 +421,30 @@ export const STR = {
     hr: 'Podaci o jedinicama dolaze iz HANFA javnih objava u mjesečnom ritmu; prinosi su izračunati iz povijesti jedinica. Bez rangiranja i bez preporuka — činjenični prikaz. Nije investicijski savjet.',
     en: 'Unit values come from monthly HANFA public releases; returns are computed from the unit-value history. No ranking and no recommendations — a factual view. Not investment advice.',
   },
+  'fund.y10': { hr: '10g', en: '10y' },
+  'fund.rg.ytd': { hr: 'YTD', en: 'YTD' },
+  'fund.rg.y1': { hr: '1G', en: '1Y' },
+  'fund.rg.y3': { hr: '3G', en: '3Y' },
+  'fund.rg.y5': { hr: '5G', en: '5Y' },
+  'fund.rg.y10': { hr: '10G', en: '10Y' },
+  'fund.rg.max': { hr: 'MAX', en: 'MAX' },
+  'fund.chartTitle': {
+    hr: 'Usporedba kretanja — jedinice OMF-ova i Mirex',
+    en: 'Performance comparison — OMF unit values and Mirex',
+  },
+  'fund.chartSeries': { hr: 'Serije (klik uključuje/isključuje)', en: 'Series (click to toggle)' },
+  'fund.chartRebase': {
+    hr: 'Početak odabranog raspona = 100 — usporedivo kretanje, ne apsolutne vrijednosti. Dnevne točke za YTD/1G, mjesečne za dulje raspone; samo stvarne objavljene vrijednosti (HANFA), bez interpolacije.',
+    en: 'Start of the selected range = 100 — comparable performance, not absolute values. Daily points for YTD/1Y, monthly for longer ranges; only actually published values (HANFA), no interpolation.',
+  },
+  'fund.chartEmpty': {
+    hr: 'Povijesne serije čekaju prvi uvoz (HANFA, mjesečni ritam).',
+    en: 'Historical series are awaiting the first import (HANFA, monthly cadence).',
+  },
+  'fund.chartShort': {
+    hr: 'serija kraća od raspona — prikazan dostupni dio',
+    en: 'series shorter than the range — available part shown',
+  },
   'fund.holdersTitle': {
     hr: 'Mirovinski fondovi među dioničarima',
     en: 'Pension funds among shareholders',

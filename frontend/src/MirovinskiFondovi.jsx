@@ -7,7 +7,10 @@ import { useLang } from './i18n/LangContext.jsx'
 /* M-FOND: /mirovinski-fondovi — vrijednosti obračunskih jedinica OMF-ova
    (A/B/C) i Mirex (izvor HANFA, MJESEČNI ritam) + sinergija s našim
    podacima: ZSE dionice u čijim se top-10 popisima pojavljuju OMF-ovi.
-   BEZ rangiranja fondova (abecedni redoslijed) — činjenični prikaz. */
+   BEZ rangiranja fondova (abecedni redoslijed) — činjenični prikaz.
+   M-FOND2: graf usporedbe (fondovi međusobno + Mirex) na standardnim
+   rasponima; normirano na 100 na početku raspona (usporedivo kretanje,
+   ne apsolutne razine — jedinice i indeks nemaju istu skalu). */
 
 export function useFondovi() {
   const [d, setD] = useState(null)
@@ -20,6 +23,167 @@ export function useFondovi() {
 
 const pct = (v, na) => (v === null || v === undefined ? na
   : `${v >= 0 ? '+' : '−'}${num(Math.abs(v) * 100, 2)} %`)
+
+/* ---------- M-FOND2: graf usporedbe ---------- */
+
+const CHART_COLORS = ['#9E2B25', '#2F5D86', '#1F6E5A', '#B0762B', '#6E4E9E',
+  '#C05C79', '#3E8E8C', '#7A6A54']
+const RANGES = [['ytd', 'fund.rg.ytd'], ['y1', 'fund.rg.y1'], ['y3', 'fund.rg.y3'],
+  ['y5', 'fund.rg.y5'], ['y10', 'fund.rg.y10'], ['max', 'fund.rg.max']]
+const RANGE_YEARS = { y1: 1, y3: 3, y5: 5, y10: 10 }
+
+const seriesLabel = (s) => (s.kind === 'mirex' ? `Mirex ${s.category}` : `${s.fund} ${s.category}`)
+
+export function FundChart() {
+  const { t } = useLang()
+  const [data, setData] = useState(null)
+  const [range, setRange] = useState('y1')
+  const [sel, setSel] = useState(null)
+  useEffect(() => {
+    fetch('/data/fondovi_series.json')
+      .then((r) => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json() })
+      .then((d) => {
+        if (d?.series?.length) {
+          const def = d.series.filter((s) => s.category === 'B').map((s) => s.id)
+          setSel(new Set(def.length ? def : d.series.map((s) => s.id)))
+          setData(d)
+        } else setData(false)
+      })
+      .catch(() => setData(false))
+  }, [])
+  const toggle = (id) => setSel((old) => {
+    const n = new Set(old)
+    if (n.has(id)) { if (n.size > 1) n.delete(id) } else n.add(id)
+    return n
+  })
+
+  if (data === false) {
+    return (
+      <section style={{ marginTop: 14 }}>
+        <div className="sec-label">{t('fund.chartTitle')}</div>
+        <div className="subnote">{t('fund.chartEmpty')}</div>
+      </section>
+    )
+  }
+  if (!data || !sel) return <div className="loading">{t('common.loading')}</div>
+
+  const asOf = data.as_of || ''
+  let cutIso = null
+  if (range === 'ytd') cutIso = `${asOf.slice(0, 4)}-01-01`
+  else if (RANGE_YEARS[range]) {
+    const d0 = new Date(asOf)
+    d0.setDate(d0.getDate() - Math.round(365.25 * RANGE_YEARS[range]))
+    cutIso = d0.toISOString().slice(0, 10)
+  }
+
+  const lines = []
+  let short = false
+  data.series.forEach((s) => {
+    if (!sel.has(s.id)) return
+    const src = (range === 'ytd' || range === 'y1') && s.d?.length > 1 ? s.d : s.m
+    const pts = cutIso ? src.filter((p) => p[0] >= cutIso) : src
+    if (cutIso && src.length && src[0][0] > cutIso) short = true
+    if (pts.length < 2) return
+    const base = pts[0][1]
+    lines.push({ s, pts: pts.map((p) => ({ t: Date.parse(p[0]), v: (p[1] / base) * 100 })) })
+  })
+
+  const W = 760; const H = 300; const pT = 12; const pB = 24; const pL = 10; const pR = 56
+  let body = null
+  if (lines.length) {
+    const allT = lines.flatMap((l) => [l.pts[0].t, l.pts[l.pts.length - 1].t])
+    const tMin = Math.min(...allT); const tMax = Math.max(...allT)
+    const allV = lines.flatMap((l) => l.pts.map((p) => p.v))
+    let vMin = Math.min(...allV); let vMax = Math.max(...allV)
+    const vPad = (vMax - vMin) * 0.06 || 2
+    vMin -= vPad; vMax += vPad
+    const xF = (tv) => pL + ((tv - tMin) / (tMax - tMin || 1)) * (W - pL - pR)
+    const yF = (v) => pT + ((vMax - v) / (vMax - vMin)) * (H - pT - pB)
+    const x2 = W - pR
+    const gy = [0.25, 0.5, 0.75].map((f) => (pT + (H - pT - pB) * f).toFixed(1))
+    body = (
+      <>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}
+          role="img" aria-label={t('fund.chartTitle')}>
+          {gy.map((y) => <line key={y} x1={pL} x2={x2} y1={y} y2={y} stroke="rgba(38,46,51,0.09)" />)}
+          {vMin < 100 && vMax > 100 && (
+            <line x1={pL} x2={x2} y1={yF(100)} y2={yF(100)} stroke="rgba(38,46,51,0.30)"
+              strokeDasharray="2 3" />
+          )}
+          {lines.map((l, i) => (
+            <polyline key={l.s.id} fill="none"
+              stroke={CHART_COLORS[i % CHART_COLORS.length]}
+              strokeWidth={l.s.kind === 'mirex' ? 1.4 : 1.7}
+              strokeDasharray={l.s.kind === 'mirex' ? '6 4' : undefined}
+              points={l.pts.map((p) => `${xF(p.t).toFixed(1)},${yF(p.v).toFixed(1)}`).join(' ')} />
+          ))}
+          {vMin < 100 && vMax > 100 && (
+            <text x={x2 + 4} y={yF(100) + 3.5} fontFamily="IBM Plex Mono" fontSize="10"
+              fill="rgba(38,46,51,0.55)">100</text>
+          )}
+          <text x={x2 + 4} y={pT + 4} fontFamily="IBM Plex Mono" fontSize="10"
+            fill="rgba(38,46,51,0.55)">{num(vMax, 0)}</text>
+          <text x={x2 + 4} y={H - pB} fontFamily="IBM Plex Mono" fontSize="10"
+            fill="rgba(38,46,51,0.55)">{num(vMin, 0)}</text>
+          <text x={pL} y={H - 6} fontFamily="IBM Plex Mono" fontSize="10"
+            fill="rgba(38,46,51,0.55)">{fmtDate(new Date(tMin).toISOString().slice(0, 10))}</text>
+          <text x={x2} y={H - 6} textAnchor="end" fontFamily="IBM Plex Mono" fontSize="10"
+            fill="rgba(38,46,51,0.55)">{fmtDate(new Date(tMax).toISOString().slice(0, 10))}</text>
+        </svg>
+        <div className="fnd-leg">
+          {lines.map((l, i) => {
+            const ret = l.pts[l.pts.length - 1].v - 100
+            return (
+              <span key={l.s.id} className="fnd-leg-item">
+                <i className="swatch" style={{
+                  background: l.s.kind === 'mirex' ? 'transparent' : CHART_COLORS[i % CHART_COLORS.length],
+                  border: l.s.kind === 'mirex'
+                    ? `2px dashed ${CHART_COLORS[i % CHART_COLORS.length]}` : 'none',
+                }} />
+                {seriesLabel(l.s)}{' '}
+                <b className="mono">{ret >= 0 ? '+' : '−'}{num(Math.abs(ret), 1)} %</b>
+              </span>
+            )
+          })}
+        </div>
+      </>
+    )
+  } else {
+    body = <div className="subnote">{t('fund.chartEmpty')}</div>
+  }
+
+  return (
+    <section style={{ marginTop: 14 }}>
+      <div className="prof-panel">
+        <div className="prof-panel-head">
+          <span className="prof-klabel">{t('fund.chartTitle')}</span>
+          <div className="prof-chips">
+            {RANGES.map(([k, key]) => (
+              <button key={k} className={`prof-chip ${range === k ? 'on' : ''}`}
+                onClick={() => setRange(k)}>{t(key)}</button>
+            ))}
+          </div>
+        </div>
+        <div className="fnd-sel">
+          <span className="fund-src">{t('fund.chartSeries')}:</span>
+          {['A', 'B', 'C'].map((cat) => (
+            <div className="fnd-selrow" key={cat}>
+              <span className="fnd-selcat">{cat}</span>
+              {data.series.filter((s) => s.category === cat).map((s) => (
+                <button key={s.id} className={`prof-chip ${sel.has(s.id) ? 'on' : ''}`}
+                  onClick={() => toggle(s.id)}>{seriesLabel(s)}</button>
+              ))}
+            </div>
+          ))}
+        </div>
+        {body}
+        <div className="subnote" style={{ marginTop: 8 }}>
+          {t('fund.chartRebase')}{short ? ` ${t('fund.chartShort')}.` : ''}
+        </div>
+      </div>
+    </section>
+  )
+}
 
 export default function MirovinskiFondovi() {
   const d = useFondovi()
@@ -44,6 +208,7 @@ export default function MirovinskiFondovi() {
           <span>{t('fund.subtitle')}</span></div>
         {!d ? <div className="loading">{t('common.loading')}</div> : (
           <>
+            <FundChart />
             {['A', 'B', 'C'].map((cat) => (
               <section key={cat} style={{ marginTop: 14 }}>
                 <div className="sec-label">{t('fund.category')} {cat}</div>
@@ -52,6 +217,7 @@ export default function MirovinskiFondovi() {
                   <thead><tr><th>{t('fund.fund')}</th><th className="num">{t('fund.unit')}</th>
                     <th className="num">YTD</th><th className="num">{t('fund.y1')}</th>
                     <th className="num">{t('fund.y3')}</th><th className="num">{t('fund.y5')}</th>
+                    <th className="num">{t('fund.y10')}</th>
                     <th>{t('fund.date')}</th></tr></thead>
                   <tbody>
                     {d.units.filter((u) => u.category === cat).map((u) => (
@@ -63,6 +229,7 @@ export default function MirovinskiFondovi() {
                         <td className="num">{pct(u.y1, na)}</td>
                         <td className="num">{pct(u.y3, na)}</td>
                         <td className="num">{pct(u.y5, na)}</td>
+                        <td className="num">{pct(u.y10, na)}</td>
                         <td className="fund-src">{fmtDate(u.value_date)}</td>
                       </tr>
                     ))}
@@ -74,7 +241,10 @@ export default function MirovinskiFondovi() {
                           <td className="num">{mx?.value !== null && mx?.value !== undefined
                             ? num(mx.value, 4) : <span className="np">{t('fund.awaitingImport')}</span>}</td>
                           <td className="num">{pct(mx?.ytd, na)}</td>
-                          <td className="num" colSpan={3} />
+                          <td className="num">{pct(mx?.y1, na)}</td>
+                          <td className="num">{pct(mx?.y3, na)}</td>
+                          <td className="num">{pct(mx?.y5, na)}</td>
+                          <td className="num">{pct(mx?.y10, na)}</td>
                           <td className="fund-src">{fmtDate(mx?.value_date)}</td>
                         </tr>
                       )
