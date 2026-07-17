@@ -95,6 +95,11 @@ def import_rows(conn, rows: list[dict], source: str) -> int:
                 [(r["fund"], r["category"], r["value_date"], r["unit_value"], source)
                  for r in units], page_size=2000)
         if mirex:
+            # rekonstrukcija umjesto dopune: prvi uvoz (17.07.2026.) je
+            # MIREX prije 2023. krivo preračunao u EUR (indeks se ne
+            # preračunava) — ON CONFLICT DO NOTHING te redove nikad ne bi
+            # ispravio, a datoteka ionako uvijek nosi PUNU povijest
+            cur.execute("DELETE FROM mirex WHERE source LIKE 'HANFA statistika%%'")
             execute_values(cur,
                 """INSERT INTO mirex (category, value_date, value, source)
                    VALUES %s ON CONFLICT (category, value_date) DO NOTHING""",
@@ -232,14 +237,18 @@ def parse_hanfa_xlsx(raw: bytes) -> list[dict]:
                 v = row[i] if i < len(row) else None
                 if not isinstance(v, int | float):
                     continue
-                v = float(v) / HRK_EUR if hrk else float(v)
                 if kind[0] == "unit":
+                    # jedinice su do 31.12.2022. u HRK (footnote u datoteci),
+                    # od 2023. u EUR — preračun drži seriju kontinuiranom
                     out.append({"kind": "unit", "fund": kind[1],
                                 "category": kind[2], "value_date": d,
-                                "unit_value": v})
+                                "unit_value": float(v) / HRK_EUR if hrk else float(v)})
                 else:
+                    # MIREX je INDEKS kontinuiteta (baza 100 na početku rada
+                    # kategorije) — HANFA ga NE re-denominira u euro, pa se
+                    # NE preračunava (2026: MIREX B ~377 uz jedinice ~48 EUR)
                     out.append({"kind": "mirex", "category": kind[1],
-                                "value_date": d, "value": v})
+                                "value_date": d, "value": float(v)})
     if not out:
         raise RuntimeError(
             "HANFA XLSX: nijedan red nije prepoznat kao OMF jedinica/MIREX — "
