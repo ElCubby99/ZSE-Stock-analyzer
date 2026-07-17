@@ -1,11 +1,14 @@
 import React, { useMemo, useState } from 'react'
-import { dash, eur, num, pct } from './format.js'
+import { useLang } from './i18n/LangContext.jsx'
+import { tx } from './i18n/dataText.mjs'
+import { dash, eur, fmtDate, num, pct } from './format.js'
 
 /* Tržišni profil (GORE) — dizajnerski jezik "Burzovni list": IBM Plex,
    papir #F2F3EF / paneli #F7F8F4, oksblood #9E2B25 (tržišna cijena),
    steel #2F5D86 (povlaštene, izglasane isplate), borova #1F6E5A (fer-zona).
    Sve brojke dolaze iz exporta (price_summary / prices / dividend_calendar /
-   metrics / valuation.reconciliation) — ništa se ne računa izvan baze. */
+   metrics / valuation.reconciliation) — ništa se ne računa izvan baze.
+   M38: UI tekstovi kroz t(), podatkovni tekstovi kroz tx(). */
 
 const INK = '#262E33'
 const OX = '#9E2B25'
@@ -24,6 +27,7 @@ export function SectionRule({ n, title }) {
 
 /* mini fer-zona traka u headeru: pojas zone + okomita crta cijene */
 function GapBand({ zone, price, pref }) {
+  const { t } = useLang()
   if (!zone || price === null || price === undefined) return null
   const [lo, hi] = zone
   const d0m = Math.min(lo, price); const d1m = Math.max(hi, price)
@@ -33,33 +37,34 @@ function GapBand({ zone, price, pref }) {
   let gap = 0
   if (price > hi) gap = (price / hi - 1) * 100
   else if (price < lo) gap = -(1 - price / lo) * 100
-  const gapLabel = gap === 0 ? 'u zoni'
-    : gap > 0 ? `+${num(gap, 1)} % iznad` : `−${num(Math.abs(gap), 1)} % ispod`
+  const gapLabel = gap === 0 ? t('idx.inside')
+    : gap > 0 ? `+${num(gap, 1)} ${t('mp.pctAbove')}` : `−${num(Math.abs(gap), 1)} ${t('mp.pctBelow')}`
   return (
     <div>
-      <div className="prof-klabel">RASKORAK NASPRAM FER-ZONE</div>
+      <div className="prof-klabel">{t('mp.gapVsZone')}</div>
       <div className="prof-band">
         <div className="prof-band-axis" />
         <div className="prof-band-zone" style={{ left: `${p(lo)}%`, width: `${p(hi) - p(lo)}%` }} />
         <div className="prof-band-tick" style={{ left: `${p(price)}%`, background: pref ? STEEL : OX }} />
       </div>
-      <div className="prof-band-sub">fer-zona {num(lo, 0)}–{num(hi, 0)} € · {gapLabel}</div>
+      <div className="prof-band-sub">{t('stock.fairZone')} {num(lo, 0)}–{num(hi, 0)} € · {gapLabel}</div>
     </div>
   )
 }
 
 export function ProfileHeader({ data, zone }) {
+  const { t } = useLang()
   const sum = data.price_summary?.classes || []
   const primary = data.share_classes.find((c) => c.is_primary) || data.share_classes[0]
   return (
     <div className="prof-head">
       <div>
         <div className="prof-title">
-          <h1>{data.name} ({data.ticker}) — analiza dionice</h1>
+          <h1>{data.name} ({data.ticker}) — {t('stock.analysisTitle')}</h1>
           <span className="prof-tk">{data.ticker}</span>
         </div>
         <div className="prof-subline">
-          {data.sector_hr || data.sector || 'sektor nepoznat'} · Zagrebačka burza · EUR
+          {data.sector_hr || data.sector || t('stock.unknownSector')} · {t('stock.zseEur')}
         </div>
       </div>
       <div className="prof-head-right">
@@ -69,7 +74,7 @@ export function ProfileHeader({ data, zone }) {
           return (
             <div key={s.class_ticker}>
               <div className="prof-klabel">
-                TRŽIŠNA CIJENA{sum.length > 1 ? ` · ${s.class_ticker}` : ''}
+                {t('mp.marketPrice')}{sum.length > 1 ? ` · ${s.class_ticker}` : ''}
               </div>
               {s.last ? (
                 <div className="prof-price-row">
@@ -101,15 +106,15 @@ export function ProfileHeader({ data, zone }) {
 }
 
 export function IlliquidBanner({ liquidity }) {
+  const { lang, t } = useLang()
   const flagged = (liquidity?.classes || []).filter((c) => c.flag !== 'ok')
   if (!flagged.length) return null
   const veryLow = flagged.some((c) => c.flag === 'very_low')
   return (
     <div className="prof-illiq">
-      <span className="prof-illiq-t">{veryLow ? 'VRLO ' : ''}ILIKVIDNA DIONICA</span>
+      <span className="prof-illiq-t">{veryLow ? t('mp.veryPrefix') : ''}{t('mp.illiquidStock')}</span>
       <span className="prof-illiq-n">
-        {flagged.map((c) => `${c.class_ticker}: ${c.note}`).join(' · ')} — prikazana
-        cijena i vrijednosti su indikativne
+        {flagged.map((c) => `${c.class_ticker}: ${tx(c.note, lang)}`).join(' · ')}{t('mp.illiqNote')}
       </span>
     </div>
   )
@@ -118,19 +123,14 @@ export function IlliquidBanner({ liquidity }) {
 /* ---------- graf cijene ---------- */
 
 const RANGES = [
-  { key: '1M', days: 31 },
-  { key: '6M', days: 183 },
-  { key: '1G', days: 366 },
-  { key: '5G', days: 1830 },
+  { key: '1M', days: 31, lbl: 'mp.r1m' },
+  { key: '6M', days: 183, lbl: 'mp.r6m' },
+  { key: '1G', days: 366, lbl: 'mp.r1g' },
+  { key: '5G', days: 1830, lbl: 'mp.r5g' },
 ]
 
-function fmtHr(iso) {
-  if (!iso) return ''
-  const [y, m, d] = iso.split('-')
-  return `${Number(d)}.${Number(m)}.${y}.`
-}
-
 export function PriceChart({ data, zone, classZones }) {
+  const { t } = useLang()
   const classes = data.share_classes
   const [clsTk, setClsTk] = useState(
     (classes.find((c) => c.is_primary) || classes[0] || {}).ticker)
@@ -146,8 +146,8 @@ export function PriceChart({ data, zone, classZones }) {
   if (!series.length) {
     return (
       <div className="prof-panel">
-        <div className="prof-panel-head"><span className="prof-klabel">CIJENA · {data.ticker} · EUR</span></div>
-        <div className="prof-empty">nema cijena u bazi</div>
+        <div className="prof-panel-head"><span className="prof-klabel">{t('mp.price')} · {data.ticker} · EUR</span></div>
+        <div className="prof-empty">{t('mp.noPrices')}</div>
       </div>
     )
   }
@@ -183,7 +183,7 @@ export function PriceChart({ data, zone, classZones }) {
   return (
     <div className="prof-panel">
       <div className="prof-panel-head">
-        <span className="prof-klabel">CIJENA · {clsTk} · EUR</span>
+        <span className="prof-klabel">{t('mp.price')} · {clsTk} · EUR</span>
         <div className="prof-chips">
           {classes.length > 1 && classes.map((c) => (
             <button key={c.ticker} className={`prof-chip ${clsTk === c.ticker ? 'on' : ''}`}
@@ -192,12 +192,12 @@ export function PriceChart({ data, zone, classZones }) {
           {classes.length > 1 && <span className="prof-chip-gap" />}
           {RANGES.map((r) => (
             <button key={r.key} className={`prof-chip ${range === r.key ? 'on' : ''}`}
-              onClick={() => setRange(r.key)}>{r.key}</button>
+              onClick={() => setRange(r.key)}>{t(r.lbl)}</button>
           ))}
         </div>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}
-        role="img" aria-label={`Kretanje cijene ${clsTk}`}>
+        role="img" aria-label={`${t('mp.priceAria')} ${clsTk}`}>
         {gy.map((y) => <line key={y} x1={pL} x2={x2} y1={y} y2={y} stroke="rgba(38,46,51,0.09)" />)}
         {zoneEff && (
           <>
@@ -206,7 +206,7 @@ export function PriceChart({ data, zone, classZones }) {
             <line x1={pL} x2={x2} y1={yF(zoneEff[1])} y2={yF(zoneEff[1])} stroke={PINE} strokeDasharray="3 4" opacity="0.7" />
             <line x1={pL} x2={x2} y1={yF(zoneEff[0])} y2={yF(zoneEff[0])} stroke={PINE} strokeDasharray="3 4" opacity="0.7" />
             <text x={x2 + 8} y={(yF(zoneEff[0]) + yF(zoneEff[1])) / 2 + 3.5} fill={PINE}
-              fontFamily="IBM Plex Mono" fontSize="10">fer-zona</text>
+              fontFamily="IBM Plex Mono" fontSize="10">{t('stock.fairZone')}</text>
           </>
         )}
         <polyline points={poly} fill="none" stroke={lineCol} strokeWidth="1.6"
@@ -218,15 +218,15 @@ export function PriceChart({ data, zone, classZones }) {
         <text x={pL + 4} y={H - 12} fill="rgba(38,46,51,0.45)" fontFamily="IBM Plex Mono" fontSize="10">{num(vMin, 2)}</text>
       </svg>
       <div className="prof-panel-foot">
-        <span>{fmtHr(clipped[0].trade_date)}{truncated ? ' (početak dostupne povijesti)' : ''}</span>
+        <span>{fmtDate(clipped[0].trade_date)}{truncated ? t('mp.histStart') : ''}</span>
         <span className="prof-legend">
-          <i className="prof-sw" style={{ background: lineCol }} /> tržišna cijena (EOD)
-          {zoneEff && <><i className="prof-sw-zone" /> fer-zona (naša procjena)</>}
+          <i className="prof-sw" style={{ background: lineCol }} /> {t('mp.marketPriceEod')}
+          {zoneEff && <><i className="prof-sw-zone" /> {t('mkt.legendZone')}</>}
         </span>
-        <span>{fmtHr(last.trade_date)}</span>
+        <span>{fmtDate(last.trade_date)}</span>
       </div>
       <div className="prof-panel-note">
-        dani bez trgovanja nisu u seriji — os x su trgovani dani ({clipped.length} zapisa)
+        {t('mp.tradedDays1')} ({clipped.length} {t('mp.tradedDays2')})
       </div>
     </div>
   )
@@ -235,41 +235,42 @@ export function PriceChart({ data, zone, classZones }) {
 /* ---------- ključni podaci ---------- */
 
 export function StatsStrip({ data }) {
+  const { lang, t } = useLang()
   const primary = data.share_classes.find((c) => c.is_primary) || data.share_classes[0] || {}
   const sum = (data.price_summary?.classes || []).find((s) => s.class_ticker === primary.ticker)
   const perCls = (data.metrics?.per_class || []).find((r) => r.class_ticker === primary.ticker)
   const m = data.metrics || {}
   const tiles = [
     {
-      l: '52-TJ RASPON',
+      l: t('mp.stat52w'),
       v: sum && sum.high_52w_eur !== null && sum.high_52w_eur !== undefined
         ? `${num(sum.low_52w_eur, 2)}–${num(sum.high_52w_eur, 2)} €` : dash,
-      n: sum?.note || null,
+      n: sum?.note ? tx(sum.note, lang) : null,
     },
     {
-      l: 'TRŽ. KAPITALIZACIJA',
-      v: m.market_cap_eur ? `${num(m.market_cap_eur / 1e6, 0)} mil €` : 'nema u bazi',
+      l: t('mp.statMcap'),
+      v: m.market_cap_eur ? `${num(m.market_cap_eur / 1e6, 0)} ${t('mp.milEur')}` : t('mkt.indicesNone'),
     },
     {
-      l: 'PROSJ. DNEVNI PROMET',
-      v: sum && sum.avg_turnover_20d_eur ? `${num(sum.avg_turnover_20d_eur, 0)} €` : dash,
-      n: '20 trgovanih dana, stvarni promet',
+      l: t('mp.statTurnover'),
+      v: sum && sum.avg_turnover_20d_eur ? eur(sum.avg_turnover_20d_eur, 0) : dash,
+      n: t('mp.turnoverBasis'),
     },
-    { l: 'P/E', v: perCls && perCls.pe !== null ? num(perCls.pe, 1) : 'nema u bazi' },
-    { l: 'P/B', v: perCls && perCls.pb !== null ? num(perCls.pb, 2) : 'nema u bazi' },
+    { l: 'P/E', v: perCls && perCls.pe !== null ? num(perCls.pe, 1) : t('mkt.indicesNone') },
+    { l: 'P/B', v: perCls && perCls.pb !== null ? num(perCls.pb, 2) : t('mkt.indicesNone') },
     {
-      l: 'DIV. PRINOS',
+      l: t('mp.statDivYield'),
       v: perCls && perCls.div_yield ? pct(perCls.div_yield, 2) : dash,
       n: m.dps ? `DPS ${eur(m.dps)}` : null,
     },
   ]
   return (
     <div className="prof-stats">
-      {tiles.map((t) => (
-        <div className="prof-stat" key={t.l}>
-          <div className="prof-klabel">{t.l}</div>
-          <div className="prof-stat-v">{t.v}</div>
-          {t.n && <div className="prof-stat-n">{t.n}</div>}
+      {tiles.map((t_) => (
+        <div className="prof-stat" key={t_.l}>
+          <div className="prof-klabel">{t_.l}</div>
+          <div className="prof-stat-v">{t_.v}</div>
+          {t_.n && <div className="prof-stat-n">{t_.n}</div>}
         </div>
       ))}
     </div>
@@ -279,6 +280,7 @@ export function StatsStrip({ data }) {
 /* ---------- dividende ---------- */
 
 export function Dividends({ data }) {
+  const { lang, t } = useLang()
   const cal = data.dividend_calendar
   if (!cal) return null
   const multi = data.share_classes.length > 1
@@ -290,29 +292,29 @@ export function Dividends({ data }) {
   const h = cal.history
   return (
     <>
-      <h3 className="prof-h3">Dividende</h3>
+      <h3 className="prof-h3">{t('nav.dividends')}</h3>
       {h && (
         <div className="div-hist-strip">
-          <span><b>{h.continuity.paid_years} od 5</b> zadnjih fisk. godina s
-            isplatom <i className="fund-src">(podaci od FY{h.continuity.coverage_from})</i></span>
-          <span>prosjek (do 5 g.): <b>{num(h.avg_amount_5y, 2)} €</b>/dionici</span>
-          <span>rast dividende: <b>{h.growth_cagr !== null && h.growth_cagr !== undefined
-            ? `${h.growth_cagr > 0 ? '+' : ''}${num(h.growth_cagr * 100, 1)} %/g.` : 'n/p'}</b>
-            {' '}<i className="fund-src">({h.growth_note})</i></span>
+          <span><b>{h.continuity.paid_years} {t('mp.of5')}</b> {t('mp.lastFyWithPayout')}
+            {' '}<i className="fund-src">({t('mp.dataFromFy')}{h.continuity.coverage_from})</i></span>
+          <span>{t('mp.avg5y')} <b>{num(h.avg_amount_5y, 2)} €</b>{t('mp.perShare')}</span>
+          <span>{t('mp.divGrowth')} <b>{h.growth_cagr !== null && h.growth_cagr !== undefined
+            ? `${h.growth_cagr > 0 ? '+' : ''}${num(h.growth_cagr * 100, 1)} ${t('mp.pctPerYear')}` : t('common.na')}</b>
+            {' '}<i className="fund-src">({tx(h.growth_note, lang)})</i></span>
         </div>
       )}
       {cal.d_sust && cal.d_sust.d_sust_ps !== null && cal.d_sust.d_sust_ps !== undefined && (
         <div className="div-hist-strip">
-          <span>Održiva dividenda (procjena): <b>{num(cal.d_sust.d_sust_ps, 2)} €</b>/dionici
+          <span>{t('mp.dsustLabel')} <b>{num(cal.d_sust.d_sust_ps, 2)} €</b>{t('mp.perShare')}
             {cal.d_sust.flags && cal.d_sust.flags.length > 0 && (
-              <> {cal.d_sust.flags.map((f) => <span key={f} className="flag"> {f}</span>)}</>
+              <> {cal.d_sust.flags.map((f) => <span key={f} className="flag"> {tx(f, lang)}</span>)}</>
             )}
           </span>
-          <details className="src-details"><summary>puni raspis</summary>
+          <details className="src-details"><summary>{t('mp.fullBreakdown')}</summary>
             <div className="src">
               {cal.d_sust.fallback_raw
-                ? cal.d_sust.note
-                : `Održivi payout ${num((cal.d_sust.payout_used || 0) * 100, 0)} % (${cal.d_sust.payout_basis}) × normalizirana dobit (12 mj.) / broj dionica. ${cal.d_sust.excluded_years && cal.d_sust.excluded_years.length ? `Isključene jednokratne/iz zadržane dobiti: ${cal.d_sust.excluded_years.join(', ')}. ` : ''}${cal.d_sust.coverage_announced ? `Pokrivenost zadnje najave tekućom dobiti: ${num(cal.d_sust.coverage_announced, 2)}×. ` : ''}${cal.d_sust.note}`}
+                ? tx(cal.d_sust.note, lang)
+                : `${t('mp.ds1')} ${num((cal.d_sust.payout_used || 0) * 100, 0)} % (${tx(cal.d_sust.payout_basis, lang)}) ${t('mp.ds2')} ${cal.d_sust.excluded_years && cal.d_sust.excluded_years.length ? `${t('mp.dsExcluded')} ${cal.d_sust.excluded_years.join(', ')}. ` : ''}${cal.d_sust.coverage_announced ? `${t('mp.dsCoverage')} ${num(cal.d_sust.coverage_announced, 2)}×. ` : ''}${tx(cal.d_sust.note, lang)}`}
             </div>
           </details>
         </div>
@@ -323,13 +325,13 @@ export function Dividends({ data }) {
             <table className="prof-div-table">
               <thead>
                 <tr>
-                  <th>FISK. GOD.</th>
-                  {multi && <th>KLASA</th>}
-                  <th className="num">IZNOS / DION.</th>
-                  <th className="num">% DOBITI</th>
-                  <th>TIP</th>
-                  <th className="num">EX-DATUM</th>
-                  <th className="num">ISPLATA</th>
+                  <th>{t('mp.colFy')}</th>
+                  {multi && <th>{t('mp.colClass')}</th>}
+                  <th className="num">{t('mp.colAmount')}</th>
+                  <th className="num">{t('div.col.payout')}</th>
+                  <th>{t('mp.colType')}</th>
+                  <th className="num">{t('div.col.ex')}</th>
+                  <th className="num">{t('div.col.pay')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -339,71 +341,67 @@ export function Dividends({ data }) {
                     {multi && <td>{e.class_ticker}</td>}
                     <td className="num strong">{num(e.amount_eur, 2)} €</td>
                     <td className="num">{e.payout_ratio === null || e.payout_ratio === undefined
-                      ? <i className="np" title={`dobit FY${e.fiscal_year ?? '?'} nije dostupna u bazi`}>—</i>
+                      ? <i className="np" title={`${t('mp.profitFy1')}${e.fiscal_year ?? '?'}${t('mp.profitFy2')}`}>—</i>
                       : e.payout_ratio > 1
-                        ? <span title={e.classified_reason || ''}>&gt; 100% (iz zadržane dobiti)</span>
-                        : <span title={e.classified_reason || ''}>{num(e.payout_ratio * 100, 0)} %</span>}</td>
+                        ? <span title={tx(e.classified_reason, lang) || ''}>{t('div.payoutOver')}</span>
+                        : <span title={tx(e.classified_reason, lang) || ''}>{num(e.payout_ratio * 100, 0)} %</span>}</td>
                     <td>{e.payout_type ? (e.payout_type === 'redovna'
-                      ? <span className="div-onoff reg" title={e.classified_reason || ''}>redovna</span>
-                      : <span className="div-onoff" title={e.classified_reason || ''}>
-                        {e.payout_type === 'iz_zadrzane_dobiti' ? 'iz zadržane dobiti' : 'izvanredna'}</span>) : dash}</td>
-                    <td className="num">{e.ex_date ? fmtHr(e.ex_date) : dash}</td>
-                    <td className="num">{e.payment_date ? fmtHr(e.payment_date) : dash}</td>
+                      ? <span className="div-onoff reg" title={tx(e.classified_reason, lang) || ''}>{t('div.type.regular')}</span>
+                      : <span className="div-onoff" title={tx(e.classified_reason, lang) || ''}>
+                        {e.payout_type === 'iz_zadrzane_dobiti' ? t('div.type.retained') : t('div.type.extraordinary')}</span>) : dash}</td>
+                    <td className="num">{e.ex_date ? fmtDate(e.ex_date) : dash}</td>
+                    <td className="num">{e.payment_date ? fmtDate(e.payment_date) : dash}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
             <div className="prof-empty-box">
-              U dostupnim podacima (EHO objave od 2023.) nema isplaćene dividende.
+              {t('mp.noPaid')}
             </div>
           )}
-          <div className="prof-panel-note">{cal.note}</div>
+          <div className="prof-panel-note">{tx(cal.note, lang)}</div>
           <div className="prof-panel-note">
-            % DOBITI = ukupna isplata firme za tu fiskalnu godinu / neto dobit
-            iste godine (— kad dobit te godine nije u bazi). Tipovi isplata su
-            činjenične oznake: <b>redovna</b> — u liniji s dosadašnjima;{' '}
-            <b>izvanredna</b> — više od 150% medijana prethodnih redovnih;{' '}
-            <b>iz zadržane dobiti</b> — ukupna isplata veća od dobiti godine iz
-            koje se isplaćuje. Jednokratne isplate ne ulaze u procjenu održive
-            dividende.
+            {t('mp.leg1')} <b>{t('div.type.regular')}</b> {t('mp.leg2')}{' '}
+            <b>{t('div.type.extraordinary')}</b> {t('mp.leg3')}{' '}
+            <b>{t('div.type.retained')}</b> {t('mp.leg4')}
           </div>
         </div>
         <div>
           {next ? next.status === 'upcoming' ? (
             <div className="prof-next prof-next-firm">
               <div className="prof-next-label" style={{ color: STEEL }}>
-                IZGLASANA ISPLATA · {next.fiscal_year ? `IZ DOBITI ${next.fiscal_year}.` : ''}
+                {t('mp.approvedPayout')} · {next.fiscal_year ? `${t('mp.fromProfitOf')} ${next.fiscal_year}.` : ''}
                 {multi ? ` · ${next.class_ticker}` : ''}
               </div>
               <div className="prof-next-amt">{num(next.amount_eur, 2)} €</div>
               <div className="prof-next-dates">
-                <span><i>EX-DATUM </i>{next.ex_date ? fmtHr(next.ex_date) : dash}</span>
-                <span><i>ISPLATA </i>{next.payment_date ? fmtHr(next.payment_date) : dash}</span>
+                <span><i>{t('div.col.ex')} </i>{next.ex_date ? fmtDate(next.ex_date) : dash}</span>
+                <span><i>{t('div.col.pay')} </i>{next.payment_date ? fmtDate(next.payment_date) : dash}</span>
               </div>
               <div className="prof-next-src">
-                po dionici, prije poreza · odluka GS —{' '}
-                {next.source_url ? <a href={next.source_url} target="_blank" rel="noreferrer">objava društva</a> : 'objava društva'}
+                {t('mp.perShareNote')}{' '}
+                {next.source_url ? <a href={next.source_url} target="_blank" rel="noreferrer">{t('mp.companyFiling')}</a> : t('mp.companyFiling')}
               </div>
             </div>
           ) : (
             <div className="prof-next prof-next-prop">
               <div className="prof-next-label prof-warn-t">
-                PRIJEDLOG DIVIDENDE — JOŠ NIJE IZGLASAN
+                {t('mp.proposalTitle')}
                 {multi ? ` · ${next.class_ticker}` : ''}
               </div>
               <div className="prof-next-amt">{num(next.amount_eur, 2)} €</div>
               <div className="prof-next-dates">
-                <span><i>EX-DATUM </i>{next.ex_date ? fmtHr(next.ex_date) : dash}</span>
-                <span><i>ISPLATA </i>{next.payment_date ? fmtHr(next.payment_date) : dash}</span>
+                <span><i>{t('div.col.ex')} </i>{next.ex_date ? fmtDate(next.ex_date) : dash}</span>
+                <span><i>{t('div.col.pay')} </i>{next.payment_date ? fmtDate(next.payment_date) : dash}</span>
               </div>
               <div className="prof-next-src">
-                prijedlog uprave/GS — isplata NIJE izvjesna dok skupština ne odluči ·{' '}
-                {next.source_url ? <a href={next.source_url} target="_blank" rel="noreferrer">objava društva</a> : 'objava društva'}
+                {t('mp.proposalNote')}{' '}
+                {next.source_url ? <a href={next.source_url} target="_blank" rel="noreferrer">{t('mp.companyFiling')}</a> : t('mp.companyFiling')}
               </div>
             </div>
           ) : (
-            <div className="prof-empty-box">Nema najavljene nadolazeće isplate.</div>
+            <div className="prof-empty-box">{t('mp.noUpcoming')}</div>
           )}
         </div>
       </div>
@@ -414,13 +412,13 @@ export function Dividends({ data }) {
 /* ---------- prazno stanje analize (market_only) ---------- */
 
 export function AnalysisUnavailable({ note }) {
+  const { lang, t } = useLang()
   return (
     <div className="prof-unavail">
-      <div className="prof-klabel">ANALIZA NIJE DOSTUPNA</div>
-      <p>{note}</p>
+      <div className="prof-klabel">{t('mp.analysisNa')}</div>
+      <p>{tx(note, lang)}</p>
       <p className="prof-panel-note">
-        Fundamenti, vrednovanje, bilanca i vlasništvo: <b>nema u bazi</b> — objavljuju
-        se tek kad izvješća prođu validaciju (ništa se ne procjenjuje).
+        {t('mp.analysisNa1')} <b>{t('mkt.indicesNone')}</b> {t('mp.analysisNa2')}
       </p>
     </div>
   )

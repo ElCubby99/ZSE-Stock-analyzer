@@ -581,6 +581,304 @@ export const STR = {
     hr: 'Blog je dostupan na hrvatskom.',
     en: 'The blog is currently available in Croatian.',
   },
+
+  /* ---------- legenda pojmova (Legend.jsx) ---------- */
+  'lg.summary': {
+    hr: 'LEGENDA POJMOVA — što znače kratice i termini (klik za otvaranje)',
+    en: 'GLOSSARY — what the abbreviations and terms mean (click to open)',
+  },
+  'lg.note': {
+    hr: 'Objašnjenja su edukativna i pojednostavljena; točne formule i izvori stoje uz svaku metodu i pretpostavku na stranici.',
+    en: 'The explanations are educational and simplified; the exact formulas and sources appear next to each method and assumption on the page.',
+  },
+  'lg.k.pe': { hr: 'P/E', en: 'P/E' },
+  'lg.d.pe': {
+    hr: 'Cijena dionice podijeljena godišnjom zaradom po dionici — koliko godina zarade plaćate po današnjoj cijeni.',
+    en: 'The share price divided by annual earnings per share — how many years of earnings you pay at today\'s price.',
+  },
+  'lg.k.pb': { hr: 'P/B', en: 'P/B' },
+  'lg.d.pb': {
+    hr: 'Cijena dionice podijeljena knjigovodstvenom vrijednošću po dionici — koliko plaćate po euru vlastitog kapitala firme.',
+    en: 'The share price divided by book value per share — how much you pay per euro of the company\'s own equity.',
+  },
+  'lg.k.evEbitda': { hr: 'EV/EBITDA', en: 'EV/EBITDA' },
+  'lg.d.evEbitda': {
+    hr: 'Vrijednost cijelog poslovanja (s dugom) podijeljena operativnom zaradom — omjer neovisan o načinu financiranja.',
+    en: 'The value of the whole business (including debt) divided by operating earnings — a ratio independent of how the company is financed.',
+  },
+  'lg.k.dcf': { hr: 'DCF', en: 'DCF' },
+  'lg.d.dcf': {
+    hr: 'Diskontirani novčani tok — budući slobodni novac firme preračunat na današnju vrijednost.',
+    en: 'Discounted cash flow — the company\'s future free cash converted into today\'s value.',
+  },
+  'lg.k.comps': { hr: 'comps', en: 'comps' },
+  'lg.d.comps': {
+    hr: 'Peer usporedba — jedna metoda koja kroz više leća (P/E, EV/EBITDA, EV/EBIT, P/B) uspoređuje firmu sa sličnima; leće su ulazi, ne zasebne metode.',
+    en: 'Peer comparison — one method that compares the company with similar ones through several lenses (P/E, EV/EBITDA, EV/EBIT, P/B); the lenses are inputs, not separate methods.',
+  },
+  'lg.k.sotp': { hr: 'SOTP', en: 'SOTP' },
+  'lg.d.sotp': {
+    hr: 'Zbroj dijelova (sum-of-the-parts) — holding se vrednuje tako da se zbroje vrijednosti svih tvrtki koje drži, minus dug.',
+    en: 'Sum-of-the-parts — a holding company is valued by adding up the values of all the companies it holds, minus debt.',
+  },
+  'lg.k.ddm': { hr: 'DDM', en: 'DDM' },
+  'lg.d.ddm': {
+    hr: 'Dividendni model — vrijednost dionice kao zbroj svih budućih dividendi preračunatih na danas.',
+    en: 'Dividend discount model — the value of a share as the sum of all future dividends converted into today\'s value.',
+  },
+  'lg.k.roe': { hr: 'ROE', en: 'ROE' },
+  'lg.d.roe': {
+    hr: 'Povrat na kapital — koliko firma godišnje zaradi na svakih 100 € vlastitog kapitala.',
+    en: 'Return on equity — how much the company earns each year per €100 of its own equity.',
+  },
+  'lg.k.ebitda': { hr: 'EBITDA', en: 'EBITDA' },
+  'lg.d.ebitda': {
+    hr: 'Operativna zarada prije kamata, poreza i amortizacije — gruba mjera koliko posao stvara novca.',
+    en: 'Operating earnings before interest, taxes, depreciation and amortisation — a rough measure of how much cash the business generates.',
+  },
+  'lg.k.backlog': { hr: 'backlog', en: 'backlog' },
+  'lg.d.backlog': {
+    hr: 'Ugovoreni, još neisporučeni poslovi — narudžbe koje čekaju izvršenje i daju uvid u buduće prihode.',
+    en: 'Contracted work not yet delivered — orders awaiting execution that give insight into future revenue.',
+  },
+  'lg.k.ferZona': { hr: 'fer-zona', en: 'fair-value zone' },
+  'lg.d.ferZona': {
+    hr: 'Naša procjena vrijednosti dionice. Cijena iznad zone znači da tržište plaća više nego što fundamenti govore; ispod — obrnuto. Zaključak je vaš.',
+    en: 'Our estimate of the stock\'s value. A price above the zone means the market pays more than the fundamentals suggest; below — the opposite. The conclusion is yours.',
+  },
+  'lg.k.sidro': { hr: 'sidro', en: 'anchor' },
+  'lg.d.sidro': {
+    hr: 'Glavna metoda procjene za tip firme (holding → SOTP, banka → kapital, industrija → DCF); ostale metode služe kao kontrola.',
+    en: 'The main valuation method for the company type (holding → SOTP, bank → equity capital, industrials → DCF); the other methods serve as a cross-check.',
+  },
+  'lg.k.beta': { hr: 'beta', en: 'beta' },
+  'lg.d.beta': {
+    hr: 'Koliko dionica njiše u odnosu na tržište: 1 = kao tržište, više = jače njihanje (rizičnije), manje = mirnije.',
+    en: 'How much the stock swings relative to the market: 1 = like the market, higher = stronger swings (riskier), lower = calmer.',
+  },
+  'lg.k.trosakKapitala': { hr: 'trošak kapitala', en: 'cost of equity' },
+  'lg.d.trosakKapitala': {
+    hr: 'Prinos koji ulagač razumno traži za rizik ove dionice; veći trošak = stroža (niža) procjena vrijednosti. Oznaka: r.',
+    en: 'The return an investor reasonably requires for the risk of this stock; a higher cost = a stricter (lower) estimate of value. Symbol: r.',
+  },
+  'lg.k.r': { hr: 'r', en: 'r' },
+  'lg.d.r': {
+    hr: 'Trošak kapitala — prinos koji ulagač razumno traži za rizik ove dionice. Slaže se kao zbroj: rf + β×ERP + CRP (+ premija nelikvidnosti). Veći r = stroža (niža) procjena.',
+    en: 'Cost of equity — the return an investor reasonably requires for the risk of this stock. It stacks up as: rf + β×ERP + CRP (+ illiquidity premium). A higher r = a stricter (lower) estimate.',
+  },
+  'lg.k.rf': { hr: 'rf', en: 'rf' },
+  'lg.d.rf': {
+    hr: 'Bezrizični prinos — prinos "bez rizika" u euru (10-godišnja njemačka državna obveznica, Bund). Temelj od kojeg svaki traženi prinos kreće; rizik Hrvatske NIJE ovdje nego u CRP-u.',
+    en: 'Risk-free rate — the "no-risk" return in euros (the 10-year German government bond, Bund). The base every required return starts from; Croatia\'s risk is NOT here but in the CRP.',
+  },
+  'lg.k.erp': { hr: 'ERP', en: 'ERP' },
+  'lg.d.erp': {
+    hr: 'Premija rizika tržišta dionica (equity risk premium) — koliko ulagači povrh bezrizičnog prinosa traže za ulaganje u dionice općenito (zrelo tržište, bez premije zemlje). Množi se betom dionice.',
+    en: 'Equity risk premium — how much investors require above the risk-free rate for investing in stocks in general (mature market, without the country premium). It is multiplied by the stock\'s beta.',
+  },
+  'lg.k.crp': { hr: 'CRP', en: 'CRP' },
+  'lg.d.crp': {
+    hr: 'Premija rizika zemlje (country risk premium) — mali dodatak na traženi prinos zbog ulaganja u Hrvatsku; primjeren investment-grade eurozoni i računa se točno jednom (nije skriven ni u rf-u ni u ERP-u).',
+    en: 'Country risk premium — a small addition to the required return for investing in Croatia; appropriate for an investment-grade eurozone country and counted exactly once (hidden neither in rf nor in the ERP).',
+  },
+  'lg.k.ttm': { hr: 'TTM', en: 'TTM' },
+  'lg.d.ttm': {
+    hr: 'Zadnjih 12 mjeseci (trailing twelve months) — zarada/prihodi zbrojeni kroz posljednja četiri kvartala umjesto iz zadnjeg godišnjeg izvješća; svježija slika poslovanja.',
+    en: 'Trailing twelve months — earnings/revenue summed over the last four quarters instead of taken from the last annual report; a fresher picture of the business.',
+  },
+  'lg.k.g': { hr: 'g', en: 'g' },
+  'lg.d.g': {
+    hr: 'Stopa rasta — koliko firma (ili njezina dividenda) raste godišnje. Trajni g je rast "zauvijek" i drži se konzervativno: 2,5% za kapitalne metode, 4% terminalno za DCF/DDM.',
+    en: 'Growth rate — how fast the company (or its dividend) grows per year. Perpetual g is growth "forever" and is kept conservative: 2.5% for capital-based methods, 4% terminal for DCF/DDM.',
+  },
+  'lg.k.g1': { hr: 'g1', en: 'g1' },
+  'lg.d.g1': {
+    hr: 'Stopa rasta eksplicitne faze (prvih 5 godina) — kompozit (medijan) tri signala iz objavljenih brojki: višegodišnja serija, održivi rast iz zadržane dobiti (ROE × neisplaćeni dio dobiti) i konzervativno terminalno sidro; ograničen odozgo (10% sa serijom, 8% bez) i uvijek ispod troška kapitala r, zatim postupno pada prema trajnom g.',
+    en: 'Growth rate of the explicit phase (first 5 years) — a composite (median) of three signals from published figures: the multi-year series, sustainable growth from retained earnings (ROE × the unpaid share of profit) and the conservative terminal anchor; capped from above (10% with a series, 8% without) and always below the cost of equity r, then gradually declining towards perpetual g.',
+  },
+  'lg.k.cagr': { hr: 'CAGR', en: 'CAGR' },
+  'lg.d.cagr': {
+    hr: 'Prosječna godišnja stopa rasta kroz više godina (compound annual growth rate) — npr. "3g CAGR prihoda" je prosječni godišnji rast prihoda u zadnje tri godine.',
+    en: 'The average annual growth rate over several years (compound annual growth rate) — e.g. "3y revenue CAGR" is the average annual revenue growth over the last three years.',
+  },
+  'lg.k.payout': { hr: 'payout', en: 'payout' },
+  'lg.d.payout': {
+    hr: 'Udio dobiti koji firma isplati kao dividendu — npr. payout 60% znači da od svakih 100 € dobiti dioničarima ode 60 €.',
+    en: 'The share of profit the company pays out as a dividend — e.g. a 60% payout means that of every €100 of profit, €60 goes to shareholders.',
+  },
+  'lg.k.dSust': { hr: 'D_sust', en: 'D_sust' },
+  'lg.d.dSust': {
+    hr: 'Naša procjena ODRŽIVE godišnje dividende po dionici: održivi payout (medijan povijesnih payouta, samo redovne isplate — jednokratne ne ulaze; kod banaka najviše 70%) × dobit zadnjih 12 mjeseci ÷ broj dionica.',
+    en: 'Our estimate of the SUSTAINABLE annual dividend per share: the sustainable payout (the median of historical payouts, regular payouts only — one-offs excluded; for banks at most 70%) × trailing 12-month profit ÷ the number of shares.',
+  },
+  'lg.k.divPod': { hr: 'dividendni pod', en: 'dividend floor' },
+  'lg.d.divPod': {
+    hr: 'Donja granica vrijednosti iz održive dividende (Gordonov izračun: D_sust ÷ (r − g)) — kad bi zona pala ispod nje, sama dividenda bi nosila više nego što ulagač traži za rizik, pa se pod uključuje u zonu.',
+    en: 'The lower bound of value from the sustainable dividend (Gordon calculation: D_sust ÷ (r − g)) — if the zone fell below it, the dividend alone would deliver more than the investor requires for the risk, so the floor is included in the zone.',
+  },
+  /* ---------- tržišni profil dionice (MarketProfile.jsx) ---------- */
+  'mp.gapVsZone': { hr: 'RASKORAK NASPRAM FER-ZONE', en: 'GAP VERSUS FAIR-VALUE ZONE' },
+  'mp.pctAbove': { hr: '% iznad', en: '% above' },
+  'mp.pctBelow': { hr: '% ispod', en: '% below' },
+  'mp.marketPrice': { hr: 'TRŽIŠNA CIJENA', en: 'MARKET PRICE' },
+  'mp.veryPrefix': { hr: 'VRLO ', en: 'VERY ' },
+  'mp.illiquidStock': { hr: 'ILIKVIDNA DIONICA', en: 'ILLIQUID STOCK' },
+  'mp.illiqNote': {
+    hr: ' — prikazana cijena i vrijednosti su indikativne',
+    en: ' — the displayed price and values are indicative',
+  },
+  'mp.price': { hr: 'CIJENA', en: 'PRICE' },
+  'mp.noPrices': { hr: 'nema cijena u bazi', en: 'no prices in our database' },
+  'mp.priceAria': { hr: 'Kretanje cijene', en: 'Price history of' },
+  'mp.r1m': { hr: '1M', en: '1M' },
+  'mp.r6m': { hr: '6M', en: '6M' },
+  'mp.r1g': { hr: '1G', en: '1Y' },
+  'mp.r5g': { hr: '5G', en: '5Y' },
+  'mp.histStart': { hr: ' (početak dostupne povijesti)', en: ' (start of available history)' },
+  'mp.marketPriceEod': { hr: 'tržišna cijena (EOD)', en: 'market price (end-of-day)' },
+  'mp.tradedDays1': {
+    hr: 'dani bez trgovanja nisu u seriji — os x su trgovani dani',
+    en: 'non-trading days are not in the series — the x-axis is traded days',
+  },
+  'mp.tradedDays2': { hr: 'zapisa', en: 'records' },
+  'mp.stat52w': { hr: '52-TJ RASPON', en: '52-WK RANGE' },
+  'mp.statMcap': { hr: 'TRŽ. KAPITALIZACIJA', en: 'MARKET CAP' },
+  'mp.milEur': { hr: 'mil €', en: 'M€' },
+  'mp.statTurnover': { hr: 'PROSJ. DNEVNI PROMET', en: 'AVG DAILY TURNOVER' },
+  'mp.turnoverBasis': {
+    hr: '20 trgovanih dana, stvarni promet',
+    en: '20 traded days, actual turnover',
+  },
+  'mp.statDivYield': { hr: 'DIV. PRINOS', en: 'DIV. YIELD' },
+  'mp.of5': { hr: 'od 5', en: 'of 5' },
+  'mp.lastFyWithPayout': {
+    hr: 'zadnjih fisk. godina s isplatom',
+    en: 'of the last fiscal years with a payout',
+  },
+  'mp.dataFromFy': { hr: 'podaci od FY', en: 'data since FY' },
+  'mp.avg5y': { hr: 'prosjek (do 5 g.):', en: 'average (up to 5y):' },
+  'mp.perShare': { hr: '/dionici', en: '/share' },
+  'mp.divGrowth': { hr: 'rast dividende:', en: 'dividend growth:' },
+  'mp.pctPerYear': { hr: '%/g.', en: '%/yr' },
+  'mp.dsustLabel': { hr: 'Održiva dividenda (procjena):', en: 'Sustainable dividend (estimate):' },
+  'mp.fullBreakdown': { hr: 'puni raspis', en: 'full breakdown' },
+  'mp.ds1': { hr: 'Održivi payout', en: 'Sustainable payout' },
+  'mp.ds2': {
+    hr: '× normalizirana dobit (12 mj.) / broj dionica.',
+    en: '× normalised profit (12 mo.) / number of shares.',
+  },
+  'mp.dsExcluded': {
+    hr: 'Isključene jednokratne/iz zadržane dobiti:',
+    en: 'Excluded one-offs / payouts from retained earnings:',
+  },
+  'mp.dsCoverage': {
+    hr: 'Pokrivenost zadnje najave tekućom dobiti:',
+    en: 'Coverage of the latest announcement by current profit:',
+  },
+  'mp.colFy': { hr: 'FISK. GOD.', en: 'FISCAL YR' },
+  'mp.colClass': { hr: 'KLASA', en: 'CLASS' },
+  'mp.colAmount': { hr: 'IZNOS / DION.', en: 'AMOUNT / SHARE' },
+  'mp.colType': { hr: 'TIP', en: 'TYPE' },
+  'mp.profitFy1': { hr: 'dobit FY', en: 'FY' },
+  'mp.profitFy2': {
+    hr: ' nije dostupna u bazi',
+    en: ' profit is not available in our database',
+  },
+  'mp.noPaid': {
+    hr: 'U dostupnim podacima (EHO objave od 2023.) nema isplaćene dividende.',
+    en: 'The available data (EHO filings since 2023) contain no paid dividend.',
+  },
+  'mp.leg1': {
+    hr: '% DOBITI = ukupna isplata firme za tu fiskalnu godinu / neto dobit iste godine (— kad dobit te godine nije u bazi). Tipovi isplata su činjenične oznake:',
+    en: "% OF PROFIT = the company's total payout for that fiscal year / net profit of the same year (— when that year's profit is not in our database). Payout types are factual tags:",
+  },
+  'mp.leg2': { hr: '— u liniji s dosadašnjima;', en: '— in line with prior ones;' },
+  'mp.leg3': {
+    hr: '— više od 150% medijana prethodnih redovnih;',
+    en: '— more than 150% of the median of prior regular payouts;',
+  },
+  'mp.leg4': {
+    hr: '— ukupna isplata veća od dobiti godine iz koje se isplaćuje. Jednokratne isplate ne ulaze u procjenu održive dividende.',
+    en: '— total payout above the profit of the year it is paid from. One-off payouts are excluded from the sustainable dividend estimate.',
+  },
+  'mp.approvedPayout': { hr: 'IZGLASANA ISPLATA', en: 'APPROVED PAYOUT' },
+  'mp.fromProfitOf': { hr: 'IZ DOBITI', en: 'FROM PROFIT OF' },
+  'mp.perShareNote': {
+    hr: 'po dionici, prije poreza · odluka GS —',
+    en: 'per share, before tax · general assembly decision —',
+  },
+  'mp.companyFiling': { hr: 'objava društva', en: 'company filing' },
+  'mp.proposalTitle': {
+    hr: 'PRIJEDLOG DIVIDENDE — JOŠ NIJE IZGLASAN',
+    en: 'DIVIDEND PROPOSAL — NOT YET APPROVED',
+  },
+  'mp.proposalNote': {
+    hr: 'prijedlog uprave/GS — isplata NIJE izvjesna dok skupština ne odluči ·',
+    en: 'management/GA proposal — the payout is NOT certain until the general assembly decides ·',
+  },
+  'mp.noUpcoming': { hr: 'Nema najavljene nadolazeće isplate.', en: 'No upcoming payout announced.' },
+  'mp.analysisNa': { hr: 'ANALIZA NIJE DOSTUPNA', en: 'ANALYSIS NOT AVAILABLE' },
+  'mp.analysisNa1': {
+    hr: 'Fundamenti, vrednovanje, bilanca i vlasništvo:',
+    en: 'Fundamentals, valuation, balance sheet and ownership:',
+  },
+  'mp.analysisNa2': {
+    hr: '— objavljuju se tek kad izvješća prođu validaciju (ništa se ne procjenjuje).',
+    en: '— published only once the reports pass validation (nothing is estimated).',
+  },
+
+  /* ---------- graf raspona metoda (VerdictSpread.jsx) ---------- */
+  'vs.aria': { hr: 'Raspon vrijednosti po metodi', en: 'Value range per method' },
+  'vs.noMethods': {
+    hr: 'Nema metoda s izračunatom vrijednošću — nedovoljno ulaza u bazi.',
+    en: 'No methods with a computed value — insufficient inputs in our database.',
+  },
+  'vs.zoneAnchored': {
+    hr: 'fer-zona (raspon sidrenih metoda arhetipa)',
+    en: "fair-value zone (range of the archetype's anchor methods)",
+  },
+  'vs.zoneOverlap': {
+    hr: 'zona preklapanja metoda (min–max baza; sidro nedostupno)',
+    en: 'method overlap zone (min–max of base estimates; anchor unavailable)',
+  },
+  'vs.dispersion': { hr: 'disperzija sidra', en: 'anchor dispersion' },
+  'vs.divergent': { hr: '(sidrene metode se razilaze)', en: '(anchor methods diverge)' },
+  'vs.aligned': { hr: '(sidro usklađeno)', en: '(anchor aligned)' },
+  'vs.secondaryNote': {
+    hr: ' · * = sekundarna leća, prigušena',
+    en: ' · * = secondary lens, dimmed',
+  },
+  'vs.range': { hr: 'raspon metode (low–high)', en: 'method range (low–high)' },
+  'vs.base': { hr: 'središnja procjena', en: 'central estimate' },
+  'vs.zone': { hr: 'zona', en: 'zone' },
+  'vs.price': { hr: '(cijena)', en: '(price)' },
+  'vs.illiq': {
+    hr: ' — ⚠ niska likvidnost, indikativna (isprekidano)',
+    en: ' — ⚠ low liquidity, indicative (dashed)',
+  },
+
+  /* ---------- metodološka napomena (MethodologyNote.jsx) ---------- */
+  'mn.summary': {
+    hr: 'KAKO JE NASTALA OVA PROCJENA — metodološka napomena (klik za otvaranje)',
+    en: 'HOW THIS ESTIMATE WAS MADE — methodology note (click to open)',
+  },
+  'mn.archetype': { hr: 'ARHETIP I SIDRO', en: 'ARCHETYPE AND ANCHOR' },
+  'mn.params': { hr: 'KLJUČNI PARAMETRI OVE PROCJENE', en: 'KEY PARAMETERS OF THIS ESTIMATE' },
+  'mn.limitations': { hr: 'OGRANIČENJA OVE PROCJENE', en: 'LIMITATIONS OF THIS ESTIMATE' },
+  'mn.changelog': { hr: 'POVIJEST PROMJENA PROCJENE', en: 'ESTIMATE CHANGE HISTORY' },
+  'mn.colOld': { hr: 'Stara zona €', en: 'Old zone €' },
+  'mn.colNew': { hr: 'Nova zona €', en: 'New zone €' },
+  'mn.colReason': { hr: 'Razlog', en: 'Reason' },
+  'mn.fullLink': {
+    hr: 'Puna metodologija — kako procjenjujemo →',
+    en: 'Full methodology — how we estimate →',
+  },
+
+  'lg.k.medijan': { hr: 'medijan', en: 'median' },
+  'lg.d.medijan': {
+    hr: 'Srednja vrijednost po redoslijedu — pola vrijednosti je iznad, pola ispod; otporniji na ekstremne vrijednosti od običnog prosjeka.',
+    en: 'The middle value by rank — half the values are above, half below; more robust to extreme values than a simple average.',
+  },
 }
 
 /* t('key', 'en') -> prijevod; nepoznat ključ pada GLASNO u devu (konzola),

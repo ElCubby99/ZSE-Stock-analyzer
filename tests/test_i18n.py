@@ -31,6 +31,10 @@ I18N_CLEAN = [
     "src/Obveznice.jsx",
     "src/MirovinskiFondovi.jsx",
     "src/StockTabs.jsx",
+    "src/Legend.jsx",
+    "src/MethodologyNote.jsx",
+    "src/VerdictSpread.jsx",
+    "src/MarketProfile.jsx",
     "src/i18n/LangContext.jsx",
 ]
 
