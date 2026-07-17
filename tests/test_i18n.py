@@ -26,6 +26,7 @@ I18N_CLEAN = [
     "src/Dividende.jsx",
     "src/Trziste.jsx",
     "src/Screener.jsx",
+    "src/Usporedba.jsx",
     "src/i18n/LangContext.jsx",
 ]
 

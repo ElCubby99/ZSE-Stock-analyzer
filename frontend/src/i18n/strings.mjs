@@ -261,6 +261,22 @@ export const STR = {
   },
   'home.title': { hr: 'Analiza dionica Zagrebačke burze', en: 'Zagreb Stock Exchange stock analysis' },
   'cmp.title': { hr: 'Usporedba dionica Zagrebačke burze', en: 'Compare Zagreb Stock Exchange stocks' },
+  'cmp.subtitle': {
+    hr: 'svi podaci iz službenih izvora, klik na zaglavlje sortira',
+    en: 'all data from official sources, click a header to sort',
+  },
+  'cmp.mcap': { hr: 'Trž. kap.', en: 'Mkt. cap' },
+  'cmp.searchPh': { hr: 'traži ticker ili ime…', en: 'search ticker or name…' },
+  'cmp.picked': { hr: 'odabrano', en: 'selected' },
+  'cmp.jump': { hr: 'skoči na usporedbu ↓', en: 'jump to comparison ↓' },
+  'cmp.cardNote': {
+    hr: 'Usporedni prikaz činjeničnih podataka — nije rangiranje ni preporuka; n/p znači da podatak nije u bazi.',
+    en: 'A side-by-side view of factual data — not a ranking or recommendation; n/a means the figure is not in our database.',
+  },
+  'cmp.disc': {
+    hr: 'Multipli i raskorak od fer-zone su činjenični prikaz iz javno opisane metodologije — nisu preporuka ni rangiranje. Zaključak je uvijek vaš.',
+    en: 'Multiples and the gap to the fair-value zone are a factual display from a publicly described methodology — not a recommendation or ranking. The conclusion is always yours.',
+  },
   'idx.title': { hr: 'Indeksi Zagrebačke burze', en: 'Zagreb Stock Exchange indices' },
   'bond.title': { hr: 'Obveznice na Zagrebačkoj burzi', en: 'Bonds on the Zagreb Stock Exchange' },
   'fund.title': { hr: 'Mirovinski fondovi (OMF)', en: 'Mandatory pension funds' },
