@@ -75,20 +75,37 @@ def match_omf(holder_name: str) -> tuple[str, str] | None:
 
 
 def import_rows(conn, rows: list[dict], source: str) -> int:
-    """Idempotentan upis [{fund, category, value_date, unit_value}] — ponovni
-    run s istim podacima ne mijenja ništa (ON CONFLICT DO NOTHING)."""
+    """Idempotentan BATCH upis jedinica i MIREX-a (ON CONFLICT DO NOTHING).
+    c-03 nosi punu DNEVNU povijest od 2002. (~90k redova) — red-po-red
+    upis preko mreže bi trajao desetke minuta (ista zamka kao db-sync #1),
+    pa ide execute_values u serijama."""
+    from psycopg2.extras import execute_values
     ensure_tables(conn)
-    n = 0
+    units = [r for r in rows if r.get("kind", "unit") == "unit"]
+    mirex = [r for r in rows if r.get("kind") == "mirex"]
     with conn.cursor() as cur:
-        for r in rows:
-            cur.execute(
+        cur.execute("SELECT COUNT(*) FROM fund_units")
+        before_u = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM mirex")
+        before_m = cur.fetchone()[0]
+        if units:
+            execute_values(cur,
                 """INSERT INTO fund_units (fund, category, value_date, unit_value, source)
-                   VALUES (%s,%s,%s,%s,%s)
-                   ON CONFLICT (fund, category, value_date) DO NOTHING""",
-                (r["fund"], r["category"], r["value_date"], r["unit_value"], source))
-            n += cur.rowcount
+                   VALUES %s ON CONFLICT (fund, category, value_date) DO NOTHING""",
+                [(r["fund"], r["category"], r["value_date"], r["unit_value"], source)
+                 for r in units], page_size=2000)
+        if mirex:
+            execute_values(cur,
+                """INSERT INTO mirex (category, value_date, value, source)
+                   VALUES %s ON CONFLICT (category, value_date) DO NOTHING""",
+                [(r["category"], r["value_date"], r["value"], source)
+                 for r in mirex], page_size=2000)
+        cur.execute("SELECT COUNT(*) FROM fund_units")
+        after_u = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM mirex")
+        after_m = cur.fetchone()[0]
     conn.commit()
-    return n
+    return (after_u - before_u) + (after_m - before_m)
 
 
 def fetch_hanfa(conn, log=print) -> int:
@@ -134,6 +151,8 @@ def fetch_hanfa(conn, log=print) -> int:
         raise RuntimeError(
             f"HANFA: nijedna XLSX/getfile poveznica s 'mirovin' na {listing} "
             "— provjeri strukturu stranice i prilagodi fetch_hanfa()")
+    # jedinice i MIREX žive u c-03 (neto imovina i Mirex) — nju prvo
+    cands.sort(key=lambda u: 0 if re.search(r"mirex|neto_imovina", u, re.I) else 1)
     errors = []
     for url in cands[:6]:
         try:
@@ -151,34 +170,81 @@ def fetch_hanfa(conn, log=print) -> int:
         + "\n  ".join(errors))
 
 
+HRK_EUR = 7.5345   # fiksni konverzijski tečaj (uveden 1.1.2023.)
+
+
+def _header_kind(cell: str):
+    """('unit', obitelj, kat) | ('mirex', kat) | None iz teksta zaglavlja.
+    Stvarni format (c-03, sheet 'C - OMF VOJ i MIREX', forenzika 17.07.2026.):
+    'AZ\\nOMF A', 'Erste Plavi\\nOMF A', 'PBZ CO OMF A', 'Raiffeisen OMF A',
+    'MIREX  A' — višak whitespacea/newlinea se normalizira."""
+    n = _norm(re.sub(r"\s+", " ", str(cell))).strip()
+    m = re.match(r"^MIREX\s*([ABC])$", n)
+    if m:
+        return ("mirex", m.group(1))
+    m = re.match(r"^(AZ|ERSTE PLAVI|PBZ CO|PBZ CROATIA OSIGURANJE|RAIFFEISEN)"
+                 r"\s+OMF\s*([ABC])$", n)
+    if m:
+        fam = {"PBZ CROATIA OSIGURANJE": "PBZ CO"}.get(m.group(1), m.group(1))
+        fam = {"AZ": "AZ", "ERSTE PLAVI": "Erste Plavi", "PBZ CO": "PBZ CO",
+               "RAIFFEISEN": "Raiffeisen"}[fam]
+        return ("unit", fam, m.group(2))
+    return None
+
+
 def parse_hanfa_xlsx(raw: bytes) -> list[dict]:
-    """Parsiranje HANFA XLSX-a s vrijednostima jedinica OMF-ova. STROGO:
-    očekuje stupce s nazivom fonda (AZ/Erste Plavi/PBZ CO/Raiffeisen),
-    kategorijom i vrijednošću jedinice; sve drugo -> RuntimeError."""
+    """Parsiranje HANFA c-03 XLSX-a (sheet s vrijednostima obračunskih
+    jedinica OMF-ova i MIREX-om). STROGO prema izmjerenoj strukturi:
+    zaglavlje = red s ćelijom 'Datum' + >=3 stupca fond/MIREX; podaci =
+    redovi s datumom u datumskom stupcu. Vrijednosti s datumom do
+    31.12.2022. su u HRK (footnote u datoteci) -> preračun u EUR fiksnim
+    tečajem. Ništa prepoznato -> RuntimeError (nikad kriva brojka)."""
+    import datetime as dt
     import io
+
     from openpyxl import load_workbook
     wb = load_workbook(io.BytesIO(raw), read_only=True, data_only=True)
     out = []
+    cutoff = dt.date(2022, 12, 31)
     for ws in wb.worksheets:
+        colmap, date_col = None, None
         for row in ws.iter_rows(values_only=True):
-            cells = [str(c) if c is not None else "" for c in row]
-            joined = " ".join(cells)
-            m = match_omf(joined)
-            if not m:
+            if colmap is None:
+                cand = {}
+                dcol = None
+                for i, c in enumerate(row):
+                    if c is None:
+                        continue
+                    if "DATUM" in _norm(str(c)):
+                        dcol = i
+                    k = _header_kind(c)
+                    if k:
+                        cand[i] = k
+                if dcol is not None and len(cand) >= 3:
+                    colmap, date_col = cand, dcol
                 continue
-            # heuristika: prvi datum + prva decimalna vrijednost u retku
-            import datetime as dt
-            date_v = next((c for c in row if isinstance(c, dt.datetime | dt.date)), None)
-            num_v = next((c for c in row if isinstance(c, int | float) and 1 < float(c) < 10000), None)
-            if date_v is None or num_v is None:
+            d = row[date_col] if date_col < len(row) else None
+            if not isinstance(d, dt.datetime | dt.date):
                 continue
-            out.append({"fund": m[0], "category": m[1],
-                        "value_date": date_v.date() if hasattr(date_v, "date") else date_v,
-                        "unit_value": float(num_v)})
+            d = d.date() if isinstance(d, dt.datetime) else d
+            hrk = d <= cutoff
+            for i, kind in colmap.items():
+                v = row[i] if i < len(row) else None
+                if not isinstance(v, int | float):
+                    continue
+                v = float(v) / HRK_EUR if hrk else float(v)
+                if kind[0] == "unit":
+                    out.append({"kind": "unit", "fund": kind[1],
+                                "category": kind[2], "value_date": d,
+                                "unit_value": v})
+                else:
+                    out.append({"kind": "mirex", "category": kind[1],
+                                "value_date": d, "value": v})
     if not out:
         raise RuntimeError(
-            "HANFA XLSX: nijedan red nije prepoznat kao OMF jedinica — format "
-            "se promijenio ili je datoteka kriva; prilagodi parse_hanfa_xlsx()")
+            "HANFA XLSX: nijedan red nije prepoznat kao OMF jedinica/MIREX — "
+            "format se promijenio ili je datoteka kriva; prilagodi "
+            "parse_hanfa_xlsx() (debug: scripts/debug_hanfa.py)")
     return out
 
 
