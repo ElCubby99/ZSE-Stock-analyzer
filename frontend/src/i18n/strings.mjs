@@ -248,6 +248,17 @@ export const STR = {
 
   /* ---------- screener / naslovnica / usporedba ---------- */
   'scr.title': { hr: 'Screener dionica Zagrebačke burze', en: 'Croatian stocks screener' },
+  'scr.subtitle': {
+    hr: 'klasa · klik na zaglavlje sortira · klik na redak otvara dionicu',
+    en: 'share classes · click a header to sort · click a row to open the stock',
+  },
+  'scr.allSectors': { hr: 'SVI', en: 'ALL' },
+  'scr.col.priceEur': { hr: 'CIJENA €', en: 'PRICE €' },
+  'scr.col.yieldPct': { hr: 'PRINOS %', en: 'YIELD %' },
+  'scr.legendGap': {
+    hr: 'RASKORAK = položaj tržišne cijene naspram fer-zone · negativno = ispod, pozitivno = iznad · n/p = analiza u obradi ili bez zone',
+    en: 'GAP = position of the market price versus the fair-value zone · negative = below, positive = above · n/a = analysis in progress or no zone',
+  },
   'home.title': { hr: 'Analiza dionica Zagrebačke burze', en: 'Zagreb Stock Exchange stock analysis' },
   'cmp.title': { hr: 'Usporedba dionica Zagrebačke burze', en: 'Compare Zagreb Stock Exchange stocks' },
   'idx.title': { hr: 'Indeksi Zagrebačke burze', en: 'Zagreb Stock Exchange indices' },
@@ -266,6 +277,45 @@ export const STR = {
   'news.all': { hr: 'sve vijesti', en: 'all news' },
   'news.dataPage': { hr: 'pogledaj stranicu s podacima', en: 'open the data page' },
   'mkt.temperature': { hr: 'Temperatura tržišta', en: 'Market temperature' },
+  'mkt.pageTitle': { hr: 'Tržište', en: 'Market' },
+  'mkt.subtitle': {
+    hr: 'fer vrijednost, CROBEX, dividende i pokazatelji · službeni EOD',
+    en: 'fair value, CROBEX, dividends and indicators · official end-of-day data',
+  },
+  'mkt.subtitleFor': { hr: 'za', en: 'for' },
+  'mkt.subtitleUpdate': {
+    hr: 'ažurira se nakon zatvaranja trgovine (16:00)',
+    en: 'updated after the close of trading (16:00 CET)',
+  },
+  'mkt.tracked': { hr: 'PRAĆENE DIONICE', en: 'TRACKED STOCKS' },
+  'mkt.classesInSystem': { hr: 'klasa u sustavu', en: 'share classes covered' },
+  'mkt.indicesNone': { hr: 'nema u bazi', en: 'not in database' },
+  'mkt.allIndices': { hr: 'Svi indeksi ZSE', en: 'All ZSE indices' },
+  'mkt.gainers': { hr: 'Najveći dobitnici', en: 'Top gainers' },
+  'mkt.losers': { hr: 'Najveći gubitnici', en: 'Top losers' },
+  'mkt.moversNote1': { hr: 'Promjene se odnose na trgovinski dan', en: 'Changes refer to the trading day' },
+  'mkt.moversNote2': {
+    hr: 'dionice koje taj dan nisu trgovane nisu u dobitnicima/gubitnicima (njihova zadnja cijena je starija).',
+    en: 'stocks not traded that day are excluded from gainers/losers (their last price is older).',
+  },
+  'mkt.sortNote': {
+    hr: 'klik na zaglavlje sortira (ponovni klik obrće smjer)',
+    en: 'click a header to sort (click again to reverse)',
+  },
+  'mkt.col.stock': { hr: 'DIONICA', en: 'STOCK' },
+  'mkt.col.last': { hr: 'ZADNJA €', en: 'LAST €' },
+  'mkt.col.change': { hr: 'PROMJENA', en: 'CHANGE' },
+  'mkt.col.turnover': { hr: 'PROMET €', en: 'TURNOVER €' },
+  'mkt.col.zone': { hr: 'FER-ZONA €', en: 'FAIR ZONE €' },
+  'mkt.col.gap': { hr: 'RASKORAK', en: 'GAP' },
+  'mkt.legendZone': { hr: 'fer-zona (naša procjena)', en: 'fair-value zone (our estimate)' },
+  'mkt.legendPrice': { hr: 'tržišna cijena', en: 'market price' },
+  'mkt.legendPref': { hr: 'povlaštena dionica', en: 'preferred share' },
+  'mkt.legendIlliq': {
+    hr: 'ILIKV. = rijetke transakcije, cijena indikativna · n/p = analiza u obradi',
+    en: 'ILLIQ. = infrequent trading, indicative price · n/a = analysis in progress',
+  },
+  'mkt.illiq': { hr: 'ILIKV.', en: 'ILLIQ.' },
 
   /* ---------- kategorije vijesti ---------- */
   'newscat.novo_izvjesce': { hr: 'NOVO IZVJEŠĆE', en: 'NEW REPORT' },

@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GapCell, SECTOR_HR, SiteFooter, SiteHeader, useOverview } from './Shell.jsx'
+import { GapCell, SiteFooter, SiteHeader, useOverview } from './Shell.jsx'
+import { sectorLabel } from './sectorLabels.mjs'
+import { useLang } from './i18n/LangContext.jsx'
 import { num } from './format.js'
 
 const COLS = [
-  ['ticker', 'DIONICA', 'l'], ['sector', 'SEKTOR', 'l'], ['price', 'CIJENA €', 'r'],
-  ['pe', 'P/E', 'r'], ['pb', 'P/B', 'r'], ['div_yield', 'PRINOS %', 'r'],
-  ['gap', 'RASKORAK', 'l'],
+  ['ticker', 'mkt.col.stock', 'l'], ['sector', 'common.sector', 'l'],
+  ['price', 'scr.col.priceEur', 'r'],
+  ['pe', 'P/E', 'r'], ['pb', 'P/B', 'r'], ['div_yield', 'scr.col.yieldPct', 'r'],
+  ['gap', 'mkt.col.gap', 'l'],
 ]
 
 export default function Screener() {
   const ov = useOverview()
   const nav = useNavigate()
+  const { lang, t } = useLang()
   const [sk, setSk] = useState('gap'); const [dir, setDir] = useState(1)
   const [sec, setSec] = useState('Svi')
-  useEffect(() => { document.title = 'Screener · Burzovni list' }, [])
-  if (!ov) return <div className="shellpg"><SiteHeader /><div className="loading">učitavam…</div></div>
+  useEffect(() => { document.title = `${t('nav.screener')} · Burzovni list` }, [lang])
+  if (!ov) return <div className="shellpg"><SiteHeader /><div className="loading">{t('common.loading')}</div></div>
   const gap = (s) => (s.zone_low === null || s.zone_low === undefined || !s.price ? null
     : s.price > s.zone_high ? s.price / s.zone_high - 1
       : s.price < s.zone_low ? s.price / s.zone_low - 1 : 0)
@@ -34,30 +38,30 @@ export default function Screener() {
       <SiteHeader />
       <main className="wrap-wide">
         <div className="mk-title">
-          <h1>Screener</h1>
-          <span>{list.length} klasa · klik na zaglavlje sortira · klik na redak otvara dionicu</span>
+          <h1>{t('nav.screener')}</h1>
+          <span>{list.length} {t('scr.subtitle')}</span>
         </div>
         <div className="prof-chips" style={{ marginBottom: 18 }}>
-          <span className="prof-klabel" style={{ margin: 0 }}>SEKTOR:</span>
+          <span className="prof-klabel" style={{ margin: 0 }}>{t('common.sector').toUpperCase()}:</span>
           {sectors.map((c) => (
             <button key={c} className={`prof-chip ${sec === c ? 'on' : ''}`}
-              onClick={() => setSec(c)}>{(SECTOR_HR[c] || c).toUpperCase()}</button>
+              onClick={() => setSec(c)}>{(c === 'Svi' ? t('scr.allSectors') : sectorLabel(c, lang)).toUpperCase()}</button>
           ))}
         </div>
         <div className="mk-scroll">
           <div className="scr-table">
             <div className="scr-hd">
-              {COLS.map(([k, l, ta]) => (
+              {COLS.map(([k, key, ta]) => (
                 <button key={k} className={ta} onClick={sort(k)}>
-                  {l}{sk === k ? (dir === 1 ? ' ↑' : ' ↓') : ''}
+                  {key.includes('.') ? t(key) : key}{sk === k ? (dir === 1 ? ' ↑' : ' ↓') : ''}
                 </button>
               ))}
             </div>
             {list.map((s) => (
-              <div className="scr-row" key={s.ticker} onClick={() => nav(`/dionica/${String(s.company).toLowerCase()}`)}>
+              <div className="scr-row" key={s.ticker} onClick={() => nav(lang === 'en' ? `/en/stock/${String(s.company).toLowerCase()}` : `/dionica/${String(s.company).toLowerCase()}`)}>
                 <span className="mk-name"><b>{s.ticker}</b><em>{s.name}</em>
-                  {s.illiquid && <i className="mk-ill">ILIKV.</i>}</span>
-                <span className="dim">{SECTOR_HR[s.sector] || s.sector || '—'}</span>
+                  {s.illiquid && <i className="mk-ill">{t('mkt.illiq')}</i>}</span>
+                <span className="dim">{sectorLabel(s.sector, lang) || '—'}</span>
                 <span className="r mono">{s.price === null ? '—' : num(s.price, 2)}</span>
                 <span className="r mono dim">{s.pe === null || s.pe === undefined ? '—' : num(s.pe, 1)}</span>
                 <span className="r mono dim">{s.pb === null || s.pb === undefined ? '—' : num(s.pb, 2)}</span>
@@ -66,7 +70,7 @@ export default function Screener() {
               </div>
             ))}
             <div className="mk-legend">
-              <span>RASKORAK = položaj tržišne cijene naspram fer-zone · negativno = ispod, pozitivno = iznad · n/p = analiza u obradi ili bez zone</span>
+              <span>{t('scr.legendGap')}</span>
             </div>
           </div>
         </div>
