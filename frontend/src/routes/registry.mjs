@@ -43,6 +43,12 @@ export const ROUTES = [
     expand: 'stocks',
   },
   {
+    path: '/dionica/:ticker/financije',
+    component: 'FinancijePage',
+    indexable: true,
+    expand: 'stocks_fin', // M37: as-reported izvještaji (data/fin/<T>.json)
+  },
+  {
     path: '/indeksi',
     component: 'IndeksiIndex',
     indexable: true,

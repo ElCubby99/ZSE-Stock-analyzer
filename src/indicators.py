@@ -494,6 +494,7 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     groups.append({"key": "emp", "title": "Po zaposlenom", "items": g})
 
     return {"groups": groups, "review_flags": ix.flags,
+            "ticker": ticker,  # M37: link na /dionica/<t>/financije iz UI-ja
             "note": ("TTM = zadnji FY + tekući YTD − lanjski isti YTD (samo tokovne "
                      "stavke); bilanca = zadnje objavljeno stanje; FY se nikad ne "
                      "prikazuje kao TTM. Formule su opisane u Metodologiji.")}

@@ -441,6 +441,15 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
             # aborted i ruši SVE sljedeće tickere (incident 16.07.2026.)
             conn.rollback()
             log("regen", None, "failed", f"{t}: {type(e).__name__}: {e}")
+    # M37: as-reported financije po dionici (fin/<T>.json) — mijenja se samo
+    # kad stignu nova izvješća, ali regen je jeftin i idempotentan
+    try:
+        import subprocess
+        subprocess.run([os.sys.executable, "-m", "scripts.build_financije"],
+                       check=True, capture_output=True, text=True)
+        log("regen", None, "ok", "fin/*.json regeneriran (as-reported financije)")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"financije: {type(e).__name__}: {e}")
     # M32: overview.json (naslovnica/screener/usporedba + datum svježine u
     # headeru i prerenderu) MORA pratiti nove cijene — bez ovoga bi datum
     # na sajtu ostajao star iako su per-stock exporti svježi
