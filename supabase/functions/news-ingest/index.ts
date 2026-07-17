@@ -13,20 +13,35 @@
 // preskače postojeće zapise umjesto da ih duplicira.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "content-type, x-api-key",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+// CORS: samo vlastite domene (audit M36: '*' je presirok) — browser pozivi
+// dolaze iskljucivo s burzovnilist.com; server-server pozivi (pipeline,
+// agent, hookovi) ne salju Origin pa ih suzavanje ne dira.
+const ALLOWED_ORIGINS = new Set([
+  "https://www.burzovnilist.com",
+  "https://burzovnilist.com",
+  "http://localhost:5173",
+  "http://localhost:4173",
+]);
+const corsFor = (req: Request) => {
+  const o = req.headers.get("origin");
+  return {
+    "Access-Control-Allow-Origin":
+      o && ALLOWED_ORIGINS.has(o) ? o : "https://www.burzovnilist.com",
+    "Vary": "Origin",
+    "Access-Control-Allow-Headers": "content-type, x-api-key",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+  };
 };
-const json = (status: number, body: unknown) =>
-  new Response(JSON.stringify(body),
-    { status, headers: { ...CORS, "Content-Type": "application/json" } });
 
 const CATEGORIES = ["novo_izvjesce", "dividenda", "promjena_cijene", "opce"];
 // deterministički generirane iz službenih objava -> smiju odmah na /vijesti
 const AUTO_PUBLISH = new Set(["novo_izvjesce", "dividenda"]);
 
 Deno.serve(async (req) => {
+  const CORS = corsFor(req);
+  const json = (status: number, body: unknown) =>
+    new Response(JSON.stringify(body),
+      { status, headers: { ...CORS, "Content-Type": "application/json" } });
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json(405, { error: "POST only" });
 
