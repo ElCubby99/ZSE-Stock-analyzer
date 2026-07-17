@@ -441,9 +441,9 @@ export const STR = {
     hr: 'Povijesne serije čekaju prvi uvoz (HANFA, mjesečni ritam).',
     en: 'Historical series are awaiting the first import (HANFA, monthly cadence).',
   },
-  'fund.chartShort': {
-    hr: 'serija kraća od raspona — prikazan dostupni dio',
-    en: 'series shorter than the range — available part shown',
+  'fund.chartCommon': {
+    hr: 'Odabrane serije nemaju isti početak (kategorije A i C postoje od 2014.) — radi usporedivosti sve su prikazane i normirane od zajedničkog početka:',
+    en: 'The selected series do not share the same start (categories A and C exist since 2014) — for comparability all are shown and rebased from the common start:',
   },
   'fund.holdersTitle': {
     hr: 'Mirovinski fondovi među dioničarima',

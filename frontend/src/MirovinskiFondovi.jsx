@@ -76,13 +76,26 @@ export function FundChart() {
     cutIso = d0.toISOString().slice(0, 10)
   }
 
+  /* usporedivost: serije nemaju isti početak (A/C kategorije od 2014.,
+     B i Mirex B od 2002.) — normiranje na VLASTITI početak dalo bi
+     neusporedive prinose, pa se sve odabrane serije režu i normiraju od
+     ZAJEDNIČKOG početka (najkasniji prvi datum među odabranima) */
+  const pick = (s) => ((range === 'ytd' || range === 'y1') && s.d?.length > 1 ? s.d : s.m)
+  const selected = data.series.filter((s) => sel.has(s.id))
+  const firstDates = selected.map((s) => pick(s)[0]?.[0]).filter(Boolean)
+  const commonStart = firstDates.length
+    ? firstDates.reduce((a, b) => (a > b ? a : b)) : null
+  let effCut = cutIso
+  let clipped = false
+  if (commonStart && (!effCut || commonStart > effCut)) {
+    clipped = effCut ? true : new Set(firstDates).size > 1
+    effCut = commonStart
+  }
+
   const lines = []
-  let short = false
-  data.series.forEach((s) => {
-    if (!sel.has(s.id)) return
-    const src = (range === 'ytd' || range === 'y1') && s.d?.length > 1 ? s.d : s.m
-    const pts = cutIso ? src.filter((p) => p[0] >= cutIso) : src
-    if (cutIso && src.length && src[0][0] > cutIso) short = true
+  selected.forEach((s) => {
+    const src = pick(s)
+    const pts = effCut ? src.filter((p) => p[0] >= effCut) : src
     if (pts.length < 2) return
     const base = pts[0][1]
     lines.push({ s, pts: pts.map((p) => ({ t: Date.parse(p[0]), v: (p[1] / base) * 100 })) })
@@ -178,7 +191,8 @@ export function FundChart() {
         </div>
         {body}
         <div className="subnote" style={{ marginTop: 8 }}>
-          {t('fund.chartRebase')}{short ? ` ${t('fund.chartShort')}.` : ''}
+          {clipped && <b>{t('fund.chartCommon')} {fmtDate(effCut)}. </b>}
+          {t('fund.chartRebase')}
         </div>
       </div>
     </section>
