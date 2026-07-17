@@ -492,6 +492,88 @@ export const STR = {
   'newscat.promjena_cijene': { hr: 'CIJENA', en: 'PRICE' },
   'newscat.opce': { hr: 'OPĆE', en: 'GENERAL' },
 
+  /* ---------- stranica dionice: pokazatelji (StockTabs) ---------- */
+  'ind.secLabel': {
+    hr: 'Pokazatelji — TTM gdje je izračunljivo, inače FY (s oznakom)',
+    en: 'Indicators — TTM where computable, otherwise FY (labelled)',
+  },
+  'ind.formula': { hr: 'Formula', en: 'Formula' },
+  'ind.why': { hr: 'Zašto ovako', en: 'Why this way' },
+  'ind.basis': { hr: 'Osnovica', en: 'Basis' },
+  'ind.forReview': { hr: 'za pregled', en: 'for review' },
+  'ind.legendIntro': { hr: 'Nazivi osnovica:', en: 'Basis labels:' },
+  'ind.legendTtm': { hr: '= trailing 12 mj.,', en: '= trailing 12 months,' },
+  'ind.legendFy': { hr: '= zadnja poslovna godina,', en: '= last fiscal year,' },
+  'ind.legendQ': { hr: '= zadnje kvartalno stanje.', en: '= latest quarterly position.' },
+  'ind.legendDerived1': {
+    hr: 'Sve izvedenice su izračun iz objavljenih izvješća (kod), ne procjena — formula i obrazloženje "zašto baš ovako" (oznaka',
+    en: 'All derived figures are computed from published reports (code), not estimates — the formula and the "why this way" reasoning (the',
+  },
+  'ind.legendDerived2': {
+    hr: ') su u opisu svakog retka (hover / dodir).',
+    en: "marker) are in each row's description (hover / tap).",
+  },
+  'ind.npCarries': { hr: 'nosi razlog.', en: 'carries its reason.' },
+  'ind.backing': { hr: 'Podloga za sve izračune:', en: 'Underlying data for every calculation:' },
+  'ind.fullReports': { hr: 'puni izvještaji (as-reported) →', en: 'full statements (as-reported) →' },
+
+  /* ---------- stranica dionice: ključni omjeri po klasi ---------- */
+  'ki.secLabel': { hr: 'Omjeri po klasi — tržišni vs fer-zona', en: 'Ratios per class — market vs fair-value zone' },
+  'ki.class': { hr: 'Klasa', en: 'Class' },
+  'ki.priceEur': { hr: 'Cijena €', en: 'Price €' },
+  'ki.fairPe': { hr: 'fer P/E*', en: 'fair P/E*' },
+  'ki.fairPb': { hr: 'fer P/B*', en: 'fair P/B*' },
+  'ki.divYield': { hr: 'Div. prinos', en: 'Div. yield' },
+  'ki.note1': {
+    hr: '* fer P/E i fer P/B = sredina sidrene fer-zone (',
+    en: '* fair P/E and fair P/B = midpoint of the anchored fair-value zone (',
+  },
+  'ki.note2': {
+    hr: ') podijeljena EPS-om odn. knjigom po dionici — pokazuje koliko bi omjer iznosio na razini naše procjene; usporedba s tržišnim omjerom je činjenica, ne ocjena.',
+    en: ') divided by EPS or book value per share — shows what the ratio would be at the level of our estimate; the comparison with the market ratio is a fact, not a rating.',
+  },
+
+  /* ---------- stranica dionice: tab Usporedba ---------- */
+  'cmpS.secLabel': { hr: 'Usporedba — sektor:', en: 'Comparison — sector:' },
+  'cmpS.noOthers': {
+    hr: 'u sustavu trenutačno nema drugih praćenih firmi istog sektora; usporedba po sektoru nije moguća bez izmišljanja (vidi peer napomenu ispod).',
+    en: 'there are currently no other covered companies in the same sector; a sector comparison is not possible without making things up (see the peer note below).',
+  },
+  'cmpS.stock': { hr: 'Dionica', en: 'Stock' },
+  'cmpS.yield': { hr: 'Prinos', en: 'Yield' },
+  'cmpS.gap': { hr: 'Raskorak', en: 'Gap' },
+  'cmpS.thisStock': { hr: 'ova dionica', en: 'this stock' },
+  'cmpS.median': { hr: 'medijan sektora', en: 'sector median' },
+  'cmpS.us': { hr: 'mi', en: 'us' },
+  'cmpS.finNote1': {
+    hr: 'EV/EBITDA se za financijski sektor ne primjenjuje (dug je posao, ne struktura) — usporedba ide kroz P/B',
+    en: 'EV/EBITDA is not applied to the financial sector (debt is the business, not the structure) — the comparison runs through P/B',
+  },
+  'cmpS.finNoteBank': { hr: ', ROE i CIR (vidi Ključni pokazatelji)', en: ', ROE and CIR (see Key indicators)' },
+  'cmpS.finNoteOther': { hr: ' i ROE', en: ' and ROE' },
+  'cmpS.note': {
+    hr: 'Usporedba po sektorskoj oznaci nad praćenim firmama (isti izvor kao Screener); zeleno = medijan sektora, crveno = ova dionica.',
+    en: 'Comparison by sector label across covered companies (same source as the Screener); green = sector median, red = this stock.',
+  },
+  'cmpS.peerSet': { hr: 'Valuacijski peer skup ove firme:', en: "This company's valuation peer set:" },
+
+  /* ---------- stranica dionice: globalni peerovi ---------- */
+  'gp.secLabel': { hr: 'Globalni peerovi — kontekst (nije sidro)', en: 'Global peers — context (not an anchor)' },
+  'gp.level': { hr: 'Razina', en: 'Level' },
+  'gp.market': { hr: 'Burza', en: 'Exchange' },
+  'gp.snapshot': { hr: 'Ručni snapshot multipla:', en: 'Manual multiples snapshot:' },
+
+  /* ---------- stranica dionice: tab Novosti ---------- */
+  'nt.secLabel': {
+    hr: 'Novosti — službene objave izdavatelja (EHO)',
+    en: 'News — official issuer announcements (EHO)',
+  },
+  'nt.emptyFlag': { hr: 'nema u bazi', en: 'not in database' },
+  'nt.empty': {
+    hr: 'nema uvezenih objava za ovu firmu.',
+    en: 'no imported announcements for this company.',
+  },
+
   /* ---------- jezični switcher ---------- */
   'lang.switchToEn': { hr: 'EN', en: 'EN' },
   'lang.switchToHr': { hr: 'HR', en: 'HR' },

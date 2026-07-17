@@ -30,6 +30,7 @@ I18N_CLEAN = [
     "src/Indeksi.jsx",
     "src/Obveznice.jsx",
     "src/MirovinskiFondovi.jsx",
+    "src/StockTabs.jsx",
     "src/i18n/LangContext.jsx",
 ]
 
@@ -154,6 +155,59 @@ def test_lint_dokazano_pada_na_umjetnom_primjeru(tmp_path):
     fake = 'export const X = () => <div>Fer-zona još nije izračunata</div>\n'
     assert _hardcoded_croatian(fake), \
         "lint NE hvata hardkodirani hrvatski string — brana ne radi"
+
+
+def test_data_tekstovi_pokriveni():
+    """M38 DIO 1.2: Python-generirani tekstovi u stock JSON-ovima (pokazatelji,
+    globalni peerovi, news napomena, peer izvori) moraju kroz tx() dati čisti
+    EN — exact mapa ili pattern u dataText.mjs. Novi backend tekst bez
+    prijevoda = pad ovog testa."""
+    strings = set()
+    for f in (FRONT / "public/data").glob("*.json"):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if not isinstance(d, dict) or "indicators" not in d:
+            continue
+        ind = d.get("indicators") or {}
+        for g in ind.get("groups") or []:
+            strings.add(g["title"])
+            for it in g["items"]:
+                for fld in ("k", "why", "formula", "np_reason", "basis", "note"):
+                    if it.get(fld):
+                        strings.add(str(it[fld]))
+        if ind.get("note"):
+            strings.add(ind["note"])
+        strings.update(ind.get("review_flags") or [])
+        gp = d.get("global_peers") or {}
+        for fld in ("note", "no_metrics_reason"):
+            if gp.get(fld):
+                strings.add(gp[fld])
+        strings.update((gp.get("levels_hr") or {}).values())
+        if (d.get("news") or {}).get("note"):
+            strings.add(d["news"]["note"])
+        ps = ((d.get("valuation") or {}).get("params") or {}).get("sources") or {}
+        if ps.get("peers"):
+            strings.add(ps["peers"])
+    assert len(strings) > 100, f"sumnjivo malo podatkovnih tekstova ({len(strings)})"
+    script = (
+        "import { readFileSync } from 'fs';"
+        f"import {{ tx }} from '{(FRONT / 'src/i18n/dataText.mjs').as_posix()}';"
+        "const data = JSON.parse(readFileSync(0, 'utf8'));"
+        "const CRO = /[\\u010d\\u0107\\u017e\\u0161\\u0111\\u010c\\u0106\\u017d\\u0160\\u0110]/;"
+        "const STOP = /\\b(prihod|dobit|knjiga|novac|imovina|obveze|dionica|dionice|"
+        "zadnja|zadnji|isplata|cijena|kvartal|kvartali|nema|baze|bazi)\\b/i;"
+        "const bad = data.map((s) => [s, tx(s, 'en')])"
+        ".filter(([s, r]) => CRO.test(r) || STOP.test(r));"
+        "console.log(JSON.stringify(bad.slice(0, 8)))")
+    r = subprocess.run(["node", "--input-type=module", "-e", script],
+                       input=json.dumps(sorted(strings)),
+                       capture_output=True, text=True, check=True)
+    bad = json.loads(r.stdout.strip())
+    assert not bad, ("podatkovni tekstovi bez EN prijevoda u dataText.mjs "
+                     "(HR original -> trenutni tx izlaz):\n"
+                     + "\n".join(f"{s!r} -> {t!r}" for s, t in bad))
 
 
 def test_glosar_postoji_i_pokriva_kljucne_pojmove():
