@@ -1742,7 +1742,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                     # point-in-time: zadnji interim (najkasniji period u FY)
                     pt, fy_i, v_i, c_i = max(
                         newer, key=lambda x: (x[1], _PERIOD_MONTHS.get(x[0], 0)))
-                    ttm_meta[item] = {"basis": "interim",
+                    ttm_meta[item] = {"basis": "interim", "fy": fy_i,
+                                      "annual_fy": fy_a,
                                       "period": f"{pt} FY{fy_i}"}
                     return (float(v_i),
                             min(conf_a, float(c_i) if c_i is not None else 0.0))
@@ -1774,7 +1775,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                             return (val_a, conf_a)
                         c_i_f = float(c_i) if c_i is not None else 0.0
                         c_p_f = float(prev[3]) if prev[3] is not None else 0.0
-                        ttm_meta[item] = {"basis": "ttm",
+                        ttm_meta[item] = {"basis": "ttm", "fy": fy_a,
+                                          "interim_fy": fy_i,
                                           "period": f"FY{fy_a} + {pt} FY{fy_i} − {pt} FY{fy_i - 1}"}
                         return (ttm, min(conf_a, c_i_f, c_p_f))
                     ttm_meta[item] = {

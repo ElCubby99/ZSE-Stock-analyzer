@@ -81,6 +81,12 @@ def load_extraction(conn, extraction: dict[str, Any], *, source_url: str,
 
     filing_id = _upsert_filing(conn, company_id, meta, source_url, doc_type, published_at)
 
+    # M39: financijske firme ne dobivaju izvedene operativne mjere (ebit/ebitda/FCF)
+    with conn.cursor() as _sc:
+        _sc.execute("SELECT sector FROM companies WHERE id = %s", (company_id,))
+        _row = _sc.fetchone()
+    is_financial = bool(_row) and _row[0] in ("bank", "insurance")
+
     with conn.cursor() as cur:
         # Re-ingest: očisti prethodne retke za ovaj filing.
         cur.execute("DELETE FROM financials WHERE filing_id = %s", (filing_id,))
@@ -122,7 +128,7 @@ def load_extraction(conn, extraction: dict[str, Any], *, source_url: str,
             )
 
         # Derivirane stavke (is_reported=FALSE, value_raw=NULL, confidence=NULL).
-        for item, value_eur in derive_items(reported_eur).items():
+        for item, value_eur in derive_items(reported_eur, is_financial).items():
             statement = canonical.DERIVED_ITEMS[item]
             cur.execute(
                 """
