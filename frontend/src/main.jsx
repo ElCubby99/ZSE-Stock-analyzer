@@ -21,7 +21,7 @@ import { ObveznicaDetail, ObvezniceIndex } from './Obveznice.jsx'
 import MirovinskiFondovi from './MirovinskiFondovi.jsx'
 import Admin from './Admin.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
-import { ConsentProvider, pushEvent } from './consent.jsx'
+import { ConsentProvider, fbqTrack, pushEvent } from './consent.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import AuthCallback from './AuthCallback.jsx'
 import { initAuthEvents } from './authEvents.js'
@@ -43,6 +43,8 @@ function RootLayout() {
       page_title: document.title,
       language: langFromPath(loc.pathname), // M38: GA4 custom dimension
     })
+    // Meta Pixel: base kod broji samo prvi load — SPA navigacije okidamo ručno
+    fbqTrack('PageView')
   }, [loc.pathname])
   return <LangProvider><Outlet /></LangProvider>
 }
