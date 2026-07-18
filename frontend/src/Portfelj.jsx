@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { SiteFooter, SiteHeader, useOverview } from './Shell.jsx'
 import { dash, num, pct } from './format.js'
 import { APPLE_ENABLED, DEMO, supabase, TERMS_VERSION } from './supabase.js'
-import { pushEvent } from './consent.jsx'
+import { fbqTrack, pushEvent } from './consent.jsx'
 
 /* Auth v2 (M26, nadogradnja M9): OAuth (Google/Facebook, Apple iza flaga) +
    email+password; terms gate za OAuth korisnike; portfelj na portfolios/
@@ -89,7 +89,11 @@ export function AuthForms({ onDemo }) {
     const { error } = await fn()
     setBusy(false)
     setMsg(error ? { t: 'err', s: error.message } : { t: 'ok', s: okMsg })
-    if (!error && gtmEvent) pushEvent(gtmEvent, { method: 'email' })
+    if (!error && gtmEvent) {
+      pushEvent(gtmEvent, { method: 'email' })
+      // Meta Pixel: email registracija = CompleteRegistration
+      if (gtmEvent === 'sign_up') fbqTrack('CompleteRegistration', { method: 'email' })
+    }
   }
   const submit = (e) => {
     e.preventDefault()
@@ -534,7 +538,11 @@ export default function Portfelj() {
       .insert({ ...p, portfolio_id: portfolioId })
     if (error) setErr(error.message)
     else {
-      if (first) pushEvent('portfolio_created') // prva pozicija = kreiran portfelj
+      if (first) {
+        pushEvent('portfolio_created') // prva pozicija = kreiran portfelj
+        // Meta Pixel: nema standardnog ekvivalenta -> custom event
+        fbqTrack('PortfolioCreated', undefined, true)
+      }
       load()
     }
   }

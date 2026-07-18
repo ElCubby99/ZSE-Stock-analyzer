@@ -74,6 +74,14 @@ export function pushEvent(event, params = {}) {
   window.dataLayer.push({ event, ...params })
 }
 
+/* Meta (Facebook) Pixel — base kod je u index.html; ovdje samo sigurno
+   okidamo evente ako je fbq učitan. custom=true -> trackCustom (za evente
+   koji nemaju standardni Meta ekvivalent, npr. PortfolioCreated). */
+export function fbqTrack(event, params, custom = false) {
+  if (typeof window === 'undefined' || typeof window.fbq !== 'function') return
+  window.fbq(custom ? 'trackCustom' : 'track', event, params || undefined)
+}
+
 function deleteGaCookies() {
   // povlačenje privole: _ga i _ga_* se brišu (path=/, apex i trenutna domena)
   const doms = ['', '; domain=.burzovnilist.com', `; domain=${window.location.hostname}`]

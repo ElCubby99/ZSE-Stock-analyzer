@@ -4,7 +4,7 @@
    profiles.created_at unutar zadnjih 60 s = sign_up, inače login.
    Dedupe po korisniku u sessionStorage (tab-sesija) da refresh tokena ili
    povratak na tab ne puša event ponovno. */
-import { pushEvent } from './consent.jsx'
+import { fbqTrack, pushEvent } from './consent.jsx'
 import { supabase } from './supabase.js'
 
 function method(user) {
@@ -33,6 +33,9 @@ async function onSignedIn(session) {
     } catch { /* profil nedostupan -> tretiraj kao login */ }
   }
   pushEvent(isNew ? 'sign_up' : 'login', { method: m })
+  // Meta Pixel: registracija = standardni CompleteRegistration event
+  // (OAuth registracije; email registracije puša forma u Portfelj.jsx)
+  if (isNew) fbqTrack('CompleteRegistration', { method: m })
 }
 
 export function initAuthEvents() {
