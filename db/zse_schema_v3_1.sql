@@ -159,3 +159,6 @@ CREATE TABLE IF NOT EXISTS mirex (
     value NUMERIC NOT NULL,
     source TEXT,
     PRIMARY KEY (category, value_date));
+-- M40: EN prijevod poslovnog profila (djelatnost/segmenti/tržišta/tvrdnje).
+-- Mirror strukture bez source_page (ti se ne prevode); overlay po indeksu.
+ALTER TABLE business_profiles ADD COLUMN IF NOT EXISTS bp_en JSONB;

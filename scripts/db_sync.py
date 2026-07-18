@@ -62,7 +62,8 @@ def _j(v):
 def dump() -> int:
     out = {"companies": [], "filings": [], "dividends": [], "holdings": [],
            "dividend_policies": [], "growth_estimates": [],
-           "valuation_changelog": [], "share_classes": []}
+           "valuation_changelog": [], "share_classes": [],
+           "business_profiles": []}
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(f"""SELECT ticker, {', '.join(COMPANY_COLS)}
                         FROM companies ORDER BY ticker""")
@@ -84,6 +85,14 @@ def dump() -> int:
         cur.execute(f"""SELECT ticker, {', '.join(SC_COLS)}
                         FROM share_classes ORDER BY ticker""")
         out["share_classes"] = [[_j(x) for x in r] for r in cur.fetchall()]
+
+        # M40: profil poslovanja (djelatnost/segmenti/tržišta/tvrdnje + EN prijevod)
+        cur.execute("""SELECT c.ticker, bp.fiscal_year, bp.activity,
+                              bp.activity_source_page, bp.segments, bp.markets,
+                              bp.export_share, bp.issuer_claims, bp.source, bp.bp_en
+                       FROM business_profiles bp JOIN companies c ON c.id=bp.company_id
+                       ORDER BY c.ticker""")
+        out["business_profiles"] = [[_j(x) for x in r] for r in cur.fetchall()]
 
         cur.execute(f"""SELECT class_ticker, ex_date, amount_eur,
                                {', '.join(DIV_COLS)}
@@ -151,6 +160,35 @@ def apply() -> int:
             cur.execute(f"UPDATE share_classes SET {sets} WHERE ticker=%s",
                         (*vals, ticker))
             stats["share_classes"] = stats.get("share_classes", 0) + cur.rowcount
+
+        # M40: business_profiles — upsert po company_id (PK); JSONB stupci
+        import json as _json
+        for row in d.get("business_profiles", []):
+            ticker = row[0]
+            cid = cid_of.get(ticker)
+            if cid is None:
+                continue
+            fy, activity, asp, segments, markets, exp, claims, source, bp_en = row[1:]
+            cur.execute(
+                """INSERT INTO business_profiles (company_id, fiscal_year, activity,
+                     activity_source_page, segments, markets, export_share,
+                     issuer_claims, source, bp_en)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                   ON CONFLICT (company_id) DO UPDATE SET
+                     fiscal_year=EXCLUDED.fiscal_year, activity=EXCLUDED.activity,
+                     activity_source_page=EXCLUDED.activity_source_page,
+                     segments=EXCLUDED.segments, markets=EXCLUDED.markets,
+                     export_share=EXCLUDED.export_share,
+                     issuer_claims=EXCLUDED.issuer_claims, source=EXCLUDED.source,
+                     bp_en=EXCLUDED.bp_en""",
+                (cid, fy, activity, asp,
+                 _json.dumps(segments) if segments is not None else None,
+                 _json.dumps(markets) if markets is not None else None,
+                 _json.dumps(exp) if exp is not None else None,
+                 _json.dumps(claims) if claims is not None else None,
+                 source,
+                 _json.dumps(bp_en) if bp_en is not None else None))
+            stats["business_profiles"] = stats.get("business_profiles", 0) + 1
 
         for frec in d["filings"]:
             ticker, doc_type, fy, pt, basis, *attrs = frec["k"]

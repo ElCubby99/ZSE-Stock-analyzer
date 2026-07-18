@@ -427,7 +427,7 @@ def _business_profile(cur, company_id: int, sector: str | None = None) -> dict |
     vraća GENERIČKI sektorski opis (označen), ne null."""
     cur.execute(
         """SELECT fiscal_year, activity, activity_source_page, segments,
-                  markets, export_share, issuer_claims, source
+                  markets, export_share, issuer_claims, source, bp_en
            FROM business_profiles WHERE company_id=%s""", (company_id,))
     r = cur.fetchone()
     if not r:
@@ -442,14 +442,38 @@ def _business_profile(cur, company_id: int, sector: str | None = None) -> dict |
                      "ekstrahiran; opis navodi samo sektorsku činjenicu iz "
                      "registra i ne tvrdi ništa specifično o firmi"),
         }
-    return {
+    segments = r[3] or []
+    markets = r[4] or []
+    claims = r[6] or []
+    out = {
         "fiscal_year": r[0], "activity": r[1], "activity_source_page": r[2],
-        "segments": r[3] or [], "markets": r[4] or [],
-        "export_share": r[5], "issuer_claims": r[6] or [], "source": r[7],
+        "segments": segments, "markets": markets,
+        "export_share": r[5], "issuer_claims": claims, "source": r[7],
         "note": ("samo činjenice iz izvješća s citatima; kvalitativne tvrdnje "
                  "('vodeći' i sl.) su TVRDNJE IZDAVATELJA, označene i citirane "
                  "— platforma ih ne generira niti potvrđuje"),
     }
+    # M40: EN prijevod (bp_en) — overlay po indeksu; source_page se NE prevodi,
+    # nego dijeli s HR. Frontend čita *_en polja na /en stranicama.
+    en = r[8]
+    if en:
+        out["activity_en"] = en.get("activity")
+        en_seg = en.get("segments") or []
+        for i, s in enumerate(out["segments"]):
+            if i < len(en_seg):
+                s["name_en"] = en_seg[i].get("name")
+                s["description_en"] = en_seg[i].get("description")
+        en_mkt = en.get("markets") or []
+        for i, m in enumerate(out["markets"]):
+            if i < len(en_mkt):
+                m["market_en"] = en_mkt[i]
+        en_claims = en.get("claims") or []
+        for i, c in enumerate(out["issuer_claims"]):
+            if i < len(en_claims):
+                c["claim_en"] = en_claims[i]
+        if out.get("export_share") and en.get("export_basis"):
+            out["export_share"]["basis_en"] = en["export_basis"]
+    return out
 
 
 def _balance(cur, company_id: int, sector: str, fiscal_year: int | None,
