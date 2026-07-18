@@ -99,7 +99,9 @@ REPORTED_ITEMS = set(STATEMENT_OF.keys())
 
 # Derivirane stavke: (statement, item). Računa kod, is_reported=FALSE.
 DERIVED_ITEMS = {
+    "ebit": "income",            # M39: prihod − poslovni rashodi (identitet)
     "ebitda": "income",          # samo ako NIJE objavljen: ebit + d&a
+    "depreciation_amortization": "income",  # M39: identitet ebitda − ebit
     "total_debt": "balance",     # debt_short + debt_long
     "net_debt": "balance",       # total_debt - cash_and_equivalents
     "free_cash_flow": "cashflow",  # operating_cf - capex

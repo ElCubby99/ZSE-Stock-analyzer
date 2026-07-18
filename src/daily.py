@@ -645,6 +645,23 @@ def main(argv=None) -> int:
                 log("watcher", None, "failed", f"{type(e).__name__}: {e}")
             touched = stage_extract_queue(conn, run_id, log)
         stage_recompute(conn, run_id, log, touched)
+        # M39: brana svježine — nijedan valuacijski ulaz ne smije biti stariji
+        # od zadnjeg dostupnog izvješća (fer vrijednost uvijek iz zadnjeg).
+        try:
+            from .freshness import audit_all
+            reports = audit_all(conn)
+            stale = [(r["ticker"], f) for r in reports for f in r["findings"]
+                     if f["type"] == "stale_input"]
+            if stale:
+                for tic, f in stale:
+                    log("freshness", None, "needs_review",
+                        f"{tic}: {f['detail']}")
+            else:
+                log("freshness", None, "ok",
+                    "svi valuacijski ulazi iz zadnjeg izvješća")
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("freshness", None, "failed", f"{type(e).__name__}: {e}")
         # M-IDX: indeksi (vrijednosti + sastavnice) — rupa: do M-IDX se
         # index_eod nikad nije ažurirao u dnevnom prolazu
         try:
