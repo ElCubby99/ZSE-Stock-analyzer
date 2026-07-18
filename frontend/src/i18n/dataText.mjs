@@ -10,6 +10,45 @@
    MORA proširiti kad backend doda novi tekst. */
 
 export const DATA_TX = {
+  // ---- M40: profil poslovanja — generički sektorski opisi (GENERIC_ACTIVITY) ----
+  'Kreditna institucija sa sjedištem u Republici Hrvatskoj (bankovni sektor).':
+    'Credit institution headquartered in the Republic of Croatia (banking sector).',
+  'Društvo za osiguranje sa sjedištem u Republici Hrvatskoj.':
+    'Insurance company headquartered in the Republic of Croatia.',
+  'Zatvoreni investicijski fond / investicijsko društvo uvršteno na Zagrebačkoj burzi.':
+    'Closed-end investment fund / investment company listed on the Zagreb Stock Exchange.',
+  'Društvo u djelatnosti turizma i ugostiteljstva (hoteli/marine/odmarališta).':
+    'Company in the tourism and hospitality sector (hotels/marinas/resorts).',
+  'Društvo u potrošačkom sektoru (proizvodnja/distribucija robe široke potrošnje).':
+    'Company in the consumer sector (production/distribution of consumer goods).',
+  'Industrijsko društvo (proizvodnja i/ili industrijske usluge).':
+    'Industrial company (manufacturing and/or industrial services).',
+  'Društvo koje upravlja grupom povezanih društava (holding/uprava grupe).':
+    'Company managing a group of related companies (holding/group management).',
+  'Telekomunikacijsko društvo.': 'Telecommunications company.',
+  'Društvo u sektoru informacijskih tehnologija.':
+    'Company in the information technology sector.',
+  'Društvo u energetskom sektoru (energetska infrastruktura/usluge).':
+    'Company in the energy sector (energy infrastructure/services).',
+  'Brodarsko / pomorsko-prijevozničko društvo.':
+    'Shipping / maritime transport company.',
+  'Prijevozničko društvo.': 'Transport company.',
+  'Društvo u graditeljstvu i inženjeringu.':
+    'Construction and engineering company.',
+  'Društvo za poslovanje nekretninama.': 'Real-estate company.',
+  'Društvo u marikulturi/akvakulturi.': 'Company in mariculture/aquaculture.',
+  'Uvršteno dioničko društvo (djelatnost prema sudskom/NACE registru).':
+    'Listed joint-stock company (activity per the court/NACE register).',
+  // ---- profil poslovanja — napomene i izvor ----
+  'GENERIČKI OPIS — profil iz godišnjeg izvješća još nije ekstrahiran; opis navodi samo sektorsku činjenicu iz registra i ne tvrdi ništa specifično o firmi':
+    'GENERIC DESCRIPTION — the profile from the annual report has not yet been extracted; the description states only the sector fact from the register and asserts nothing specific about the company',
+  "samo činjenice iz izvješća s citatima; kvalitativne tvrdnje ('vodeći' i sl.) su TVRDNJE IZDAVATELJA, označene i citirane — platforma ih ne generira niti potvrđuje":
+    "only facts from the report with citations; qualitative claims ('leading' etc.) are ISSUER CLAIMS, marked and quoted — the platform neither generates nor confirms them",
+  'generički opis iz sektorskog registra (NACE)':
+    'generic description from the sector register (NACE)',
+  'Godišnje izvješće FY2025 (konsolidirano, PDF s EHO-a); ručna ekstrakcija s citatima po stranicama — API ekstrakcija nedostupna (kredit)':
+    'Annual report FY2025 (consolidated, PDF from EHO); manual extraction with per-page citations — API extraction unavailable (credit)',
+
   // ---- indicators: naslovi grupa ----
   'Bilanca': 'Balance sheet',
   'Dividende': 'Dividends',
@@ -304,6 +343,9 @@ export const DATA_TX = {
 /* Pattern pravila za stringove s dinamičkim dijelovima (datumi, n=,
    popisi peera). Primjenjuju se redom NAKON promašaja exact mape. */
 const PATTERNS = [
+  // M40: izvor profila — ručna ekstrakcija (put do datoteke ostaje kako jest)
+  [/ručna ekstrakcija u Claude Code sesiji \(([^,]+), početak izvješća; ista shema kao API pipeline\)/g,
+    'manual extraction in a Claude Code session ($1, start of the report; same schema as the API pipeline)'],
   [/Kvartalno/g, 'Quarterly'],
   [/ilikvidna \(indikativno\)/g, 'illiquid (indicative)'],
   [/negativan izvedeni kvartal \(restatement\?\) -> isključen/g,

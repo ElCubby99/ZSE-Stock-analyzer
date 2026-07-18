@@ -107,11 +107,17 @@ function TrendBlock({ trend }) {
 
 /* M9: profil poslovanja — SAMO činjenice iz izvješća; epiteti = tvrdnje
    izdavatelja, označene i citirane. Bez izvora -> sekcija kaže "nema u bazi".
-   Slobodni per-firma tekstovi (activity, segmenti, tvrdnje) prikazuju se
-   kako jesu; u EN nose diskretnu oznaku da je izvorni tekst hrvatski. */
+   M40: slobodni per-firma tekstovi (djelatnost, segmenti, tržišta, tvrdnje)
+   prevedeni su na engleski (bp_en overlay) — na /en se prikazuje *_en
+   varijanta, izvorne stranice (source_page) ostaju zajedničke. */
 function BusinessProfile({ bp }) {
   const { lang, t } = useLang()
-  const srcHr = lang === 'en' && <span className="fund-src"> {t('sp.hrSourceNote')}</span>
+  const en = lang === 'en'
+  // generička djelatnost je sektorski predložak (Python) -> tx(); ekstrahirana
+  // koristi bp_en overlay (activity_en); fallback na HR ako prijevoda nema
+  const activity = bp?.generic
+    ? tx(bp.activity, lang)
+    : (en ? (bp?.activity_en || bp?.activity) : bp?.activity)
   return (
     <section>
       <div className="sec-label">
@@ -123,36 +129,39 @@ function BusinessProfile({ bp }) {
           {t('sp.bpNone')}</div>
       ) : bp.generic ? (
         <>
-          <p className="bp-activity">{bp.activity}{srcHr}</p>
+          <p className="bp-activity">{activity}</p>
           <div className="subnote">{tx(bp.note, lang)}.</div>
         </>
       ) : (
         <>
-          <p className="bp-activity">{bp.activity}
+          <p className="bp-activity">{activity}
             {bp.activity_source_page && <span className="fund-src"> ({bp.activity_source_page})</span>}
-            {srcHr}
           </p>
           <div className="bp-grid">
             {bp.segments.length > 0 && (
               <div>
-                <div className="bp-h">{t('sp.bpSegments')}{srcHr}</div>
+                <div className="bp-h">{t('sp.bpSegments')}</div>
                 <ul className="bp-list">
-                  {bp.segments.map((sg) => (
-                    <li key={sg.name}>
-                      <b>{sg.name}</b>{sg.description ? ` — ${sg.description}` : ''}
-                      {sg.source_page && <span className="fund-src"> ({sg.source_page})</span>}
-                    </li>
-                  ))}
+                  {bp.segments.map((sg) => {
+                    const nm = en ? (sg.name_en || sg.name) : sg.name
+                    const de = en ? (sg.description_en || sg.description) : sg.description
+                    return (
+                      <li key={sg.name}>
+                        <b>{nm}</b>{de ? ` — ${de}` : ''}
+                        {sg.source_page && <span className="fund-src"> ({sg.source_page})</span>}
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             )}
             <div>
               {bp.markets.length > 0 && (
                 <>
-                  <div className="bp-h">{t('sp.bpMarkets')}{srcHr}</div>
+                  <div className="bp-h">{t('sp.bpMarkets')}</div>
                   <ul className="bp-list">
                     {bp.markets.map((m) => (
-                      <li key={m.market}>{m.market}
+                      <li key={m.market}>{en ? (m.market_en || m.market) : m.market}
                         {m.source_page && <span className="fund-src"> ({m.source_page})</span>}
                       </li>
                     ))}
@@ -162,7 +171,7 @@ function BusinessProfile({ bp }) {
               <div className="bp-h">{t('sp.bpExport')}</div>
               {bp.export_share ? (
                 <p className="bp-export">
-                  <b>{num(bp.export_share.value * 100, 0)}%</b> — {tx(bp.export_share.basis, lang)}
+                  <b>{num(bp.export_share.value * 100, 0)}%</b> — {en ? (bp.export_share.basis_en || tx(bp.export_share.basis, lang)) : bp.export_share.basis}
                   {bp.export_share.source_page && <span className="fund-src"> ({bp.export_share.source_page})</span>}
                 </p>
               ) : (
@@ -172,11 +181,11 @@ function BusinessProfile({ bp }) {
           </div>
           {bp.issuer_claims.length > 0 && (
             <div className="bp-claims">
-              <div className="bp-h">{t('sp.bpClaims')}{srcHr}</div>
+              <div className="bp-h">{t('sp.bpClaims')}</div>
               <ul className="bp-list">
                 {bp.issuer_claims.map((c, i) => (
                   <li key={i}>
-                    <span className="flag">{t('sp.bpClaimFlag')}</span> {c.claim}
+                    <span className="flag">{t('sp.bpClaimFlag')}</span> {en ? (c.claim_en || c.claim) : c.claim}
                     {c.source_page && <span className="fund-src"> ({c.source_page})</span>}
                   </li>
                 ))}
@@ -1064,10 +1073,13 @@ export default function StockPage() {
           {data.business_profile?.activity && (
             <div className="prof-activity">
               <div className="prof-klabel">{t('sp.bpKlabel')}</div>
-              <p>{data.business_profile.activity}
+              <p>{data.business_profile.generic
+                ? tx(data.business_profile.activity, lang)
+                : (lang === 'en'
+                  ? (data.business_profile.activity_en || data.business_profile.activity)
+                  : data.business_profile.activity)}
                 {data.business_profile.activity_source_page &&
                   <span className="fund-src"> ({data.business_profile.activity_source_page})</span>}
-                {lang === 'en' && <span className="fund-src"> {t('sp.hrSourceNote')}</span>}
               </p>
             </div>
           )}
