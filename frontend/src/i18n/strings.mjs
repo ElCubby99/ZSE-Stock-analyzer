@@ -476,6 +476,12 @@ export const STR = {
     hr: 'Iz naših snapshota top 10 dioničara (ZSE/SKDD) — prikazan je onaj dio ulaganja fonda koji je javno objavljen među top 10 dioničara pojedine ZSE firme; nije cijeli portfelj fonda.',
     en: 'From our top-10 shareholder snapshots (ZSE/SKDD) — this shows the part of the fund’s holdings publicly disclosed among a company’s top-10 shareholders; it is not the fund’s entire portfolio.',
   },
+  'fund.stakeValue': { hr: 'Tržišna vrijednost', en: 'Market value' },
+  'fund.navShare': { hr: 'Udio u NAV-u', en: 'Share of NAV' },
+  'fund.navNote': {
+    hr: 'Tržišna vrijednost udjela = udjel × tržišna kapitalizacija firme (zadnji EOD). Udio u NAV-u = ta vrijednost naspram neto imovine fonda; računa se tek kad HANFA neto imovina (mjesečni uvoz) bude dostupna.',
+    en: 'Market value of the stake = stake × the company’s market capitalisation (latest EOD). Share of NAV = that value against the fund’s net assets; it is computed once HANFA net assets (monthly import) are available.',
+  },
   'fund.noHoldings': {
     hr: 'Fond se ne pojavljuje ni u jednom dostupnom top-10 popisu dioničara ZSE firmi.',
     en: 'The fund does not appear in any available ZSE top-10 shareholder list.',
@@ -862,6 +868,16 @@ export const STR = {
   'sp.prelimStar': {
     hr: 'nerevidirano — kvartalni kumulativ za kraj godine (TFI); revidirano godišnje izvješće još nije u bazi',
     en: 'unaudited — year-end quarterly cumulative (TFI); the audited annual report is not yet in the database',
+  },
+  'sp.dcfCcTitle': {
+    hr: 'DCF (normaliziran FCF) — kontrolna brojka',
+    en: 'DCF (normalised FCF) — cross-check',
+  },
+  'sp.range': { hr: 'raspon', en: 'range' },
+  'sp.dcfCcFcf': { hr: 'prosjek FCF', en: 'average FCF' },
+  'sp.dcfCcNote': {
+    hr: 'Jednofazni DCF na višegodišnjem prosjeku slobodnog novčanog toka (jer jednogodišnji FCF ljulja obrtni kapital) minus neto dug i manjinski interes. KRHKO — samo kontrolna perspektiva; sidro ostaje usporedba s konkurentima (comps), a fer-zona se ne mijenja.',
+    en: 'Single-stage DCF on a multi-year average of free cash flow (single-year FCF swings with working capital) minus net debt and minority interest. FRAGILE — a cross-check perspective only; the anchor remains peer comparison (comps) and the fair-value zone is unchanged.',
   },
   'sp.balTitle': { hr: 'Bilanca i zaduženost — FY', en: 'Balance sheet and leverage — FY' },
   'sp.balEquityParent': { hr: 'Kapital matici', en: 'Equity to parent' },

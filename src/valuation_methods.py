@@ -97,6 +97,9 @@ class Ctx:
     free_float_proxy: Optional[float] = None
     # v3 FAZA SOTP: NEKONSOLIDIRANI izvještaj matice (basis='separate')
     separate_fin: Optional[dict] = None
+    # opcija A: FCF po PUNOJ godini [(fy, fcf_eur)] za normalizirani DCF
+    # cross-check (sekundarna kontrolna brojka; annual > q4 kumulativ)
+    fcf_years: list = field(default_factory=list)
     params: Params = field(default_factory=Params)
 
     def have(self, item: str) -> bool:
@@ -1063,6 +1066,52 @@ def hierarchy_for_ctx(c: Ctx) -> tuple[str, dict]:
     return arche, HIERARCHY_V2[arche]
 
 
+def _dcf_crosscheck(c: Ctx) -> Optional[dict]:
+    """Opcija A: normalizirani DCF (VIŠEGODIŠNJI prosjek FCF-a) — SEKUNDARNA
+    KONTROLNA brojka za firme kojima redovni DCF pada zbog iskrivljenog/
+    nesigurnog jednogodišnjeg FCF-a (npr. graditelji: obrtni kapital ljulja
+    OCF). NE ulazi u results, NE sidri, NE mijenja fer-zonu — samo daje
+    čitatelju DCF perspektivu uz jasnu ogradu o krhkosti. Vraća None kad
+    nema ≥2 godine FCF-a ili je normalizirani FCF nepozitivan (tada DCF
+    nema smisla — radije ništa nego kriva brojka)."""
+    ys = [(y, f) for (y, f) in (c.fcf_years or []) if f is not None]
+    if len(ys) < 2:
+        return None
+    fcf_norm = sum(f for _, f in ys) / len(ys)
+    if fcf_norm <= 0:
+        return None
+    p = c.params
+    gT = p.terminal_growth
+    if p.wacc <= gT or not c.shares_ex_treasury:
+        return None
+    net_debt = c.val("net_debt") or 0.0
+    te, ep = c.val("total_equity"), c.val("equity_parent")
+    nci = (te - ep) if (te is not None and ep is not None and te - ep > 0) else 0.0
+
+    def ps(wacc):
+        ev = fcf_norm * (1 + gT) / (wacc - gT)
+        return _per_share(ev - net_debt - nci, c)
+
+    base = ps(p.wacc)
+    if base is None or base <= 0:
+        return None
+    lo, hi = ps(p.wacc + 0.01), ps(p.wacc - 0.01)
+    yrs = [y for y, _ in ys]
+    return {
+        "per_share": round(base, 2),
+        "low": round(min(lo, hi), 2), "high": round(max(lo, hi), 2),
+        "fcf_norm_eur": round(fcf_norm, 0),
+        "years": yrs,
+        "note": (
+            f"DCF na NORMALIZIRANOM FCF-u: prosjek {len(ys)} god. "
+            f"({'/'.join('FY' + str(y) for y in yrs)}) = {fcf_norm / 1e6:,.1f} M€, "
+            f"jednofazni Gordon (WACC {p.wacc:.1%}, g {gT:.1%}) minus neto dug i "
+            f"manjinski interes. KRHKO: jednogodišnji FCF ove firme ljulja obrtni "
+            f"kapital, pa je ovo samo KONTROLNA brojka — sidro ostaje comps, "
+            f"fer-zona se ne mijenja."),
+    }
+
+
 def value_company(c: Ctx) -> dict:
     # eligibility petlja NEPROMIJENJENA — hijerarhija je sloj IZNAD rezultata
     results, skipped = {}, {}
@@ -1112,6 +1161,12 @@ def value_company(c: Ctx) -> dict:
         rec["red_rules"] = red
         rec["qa_flags"] = flags
         rec["reasoning"] = _reasoning(c, results, rec)
+        # opcija A: normalizirani DCF cross-check SAMO kad redovni DCF nije
+        # pokrenut (skipped) — sekundarna kontrolna brojka, ne dira zonu
+        if "dcf_fcf" in skipped:
+            cc = _dcf_crosscheck(c)
+            if cc:
+                rec["dcf_crosscheck"] = cc
     return {
         "ran": results,
         "skipped": skipped,
@@ -2244,6 +2299,33 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     except Exception:  # noqa: BLE001 — tablica je opcionalna
         conn.rollback()
 
+    # opcija A: FCF po PUNOJ godini (annual > q4 kumulativ) — za normalizirani
+    # DCF cross-check kod firmi kojima redovni DCF pada zbog iskrivljenog
+    # jednogodišnjeg FCF-a (obrtni kapital); NE ulazi u eligibility ni zonu
+    fcf_years: list = []
+    try:
+        cur.execute(
+            """SELECT f.fiscal_year, f.period_type, fin.item, fin.value_eur
+               FROM financials fin JOIN filings f ON f.id = fin.filing_id
+               WHERE f.company_id = %s AND f.basis='consolidated'
+                     AND f.period_type IN ('annual','q4')
+                     AND fin.item IN ('operating_cf','capex','free_cash_flow')
+                     AND fin.value_eur IS NOT NULL""", (company_id,))
+        _by_year: dict = {}
+        for _fy, _pt, _item, _val in cur.fetchall():
+            _d = _by_year.setdefault(_fy, {})
+            if _item not in _d or _pt == "annual":   # annual ima prednost nad q4
+                _d[_item] = float(_val)
+        for _fy in sorted(_by_year):
+            _d = _by_year[_fy]
+            if "operating_cf" in _d and "capex" in _d:
+                fcf_years.append((_fy, _d["operating_cf"] - _d["capex"]))
+            elif "free_cash_flow" in _d:
+                fcf_years.append((_fy, _d["free_cash_flow"]))
+    except Exception:  # noqa: BLE001 — cross-check je best-effort
+        conn.rollback()
+        fcf_years = []
+
     return Ctx(
         ticker=ticker, sector=sector, is_group=is_group,
         holdings=holdings, has_segments=has_segments, data=data,
@@ -2255,6 +2337,7 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         ttm_meta=ttm_meta, roe_hint=roe_hint,
         dsust_hint=dsust_holder.get("hint"),
         free_float_proxy=free_float_proxy, separate_fin=separate_fin,
+        fcf_years=fcf_years,
         params=params,
     )
 

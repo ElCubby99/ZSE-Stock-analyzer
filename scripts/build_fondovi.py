@@ -107,6 +107,26 @@ def main() -> int:
                                "value_date": vd, "source": src}
         except Exception:  # noqa: BLE001 — tablica možda još prazna
             conn.rollback()
+        # M-FOND4: tržišna kapitalizacija po firmi (Σ klasa: zadnji EOD ×
+        # dionice bez trezorskih) — za tržišnu vrijednost OMF udjela i % NAV-a
+        mcap = {}
+        try:
+            cur.execute(
+                """SELECT c.ticker,
+                          SUM(p.close_eur * (sc.shares_issued
+                              - COALESCE(sc.treasury_shares, 0))) AS mcap
+                   FROM share_classes sc
+                   JOIN companies c ON c.id = sc.company_id
+                   JOIN LATERAL (
+                       SELECT close_eur FROM prices_eod pe
+                       WHERE pe.share_class_id = sc.id AND pe.close_eur IS NOT NULL
+                       ORDER BY pe.trade_date DESC LIMIT 1) p ON TRUE
+                   WHERE sc.shares_issued IS NOT NULL
+                   GROUP BY c.ticker""")
+            for tk, mc in cur.fetchall():
+                mcap[tk] = float(mc) if mc is not None else None
+        except Exception:  # noqa: BLE001
+            conn.rollback()
         for fund in sorted(FUNDS):
             for cat in CATEGORIES:
                 cur.execute(
@@ -158,11 +178,22 @@ def main() -> int:
             m = match_omf(holder)
             if not m:
                 continue
+            # M-FOND4: tržišna vrijednost udjela (pct × tržišna kap.) i udio
+            # tog ulaganja u neto imovini (NAV) fonda — NAV% samo kad je AUM
+            # poznat (HANFA neto imovina); inače null uz jasnu ogradu na webu
+            mc = mcap.get(ticker)
+            stake_value = (pct / 100.0 * mc) if (pct is not None and mc) else None
+            fa = aum.get((m[0], m[1])) or {}
+            na = fa.get("net_assets_eur")
+            nav_pct = (stake_value / na * 100.0) if (stake_value and na) else None
             synergy.append({
                 "ticker": ticker, "company_name": name,
                 "fund": m[0], "category": m[1],
                 "slug": fund_slug(m[0], m[1]),
                 "pct": pct, "holder_name": holder, "as_of": snap,
+                "stake_value_eur": (round(stake_value, 0)
+                                    if stake_value is not None else None),
+                "nav_pct": (round(nav_pct, 3) if nav_pct is not None else None),
             })
 
     has_units = any(u["unit_value"] is not None for u in units)

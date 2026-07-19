@@ -1162,6 +1162,21 @@ export default function StockPage() {
             <SotpTable sotp={data.valuation.sotp} />
           </div>
 
+          {data.valuation.reconciliation?.dcf_crosscheck && (() => {
+            const cc = data.valuation.reconciliation.dcf_crosscheck
+            return (
+              <section>
+                <div className="sec-label">{t('sp.dcfCcTitle')}</div>
+                <div className="subnote">
+                  <b className="mono">{eur(cc.per_share)}</b>{' '}
+                  ({t('sp.range')} {eur(cc.low)}–{eur(cc.high)}) · {t('sp.dcfCcFcf')}{' '}
+                  {meur(cc.fcf_norm_eur)} ({(cc.years || []).map((y) => `FY${y}`).join('/')})
+                  <div style={{ marginTop: 4 }}>{t('sp.dcfCcNote')}</div>
+                </div>
+              </section>
+            )
+          })()}
+
           <section>
             <div className="sec-label">{t('sp.skippedTitle')}</div>
             {data.valuation.skipped.map((s) => (
