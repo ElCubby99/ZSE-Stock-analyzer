@@ -95,6 +95,12 @@ def classify_company(conn, company_id: int) -> int:
     # payout ratio po fiskalnoj godini (Σ svih isplata te godine / NI te godine)
     per_fy: dict = {}
     for _id, scid, ctk, fy, amt, dt, shares in rows:
+        # M43: 'cash' isplate iz dnevnog pipelinea nemaju fiscal_year, ali imaju
+        # ex/payment datum — isplata u godini N je (konvencija) za dobit godine
+        # N-1; izvedi fiskalnu godinu iz datuma da payout ratio bude izračunljiv
+        # (prije se cijeli red preskakao pa se D_sust rušio na fallback — PLAG).
+        if fy is None and dt is not None:
+            fy = dt.year - 1
         if fy is None:
             continue
         per_fy.setdefault(fy, {"total": 0.0, "known": True, "rows": []})
@@ -119,6 +125,8 @@ def classify_company(conn, company_id: int) -> int:
     n = 0
     prior_regular: dict = {}   # class_ticker -> [per-share iznosi redovnih]
     for _id, scid, ctk, fy, amt, dt, shares in rows:
+        if fy is None and dt is not None:
+            fy = dt.year - 1   # M43: ista izvedba fiskalne godine iz datuma
         ratio, ratio_reason = ratio_fy.get(fy, (None, "bez fiskalne godine"))
         med = (median(prior_regular[ctk]) if prior_regular.get(ctk) else None)
         eho = next((t for t, p in one_off_titles
@@ -141,11 +149,15 @@ def classify_company(conn, company_id: int) -> int:
                       if med is not None else "prva zabilježena isplata klase")
         if ptype == "redovna":
             prior_regular.setdefault(ctk, []).append(amt)
+        # M43: perzistiraj izvedenu fiskalnu godinu (iz datuma) kad je stupac
+        # bio NULL — d_sust grupira po fiscal_year, pa bez ovoga bi se isplate
+        # bez godine (npr. više 'cash' isplata kroz godine) zbrajale u jednu
         cur.execute(
             """UPDATE dividends SET payout_type=%s, payout_ratio=%s,
-                      classified_reason=%s WHERE id=%s""",
+                      classified_reason=%s,
+                      fiscal_year=COALESCE(fiscal_year,%s) WHERE id=%s""",
             (ptype, ratio, reason if ratio_reason is None
-             else f"{reason}; payout n/p: {ratio_reason}", _id))
+             else f"{reason}; payout n/p: {ratio_reason}", fy, _id))
         n += 1
     conn.commit()
     return n

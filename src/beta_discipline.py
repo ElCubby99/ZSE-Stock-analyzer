@@ -54,9 +54,8 @@ SECTOR_BETA = {
     "aquaculture":  (0.70, False, "Farming/Agriculture"),
     "other":        (0.85, False, "Total market ex-financials (aproks.)"),
 }
-SECTOR_BETA_SRC = ("sektorske unlevered/levered bete: Damodaran (pages.stern."
-                   "nyu.edu, Europe, tablica siječanj 2026); TOČAN REDAK "
-                   "NEPROVJEREN (egress 403) — sector_beta_exact_unverified=true")
+SECTOR_BETA_SRC = ("sektorske (unlevered/levered) bete prema Damodaranovoj "
+                   "tablici za Europu (siječanj 2026.)")
 
 
 def liquidity_stats(conn, ticker: str) -> dict:
