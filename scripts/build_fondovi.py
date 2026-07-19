@@ -95,7 +95,9 @@ def main() -> int:
     units, mirex, synergy, chart_series = [], [], [], []
     with get_conn() as conn, conn.cursor() as cur:
         ensure_tables(conn)
-        # M-FOND3: zadnja neto imovina (AUM) po fondu/kategoriji
+        # M-FOND3/4: zadnja neto imovina. HANFA c-03 je objavljuje PO
+        # KATEGORIJI (svi OMF-ovi zajedno, fund='SVI') — po pojedinom fondu
+        # ne postoji u službenoj statistici, pa per-fond AUM ostaje n/p.
         aum = {}
         try:
             cur.execute(
@@ -107,6 +109,7 @@ def main() -> int:
                                "value_date": vd, "source": src}
         except Exception:  # noqa: BLE001 — tablica možda još prazna
             conn.rollback()
+        category_aum = {c: aum.get(("SVI", c)) for c in CATEGORIES}
         # M-FOND4: tržišna kapitalizacija po firmi (Σ klasa: zadnji EOD ×
         # dionice bez trezorskih) — za tržišnu vrijednost OMF udjela i % NAV-a
         mcap = {}
@@ -199,6 +202,9 @@ def main() -> int:
     has_units = any(u["unit_value"] is not None for u in units)
     out = {
         "units": units, "mirex": mirex, "synergy": synergy,
+        # M-FOND4: neto imovina po KATEGORIJI (HANFA c-03; svi OMF-ovi
+        # zajedno — po pojedinom fondu HANFA ne objavljuje)
+        "category_aum": category_aum,
         "units_available": has_units,
         "note": ("Izvor jedinica i Mirexa: HANFA javne objave, MJESEČNI ritam. "
                  + ("" if has_units else

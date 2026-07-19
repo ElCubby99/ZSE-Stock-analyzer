@@ -488,6 +488,16 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
         log("regen", None, "ok", "obveznice.json regeneriran")
     except Exception as e:  # noqa: BLE001
         log("regen", None, "failed", f"obveznice.json: {type(e).__name__}: {e}")
+    # M-FOND4: fondovi.json i dnevno — TRŽIŠNA VRIJEDNOST OMF udjela ovisi o
+    # zadnjem EOD-u dionica pa mora pratiti cijene; jedinice/Mirex/AUM se u
+    # bazi i dalje mijenjaju samo mjesečnim HANFA uvozom (build ih samo čita)
+    try:
+        import subprocess
+        subprocess.run([os.sys.executable, "-m", "scripts.build_fondovi"],
+                       check=True, capture_output=True, text=True)
+        log("regen", None, "ok", "fondovi.json regeneriran (EOD vrijednosti udjela)")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"fondovi.json: {type(e).__name__}: {e}")
     # M25: EOD update -> okini Vercel build (prerender po dionici čita svježe
     # exporte). Hook URL NIJE u repou — env VERCEL_DEPLOY_HOOK_URL (README).
     hook = os.environ.get("VERCEL_DEPLOY_HOOK_URL")

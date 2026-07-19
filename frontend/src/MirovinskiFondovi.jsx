@@ -333,6 +333,7 @@ export function FondDetail() {
   }, [unit, lang])
   const catNote = unit ? t(`fund.category.${unit.category}`) : ''
   const aum = unit?.aum
+  const catAum = unit ? d?.category_aum?.[unit.category] : null
   return (
     <div className="shellpg">
       <SiteHeader />
@@ -364,8 +365,14 @@ export function FondDetail() {
                         {unit.value_date ? <span className="fund-src"> · {fmtDate(unit.value_date)}</span> : null}</td></tr>
                     <tr><td>{t('fund.aum')}</td>
                       <td className="mono">{aum?.net_assets_eur
-                        ? meur(aum.net_assets_eur, 1) : <span className="np">{t('fund.awaitingImport')}</span>}
+                        ? meur(aum.net_assets_eur, 1)
+                        : <span className="np">{t('fund.aumPerFundNa')}</span>}
                         {aum?.value_date ? <span className="fund-src"> · {fmtDate(aum.value_date)}</span> : null}</td></tr>
+                    {catAum?.net_assets_eur ? (
+                      <tr><td>{t('fund.aumCat')}</td>
+                        <td className="mono">{meur(catAum.net_assets_eur, 0)}
+                          {catAum.value_date ? <span className="fund-src"> · {fmtDate(catAum.value_date)}</span> : null}</td></tr>
+                    ) : null}
                     {aum?.members ? (
                       <tr><td>{t('fund.members')}</td>
                         <td className="mono">{num(aum.members, 0)}</td></tr>
@@ -417,7 +424,7 @@ export function FondDetail() {
                             ? meur(h.stake_value_eur, 2) : <span className="np">{na}</span>}</td>
                           <td className="num">{h.nav_pct != null
                             ? `${num(h.nav_pct, 2)} %`
-                            : <span className="np">{t('fund.awaitingImport')}</span>}</td>
+                            : <span className="np">{na}</span>}</td>
                         </tr>
                       ))}
                     </tbody>
