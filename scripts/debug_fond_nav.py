@@ -19,6 +19,10 @@ import sys
 
 import requests
 
+# Windows konzola je cp1252 i ruši se na č/ć/š — prisili UTF-8 na izlazu
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
 SITES = {
     "AZ": "https://www.azfond.hr",
     "Erste Plavi": "https://www.erste-plavi.hr",
