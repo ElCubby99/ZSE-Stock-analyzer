@@ -1,0 +1,25 @@
+# Jednokratni forenzički workflow: ispis GDJE i KAKO mirovinska društva
+# (azfond.hr, erste-plavi.hr, pbzco-fond.hr, rmf.hr) objavljuju neto
+# imovinu (NAV) pojedinog OMF-a — stranice nisu dostupne iz razvojnog
+# okruženja. Bez pisanja u bazu, bez commita — samo čitanje i ispis.
+# Ukloniti kad per-fond NAV parser proradi.
+name: debug-fond-nav
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install requests
+      - run: python scripts/debug_fond_nav.py

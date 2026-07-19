@@ -369,7 +369,7 @@ export function FondDetail() {
                         : <span className="np">{t('fund.aumPerFundNa')}</span>}
                         {aum?.value_date ? <span className="fund-src"> · {fmtDate(aum.value_date)}</span> : null}</td></tr>
                     {catAum?.net_assets_eur ? (
-                      <tr><td>{t('fund.aumCat')}</td>
+                      <tr><td>{t('fund.aumCat')} {unit.category}</td>
                         <td className="mono">{meur(catAum.net_assets_eur, 0)}
                           {catAum.value_date ? <span className="fund-src"> · {fmtDate(catAum.value_date)}</span> : null}</td></tr>
                     ) : null}
