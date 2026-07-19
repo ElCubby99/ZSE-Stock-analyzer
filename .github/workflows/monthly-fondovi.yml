@@ -66,6 +66,14 @@ jobs:
             git pull --rebase origin main && git push origin main && break
             sleep $((2**i))
           done
+      # commit nosi [skip ci] (da ne okida druge Actions), ali ga zato
+      # preskače i VERCEL — bez ovog hooka statične stranice fondova ostaju
+      # stare do sljedećeg običnog pusha (uzrok "ne vidim dionice fonda")
+      - name: Vercel deploy hook (statične stranice s novim podacima)
+        if: always()
+        run: |
+          HOOK="${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+          if [ -n "$HOOK" ]; then curl -fsS -X POST "$HOOK" -o /dev/null && echo "deploy okinut"; else echo "hook nije postavljen"; fi
           curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" -o /dev/null
       - name: Issue na neuspjeh
         if: failure()
