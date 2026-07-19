@@ -15,8 +15,10 @@ Pravila (v2.2 metodologije):
    koriste sektorsku levered betu izravno (relever nema smisla).
 4. CLAMP: finalna beta u [0,7, 1,8]; izlazak se bilježi kao porijeklo 'clamp'.
 5. PREMIJA NELIKVIDNOSTI na r (zasebna komponenta, ne kroz betu):
-   +1,0 p.b. ispod praga; +2,0 p.b. za vrlo nelikvidne (<20% dana ili
+   +2,5 p.b. ispod praga; +4,0 p.b. za vrlo nelikvidne (<20% dana ili
    <300 EUR/dan). Prikazuje se kao vlastita kartica u pretpostavkama.
+   (M43: pojačano — mikro-kap koji se jedva trguje ne smije imati niži
+   traženi prinos od blue chipa; niska sektorska beta ne hvata taj rizik.)
 """
 from __future__ import annotations
 
@@ -183,18 +185,24 @@ def resolve_beta(conn, ticker: str, sector: str | None) -> dict:
         beta = rub
         origin = "clamp"
 
-    # premija nelikvidnosti (zasebna komponenta r-a)
+    # premija nelikvidnosti (zasebna komponenta r-a). M43: pojačana — mikro-kap
+    # koji se jedva trguje NE smije završiti s nižim traženim prinosom od blue
+    # chipa (AUHR je s +1,0 p.b. imao r 7,9% < ZABA 8,3%). Nelikvidnost je
+    # stvaran, velik trošak (spread + nemogućnost izlaska), a niska sektorska
+    # beta ga sama ne hvata. Standardne nelikvidnosne premije u literaturi su
+    # 2–5 p.b. za slabo trgovane male firme.
     if liquid:
         premium, prem_src = 0.0, None
     else:
-        premium = 0.02 if vlow else 0.01
-        prem_src = (f"premija nelikvidnosti +{premium * 100:.1f} p.b. na r: {liq_txt} — "
-                    f"izlazak iz pozicije nosi stvaran trošak (širok spread, plitka "
-                    f"knjiga); stupnjevano: <{VLOW_RATIO:.0%} dana ili "
-                    f"<{VLOW_TURNOVER:.0f} €/dan -> +2,0 p.b., ispod praga "
-                    f"({LIQ_MIN_RATIO:.0%} dana / {LIQ_MIN_TURNOVER:,.0f} €/dan) -> +1,0 p.b. "
-                    f"Literatura: nelikvidnosna premija je standardan dodatak na CAPM "
-                    f"za netrgovane/slabo trgovane dionice.")
+        premium = 0.04 if vlow else 0.025
+        prem_src = (f"premija nelikvidnosti +{premium * 100:.1f} p.b. na traženi "
+                    f"prinos: {liq_txt} — izlazak iz pozicije nosi stvaran trošak "
+                    f"(širok raspon cijena, plitka knjiga naloga), a niska sektorska "
+                    f"beta taj rizik ne obuhvaća; stupnjevano: <{VLOW_RATIO:.0%} dana "
+                    f"ili <{VLOW_TURNOVER:.0f} €/dan -> +4,0 p.b., ispod praga "
+                    f"({LIQ_MIN_RATIO:.0%} dana / {LIQ_MIN_TURNOVER:,.0f} €/dan) -> "
+                    f"+2,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM "
+                    f"za slabo trgovane dionice.")
 
     return {"beta": round(beta, 3), "origin": origin, "src": src,
             "illiq_premium": premium, "illiq_src": prem_src,
