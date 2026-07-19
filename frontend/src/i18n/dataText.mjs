@@ -303,6 +303,8 @@ export const DATA_TX = {
     'no material stakes or separable segments (e.g. CROS: a single business)',
   'nema operativni CF i capex (ni brojčani guidance za proxy)':
     'operating CF and capex unavailable (and no numeric guidance for a proxy)',
+  'operativni CF i capex postoje, ali ispod praga pouzdanosti (nerevidiran/kvartalni) ili obrtnim kapitalom iskrivljen jednogodišnji FCF — DCF se ne sidri na nesigurnom ulazu (comps nosi vrednovanje)':
+    'operating CF and capex exist but below the confidence threshold (unaudited/quarterly) or the single-year FCF is distorted by working capital — the DCF is not anchored on an uncertain input (comps carries the valuation)',
   'nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)':
     'no comparable insurer on the ZSE (peer selection criteria are described in the Methodology)',
   'TTM se ne gradi: nema novijih interima od godišnjeg — vrednuje se iz zadnjeg godišnjeg izvješća':

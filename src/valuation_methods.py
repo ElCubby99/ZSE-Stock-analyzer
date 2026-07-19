@@ -168,6 +168,14 @@ def elig_dcf(c: Ctx):
     if gh.get("rule") == "R0" and c.have("revenue") \
             and sig.get("guidance_ebitda_margin") and sig.get("guidance_capex_eur") is not None:
         return True, "guidance-DCF: brojčani guidance uprave (rast+marža+capex)"
+    # POŠTEN RAZLOG: razlikuj 'podaci ne postoje' od 'postoje ali ispod praga
+    # pouzdanosti' (npr. nerevidiran TFI) — inače razlog laže da CF fali kad je
+    # zapravo nesiguran ili obrtnim kapitalom iskrivljen (jednogodišnji FCF)
+    if c.val("operating_cf") is not None and c.val("capex") is not None:
+        return False, ("operativni CF i capex postoje, ali ispod praga "
+                       "pouzdanosti (nerevidiran/kvartalni) ili obrtnim "
+                       "kapitalom iskrivljen jednogodišnji FCF — DCF se ne "
+                       "sidri na nesigurnom ulazu (comps nosi vrednovanje)")
     return False, "nema operativni CF i capex (ni brojčani guidance za proxy)"
 
 def elig_ddm(c: Ctx):
