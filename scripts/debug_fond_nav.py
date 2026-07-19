@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Jednokratni forenzički alat (runda 4): REGOS statistički pokazatelji.
+"""Jednokratni forenzički alat (runda 5 (browser headeri — 415 je bio header-based WAF)): REGOS statistički pokazatelji.
 
 Runda 3: regos.hr dostupan; stranica 'statisticki-pokazatelji-za-2026-godinu'
 postoji ali nije dumpana. Runda 4: dump te stranice (svi linkovi + datoteke),
@@ -13,7 +13,10 @@ import sys
 
 import requests
 
-UA = {"User-Agent": "Mozilla/5.0 (compatible; podaci; burzovnilist.com)"}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "hr-HR,hr;q=0.9,en;q=0.8"}
 
 
 def _fetch(url, timeout=45):
