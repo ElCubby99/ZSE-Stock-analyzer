@@ -88,5 +88,5 @@ def test_likvidna_imena_nemaju_premiju_nelikvidnosti():
                 assert bd["illiq_premium"] == 0.0, (
                     f"{t}: likvidno ime ne smije nositi premiju nelikvidnosti")
             else:
-                assert bd["illiq_premium"] in (0.01, 0.02), (
-                    f"{t}: ispod praga premija mora biti +1,0 ili +2,0 p.b.")
+                assert bd["illiq_premium"] in (0.015, 0.025), (
+                    f"{t}: ispod praga premija mora biti +1,5 ili +2,5 p.b. (M43)")
