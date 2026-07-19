@@ -761,7 +761,7 @@ async function buildFundPages() {
         <table><tbody>
           <tr><td>Obračunska jedinica</td><td>${unitTxt}</td></tr>
           <tr><td>Imovina pod upravljanjem (neto imovina)</td><td>${aumTxt}</td></tr>
-          ${catAum?.net_assets_eur ? `<tr><td>Neto imovina kategorije ${esc(u.category)} (svi OMF-ovi zajedno)</td><td>${num(catAum.net_assets_eur / 1e6, 0)} M€${catAum.value_date ? ` (${esc(catAum.value_date)})` : ''}</td></tr>` : ''}
+          ${catAum?.net_assets_eur ? `<tr><td>Ukupna neto imovina SVIH OMF-ova kategorije ${esc(u.category)}</td><td>${num(catAum.net_assets_eur / 1e6, 0)} M€${catAum.value_date ? ` (${esc(catAum.value_date)})` : ''}</td></tr>` : ''}
           ${u.aum?.members ? `<tr><td>Broj članova</td><td>${num(u.aum.members, 0)}</td></tr>` : ''}
         </tbody></table>
         <p>Isti postotni udjel u nekoj firmi vrijedi više za fond s većom imovinom — apsolutni iznos ulaganja ovisi o veličini fonda.</p>
@@ -793,7 +793,7 @@ async function buildFundPages() {
         <table><tbody>
           <tr><td>Unit value</td><td>${u.unit_value ? `${num(u.unit_value, 4)} € (${esc(u.value_date || '')})` : 'awaiting first monthly import'}</td></tr>
           <tr><td>Assets under management (net assets)</td><td>${fMeur(u.aum?.net_assets_eur) || 'n/a — HANFA publishes net assets per category, not per individual fund'}</td></tr>
-          ${catAum?.net_assets_eur ? `<tr><td>Category ${esc(u.category)} net assets (all funds combined)</td><td>€${num(catAum.net_assets_eur / 1e6, 0)}M${catAum.value_date ? ` (${esc(catAum.value_date)})` : ''}</td></tr>` : ''}
+          ${catAum?.net_assets_eur ? `<tr><td>Total net assets of ALL category ${esc(u.category)} funds</td><td>€${num(catAum.net_assets_eur / 1e6, 0)}M${catAum.value_date ? ` (${esc(catAum.value_date)})` : ''}</td></tr>` : ''}
           ${u.aum?.members ? `<tr><td>Members</td><td>${num(u.aum.members, 0)}</td></tr>` : ''}
         </tbody></table>
         <p>The same percentage stake is worth more for a larger fund — the absolute size of a holding depends on the fund’s size.</p>

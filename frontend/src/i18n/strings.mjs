@@ -483,8 +483,8 @@ export const STR = {
     en: 'Market value of the stake = stake × the company’s market capitalisation (latest EOD). Share of the fund’s NAV cannot be computed because HANFA publishes net assets per category (all funds combined), not per individual fund — an empty field is better than a wrong number.',
   },
   'fund.aumCat': {
-    hr: 'Neto imovina kategorije (svi OMF-ovi zajedno)',
-    en: 'Category net assets (all funds combined)',
+    hr: 'Ukupna neto imovina SVIH OMF-ova kategorije',
+    en: 'Total net assets of ALL funds in category',
   },
   'fund.aumPerFundNa': {
     hr: 'n/p — HANFA objavljuje neto imovinu po kategoriji, ne po pojedinom fondu',
