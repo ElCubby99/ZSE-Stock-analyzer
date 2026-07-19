@@ -1520,15 +1520,27 @@ def build_stock_json(conn, ticker: str) -> dict:
     # v3 FAZA K: rf/ERP/CRP su ručni unosi s datumom (exact_unverified) —
     # eksplicitna oznaka nesigurnosti, ista praksa kao dosad za ERP
     if getattr(params, "crp", None) is not None:
+        _illiq_p = getattr(params, "illiq_premium", 0.0) or 0.0
+        _r_label = (f"komponente traženog prinosa r = {params.cost_of_equity * 100:.2f}%: "
+                    f"nerizična stopa {params.rf * 100:.2f}% + β {getattr(params, 'beta', 0):.2f} × "
+                    f"tržišna premija {params.erp * 100:.2f}% + premija rizika zemlje "
+                    f"{params.crp * 100:.1f} p.b."
+                    + (f" + premija nelikvidnosti {_illiq_p * 100:.1f} p.b."
+                       if _illiq_p else ""))
+        _r_why = ("nerizična stopa, tržišna premija i premija rizika zemlje "
+                  "referentne su tržišne veličine; rizik Hrvatske uračunava "
+                  "se točno jednom — kroz premiju rizika zemlje, ne kroz "
+                  "nerizičnu stopu ni tržišnu premiju")
+        if _illiq_p:
+            _r_why += (f". Dodatno se dodaje premija nelikvidnosti "
+                       f"{_illiq_p * 100:.1f} p.b. jer se ova dionica rijetko "
+                       f"trguje — izlazak iz pozicije nosi stvaran trošak, a niska "
+                       f"beta taj rizik ne obuhvaća; zato je traženi prinos viši "
+                       f"(i fer-vrijednost niža) nego kod likvidnih dionica")
+        _r_why += " (postupak u Metodologiji)"
         assumption_flags.append(
-            {"key": "r_components",
-             "label": (f"komponente r-a: rf {params.rf * 100:.2f}% · ERP "
-                       f"{params.erp * 100:.2f}% · CRP {params.crp * 100:.1f} p.b."),
-             "status": "pretpostavka",
-             "why": ("nerizična stopa, tržišna premija i premija rizika zemlje "
-                     "referentne su tržišne veličine; rizik Hrvatske uračunava "
-                     "se točno jednom — kroz CRP, ne kroz nerizičnu stopu ni "
-                     "tržišnu premiju (postupak u Metodologiji)")})
+            {"key": "r_components", "label": _r_label,
+             "status": "pretpostavka", "why": _r_why})
     if sotp_breakdown is not None:  # samo gdje se SOTP primjenjuje
         # v2 §4: flag opisuje STVARNO primijenjeni diskont, ne default;
         # 'pretpostavka' je samo kad je korišten default 15–25%
