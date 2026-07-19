@@ -487,12 +487,31 @@ const PATTERNS = [
     "this stock's own exchange series does not yield a reliable beta (illiquidity/short series) — the sector beta was used (Damodaran, Europe)"],
   [/finalna vrijednost ograničena na raspon \[/g, 'final value clamped to the range ['],
   [/postupak je opisan u Metodologiji/g, 'the procedure is described in the Methodology'],
+  // M43-5: nova formulacija premije nelikvidnosti (izvor u beta_discipline);
+  // MORA biti prije generičkog '494' hvatača (inače bi prefiks bio pojeden)
+  [/premija nelikvidnosti \+([\d.,]+) p\.b\. na traženi prinos: (\d+)\/(\d+) trgovanih dana \(([\d.,]+)%\), prosj\. promet ([\d.,]+) €\/dan — izlazak iz pozicije nosi stvaran trošak \(širok raspon cijena, plitka knjiga naloga\), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: /g,
+    'illiquidity premium of +$1 p.p. on the required return: $2/$3 traded days ($4%), avg. daily turnover $5 €/day — exiting a position carries a real cost (wide price range, shallow order book), and the low sector beta does not capture that risk; tiered: '],
+  [/<([\d.,]+)% dana ili <([\d.,]+) €\/dan -> \+([\d.,]+) p\.b\., ispod praga \(([\d.,]+)% dana \/ ([\d.,]+) €\/dan\) -> \+([\d.,]+) p\.b\. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice\./g,
+    '<$1% of days or <$2 €/day -> +$3 p.p., below the threshold ($4% of days / $5 €/day) -> +$6 p.p. An illiquidity premium is a standard add-on to CAPM for thinly traded stocks.'],
+  // (stara formulacija 'na r:' zadržana radi eventualnih zaostalih exporta)
   [/premija nelikvidnosti \+([\d.,]+) p\.b\. na r: (\d+)\/(\d+) trgovanih dana \(([\d.,]+)%\), prosj\. promet ([\d.,]+) €\/dan — izlazak iz pozicije nosi stvaran trošak \(širok spread, plitka knjiga\); stupnjevano: /g,
     'illiquidity premium of +$1 p.p. on r: $2/$3 traded days ($4%), avg. daily turnover $5 € — exiting a position carries a real cost (wide spread, shallow order book); tiered: '],
   [/<([\d.,]+)% dana ili <([\d.,]+) €\/dan -> \+([\d.,]+) p\.b\., ispod praga \(([\d.,]+)% dana \/ ([\d.,]+) €\/dan\) -> \+([\d.,]+) p\.b\. Literatura: nelikvidnosna premija je standardan dodatak na CAPM za netrgovane\/slabo trgovane dionice\./g,
     '<$1% of days or <$2 €/day -> +$3 p.p., below the threshold ($4% of days / $5 €/day) -> +$6 p.p. Literature: an illiquidity premium is a standard add-on to CAPM for non-traded/thinly traded stocks.'],
+  // M43-4/M43-5: raspis izvora troška kapitala (r-source explainer)
+  [/nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju/g,
+    "the risk-free rate, market premium and country-risk premium are reference market quantities; Croatia's risk is counted exactly once — through the country-risk premium, not through the risk-free rate or the market premium"],
+  [/Dodatno se dodaje premija nelikvidnosti ([\d.,]+) p\.b\. jer se ova dionica rijetko trguje — izlazak iz pozicije nosi stvaran trošak, a niska beta taj rizik ne obuhvaća; zato je traženi prinos viši \(i fer-vrijednost niža\) nego kod likvidnih dionica/g,
+    'An illiquidity premium of $1 p.p. is added because this stock trades rarely — exiting a position carries a real cost and the low beta does not capture that risk; the required return is therefore higher (and the fair value lower) than for liquid stocks'],
+  [/postupak u Metodologiji/g, 'procedure in the Methodology'],
   [/premija nelikvidnosti \+([\d.,]+) p\.b\./g, 'illiquidity premium of +$1 p.p.'],
   [/TTM podaci \(/g, 'TTM data ('],
+  // M43-5: raspis traženog prinosa r u pretpostavkama (cijela klauzula s
+  // capture grupama — bez word-level pravila koja bi razbila dulje rečenice)
+  [/komponente traženog prinosa r = ([\d.,]+)%: nerizična stopa ([\d.,]+)% \+ β ([\d.,]+) × tržišna premija ([\d.,]+)% \+ premija rizika zemlje ([\d.,]+) p\.b\.( \+ premija nelikvidnosti ([\d.,]+) p\.b\.)?/g,
+    (_m, r, rf, b, erp, crp, _illiqAll, illiq) =>
+      `required-return components r = ${r}%: risk-free rate ${rf}% + β ${b} × market premium ${erp}% + country risk premium ${crp} p.p.`
+      + (illiq ? ` + illiquidity premium ${illiq} p.p.` : '')],
   [/godišnji podatak/g, 'annual data point'],
   [/kratka serija \(rast\)/g, 'short series (growth)'],
   [/komponente r-a: rf /g, 'components of r: rf '],
