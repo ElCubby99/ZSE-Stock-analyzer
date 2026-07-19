@@ -1,97 +1,81 @@
 #!/usr/bin/env python3
-"""M-FOND5 (opcija C) — IZVIĐAČKA SKRIPTA ZA BORISOVO RAČUNALO (HR mreža).
+"""M-FOND5 izviđanje (runda L3): TOČNI URL-ovi od Borisa (19.07.2026.).
 
-Stranice mirovinskih društava blokiraju strane datacentre (GitHub/Azure
-runneri: Erste DNS fail, PBZ CO timeout), ali s hrvatske mreže rade.
-Pokreni LOKALNO:
+- AZ: .../kategorija-{a,b,c}/kretanje-vrijednosti-nav-a/ (NAV!) +
+      financijska-izvjesca/
+- PBZ CO: pbzco-fond.hr/fondovi/fond-{a,b,c}/financijski-izvjestaji
+- Erste Plavi: www.ersteplavi.hr (BEZ crtice!) + /objave/
+- RMF: puna fond-stranica (NAV + struktura imovine po Borisu)
 
-    pip install requests
-    python scripts/debug_fond_nav.py > nav_dump.txt
-
-pa pošalji nav_dump.txt u Claude sesiju — iz njega se pišu STROGI parseri
-za automatski mjesečni dohvat NAV-a po fondu. Do tada: ručni unos kroz
-Actions workflow 'nav-unos'. Skripta NIŠTA ne mijenja — samo čita i
-ispisuje: poveznice na izvještaje/dokumente, isječke teksta oko 'neto
-imovina' s brojkama, tablice i PDF/XLSX poveznice.
+Cilj: utvrditi što je dohvatljivo s GitHub runnera i u kojem obliku
+(HTML tablica / JSON / PDF) da se napišu strogi parseri. Samo čita.
 """
 import re
 import sys
 
 import requests
 
-# Windows konzola je cp1252 i ruši se na č/ć/š — prisili UTF-8 na izlazu
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-SITES = {
-    "AZ": "https://www.azfond.hr",
-    "Erste Plavi": "https://www.erste-plavi.hr",
-    "PBZ CO": "https://www.pbzco-fond.hr",
-    "Raiffeisen": "https://www.rmf.hr",
-}
+URLS = [
+    ("AZ NAV A", "https://www.azfond.hr/obvezni-mirovinski-fond/kategorija-a/kretanje-vrijednosti-nav-a/"),
+    ("AZ NAV B", "https://www.azfond.hr/obvezni-mirovinski-fond/kategorija-b/kretanje-vrijednosti-nav-a/"),
+    ("AZ FI B", "https://www.azfond.hr/obvezni-mirovinski-fond/kategorija-b/financijska-izvjesca/"),
+    ("PBZ B", "https://www.pbzco-fond.hr/fondovi/fond-b/financijski-izvjestaji"),
+    ("Erste home", "https://www.ersteplavi.hr/"),
+    ("Erste objave", "https://www.ersteplavi.hr/objave/"),
+    ("RMF A puna", "https://www.rmf.hr/raiffeisen-obvezni-mirovinski-fond-kategorija-a-32/32"),
+]
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                     "(KHTML, like Gecko) Chrome/126.0 Safari/537.36",
       "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
       "Accept-Language": "hr-HR,hr;q=0.9,en;q=0.8"}
-KEY = re.compile(r"omf|kategorij|mjese[cč]|izvje[sš]|neto|imovin|dokument|objav|fond", re.I)
-NAV_TXT = re.compile(r"neto\s+imovin", re.I)
-
-
-def _fetch(url, timeout=45):
-    r = requests.get(url, timeout=timeout, headers=UA)
-    r.raise_for_status()
-    return r.text
-
-
-def _dump(url):
-    try:
-        html = _fetch(url)
-    except Exception as e:  # noqa: BLE001
-        print(f"  {url}: GREŠKA {type(e).__name__}: {str(e)[:110]}")
-        return None
-    text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", html, flags=re.I | re.S)
-    plain = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", text))
-    print(f"  --- {url} (len {len(plain)}) ---")
-    for m in NAV_TXT.finditer(plain):
-        s = plain[max(0, m.start() - 70):m.start() + 220]
-        if re.search(r"\d", s):
-            print(f"    KONTEKST: ...{s}...")
-    for i, tm in enumerate(re.finditer(r"<table.*?</table>", html, re.I | re.S)):
-        if i >= 3:
-            break
-        rows = re.findall(r"<tr.*?</tr>", tm.group(0), re.I | re.S)
-        print(f"    TABLICA {i + 1} ({len(rows)} redova):")
-        for r_ in rows[:8]:
-            cells = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", c)).strip()[:36]
-                     for c in re.findall(r"<t[dh].*?</t[dh]>", r_, re.I | re.S)]
-            print("     |", " | ".join(cells[:8]))
-    for m in re.finditer(r'href="([^"]+\.(?:pdf|xlsx?))"', html, re.I):
-        if re.search(r"mjese|izvje|neto|imovin|nav|report", m.group(1), re.I):
-            print(f"    FILE: {m.group(1)[:160]}")
-    return html
+NAV_TXT = re.compile(r"neto\s+imovin|NAV", re.I)
 
 
 def main() -> int:
-    for fund, base in SITES.items():
-        print(f"\n########## {fund} — {base} ##########")
-        html = _dump(base)
-        if not html:
+    for label, url in URLS:
+        print(f"\n########## {label} — {url} ##########")
+        try:
+            r = requests.get(url, timeout=40, headers=UA)
+            r.raise_for_status()
+            html = r.text
+        except Exception as e:  # noqa: BLE001
+            print(f"  GREŠKA {type(e).__name__}: {str(e)[:120]}")
             continue
-        links, seen = [], set()
-        for m in re.finditer(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', html, re.I | re.S):
-            href = m.group(1)
-            txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(2))).strip()
-            if not KEY.search(f"{href} {txt}") or href.startswith(("#", "mailto:", "javascript")):
-                continue
-            u = href if href.startswith("http") else base.rstrip("/") + "/" + href.lstrip("/")
-            if u not in seen and not re.search(r"\.pdf|\.xls", u, re.I):
-                seen.add(u)
-                links.append((u, txt))
-        print(f"  kandidatske podstranice ({len(links)}):")
-        for u, t in links[:20]:
-            print(f"    LINK: {u[:130]}  TEXT: {t[:70]}")
-        for u, _t in links[:8]:
-            _dump(u)
+        text = re.sub(r"<script.*?</script>|<style.*?</style>", " ", html,
+                      flags=re.I | re.S)
+        plain = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", text))
+        print(f"  len={len(plain)}")
+        # NAV konteksti s brojkama (kraći, više njih)
+        seen_ctx = set()
+        for m in NAV_TXT.finditer(plain):
+            s = plain[max(0, m.start() - 60):m.start() + 160]
+            if re.search(r"\d[\d.,]{5,}", s) and s[:40] not in seen_ctx:
+                seen_ctx.add(s[:40])
+                print(f"  KONTEKST: ...{s}...")
+        # SVE tablice, do 10, s do 12 redova
+        for i, tm in enumerate(re.finditer(r"<table.*?</table>", html, re.I | re.S)):
+            if i >= 10:
+                break
+            rows = re.findall(r"<tr.*?</tr>", tm.group(0), re.I | re.S)
+            print(f"  TABLICA {i + 1} ({len(rows)} redova):")
+            for r_ in rows[:12]:
+                cells = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", c)).strip()[:38]
+                         for c in re.findall(r"<t[dh].*?</t[dh]>", r_, re.I | re.S)]
+                print("   |", " | ".join(cells[:8]))
+        # PDF/XLSX linkovi (svi, s tekstom)
+        for m in re.finditer(r'<a\b[^>]*href="([^"]+\.(?:pdf|xlsx?))"[^>]*>(.*?)</a>',
+                             html, re.I | re.S):
+            t = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(2))).strip()
+            print(f"  FILE: {m.group(1)[:150]}  TEXT: {t[:70]}")
+        # JSON/API endpointi u skriptama (za JS aplikacije poput PBZ)
+        for m in re.finditer(r'["\'](/[^"\']*(?:api|json|data)[^"\']*)["\']', html, re.I):
+            print(f"  API?: {m.group(1)[:120]}")
+        # canvas/chart data hint
+        if re.search(r"chart|highcharts|graf", html, re.I):
+            print("  HINT: stranica sadrži chart/graf komponentu")
     return 0
 
 
