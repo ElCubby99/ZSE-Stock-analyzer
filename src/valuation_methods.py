@@ -1606,6 +1606,10 @@ def reconcile(results: dict, sector: Optional[str] = None,
         floor_applied = bool(dividend_floor and dividend_floor["applied_floor"])
         dividend_sanity = {
             "d_sust_ps": round(d_ps, 4),
+            # M42: kad D_sust nije izračunljiv iz payout povijesti (nema
+            # višegodišnje dobiti), koristi se zadnja REDOVNA isplata — to NIJE
+            # potvrđena održivost pa se na webu jasno označi
+            "fallback_raw": bool(dh.get("fallback_raw")),
             "zone_low": round(zone_low, 2), "zone_high": round(zone_high, 2),
             "implied_yield_low": round(y_low, 4),
             "threshold": round(prag, 4), "r": round(r_, 4),
@@ -1898,7 +1902,8 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                      AND d.div_type NOT ILIKE '%%rijedlog%%'
                      AND d.amount_eur IS NOT NULL
                    ORDER BY sc.is_primary_line DESC NULLS LAST,
-                            COALESCE(d.ex_date, d.payment_date) DESC
+                            COALESCE(d.ex_date, d.payment_date) DESC NULLS LAST,
+                            d.fiscal_year DESC NULLS LAST
                    LIMIT 1""",
                 (company_id,))
             d = cur.fetchone()

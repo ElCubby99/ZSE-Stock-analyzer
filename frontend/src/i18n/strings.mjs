@@ -883,6 +883,10 @@ export const STR = {
     hr: '— ne zadnja isplaćena, nego: održivi udio dobiti koji ide dioničarima (medijan povijesnih isplata, računan samo nad redovnima — jednokratne i isplate iz zadržane dobiti ne ulaze; kod banaka najviše 70%) × dobit zadnjih 12 mjeseci ÷ broj dionica.',
     en: '— not the last one paid, but: the sustainable share of profit going to shareholders (the median of historical payouts, computed over regular ones only — one-offs and payouts from retained earnings are excluded; for banks at most 70%) × trailing 12-month profit ÷ the number of shares.',
   },
+  'sp.dsFallback': {
+    hr: 'Napomena: održivi payout nije izračunljiv jer u bazi nema višegodišnje dobiti za ovu firmu — ovdje je prikazana zadnja REDOVNA isplata, a ne potvrđena održiva razina. Čim se povijesne godišnje brojke dopune, D_sust se računa iz medijana payout ratija.',
+    en: 'Note: the sustainable payout cannot be computed because multi-year profit for this company is not in our database — the figure shown here is the last REGULAR payout, not a confirmed sustainable level. Once the historical annual figures are completed, D_sust is computed from the median payout ratio.',
+  },
   'sp.dsName2': { hr: 'Prinos na donjem rubu zone', en: 'Yield at the lower edge of the zone' },
   'sp.dsPlain2a': {
     hr: 'Donji rub je najniža cijena koju naš model još smatra fer',
