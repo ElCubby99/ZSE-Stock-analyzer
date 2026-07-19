@@ -18,7 +18,8 @@ import sys
 sys.path.insert(0, ".")
 
 from src.db import get_conn  # noqa: E402
-from src.pension_funds import CATEGORIES, FUNDS, ensure_tables, match_omf  # noqa: E402
+from src.pension_funds import (CATEGORIES, FUNDS, ensure_tables,  # noqa: E402
+                               match_dmf, match_omf)
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "frontend" / "public" / "data" / "fondovi.json"
@@ -177,7 +178,20 @@ def main() -> int:
                  SELECT max(s2.snapshot_date) FROM shareholders s2
                  WHERE s2.company_id = s.company_id)
                ORDER BY c.ticker, s.rank""")
+        dsynergy = []
         for ticker, name, holder, pct, snap in cur.fetchall():
+            # M-FOND6: DOBROVOLJNI fondovi iz istih top-10 snapshota
+            dm = match_dmf(holder)
+            if dm:
+                mc2 = mcap.get(ticker)
+                sv2 = (pct / 100.0 * mc2) if (pct is not None and mc2) else None
+                dsynergy.append({
+                    "ticker": ticker, "company_name": name,
+                    "fund_name": dm[0], "kind": dm[1], "slug": dm[2],
+                    "pct": pct, "holder_name": holder, "as_of": snap,
+                    "stake_value_eur": round(sv2, 0) if sv2 is not None else None,
+                })
+                continue
             m = match_omf(holder)
             if not m:
                 continue
@@ -199,12 +213,26 @@ def main() -> int:
                 "nav_pct": (round(nav_pct, 3) if nav_pct is not None else None),
             })
 
+    # M-FOND6: popis dobrovoljnih fondova IZVEDEN iz stvarnih pozicija
+    dfunds_map = {}
+    for x in dsynergy:
+        f = dfunds_map.setdefault(x["slug"], {
+            "slug": x["slug"], "name": x["fund_name"], "kind": x["kind"],
+            "positions": 0, "stake_total_eur": 0.0, "as_of": x["as_of"]})
+        f["positions"] += 1
+        if x["stake_value_eur"]:
+            f["stake_total_eur"] += x["stake_value_eur"]
+    dfunds = sorted(dfunds_map.values(), key=lambda f: (f["kind"], f["name"]))
+
     has_units = any(u["unit_value"] is not None for u in units)
     out = {
         "units": units, "mirex": mirex, "synergy": synergy,
         # M-FOND4: neto imovina po KATEGORIJI (HANFA c-03; svi OMF-ovi
         # zajedno — po pojedinom fondu HANFA ne objavljuje)
         "category_aum": category_aum,
+        # M-FOND6: dobrovoljni fondovi (iz top-10 dioničara; jedinice/NAV
+        # po fondu slijede — izvori se razlikuju po društvu)
+        "dfunds": dfunds, "dsynergy": dsynergy,
         "units_available": has_units,
         "note": ("Izvor jedinica i Mirexa: HANFA javne objave, MJESEČNI ritam. "
                  + ("" if has_units else

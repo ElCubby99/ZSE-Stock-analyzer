@@ -85,6 +85,42 @@ def match_omf(holder_name: str) -> tuple[str, str] | None:
     return (fam, m.group(1) if m else "B")  # bez oznake: B je najveća/default
 
 
+# M-FOND6: DOBROVOLJNI mirovinski fondovi (DMF) iz top-10 dioničara.
+# Kanonska imena/slugovi za fondove POTVRĐENE u našim shareholders podacima
+# (19.07.2026.); nepoznat DMF dobiva generičko ime iz naziva računa —
+# ništa se ne izmišlja, sve dolazi iz stvarnog naziva dioničara.
+_DMF_CANON = [
+    (r"\bAZ PROFIT\b", "AZ Profit", "otvoreni", "az-profit"),
+    (r"\bAZ BENEFIT\b", "AZ Benefit", "otvoreni", "az-benefit"),
+    (r"\bAZ ZABA\b", "AZ Zaba zatvoreni DMF", "zatvoreni", "az-zaba-zdmf"),
+    (r"ERSTE PLAVI EXPERT", "Erste Plavi Expert", "otvoreni", "erste-plavi-expert"),
+    (r"ERSTE PLAVI PROTECT", "Erste Plavi Protect", "otvoreni", "erste-plavi-protect"),
+    (r"ERSTE ZATVORENI", "Erste zatvoreni DMF", "zatvoreni", "erste-zdmf"),
+    (r"\bNESTLE\b", "Nestle zatvoreni DMF", "zatvoreni", "nestle-zdmf"),
+    (r"\bPOSTA\b", "Pošta zatvoreni DMF", "zatvoreni", "posta-zdmf"),
+    (r"CESTARSKI", "Cestarski zatvoreni DMF", "zatvoreni", "cestarski-zdmf"),
+    (r"RAIFFEISEN DOBROVOLJNI", "Raiffeisen DMF", "otvoreni", "raiffeisen-dmf"),
+]
+
+
+def match_dmf(holder_name: str) -> tuple[str, str, str] | None:
+    """(ime, vrsta 'otvoreni'/'zatvoreni', slug) za DOBROVOLJNI mirovinski
+    fond iz naziva dioničara, ili None. Custodian prefiks se odbacuje kao
+    i kod OMF-a; obvezni fondovi ovdje NE prolaze."""
+    n = _norm(holder_name.split("/")[-1])
+    if "DOBROVOLJN" not in n or "OBVEZNI" in n:
+        return None
+    for pat, name, kind, slug in _DMF_CANON:
+        if re.search(pat, n):
+            return (name, kind, slug)
+    # generički fallback: ime iz računa (bez riječi o vrsti), vrsta iz teksta
+    kind = "zatvoreni" if "ZATVORENI" in n else "otvoreni"
+    base = re.sub(r"\b(OTVORENI|ZATVORENI|DOBROVOLJNI|MIROVINSKI|FOND)\b", " ", n)
+    base = re.sub(r"\s+", " ", base).strip().title() or "Dobrovoljni fond"
+    slug = re.sub(r"[^a-z0-9]+", "-", base.lower()).strip("-")[:40] + "-dmf"
+    return (base + " DMF", kind, slug)
+
+
 def import_rows(conn, rows: list[dict], source: str) -> int:
     """Idempotentan BATCH upis jedinica i MIREX-a (ON CONFLICT DO NOTHING).
     c-03 nosi punu DNEVNU povijest od 2002. (~90k redova) — red-po-red

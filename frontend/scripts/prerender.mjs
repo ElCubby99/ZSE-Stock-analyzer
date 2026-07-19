@@ -811,6 +811,69 @@ async function buildFundPages() {
     urls.push({ loc: canonical, lastmod: u.value_date || eod, alt: alternates })
     urls.push({ loc: canonicalEn, lastmod: u.value_date || eod, alt: alternates })
   }
+  /* M-FOND6: dobrovoljni mirovinski fondovi (DMF) — stranice iz top-10
+     snapshota; jedinice/NAV još nisu uvezeni (pošteni n/p s razlogom). */
+  for (const df of f.dfunds || []) {
+    const canonical = `${SITE}/mirovinski-fond/${df.slug}`
+    const canonicalEn = `${SITE}/en/pension-fund/${df.slug}`
+    const alternates = { hr: canonical, en: canonicalEn }
+    const holdings = (f.dsynergy || []).filter((s) => s.slug === df.slug)
+      .sort((a, b) => (b.pct || 0) - (a.pct || 0))
+    const fMv = (v) => (v === null || v === undefined ? 'n/p' : `${num(v / 1e6, 2)} M€`)
+    const kindHr = df.kind === 'zatvoreni' ? 'zatvoreni' : 'otvoreni'
+    const kindEn = df.kind === 'zatvoreni' ? 'closed-ended' : 'open-ended'
+    const holdRows = holdings.map((h) => `<tr>
+      <td><a href="/dionica/${esc(h.ticker.toLowerCase())}">${esc(h.ticker)}</a> — ${esc(h.company_name)}</td>
+      <td>${num(h.pct, 2)} %</td><td>${fMv(h.stake_value_eur)}</td></tr>`).join('')
+    await write(`mirovinski-fond/${df.slug}`, page({
+      title: `${df.name} — dobrovoljni mirovinski fond i ZSE ulaganja | Burzovni list`,
+      description: `${df.name} (${kindHr} dobrovoljni mirovinski fond): ZSE dionice u kojima je fond među top 10 dioničara, s tržišnom vrijednošću udjela. Iz naših ZSE/SKDD snapshota.`.slice(0, 155),
+      canonical, alternates,
+      body: `<main>
+        <nav><a href="/">Naslovnica</a> › <a href="/mirovinski-fondovi">Mirovinski fondovi</a> › ${esc(df.name)}</nav>
+        <h1>${esc(df.name)}</h1>
+        <p>Dobrovoljni mirovinski fond (${esc(kindHr)}) — ZSE ulaganja iz top-10 popisa dioničara. Otvoreni DMF dostupan je svima; zatvoreni je vezan uz poslodavca ili strukovnu skupinu.</p>
+        <h2>Osnovni podaci</h2>
+        <table><tbody>
+          <tr><td>Vrsta</td><td>${esc(kindHr)} DMF</td></tr>
+          <tr><td>ZSE pozicije (top 10)</td><td>${num(df.positions, 0)}</td></tr>
+          <tr><td>Tržišna vrijednost pozicija (Σ)</td><td>${fMv(df.stake_total_eur)}</td></tr>
+          <tr><td>Jedinica / prinosi / NAV</td><td>n/p — vrijednosti jedinica, prinosi i neto imovina dobrovoljnih fondova još nisu uvezeni u našu bazu; HANFA ih objavljuje odvojeno od statistike OMF-ova.</td></tr>
+        </tbody></table>
+        ${holdRows ? `<h2>ZSE dionice u kojima je fond među top 10 dioničara</h2>
+        <table><thead><tr><th>Dionica</th><th>Udjel</th><th>Tržišna vrijednost</th></tr></thead><tbody>${holdRows}</tbody></table>
+        <p>Tržišna vrijednost udjela = udjel × tržišna kapitalizacija (zadnji EOD). Iz naših snapshota top 10 dioničara (ZSE/SKDD) — javno objavljeni dio ulaganja, ne cijeli portfelj fonda.</p>` : ''}
+        <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+    }))
+    PRLOC = 'en-GB'
+    const fMvEn = (v) => (v === null || v === undefined ? 'n/a' : `€${num(v / 1e6, 2)}M`)
+    const holdRowsEn = holdings.map((h) => `<tr>
+      <td><a href="/en/stock/${esc(h.ticker.toLowerCase())}">${esc(h.ticker)}</a> — ${esc(h.company_name)}</td>
+      <td>${num(h.pct, 2)}%</td><td>${fMvEn(h.stake_value_eur)}</td></tr>`).join('')
+    await write(`en/pension-fund/${df.slug}`, page({
+      title: `${df.name} — voluntary pension fund and ZSE holdings | Burzovni list`,
+      description: `${df.name} (${kindEn} voluntary pension fund): ZSE stocks where the fund is a top-10 shareholder, with market values of the stakes. From our ZSE/SKDD snapshots.`.slice(0, 155),
+      canonical: canonicalEn, lang: 'en', alternates,
+      body: `<main>
+        <nav><a href="/en">Home</a> › <a href="/en/pension-funds">Pension funds</a> › ${esc(df.name)}</nav>
+        <h1>${esc(df.name)}</h1>
+        <p>Voluntary pension fund (${esc(kindEn)}) — ZSE holdings from top-10 shareholder lists. An open-ended voluntary fund is available to everyone; a closed-ended one is tied to an employer or professional group.</p>
+        <h2>Key facts</h2>
+        <table><tbody>
+          <tr><td>Type</td><td>${esc(kindEn)} voluntary fund</td></tr>
+          <tr><td>ZSE positions (top 10)</td><td>${num(df.positions, 0)}</td></tr>
+          <tr><td>Market value of positions (Σ)</td><td>${fMvEn(df.stake_total_eur)}</td></tr>
+          <tr><td>Unit value / returns / NAV</td><td>n/a — unit values, returns and net assets of voluntary funds are not yet imported into our database; HANFA publishes them separately from the mandatory-fund statistics.</td></tr>
+        </tbody></table>
+        ${holdRowsEn ? `<h2>ZSE stocks where the fund is a top-10 shareholder</h2>
+        <table><thead><tr><th>Stock</th><th>Stake</th><th>Market value</th></tr></thead><tbody>${holdRowsEn}</tbody></table>
+        <p>Market value of the stake = stake × market capitalisation (latest EOD). From our top-10 shareholder snapshots (ZSE/SKDD) — the publicly disclosed part of the holdings, not the fund's whole portfolio.</p>` : ''}
+        <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
+    }))
+    PRLOC = 'hr-HR'
+    urls.push({ loc: canonical, lastmod: df.as_of || eod, alt: alternates })
+    urls.push({ loc: canonicalEn, lastmod: df.as_of || eod, alt: alternates })
+  }
 }
 
 /* Dinamički body/extraHead za pojedine statičke rute — sve ostalo (naslov,
@@ -910,6 +973,13 @@ const BODY_BUILDERS = {
         <td>${esc(info.funds.map((x) => `${x.fund} (${x.category})`).join(', '))}</td>
         <td>${num(info.funds.reduce((a, x) => a + (x.pct || 0), 0), 2)} %</td></tr>`).join('')}</tbody></table>
       <p>Iz naših snapshota top 10 dioničara (ZSE/SKDD)${f.synergy?.[0]?.as_of ? `, stanje ${esc(f.synergy[0].as_of)}` : ''}.</p>
+      ${f.dfunds?.length ? `<h2>Dobrovoljni mirovinski fondovi (DMF)</h2>
+      <table><thead><tr><th>Fond</th><th>Vrsta</th><th>ZSE pozicije (top 10)</th><th>Tržišna vrijednost pozicija (Σ)</th></tr></thead>
+      <tbody>${f.dfunds.map((df) => `<tr>
+        <td><a href="/mirovinski-fond/${esc(df.slug)}">${esc(df.name)}</a></td>
+        <td>${esc(df.kind)}</td><td>${num(df.positions, 0)}</td>
+        <td>${df.stake_total_eur ? `${num(df.stake_total_eur / 1e6, 2)} M€` : 'n/p'}</td></tr>`).join('')}</tbody></table>
+      <p>Popis DMF-ova je izveden iz istih top-10 snapshota — javno objavljene pozicije, ne registar svih dobrovoljnih fondova.</p>` : ''}
       <p><em>Činjenični prikaz, bez rangiranja i preporuka — nije investicijski savjet.</em></p></main>`,
     }
   },
@@ -1029,6 +1099,13 @@ const BODY_BUILDERS_EN = {
         <td>${esc(info.funds.map((x) => `${x.fund} (${x.category})`).join(', '))}</td>
         <td>${num(info.funds.reduce((a, x) => a + (x.pct || 0), 0), 2)}%</td></tr>`).join('')}</tbody></table>
       <p>From our top-10 shareholder snapshots (ZSE/SKDD).</p>
+      ${f.dfunds?.length ? `<h2>Voluntary pension funds (DMF)</h2>
+      <table><thead><tr><th>Fund</th><th>Type</th><th>ZSE positions (top 10)</th><th>Market value of positions (Σ)</th></tr></thead>
+      <tbody>${f.dfunds.map((df) => `<tr>
+        <td><a href="/en/pension-fund/${esc(df.slug)}">${esc(df.name)}</a></td>
+        <td>${df.kind === 'zatvoreni' ? 'closed-ended' : 'open-ended'}</td><td>${num(df.positions, 0)}</td>
+        <td>${df.stake_total_eur ? `€${num(df.stake_total_eur / 1e6, 2)}M` : 'n/a'}</td></tr>`).join('')}</tbody></table>
+      <p>The voluntary-fund list is derived from the same top-10 snapshots — publicly disclosed positions, not a registry of all voluntary funds.</p>` : ''}
       <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
     }
   },

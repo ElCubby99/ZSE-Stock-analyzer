@@ -82,3 +82,6 @@ glosar. Novi pojam = novi red OVDJE + ključ u `frontend/src/i18n/strings.mjs`.
 | neto imovina | net assets | |
 | broj članova (fonda) | members (of a fund) | OMF |
 | obvezni mirovinski fond (OMF) | mandatory pension fund | kategorije A/B/C |
+| dobrovoljni mirovinski fond (DMF) | voluntary pension fund | otvoreni / zatvoreni |
+| otvoreni (DMF) | open-ended (voluntary fund) | dostupan svima |
+| zatvoreni (DMF) | closed-ended (voluntary fund) | vezan uz poslodavca/strukovnu skupinu |

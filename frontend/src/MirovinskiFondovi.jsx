@@ -300,6 +300,32 @@ export default function MirovinskiFondovi() {
               ) : <div className="subnote">{t('fund.noPositions')}</div>}
               <p className="fund-src">{t('fund.synergySrc')}</p>
             </section>
+            {d.dfunds?.length ? (
+              <section style={{ marginTop: 22 }}>
+                <div className="sec-label">{t('fund.dmfTitle')}</div>
+                <div className="mk-scroll">
+                <table>
+                  <thead><tr><th>{t('fund.fund')}</th><th>{t('fund.kind')}</th>
+                    <th className="num">{t('fund.positionsCol')}</th>
+                    <th className="num">{t('fund.stakeTotal')}</th></tr></thead>
+                  <tbody>
+                    {d.dfunds.map((f) => (
+                      <tr key={f.slug}>
+                        <td><Link to={lang === 'en'
+                          ? `/en/pension-fund/${f.slug}` : `/mirovinski-fond/${f.slug}`}>
+                          <b>{f.name}</b></Link></td>
+                        <td>{t(`fund.kind.${f.kind}`)}</td>
+                        <td className="num">{num(f.positions, 0)}</td>
+                        <td className="num">{f.stake_total_eur
+                          ? meur(f.stake_total_eur, 2) : <span className="np">{na}</span>}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                </div>
+                <p className="fund-src">{t('fund.dmfIntro')} {t('fund.dmfKindNote')}</p>
+              </section>
+            ) : null}
             <div className="disc" style={{ marginTop: 24 }}>
               {t('fund.disc')}
             </div>
@@ -323,14 +349,21 @@ export function FondDetail() {
   const { lang, t } = useLang()
   const na = t('common.na')
   const unit = d?.units?.find((u) => u.slug === slug)
+  const dfund = !unit ? d?.dfunds?.find((f) => f.slug === slug) : null
   const holdings = useMemo(
     () => (d?.synergy || []).filter((s) => s.slug === slug)
       .sort((a, b) => (b.pct || 0) - (a.pct || 0)),
     [d, slug],
   )
+  const dHoldings = useMemo(
+    () => (d?.dsynergy || []).filter((s) => s.slug === slug)
+      .sort((a, b) => (b.pct || 0) - (a.pct || 0)),
+    [d, slug],
+  )
   useEffect(() => {
     if (unit) document.title = `${unit.fund} OMF ${unit.category} · Burzovni list`
-  }, [unit, lang])
+    else if (dfund) document.title = `${dfund.name} · Burzovni list`
+  }, [unit, dfund, lang])
   const catNote = unit ? t(`fund.category.${unit.category}`) : ''
   const aum = unit?.aum
   const catAum = unit ? d?.category_aum?.[unit.category] : null
@@ -339,10 +372,67 @@ export function FondDetail() {
       <SiteHeader />
       <main className="wrap-wide">
         {!d ? <div className="loading">{t('common.loading')}</div>
-          : !unit ? (
+          : !unit && !dfund ? (
             <section><div className="mk-title"><h1>{t('fund.notFound')}</h1></div>
               <p className="imp-p"><Link to={lang === 'en' ? '/en/pension-funds' : '/mirovinski-fondovi'}>
                 {t('fund.backToFunds')}</Link></p></section>
+          ) : dfund ? (
+            <>
+              <p className="fund-src" style={{ marginBottom: 4 }}>
+                <Link to={lang === 'en' ? '/en/pension-funds' : '/mirovinski-fondovi'}>
+                  {t('fund.backToFunds')}</Link></p>
+              <div className="mk-title">
+                <h1>{dfund.name}</h1>
+                <span>{t('fund.dmfDetailTitle')}</span>
+              </div>
+
+              <section style={{ marginTop: 8 }}>
+                <div className="sec-label">{t('fund.overview')}</div>
+                <table>
+                  <tbody>
+                    <tr><td>{t('fund.kind')}</td>
+                      <td><b>{t(`fund.kind.${dfund.kind}`)}</b> DMF</td></tr>
+                    <tr><td>{t('fund.positionsCol')}</td>
+                      <td className="mono">{num(dfund.positions, 0)}</td></tr>
+                    <tr><td>{t('fund.stakeTotal')}</td>
+                      <td className="mono">{dfund.stake_total_eur
+                        ? meur(dfund.stake_total_eur, 2) : <span className="np">{na}</span>}</td></tr>
+                    <tr><td>{t('fund.dmfUnitNav')}</td>
+                      <td><span className="np">{t('fund.dmfNoUnits')}</span></td></tr>
+                  </tbody>
+                </table>
+                <p className="fund-src" style={{ marginTop: 6 }}>{t('fund.dmfKindNote')}</p>
+              </section>
+
+              <section style={{ marginTop: 22 }}>
+                <div className="sec-label">{t('fund.holdingsTitle')}
+                  {dHoldings[0]?.as_of ? ` · ${t('fund.snapshot')} ${fmtDate(dHoldings[0].as_of)}` : ''}</div>
+                {dHoldings.length ? (
+                  <div className="mk-scroll">
+                  <table>
+                    <thead><tr><th>{t('fund.stock')}</th><th className="num">{t('fund.share')}</th>
+                      <th className="num">{t('fund.stakeValue')}</th></tr></thead>
+                    <tbody>
+                      {dHoldings.map((h) => (
+                        <tr key={h.ticker}>
+                          <td><Link to={lang === 'en'
+                            ? `/en/stock/${h.ticker.toLowerCase()}`
+                            : `/dionica/${h.ticker.toLowerCase()}`}><b>{h.ticker}</b></Link>{' '}
+                            <span className="basis">{h.company_name}</span></td>
+                          <td className="num">{num(h.pct, 2)} %</td>
+                          <td className="num">{h.stake_value_eur != null
+                            ? meur(h.stake_value_eur, 2) : <span className="np">{na}</span>}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  </div>
+                ) : <div className="subnote">{t('fund.noHoldings')}</div>}
+                <p className="fund-src" style={{ marginTop: 6 }}>{t('fund.holdingsNote')}</p>
+              </section>
+
+              <div className="disc" style={{ marginTop: 24 }}>{t('fund.disc')}</div>
+            </>
           ) : (
             <>
               <p className="fund-src" style={{ marginBottom: 4 }}>
@@ -448,17 +538,28 @@ export function OmfHolders({ ticker }) {
   const d = useFondovi()
   const { lang, t } = useLang()
   const rows = (d?.synergy || []).filter((s) => s.ticker === ticker)
-  if (!rows.length) return null
+  const dRows = (d?.dsynergy || []).filter((s) => s.ticker === ticker)
+  if (!rows.length && !dRows.length) return null
+  const asOf = rows[0]?.as_of || dRows[0]?.as_of
   return (
     <section>
       <div className="sec-label">{t('fund.holdersTitle')}
-        {rows[0]?.as_of ? ` · ${t('fund.snapshot')} ${fmtDate(rows[0].as_of)}` : ''}</div>
+        {asOf ? ` · ${t('fund.snapshot')} ${fmtDate(asOf)}` : ''}</div>
       <table>
         <thead><tr><th>{t('fund.fund')}</th><th className="num">{t('fund.share')}</th></tr></thead>
         <tbody>
           {rows.map((r) => (
             <tr key={r.holder_name}>
               <td>{r.fund} OMF — {t('fund.catLabel')} {r.category}
+                <div className="fund-src">{r.holder_name}</div></td>
+              <td className="num">{num(r.pct, 2)} %</td>
+            </tr>
+          ))}
+          {dRows.map((r) => (
+            <tr key={r.holder_name}>
+              <td><Link to={lang === 'en'
+                ? `/en/pension-fund/${r.slug}` : `/mirovinski-fond/${r.slug}`}>
+                {r.fund_name}</Link> — DMF ({t(`fund.kind.${r.kind}`)})
                 <div className="fund-src">{r.holder_name}</div></td>
               <td className="num">{num(r.pct, 2)} %</td>
             </tr>

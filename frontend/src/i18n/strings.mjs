@@ -514,6 +514,38 @@ export const STR = {
     hr: 'najkonzervativnija — pretežno obveznice, za članove blizu mirovine',
     en: 'most conservative — mostly bonds, for members close to retirement',
   },
+  'fund.dmfTitle': {
+    hr: 'Dobrovoljni mirovinski fondovi (DMF)',
+    en: 'Voluntary pension funds (DMF)',
+  },
+  'fund.dmfIntro': {
+    hr: 'Popis je izveden iz naših snapshota top 10 dioničara ZSE firmi (ZSE/SKDD) — prikazani su DMF-ovi koji se pojavljuju u tim javno objavljenim popisima, a ne registar svih dobrovoljnih fondova.',
+    en: 'The list is derived from our ZSE top-10 shareholder snapshots (ZSE/SKDD) — it shows the voluntary funds appearing in those publicly disclosed lists, not a registry of all voluntary funds.',
+  },
+  'fund.kind': { hr: 'Vrsta', en: 'Type' },
+  'fund.kind.otvoreni': { hr: 'otvoreni', en: 'open-ended' },
+  'fund.kind.zatvoreni': { hr: 'zatvoreni', en: 'closed-ended' },
+  'fund.dmfKindNote': {
+    hr: 'Otvoreni DMF dostupan je svima; zatvoreni DMF je vezan uz poslodavca ili strukovnu skupinu.',
+    en: 'An open-ended voluntary fund is available to everyone; a closed-ended one is tied to an employer or professional group.',
+  },
+  'fund.positionsCol': { hr: 'ZSE pozicije (top 10)', en: 'ZSE positions (top 10)' },
+  'fund.stakeTotal': {
+    hr: 'Tržišna vrijednost pozicija (Σ)',
+    en: 'Market value of positions (Σ)',
+  },
+  'fund.dmfDetailTitle': {
+    hr: 'dobrovoljni mirovinski fond — ZSE ulaganja iz top-10 popisa',
+    en: 'voluntary pension fund — ZSE holdings from top-10 lists',
+  },
+  'fund.dmfNoUnits': {
+    hr: 'n/p — vrijednosti jedinica, prinosi i neto imovina (NAV) dobrovoljnih fondova još nisu uvezeni u našu bazu; HANFA ih objavljuje odvojeno od statistike OMF-ova, a izvori se razlikuju po mirovinskom društvu. Prikazane su samo javno objavljene top-10 pozicije.',
+    en: 'n/a — unit values, returns and net assets (NAV) of voluntary funds are not yet imported into our database; HANFA publishes them separately from the mandatory-fund statistics and sources differ per pension company. Only publicly disclosed top-10 positions are shown.',
+  },
+  'fund.dmfUnitNav': {
+    hr: 'Jedinica / prinosi / NAV',
+    en: 'Unit value / returns / NAV',
+  },
   'news.title': { hr: 'Vijesti', en: 'News' },
   'news.intro': {
     hr: 'Kratke obavijesti o novim izvješćima, dividendama i ažuriranjima analiza — svaka vodi na postojeću stranicu s podacima i izvorima.',
