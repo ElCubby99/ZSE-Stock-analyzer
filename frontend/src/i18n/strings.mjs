@@ -479,16 +479,16 @@ export const STR = {
   'fund.stakeValue': { hr: 'Tržišna vrijednost', en: 'Market value' },
   'fund.navShare': { hr: 'Udio u NAV-u', en: 'Share of NAV' },
   'fund.navNote': {
-    hr: 'Tržišna vrijednost udjela = udjel × tržišna kapitalizacija firme (zadnji EOD). Udio u NAV-u fonda nije izračunljiv jer HANFA neto imovinu objavljuje po kategoriji (svi OMF-ovi zajedno), a ne po pojedinom fondu — radije prazno polje nego kriva brojka.',
-    en: 'Market value of the stake = stake × the company’s market capitalisation (latest EOD). Share of the fund’s NAV cannot be computed because HANFA publishes net assets per category (all funds combined), not per individual fund — an empty field is better than a wrong number.',
+    hr: 'Tržišna vrijednost udjela = udjel × tržišna kapitalizacija firme (zadnji EOD). Udio u NAV-u = ta vrijednost naspram neto imovine POJEDINOG fonda (izvor: mjesečni/polugodišnji izvještaj fonda); gdje ta brojka još nije uvezena, polje je prazno — HANFA statistika imovinu objavljuje samo po kategoriji.',
+    en: 'Market value of the stake = stake × the company’s market capitalisation (latest EOD). Share of NAV = that value against the INDIVIDUAL fund’s net assets (source: the fund’s monthly/semi-annual report); where that figure is not yet imported the field is empty — HANFA statistics publish assets per category only.',
   },
   'fund.aumCat': {
     hr: 'Ukupna neto imovina SVIH OMF-ova kategorije',
     en: 'Total net assets of ALL funds in category',
   },
   'fund.aumPerFundNa': {
-    hr: 'n/p — HANFA objavljuje neto imovinu po kategoriji, ne po pojedinom fondu',
-    en: 'n/a — HANFA publishes net assets per category, not per individual fund',
+    hr: 'n/p — čeka uvoz iz izvještaja fonda (HANFA objavljuje imovinu samo po kategoriji)',
+    en: 'n/a — awaiting import from the fund’s report (HANFA publishes assets per category only)',
   },
   'fund.noHoldings': {
     hr: 'Fond se ne pojavljuje ni u jednom dostupnom top-10 popisu dioničara ZSE firmi.',

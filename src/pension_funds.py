@@ -350,6 +350,54 @@ def parse_hanfa_aum(raw: bytes) -> list[dict]:
              "net_assets_eur": v} for c, (d, v) in latest.items()]
 
 
+def parse_nav_lines(text: str) -> list[dict]:
+    """M-FOND5 (opcija C): ručni/poluautomatski unos NETO IMOVINE POJEDINOG
+    fonda. Format po retku: 'Fond;Kategorija;YYYY-MM-DD;iznos_eur'
+    (npr. 'AZ;B;2026-06-30;9500000000'). Iznos je PUNI iznos u EUR (ne
+    tisuće/milijuni); dopuštene su točke/razmaci kao separatori tisućica i
+    zarez kao decimalni. STROGA validacija — kriva linija ruši cijeli unos
+    s jasnom porukom (radije ništa nego kriva brojka)."""
+    import datetime as dt
+    rows = []
+    for ln_no, raw_ln in enumerate(text.strip().splitlines(), 1):
+        ln = raw_ln.strip()
+        if not ln or ln.startswith("#"):
+            continue
+        parts = [p.strip() for p in ln.split(";")]
+        if len(parts) != 4:
+            raise ValueError(f"linija {ln_no}: očekujem 4 polja "
+                             f"'Fond;Kategorija;Datum;Iznos', dobio: {ln!r}")
+        fund, cat, d_s, v_s = parts
+        if fund not in FUNDS:
+            raise ValueError(f"linija {ln_no}: nepoznat fond {fund!r} "
+                             f"(dopušteno: {', '.join(FUNDS)})")
+        cat = cat.upper()
+        if cat not in CATEGORIES:
+            raise ValueError(f"linija {ln_no}: kategorija mora biti A/B/C, ne {cat!r}")
+        try:
+            d = dt.date.fromisoformat(d_s)
+        except ValueError:
+            raise ValueError(f"linija {ln_no}: datum mora biti YYYY-MM-DD, ne {d_s!r}")
+        v_clean = v_s.replace(" ", "")
+        if "," in v_clean:                 # HR zapis: točke tisućice, zarez dec.
+            v_clean = v_clean.replace(".", "").replace(",", ".")
+        elif v_clean.count(".") > 1:       # više točaka = separatori tisućica
+            v_clean = v_clean.replace(".", "")
+        try:
+            val = float(v_clean)
+        except ValueError:
+            raise ValueError(f"linija {ln_no}: iznos nije broj: {v_s!r}")
+        if not (AUM_MIN <= val <= 50e9):
+            raise ValueError(
+                f"linija {ln_no}: iznos {val:,.0f} EUR izvan razumnog raspona "
+                f"[{AUM_MIN:,.0f}, 50 mlrd] — iznos mora biti PUNI EUR iznos")
+        rows.append({"fund": fund, "category": cat, "value_date": d,
+                     "net_assets_eur": val})
+    if not rows:
+        raise ValueError("nijedna valjana linija u unosu")
+    return rows
+
+
 def import_aum(conn, rows: list[dict], source: str) -> int:
     """Idempotentan upsert neto imovine (najnoviji snapshot po fondu/kat.)."""
     if not rows:
@@ -378,10 +426,25 @@ if __name__ == "__main__":
     from .db import get_conn
     ap = argparse.ArgumentParser()
     ap.add_argument("--import-file", help="ručni uvoz HANFA XLSX datoteke")
+    ap.add_argument("--import-nav", help="unos NAV-a po fondu: datoteka s "
+                    "linijama 'Fond;Kategorija;YYYY-MM-DD;iznos_eur'")
+    ap.add_argument("--import-nav-lines", help="isto kao --import-nav, ali "
+                    "linije direktno kao argument (za CI workflow)")
+    ap.add_argument("--nav-source", default="mjesečni izvještaj fonda (ručni unos)",
+                    help="izvor uz NAV unos (piše se uz svaku brojku)")
     a = ap.parse_args()
     with get_conn() as conn:
         ensure_tables(conn)
-        if a.import_file:
+        if a.import_nav or a.import_nav_lines:
+            text = (open(a.import_nav, encoding="utf-8").read()
+                    if a.import_nav else a.import_nav_lines)
+            rows = parse_nav_lines(text)
+            n = import_aum(conn, rows, a.nav_source)
+            for r in rows:
+                print(f"  {r['fund']} {r['category']} {r['value_date']}: "
+                      f"{r['net_assets_eur'] / 1e6:,.1f} M EUR")
+            print(f"NAV unos: {n} zapisa (izvor: {a.nav_source})")
+        elif a.import_file:
             raw = open(a.import_file, "rb").read()
             rows = parse_hanfa_xlsx(raw)
             print(f"novo: {import_rows(conn, rows, f'HANFA XLSX (ručni uvoz: {a.import_file})')}")

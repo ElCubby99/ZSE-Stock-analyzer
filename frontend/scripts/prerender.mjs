@@ -742,7 +742,7 @@ async function buildFundPages() {
     const unitTxt = u.unit_value === null || u.unit_value === undefined
       ? 'čeka prvi mjesečni uvoz' : `${num(u.unit_value, 4)} € (${esc(u.value_date || '')})`
     const aumTxt = fMeur(u.aum?.net_assets_eur)
-      || 'n/p — HANFA objavljuje neto imovinu po kategoriji, ne po pojedinom fondu'
+      || 'n/p — čeka uvoz iz izvještaja fonda (HANFA objavljuje imovinu samo po kategoriji)'
     const fMv = (v) => (v === null || v === undefined ? 'n/p' : `${num(v / 1e6, 2)} M€`)
     const fNav = (v) => (v === null || v === undefined ? '—' : `${num(v, 2)} %`)
     const catAum = f.category_aum?.[u.category]
@@ -771,7 +771,7 @@ async function buildFundPages() {
         <td>${fndPct(u.y5)}</td><td>${fndPct(u.y10)}</td></tr></tbody></table>
         ${holdRows ? `<h2>ZSE dionice u kojima je fond među top 10 dioničara</h2>
         <table><thead><tr><th>Dionica</th><th>Udjel</th><th>Tržišna vrijednost</th><th>Udio u NAV-u</th></tr></thead><tbody>${holdRows}</tbody></table>
-        <p>Tržišna vrijednost udjela = udjel × tržišna kapitalizacija (zadnji EOD); udio u NAV-u fonda nije izračunljiv jer HANFA neto imovinu objavljuje po kategoriji, ne po pojedinom fondu. Iz naših snapshota top 10 dioničara (ZSE/SKDD) — javno objavljeni dio ulaganja, ne cijeli portfelj.</p>` : ''}
+        <p>Tržišna vrijednost udjela = udjel × tržišna kapitalizacija (zadnji EOD); udio u NAV-u = ta vrijednost naspram neto imovine POJEDINOG fonda (mjesečni/polugodišnji izvještaj fonda); dok brojka nije uvezena, polje je prazno. Iz naših snapshota top 10 dioničara (ZSE/SKDD) — javno objavljeni dio ulaganja, ne cijeli portfelj.</p>` : ''}
         <p>Izvor jedinica i neto imovine: HANFA javne objave, mjesečni ritam.</p>
         <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
     }))
@@ -792,7 +792,7 @@ async function buildFundPages() {
         <h2>Key facts</h2>
         <table><tbody>
           <tr><td>Unit value</td><td>${u.unit_value ? `${num(u.unit_value, 4)} € (${esc(u.value_date || '')})` : 'awaiting first monthly import'}</td></tr>
-          <tr><td>Assets under management (net assets)</td><td>${fMeur(u.aum?.net_assets_eur) || 'n/a — HANFA publishes net assets per category, not per individual fund'}</td></tr>
+          <tr><td>Assets under management (net assets)</td><td>${fMeur(u.aum?.net_assets_eur) || 'n/a — awaiting import from the fund’s report (HANFA publishes assets per category only)'}</td></tr>
           ${catAum?.net_assets_eur ? `<tr><td>Total net assets of ALL category ${esc(u.category)} funds</td><td>€${num(catAum.net_assets_eur / 1e6, 0)}M${catAum.value_date ? ` (${esc(catAum.value_date)})` : ''}</td></tr>` : ''}
           ${u.aum?.members ? `<tr><td>Members</td><td>${num(u.aum.members, 0)}</td></tr>` : ''}
         </tbody></table>
@@ -803,7 +803,7 @@ async function buildFundPages() {
         <td>${fndPct(u.y5)}</td><td>${fndPct(u.y10)}</td></tr></tbody></table>
         ${holdRowsEn ? `<h2>ZSE stocks where the fund is a top-10 shareholder</h2>
         <table><thead><tr><th>Stock</th><th>Stake</th><th>Market value</th><th>Share of NAV</th></tr></thead><tbody>${holdRowsEn}</tbody></table>
-        <p>Market value of the stake = stake × market capitalisation (latest EOD); share of the fund's NAV cannot be computed because HANFA publishes net assets per category, not per individual fund. From our top-10 shareholder snapshots (ZSE/SKDD) — the publicly disclosed part of the holdings, not the whole portfolio.</p>` : ''}
+        <p>Market value of the stake = stake × market capitalisation (latest EOD); share of NAV = that value against the individual fund's net assets (fund's monthly/semi-annual report); empty until that figure is imported. From our top-10 shareholder snapshots (ZSE/SKDD) — the publicly disclosed part of the holdings, not the whole portfolio.</p>` : ''}
         <p>Source of unit values and net assets: HANFA public releases, monthly cadence.</p>
         <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
     }))

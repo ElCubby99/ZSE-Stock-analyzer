@@ -1,0 +1,67 @@
+# M-FOND5 (opcija C): ručni unos NETO IMOVINE (NAV) POJEDINOG OMF-a.
+# Mirovinska društva NAV objavljuju u mjesečnim/polugodišnjim PDF
+# izvještajima na svojim stranicama (dostupne iz HR; blokiraju strane
+# datacentre), pa brojke unosi Boris kroz ovaj workflow_dispatch:
+#   Actions -> nav-unos -> Run workflow -> zalijepi linije:
+#     AZ;A;2026-06-30;1650000000
+#     AZ;B;2026-06-30;9500000000
+#     ...
+# Iznos je PUNI iznos u EUR (dopušteno 9.500.000.000 ili 9500000000).
+# STROGA validacija u parse_nav_lines() — kriva linija ruši unos s porukom.
+# Nakon uvoza se fondovi.json regenerira (NAV% se tada računa automatski).
+name: nav-unos
+
+on:
+  workflow_dispatch:
+    inputs:
+      nav:
+        description: 'Linije: Fond;Kategorija;YYYY-MM-DD;iznos_eur (Fond = AZ | Erste Plavi | PBZ CO | Raiffeisen)'
+        required: true
+        type: string
+      source:
+        description: 'Izvor brojki (piše se uz svaki zapis)'
+        required: false
+        default: 'mjesečni izvještaj fonda (ručni unos)'
+        type: string
+
+concurrency:
+  group: monthly-fondovi   # ista grupa kao HANFA uvoz — bez utrke oko commita
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  unos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: NAV unos (validiran)
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          NAV: ${{ inputs.nav }}
+          SRC: ${{ inputs.source }}
+        run: |
+          python -m src.pension_funds --import-nav-lines "$NAV" --nav-source "$SRC"
+      - name: Regen fondovi.json + commit + push
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+        run: |
+          python -m scripts.build_fondovi
+          git config user.name "nav-unos bot"
+          git config user.email "noreply@burzovnilist.com"
+          git add frontend/public/data/fondovi.json frontend/public/data/fondovi_series.json
+          if git diff --cached --quiet; then echo "bez promjena"; exit 0; fi
+          git commit -m "Fondovi: NAV po fondu (ručni unos) [skip ci]"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main && git push origin main && break
+            sleep $((2**i))
+          done
