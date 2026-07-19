@@ -43,8 +43,17 @@ def main(apply: bool) -> int:
                 continue
             company_id = cid[tk]
             for yr, blk in sorted(data[tk].items()):
+                if not (isinstance(yr, str) and yr.isdigit() and len(yr) == 4):
+                    continue  # preskoči _note i sl. ne-godišnje ključeve
+                if not isinstance(blk, dict):
+                    continue
                 fy = int(yr)
-                basis = blk.get("basis") or "consolidated"
+                # DB konvencija: primarni godišnji izvještaj se vodi kao
+                # 'consolidated' (i za banke koje ne konsolidiraju) — postojeći
+                # FY2025 svih 8 firmi je 'consolidated', a data()/_ni_annual
+                # čitaju SAMO 'consolidated'. Poravnavamo backfill s time da
+                # višegodišnji trend i payout ratio (D_sust) prorade.
+                basis = "consolidated"
                 items = blk.get("items") or {}
                 # izvedi ebitda = ebit + amortizacija (nefinancijske firme)
                 ebit = (items.get("ebit") or {}).get("value_eur")
