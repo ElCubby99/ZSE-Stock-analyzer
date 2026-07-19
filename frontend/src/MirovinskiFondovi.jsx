@@ -400,8 +400,11 @@ export function FondDetail() {
                 <div className="sec-label">{t('fund.holdingsTitle')}
                   {holdings[0]?.as_of ? ` · ${t('fund.snapshot')} ${fmtDate(holdings[0].as_of)}` : ''}</div>
                 {holdings.length ? (
+                  <div className="mk-scroll">
                   <table>
-                    <thead><tr><th>{t('fund.stock')}</th><th className="num">{t('fund.share')}</th></tr></thead>
+                    <thead><tr><th>{t('fund.stock')}</th><th className="num">{t('fund.share')}</th>
+                      <th className="num">{t('fund.stakeValue')}</th>
+                      <th className="num">{t('fund.navShare')}</th></tr></thead>
                     <tbody>
                       {holdings.map((h) => (
                         <tr key={h.ticker}>
@@ -410,12 +413,18 @@ export function FondDetail() {
                             : `/dionica/${h.ticker.toLowerCase()}`}><b>{h.ticker}</b></Link>{' '}
                             <span className="basis">{h.company_name}</span></td>
                           <td className="num">{num(h.pct, 2)} %</td>
+                          <td className="num">{h.stake_value_eur != null
+                            ? meur(h.stake_value_eur, 2) : <span className="np">{na}</span>}</td>
+                          <td className="num">{h.nav_pct != null
+                            ? `${num(h.nav_pct, 2)} %`
+                            : <span className="np">{t('fund.awaitingImport')}</span>}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 ) : <div className="subnote">{t('fund.noHoldings')}</div>}
-                <p className="fund-src" style={{ marginTop: 6 }}>{t('fund.holdingsNote')}</p>
+                <p className="fund-src" style={{ marginTop: 6 }}>{t('fund.holdingsNote')} {t('fund.navNote')}</p>
               </section>
 
               <div className="disc" style={{ marginTop: 24 }}>{t('fund.disc')}</div>

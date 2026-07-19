@@ -742,9 +742,11 @@ async function buildFundPages() {
     const unitTxt = u.unit_value === null || u.unit_value === undefined
       ? 'čeka prvi mjesečni uvoz' : `${num(u.unit_value, 4)} € (${esc(u.value_date || '')})`
     const aumTxt = fMeur(u.aum?.net_assets_eur) || 'čeka prvi mjesečni uvoz (HANFA)'
+    const fMv = (v) => (v === null || v === undefined ? 'n/p' : `${num(v / 1e6, 2)} M€`)
+    const fNav = (v) => (v === null || v === undefined ? 'čeka HANFA neto imovinu' : `${num(v, 2)} %`)
     const holdRows = holdings.map((h) => `<tr>
       <td><a href="/dionica/${esc(h.ticker.toLowerCase())}">${esc(h.ticker)}</a> — ${esc(h.company_name)}</td>
-      <td>${num(h.pct, 2)} %</td></tr>`).join('')
+      <td>${num(h.pct, 2)} %</td><td>${fMv(h.stake_value_eur)}</td><td>${fNav(h.nav_pct)}</td></tr>`).join('')
     await write(`mirovinski-fond/${u.slug}`, page({
       title: `${u.fund} OMF ${u.category} — jedinica, prinosi i ZSE ulaganja | Burzovni list`,
       description: `${u.fund} OMF kategorija ${u.category}: obračunska jedinica ${u.unit_value ? `${num(u.unit_value, 4)} €` : 'čeka uvoz'}, prinosi i ZSE dionice u kojima je fond među top 10 dioničara. Izvor: HANFA, mjesečno.`.slice(0, 155),
@@ -765,15 +767,17 @@ async function buildFundPages() {
         <tbody><tr><td>${fndPct(u.ytd)}</td><td>${fndPct(u.y1)}</td><td>${fndPct(u.y3)}</td>
         <td>${fndPct(u.y5)}</td><td>${fndPct(u.y10)}</td></tr></tbody></table>
         ${holdRows ? `<h2>ZSE dionice u kojima je fond među top 10 dioničara</h2>
-        <table><thead><tr><th>Dionica</th><th>Udjel</th></tr></thead><tbody>${holdRows}</tbody></table>
-        <p>Iz naših snapshota top 10 dioničara (ZSE/SKDD) — prikazan je javno objavljeni dio ulaganja fonda, ne cijeli portfelj.</p>` : ''}
+        <table><thead><tr><th>Dionica</th><th>Udjel</th><th>Tržišna vrijednost</th><th>Udio u NAV-u</th></tr></thead><tbody>${holdRows}</tbody></table>
+        <p>Tržišna vrijednost udjela = udjel × tržišna kapitalizacija (zadnji EOD); udio u NAV-u računa se kad HANFA neto imovina bude dostupna. Iz naših snapshota top 10 dioničara (ZSE/SKDD) — javno objavljeni dio ulaganja, ne cijeli portfelj.</p>` : ''}
         <p>Izvor jedinica i neto imovine: HANFA javne objave, mjesečni ritam.</p>
         <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
     }))
     PRLOC = 'en-GB'
+    const fMvEn = (v) => (v === null || v === undefined ? 'n/a' : `€${num(v / 1e6, 2)}M`)
+    const fNavEn = (v) => (v === null || v === undefined ? 'awaiting HANFA net assets' : `${num(v, 2)}%`)
     const holdRowsEn = holdings.map((h) => `<tr>
       <td><a href="/en/stock/${esc(h.ticker.toLowerCase())}">${esc(h.ticker)}</a> — ${esc(h.company_name)}</td>
-      <td>${num(h.pct, 2)}%</td></tr>`).join('')
+      <td>${num(h.pct, 2)}%</td><td>${fMvEn(h.stake_value_eur)}</td><td>${fNavEn(h.nav_pct)}</td></tr>`).join('')
     await write(`en/pension-fund/${u.slug}`, page({
       title: `${u.fund} OMF ${u.category} — unit value, returns and ZSE holdings | Burzovni list`,
       description: `${u.fund} pension fund category ${u.category}: unit value, returns and ZSE stocks where the fund is a top-10 shareholder. Source: HANFA, monthly.`.slice(0, 155),
@@ -794,8 +798,8 @@ async function buildFundPages() {
         <tbody><tr><td>${fndPct(u.ytd)}</td><td>${fndPct(u.y1)}</td><td>${fndPct(u.y3)}</td>
         <td>${fndPct(u.y5)}</td><td>${fndPct(u.y10)}</td></tr></tbody></table>
         ${holdRowsEn ? `<h2>ZSE stocks where the fund is a top-10 shareholder</h2>
-        <table><thead><tr><th>Stock</th><th>Stake</th></tr></thead><tbody>${holdRowsEn}</tbody></table>
-        <p>From our top-10 shareholder snapshots (ZSE/SKDD) — the publicly disclosed part of the holdings, not the whole portfolio.</p>` : ''}
+        <table><thead><tr><th>Stock</th><th>Stake</th><th>Market value</th><th>Share of NAV</th></tr></thead><tbody>${holdRowsEn}</tbody></table>
+        <p>Market value of the stake = stake × market capitalisation (latest EOD); share of NAV is computed once HANFA net assets are available. From our top-10 shareholder snapshots (ZSE/SKDD) — the publicly disclosed part of the holdings, not the whole portfolio.</p>` : ''}
         <p>Source of unit values and net assets: HANFA public releases, monthly cadence.</p>
         <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
     }))
