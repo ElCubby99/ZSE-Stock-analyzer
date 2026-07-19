@@ -41,6 +41,14 @@ jobs:
           NOVO=$(python -m src.pension_funds | grep -oE 'novo: [0-9]+' | grep -oE '[0-9]+')
           echo "novo=$NOVO" >> "$GITHUB_OUTPUT"
           echo "novih zapisa: $NOVO"
+      # M-FOND5: automatski NAV Raiffeisen OMF-ova s rmf.hr fond-stranica
+      # (jedino društvo koje NAV objavljuje kao broj u HTML-u dostupnom s
+      # runnera); strogi regex — promašaj se logira, ne ruši workflow
+      - name: Raiffeisen NAV (automatski, rmf.hr)
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+        continue-on-error: true
+        run: python -m src.pension_funds --fetch-rmf-nav
       # ručni dispatch UVIJEK regenerira (npr. nova struktura exporta) —
       # inače samo kad uvoz nađe nove HANFA zapise
       - name: Regen fondovi.json + commit (samo ako ima novih podataka)
