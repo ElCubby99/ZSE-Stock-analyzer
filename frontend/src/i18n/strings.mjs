@@ -479,16 +479,24 @@ export const STR = {
   'fund.stakeValue': { hr: 'Tržišna vrijednost', en: 'Market value' },
   'fund.navShare': { hr: 'Udio u NAV-u', en: 'Share of NAV' },
   'fund.navNote': {
-    hr: 'Tržišna vrijednost udjela = udjel × tržišna kapitalizacija firme (zadnji EOD). Udio u NAV-u = ta vrijednost naspram neto imovine fonda; računa se tek kad HANFA neto imovina (mjesečni uvoz) bude dostupna.',
-    en: 'Market value of the stake = stake × the company’s market capitalisation (latest EOD). Share of NAV = that value against the fund’s net assets; it is computed once HANFA net assets (monthly import) are available.',
+    hr: 'Tržišna vrijednost udjela = udjel × tržišna kapitalizacija firme (zadnji EOD). Udio u NAV-u fonda nije izračunljiv jer HANFA neto imovinu objavljuje po kategoriji (svi OMF-ovi zajedno), a ne po pojedinom fondu — radije prazno polje nego kriva brojka.',
+    en: 'Market value of the stake = stake × the company’s market capitalisation (latest EOD). Share of the fund’s NAV cannot be computed because HANFA publishes net assets per category (all funds combined), not per individual fund — an empty field is better than a wrong number.',
+  },
+  'fund.aumCat': {
+    hr: 'Neto imovina kategorije (svi OMF-ovi zajedno)',
+    en: 'Category net assets (all funds combined)',
+  },
+  'fund.aumPerFundNa': {
+    hr: 'n/p — HANFA objavljuje neto imovinu po kategoriji, ne po pojedinom fondu',
+    en: 'n/a — HANFA publishes net assets per category, not per individual fund',
   },
   'fund.noHoldings': {
     hr: 'Fond se ne pojavljuje ni u jednom dostupnom top-10 popisu dioničara ZSE firmi.',
     en: 'The fund does not appear in any available ZSE top-10 shareholder list.',
   },
   'fund.aumNote': {
-    hr: 'Neto imovina i broj članova dolaze iz HANFA mjesečne statistike OMF-ova; pojavljuju se nakon prvog uvoza koji sustav povuče (mjesečni ritam).',
-    en: 'Net assets and member count come from HANFA’s monthly pension-fund statistics; they appear after the first import the system pulls (monthly cadence).',
+    hr: 'Prinosi su izračunati iz povijesti obračunskih jedinica (HANFA, mjesečni ritam).',
+    en: 'Returns are computed from the unit-value history (HANFA, monthly cadence).',
   },
   'fund.aumWhy': {
     hr: 'Zašto je imovina pod upravljanjem bitna: isti postotni udjel u nekoj firmi vrijedi više za fond s većom imovinom — apsolutni iznos ulaganja ovisi o veličini fonda, ne samo o postotku.',

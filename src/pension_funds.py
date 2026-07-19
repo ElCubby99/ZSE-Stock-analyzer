@@ -292,56 +292,62 @@ def parse_hanfa_xlsx(raw: bytes) -> list[dict]:
 AUM_MIN = 1_000_000.0
 
 
+AUM_ALL_FUNDS = "SVI"   # HANFA c-03 objavljuje neto imovinu PO KATEGORIJI
+#                         (svi OMF-ovi zajedno), ne po pojedinom fondu
+
+
 def parse_hanfa_aum(raw: bytes) -> list[dict]:
-    """NAJNOVIJA neto imovina po fondu/kategoriji iz HANFA c-03 workbooka
-    (isti file kao jedinice — 'neto imovina i Mirex'). Traži se list čiji
-    NASLOV upućuje na neto imovinu ('neto imovina'/'imovina'), a stupci
-    fondova prepoznaju se istim strogim zaglavljem kao jedinice
-    (_header_kind -> 'unit'); uzima se posljednji datum. STROGO: bez
-    jasnog signala vraća [] (AUM ostaje n/p) — nikad izmišljena brojka.
-    HANFA strukturu potvrđuje scripts/debug_hanfa.py (mreža nije lokalno
-    dostupna)."""
+    """NAJNOVIJA neto imovina PO KATEGORIJI iz HANFA c-03 workbooka.
+    IZMJERENA struktura (debug-hanfa 19.07.2026., sheet 'C-3 imovina
+    MF(EUR)'): iznosi su U TISUĆAMA EUR; DATUMI SU U STUPCIMA (zaglavlje
+    = red s >=3 datetime ćelija); REDOVI su kategorije — 'Obvezni
+    mirovinski fondovi kategorije A/B/C' sa šifrom 1/2/3 u prvom stupcu.
+    HANFA NE objavljuje neto imovinu po pojedinom fondu, pa se sprema
+    fund=AUM_ALL_FUNDS po kategoriji. HRK listovi i dobrovoljni fondovi
+    se preskaču. STROGO: bez jasnog signala vraća [] — nikad kriva
+    brojka."""
     import datetime as dt
     import io
 
     from openpyxl import load_workbook
     wb = load_workbook(io.BytesIO(raw), read_only=True, data_only=True)
-    cutoff = dt.date(2022, 12, 31)
-    latest: dict[tuple[str, str], tuple[dt.date, float]] = {}
+    latest: dict[str, tuple[dt.date, float]] = {}
+    sifra_cat = {1: "A", 2: "B", 3: "C"}
     for ws in wb.worksheets:
-        if not re.search(r"neto\s*imovin|(?<![a-z])imovin", _norm(ws.title), re.I):
-            continue
-        colmap, date_col = None, None
+        tn = _norm(ws.title)
+        if "IMOVIN" not in tn or "HRK" in tn:
+            continue                      # samo EUR list(ovi) neto imovine
+        date_cols = None
         for row in ws.iter_rows(values_only=True):
-            if colmap is None:
-                cand, dcol = {}, None
-                for i, c in enumerate(row):
-                    if c is None:
-                        continue
-                    if "DATUM" in _norm(str(c)):
-                        dcol = i
-                    k = _header_kind(c)
-                    if k and k[0] == "unit":
-                        cand[i] = (k[1], k[2])
-                if dcol is not None and len(cand) >= 3:
-                    colmap, date_col = cand, dcol
+            if date_cols is None:
+                cand = {i: (c.date() if isinstance(c, dt.datetime) else c)
+                        for i, c in enumerate(row)
+                        if isinstance(c, dt.datetime | dt.date)}
+                if len(cand) >= 3:
+                    date_cols = cand
                 continue
-            d = row[date_col] if date_col < len(row) else None
-            if not isinstance(d, dt.datetime | dt.date):
+            label_cell = next((c for c in row[:3] if isinstance(c, str)), None)
+            if label_cell is None:
                 continue
-            d = d.date() if isinstance(d, dt.datetime) else d
-            for i, (fam, cat) in colmap.items():
+            ln = _norm(label_cell)
+            if "OBVEZNI MIROVINSKI" not in ln or ln.startswith("UKUPNO"):
+                continue                  # dobrovoljni/ukupno se ne broje
+            m = re.search(r"KATEGORIJ\w*\s+([ABC])\b", ln)
+            cat = m.group(1) if m else sifra_cat.get(
+                row[0] if isinstance(row[0], int) else None)
+            if cat is None:
+                continue
+            for i, d in date_cols.items():
                 v = row[i] if i < len(row) else None
                 if not isinstance(v, int | float):
                     continue
-                val = float(v) / HRK_EUR if d <= cutoff else float(v)
-                if val < AUM_MIN:      # to nije neto imovina (npr. jedinica)
+                val = float(v) * 1000.0   # datoteka: 'u tisućama EUR'
+                if val < AUM_MIN:
                     continue
-                key = (fam, cat)
-                if key not in latest or d > latest[key][0]:
-                    latest[key] = (d, val)
-    return [{"fund": f, "category": c, "value_date": d, "net_assets_eur": v}
-            for (f, c), (d, v) in latest.items()]
+                if cat not in latest or d > latest[cat][0]:
+                    latest[cat] = (d, val)
+    return [{"fund": AUM_ALL_FUNDS, "category": c, "value_date": d,
+             "net_assets_eur": v} for c, (d, v) in latest.items()]
 
 
 def import_aum(conn, rows: list[dict], source: str) -> int:
