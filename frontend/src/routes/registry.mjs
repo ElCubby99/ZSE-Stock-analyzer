@@ -131,6 +131,13 @@ export const ROUTES = [
     },
   },
   {
+    path: '/mirovinski-fond/:slug',
+    en: { path: '/en/pension-fund/:slug' },
+    component: 'FondDetail',
+    indexable: true,
+    expand: 'funds', // zasebna stranica po fondu (obitelj+kategorija)
+  },
+  {
     path: '/usporedba',
     en: {
       path: '/en/comparison',

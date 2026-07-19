@@ -43,7 +43,8 @@ def main() -> int:
         break  # prvi dostupan listing je dovoljan
 
     want = [(u, t) for u, t in links
-            if re.search(r"jedinic|mirex|vrijednost|c-0\d", f"{u} {t}", re.I)]
+            if re.search(r"jedinic|mirex|vrijednost|neto|imovin|c-0\d",
+                         f"{u} {t}", re.I)]
     from openpyxl import load_workbook
     for url, text in want[:8]:
         print(f"\n===== FILE {url} ({text[:60]}) =====")

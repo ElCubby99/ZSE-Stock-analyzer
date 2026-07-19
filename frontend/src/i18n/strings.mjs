@@ -457,6 +457,49 @@ export const STR = {
     hr: 'stranici mirovinskih fondova',
     en: 'pension funds page',
   },
+  'fund.aum': { hr: 'Imovina pod upravljanjem', en: 'Assets under management' },
+  'fund.aumShort': { hr: 'Neto imovina', en: 'Net assets' },
+  'fund.members': { hr: 'Broj članova', en: 'Members' },
+  'fund.detailTitle': {
+    hr: 'obračunska jedinica, prinosi i ZSE ulaganja',
+    en: 'unit value, returns and ZSE holdings',
+  },
+  'fund.backToFunds': { hr: '← Svi mirovinski fondovi', en: '← All pension funds' },
+  'fund.notFound': { hr: 'Fond nije pronađen', en: 'Fund not found' },
+  'fund.overview': { hr: 'Osnovni podaci', en: 'Key facts' },
+  'fund.returnsTitle': { hr: 'Prinosi (iz povijesti jedinice)', en: 'Returns (from unit-value history)' },
+  'fund.holdingsTitle': {
+    hr: 'ZSE dionice u kojima je fond među top 10 dioničara',
+    en: 'ZSE stocks where the fund is a top-10 shareholder',
+  },
+  'fund.holdingsNote': {
+    hr: 'Iz naših snapshota top 10 dioničara (ZSE/SKDD) — prikazan je onaj dio ulaganja fonda koji je javno objavljen među top 10 dioničara pojedine ZSE firme; nije cijeli portfelj fonda.',
+    en: 'From our top-10 shareholder snapshots (ZSE/SKDD) — this shows the part of the fund’s holdings publicly disclosed among a company’s top-10 shareholders; it is not the fund’s entire portfolio.',
+  },
+  'fund.noHoldings': {
+    hr: 'Fond se ne pojavljuje ni u jednom dostupnom top-10 popisu dioničara ZSE firmi.',
+    en: 'The fund does not appear in any available ZSE top-10 shareholder list.',
+  },
+  'fund.aumNote': {
+    hr: 'Neto imovina i broj članova dolaze iz HANFA mjesečne statistike OMF-ova; pojavljuju se nakon prvog uvoza koji sustav povuče (mjesečni ritam).',
+    en: 'Net assets and member count come from HANFA’s monthly pension-fund statistics; they appear after the first import the system pulls (monthly cadence).',
+  },
+  'fund.aumWhy': {
+    hr: 'Zašto je imovina pod upravljanjem bitna: isti postotni udjel u nekoj firmi vrijedi više za fond s većom imovinom — apsolutni iznos ulaganja ovisi o veličini fonda, ne samo o postotku.',
+    en: 'Why assets under management matter: the same percentage stake in a company is worth more for a larger fund — the absolute size of a holding depends on the fund’s size, not just the percentage.',
+  },
+  'fund.category.A': {
+    hr: 'najviše dionica — za mlađe članove (dulji horizont, veći potencijalni prinos i rizik)',
+    en: 'highest equity share — for younger members (longer horizon, higher potential return and risk)',
+  },
+  'fund.category.B': {
+    hr: 'uravnotežena — najveća kategorija; kombinacija obveznica i dionica',
+    en: 'balanced — the largest category; a mix of bonds and equities',
+  },
+  'fund.category.C': {
+    hr: 'najkonzervativnija — pretežno obveznice, za članove blizu mirovine',
+    en: 'most conservative — mostly bonds, for members close to retirement',
+  },
   'news.title': { hr: 'Vijesti', en: 'News' },
   'news.intro': {
     hr: 'Kratke obavijesti o novim izvješćima, dividendama i ažuriranjima analiza — svaka vodi na postojeću stranicu s podacima i izvorima.',
@@ -815,6 +858,10 @@ export const STR = {
   'sp.finYoyNote': {
     hr: 'YoY = zadnja godina prema prethodnoj; CAGR preko prikazanog razdoblja.',
     en: 'YoY = last year versus the previous one; CAGR over the period shown.',
+  },
+  'sp.prelimStar': {
+    hr: 'nerevidirano — kvartalni kumulativ za kraj godine (TFI); revidirano godišnje izvješće još nije u bazi',
+    en: 'unaudited — year-end quarterly cumulative (TFI); the audited annual report is not yet in the database',
   },
   'sp.balTitle': { hr: 'Bilanca i zaduženost — FY', en: 'Balance sheet and leverage — FY' },
   'sp.balEquityParent': { hr: 'Kapital matici', en: 'Equity to parent' },

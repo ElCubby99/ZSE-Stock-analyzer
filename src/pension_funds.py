@@ -43,6 +43,17 @@ def ensure_tables(conn) -> None:
                 value NUMERIC NOT NULL,
                 source TEXT,
                 PRIMARY KEY (category, value_date));
+            -- M-FOND3: neto imovina (AUM) po fondu/kategoriji + broj članova,
+            -- HANFA mjesečna statistika OMF-ova. Bez ovoga se ne može ocijeniti
+            -- veličina fonda (mali fond s 1% neke firme vs veliki fond).
+            CREATE TABLE IF NOT EXISTS fund_aum (
+                fund TEXT NOT NULL,        -- AZ | Erste Plavi | PBZ CO | Raiffeisen
+                category TEXT NOT NULL,    -- A | B | C
+                value_date DATE NOT NULL,
+                net_assets_eur NUMERIC,    -- neto imovina fonda (EUR)
+                members INTEGER,           -- broj članova (ako HANFA objavi)
+                source TEXT,
+                PRIMARY KEY (fund, category, value_date));
         """)
     conn.commit()
 
@@ -167,7 +178,20 @@ def fetch_hanfa(conn, log=print) -> int:
                 continue
             rows = parse_hanfa_xlsx(raw)
             log(f"[hanfa] parsirano {len(rows)} redova iz {url}")
-            return import_rows(conn, rows, f"HANFA statistika ({url})")
+            n = import_rows(conn, rows, f"HANFA statistika ({url})")
+            # M-FOND3: iz istog workbooka pokušaj i neto imovinu (AUM) —
+            # NEobavezno: ako list neto imovine nije prepoznat, ne ruši uvoz
+            try:
+                aum = parse_hanfa_aum(raw)
+                if aum:
+                    import_aum(conn, aum, f"HANFA neto imovina ({url})")
+                    log(f"[hanfa] neto imovina: {len(aum)} fond/kategorija")
+                else:
+                    log("[hanfa] neto imovina: list nije prepoznat (AUM ostaje n/p)")
+            except Exception as e:  # noqa: BLE001 — AUM je best-effort
+                conn.rollback()
+                log(f"[hanfa] neto imovina preskočena: {type(e).__name__}: {e}")
+            return n
         except Exception as e:  # noqa: BLE001 — probaj sljedeći kandidat
             errors.append(f"{url}: {type(e).__name__}: {str(e)[:120]}")
     raise RuntimeError(
@@ -212,6 +236,11 @@ def parse_hanfa_xlsx(raw: bytes) -> list[dict]:
     out = []
     cutoff = dt.date(2022, 12, 31)
     for ws in wb.worksheets:
+        # M-FOND3: preskoči list neto imovine (isti workbook, iste kolone
+        # fondova) — inače bi iznosi od stotina milijuna završili kao
+        # obračunske jedinice. Neto imovinu čita parse_hanfa_aum().
+        if re.search(r"neto\s*imovin|(?<![a-z])imovin", _norm(ws.title), re.I):
+            continue
         colmap, date_col = None, None
         for row in ws.iter_rows(values_only=True):
             if colmap is None:
@@ -257,6 +286,85 @@ def parse_hanfa_xlsx(raw: bytes) -> list[dict]:
     return out
 
 
+# M-FOND3: neto imovina (AUM) po fondu/kategoriji. Neto imovina fonda mjeri
+# se u desecima/stotinama milijuna EUR — nikad ne može biti obračunska
+# jedinica (~10–50 EUR), pa magnitudni gate (>= AUM_MIN) sprječava zamjenu.
+AUM_MIN = 1_000_000.0
+
+
+def parse_hanfa_aum(raw: bytes) -> list[dict]:
+    """NAJNOVIJA neto imovina po fondu/kategoriji iz HANFA c-03 workbooka
+    (isti file kao jedinice — 'neto imovina i Mirex'). Traži se list čiji
+    NASLOV upućuje na neto imovinu ('neto imovina'/'imovina'), a stupci
+    fondova prepoznaju se istim strogim zaglavljem kao jedinice
+    (_header_kind -> 'unit'); uzima se posljednji datum. STROGO: bez
+    jasnog signala vraća [] (AUM ostaje n/p) — nikad izmišljena brojka.
+    HANFA strukturu potvrđuje scripts/debug_hanfa.py (mreža nije lokalno
+    dostupna)."""
+    import datetime as dt
+    import io
+
+    from openpyxl import load_workbook
+    wb = load_workbook(io.BytesIO(raw), read_only=True, data_only=True)
+    cutoff = dt.date(2022, 12, 31)
+    latest: dict[tuple[str, str], tuple[dt.date, float]] = {}
+    for ws in wb.worksheets:
+        if not re.search(r"neto\s*imovin|(?<![a-z])imovin", _norm(ws.title), re.I):
+            continue
+        colmap, date_col = None, None
+        for row in ws.iter_rows(values_only=True):
+            if colmap is None:
+                cand, dcol = {}, None
+                for i, c in enumerate(row):
+                    if c is None:
+                        continue
+                    if "DATUM" in _norm(str(c)):
+                        dcol = i
+                    k = _header_kind(c)
+                    if k and k[0] == "unit":
+                        cand[i] = (k[1], k[2])
+                if dcol is not None and len(cand) >= 3:
+                    colmap, date_col = cand, dcol
+                continue
+            d = row[date_col] if date_col < len(row) else None
+            if not isinstance(d, dt.datetime | dt.date):
+                continue
+            d = d.date() if isinstance(d, dt.datetime) else d
+            for i, (fam, cat) in colmap.items():
+                v = row[i] if i < len(row) else None
+                if not isinstance(v, int | float):
+                    continue
+                val = float(v) / HRK_EUR if d <= cutoff else float(v)
+                if val < AUM_MIN:      # to nije neto imovina (npr. jedinica)
+                    continue
+                key = (fam, cat)
+                if key not in latest or d > latest[key][0]:
+                    latest[key] = (d, val)
+    return [{"fund": f, "category": c, "value_date": d, "net_assets_eur": v}
+            for (f, c), (d, v) in latest.items()]
+
+
+def import_aum(conn, rows: list[dict], source: str) -> int:
+    """Idempotentan upsert neto imovine (najnoviji snapshot po fondu/kat.)."""
+    if not rows:
+        return 0
+    from psycopg2.extras import execute_values
+    ensure_tables(conn)
+    with conn.cursor() as cur:
+        execute_values(cur,
+            """INSERT INTO fund_aum
+                 (fund, category, value_date, net_assets_eur, members, source)
+               VALUES %s
+               ON CONFLICT (fund, category, value_date)
+               DO UPDATE SET net_assets_eur = EXCLUDED.net_assets_eur,
+                             source = EXCLUDED.source""",
+            [(r["fund"], r["category"], r["value_date"],
+              r.get("net_assets_eur"), r.get("members"), source)
+             for r in rows])
+    conn.commit()
+    return len(rows)
+
+
 if __name__ == "__main__":
     import argparse
     import sys
@@ -268,7 +376,10 @@ if __name__ == "__main__":
     with get_conn() as conn:
         ensure_tables(conn)
         if a.import_file:
-            rows = parse_hanfa_xlsx(open(a.import_file, "rb").read())
+            raw = open(a.import_file, "rb").read()
+            rows = parse_hanfa_xlsx(raw)
             print(f"novo: {import_rows(conn, rows, f'HANFA XLSX (ručni uvoz: {a.import_file})')}")
+            aum = parse_hanfa_aum(raw)
+            print(f"neto imovina: {import_aum(conn, aum, f'HANFA XLSX AUM (ručni uvoz: {a.import_file})')}")
         else:
             print(f"novo: {fetch_hanfa(conn)}")

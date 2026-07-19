@@ -720,6 +720,91 @@ async function buildBondPages() {
   }
 }
 
+/* ---------- M-FOND3: zasebna stranica po fondu (obitelj+kategorija) ---------- */
+const CAT_NOTE = {
+  A: { hr: 'najviše dionica — za mlađe članove (dulji horizont, veći potencijalni prinos i rizik)',
+    en: 'highest equity share — for younger members (longer horizon, higher potential return and risk)' },
+  B: { hr: 'uravnotežena — najveća kategorija; kombinacija obveznica i dionica',
+    en: 'balanced — the largest category; a mix of bonds and equities' },
+  C: { hr: 'najkonzervativnija — pretežno obveznice, za članove blizu mirovine',
+    en: 'most conservative — mostly bonds, for members close to retirement' },
+}
+const fMeur = (v) => (v === null || v === undefined ? null : `${num(v / 1e6, 1)} M€`)
+async function buildFundPages() {
+  const f = fondoviData
+  for (const u of f.units || []) {
+    if (!u.slug) continue
+    const canonical = `${SITE}/mirovinski-fond/${u.slug}`
+    const canonicalEn = `${SITE}/en/pension-fund/${u.slug}`
+    const alternates = { hr: canonical, en: canonicalEn }
+    const holdings = (f.synergy || []).filter((s) => s.slug === u.slug)
+      .sort((a, b) => (b.pct || 0) - (a.pct || 0))
+    const unitTxt = u.unit_value === null || u.unit_value === undefined
+      ? 'čeka prvi mjesečni uvoz' : `${num(u.unit_value, 4)} € (${esc(u.value_date || '')})`
+    const aumTxt = fMeur(u.aum?.net_assets_eur) || 'čeka prvi mjesečni uvoz (HANFA)'
+    const holdRows = holdings.map((h) => `<tr>
+      <td><a href="/dionica/${esc(h.ticker.toLowerCase())}">${esc(h.ticker)}</a> — ${esc(h.company_name)}</td>
+      <td>${num(h.pct, 2)} %</td></tr>`).join('')
+    await write(`mirovinski-fond/${u.slug}`, page({
+      title: `${u.fund} OMF ${u.category} — jedinica, prinosi i ZSE ulaganja | Burzovni list`,
+      description: `${u.fund} OMF kategorija ${u.category}: obračunska jedinica ${u.unit_value ? `${num(u.unit_value, 4)} €` : 'čeka uvoz'}, prinosi i ZSE dionice u kojima je fond među top 10 dioničara. Izvor: HANFA, mjesečno.`.slice(0, 155),
+      canonical, alternates,
+      body: `<main>
+        <nav><a href="/">Naslovnica</a> › <a href="/mirovinski-fondovi">Mirovinski fondovi</a> › ${esc(u.fund)} OMF ${esc(u.category)}</nav>
+        <h1>${esc(u.fund)} OMF — kategorija ${esc(u.category)}</h1>
+        <p>Obračunska jedinica, prinosi i ZSE ulaganja. Kategorija ${esc(u.category)}: ${esc(CAT_NOTE[u.category]?.hr || '')}.</p>
+        <h2>Osnovni podaci</h2>
+        <table><tbody>
+          <tr><td>Obračunska jedinica</td><td>${unitTxt}</td></tr>
+          <tr><td>Imovina pod upravljanjem (neto imovina)</td><td>${aumTxt}</td></tr>
+          ${u.aum?.members ? `<tr><td>Broj članova</td><td>${num(u.aum.members, 0)}</td></tr>` : ''}
+        </tbody></table>
+        <p>Isti postotni udjel u nekoj firmi vrijedi više za fond s većom imovinom — apsolutni iznos ulaganja ovisi o veličini fonda.</p>
+        <h2>Prinosi (iz povijesti jedinice)</h2>
+        <table><thead><tr><th>YTD</th><th>1g</th><th>3g</th><th>5g</th><th>10g</th></tr></thead>
+        <tbody><tr><td>${fndPct(u.ytd)}</td><td>${fndPct(u.y1)}</td><td>${fndPct(u.y3)}</td>
+        <td>${fndPct(u.y5)}</td><td>${fndPct(u.y10)}</td></tr></tbody></table>
+        ${holdRows ? `<h2>ZSE dionice u kojima je fond među top 10 dioničara</h2>
+        <table><thead><tr><th>Dionica</th><th>Udjel</th></tr></thead><tbody>${holdRows}</tbody></table>
+        <p>Iz naših snapshota top 10 dioničara (ZSE/SKDD) — prikazan je javno objavljeni dio ulaganja fonda, ne cijeli portfelj.</p>` : ''}
+        <p>Izvor jedinica i neto imovine: HANFA javne objave, mjesečni ritam.</p>
+        <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+    }))
+    PRLOC = 'en-GB'
+    const holdRowsEn = holdings.map((h) => `<tr>
+      <td><a href="/en/stock/${esc(h.ticker.toLowerCase())}">${esc(h.ticker)}</a> — ${esc(h.company_name)}</td>
+      <td>${num(h.pct, 2)}%</td></tr>`).join('')
+    await write(`en/pension-fund/${u.slug}`, page({
+      title: `${u.fund} OMF ${u.category} — unit value, returns and ZSE holdings | Burzovni list`,
+      description: `${u.fund} pension fund category ${u.category}: unit value, returns and ZSE stocks where the fund is a top-10 shareholder. Source: HANFA, monthly.`.slice(0, 155),
+      canonical: canonicalEn, lang: 'en', alternates,
+      body: `<main>
+        <nav><a href="/en">Home</a> › <a href="/en/pension-funds">Pension funds</a> › ${esc(u.fund)} OMF ${esc(u.category)}</nav>
+        <h1>${esc(u.fund)} pension fund — category ${esc(u.category)}</h1>
+        <p>Unit value, returns and ZSE holdings. Category ${esc(u.category)}: ${esc(CAT_NOTE[u.category]?.en || '')}.</p>
+        <h2>Key facts</h2>
+        <table><tbody>
+          <tr><td>Unit value</td><td>${u.unit_value ? `${num(u.unit_value, 4)} € (${esc(u.value_date || '')})` : 'awaiting first monthly import'}</td></tr>
+          <tr><td>Assets under management (net assets)</td><td>${fMeur(u.aum?.net_assets_eur) || 'awaiting first monthly import (HANFA)'}</td></tr>
+          ${u.aum?.members ? `<tr><td>Members</td><td>${num(u.aum.members, 0)}</td></tr>` : ''}
+        </tbody></table>
+        <p>The same percentage stake is worth more for a larger fund — the absolute size of a holding depends on the fund’s size.</p>
+        <h2>Returns (from unit-value history)</h2>
+        <table><thead><tr><th>YTD</th><th>1y</th><th>3y</th><th>5y</th><th>10y</th></tr></thead>
+        <tbody><tr><td>${fndPct(u.ytd)}</td><td>${fndPct(u.y1)}</td><td>${fndPct(u.y3)}</td>
+        <td>${fndPct(u.y5)}</td><td>${fndPct(u.y10)}</td></tr></tbody></table>
+        ${holdRowsEn ? `<h2>ZSE stocks where the fund is a top-10 shareholder</h2>
+        <table><thead><tr><th>Stock</th><th>Stake</th></tr></thead><tbody>${holdRowsEn}</tbody></table>
+        <p>From our top-10 shareholder snapshots (ZSE/SKDD) — the publicly disclosed part of the holdings, not the whole portfolio.</p>` : ''}
+        <p>Source of unit values and net assets: HANFA public releases, monthly cadence.</p>
+        <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
+    }))
+    PRLOC = 'hr-HR'
+    urls.push({ loc: canonical, lastmod: u.value_date || eod, alt: alternates })
+    urls.push({ loc: canonicalEn, lastmod: u.value_date || eod, alt: alternates })
+  }
+}
+
 /* Dinamički body/extraHead za pojedine statičke rute — sve ostalo (naslov,
    opis, indexability) dolazi iz registryja. */
 const BODY_BUILDERS = {
@@ -969,6 +1054,7 @@ for (const r of ROUTES) {
   if (r.expand === 'news') { await buildNewsPages(); continue }
   if (r.expand === 'indices') { await buildIndexPages(); continue }
   if (r.expand === 'bonds') { await buildBondPages(); continue }
+  if (r.expand === 'funds') { await buildFundPages(); continue }
   const route = r.path.replace(/^\//, '')
   const canonical = route ? `${SITE}/${route}` : `${SITE}/`
   const canonicalEn = r.en ? `${SITE}${r.en.path}` : null

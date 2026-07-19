@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
-import { fmtDate, num } from './format.js'
+import { fmtDate, meur, num } from './format.js'
 import { useLang } from './i18n/LangContext.jsx'
 
 /* M-FOND: /mirovinski-fondovi — vrijednosti obračunskih jedinica OMF-ova
@@ -236,7 +236,11 @@ export default function MirovinskiFondovi() {
                   <tbody>
                     {d.units.filter((u) => u.category === cat).map((u) => (
                       <tr key={u.fund}>
-                        <td>{u.fund} OMF — {t('fund.catLabel')} {cat}</td>
+                        <td>{u.slug
+                          ? <Link to={lang === 'en'
+                            ? `/en/pension-fund/${u.slug}` : `/mirovinski-fond/${u.slug}`}>
+                            <b>{u.fund} OMF</b></Link>
+                          : <b>{u.fund} OMF</b>} — {t('fund.catLabel')} {cat}</td>
                         <td className="num">{u.unit_value !== null && u.unit_value !== undefined
                           ? num(u.unit_value, 4) : <span className="np">{t('fund.awaitingImport')}</span>}</td>
                         <td className="num">{pct(u.ytd, na)}</td>
@@ -301,6 +305,122 @@ export default function MirovinskiFondovi() {
             </div>
           </>
         )}
+      </main>
+      <SiteFooter />
+    </div>
+  )
+}
+
+/* M-FOND3: /mirovinski-fond/<slug> — zasebna stranica pojedinog OMF-a
+   (obitelj + kategorija). Prikazuje osnovne podatke, obračunsku jedinicu i
+   prinose (iz povijesti jedinica), imovinu pod upravljanjem (HANFA neto
+   imovina — pojavljuje se nakon prvog mjesečnog uvoza) i ZSE dionice u
+   kojima je fond među top 10 dioničara (iz naših snapshota). Podaci se
+   filtriraju po slugu iz istog /data/fondovi.json — bez novog izvora. */
+export function FondDetail() {
+  const { slug } = useParams()
+  const d = useFondovi()
+  const { lang, t } = useLang()
+  const na = t('common.na')
+  const unit = d?.units?.find((u) => u.slug === slug)
+  const holdings = useMemo(
+    () => (d?.synergy || []).filter((s) => s.slug === slug)
+      .sort((a, b) => (b.pct || 0) - (a.pct || 0)),
+    [d, slug],
+  )
+  useEffect(() => {
+    if (unit) document.title = `${unit.fund} OMF ${unit.category} · Burzovni list`
+  }, [unit, lang])
+  const catNote = unit ? t(`fund.category.${unit.category}`) : ''
+  const aum = unit?.aum
+  return (
+    <div className="shellpg">
+      <SiteHeader />
+      <main className="wrap-wide">
+        {!d ? <div className="loading">{t('common.loading')}</div>
+          : !unit ? (
+            <section><div className="mk-title"><h1>{t('fund.notFound')}</h1></div>
+              <p className="imp-p"><Link to={lang === 'en' ? '/en/pension-funds' : '/mirovinski-fondovi'}>
+                {t('fund.backToFunds')}</Link></p></section>
+          ) : (
+            <>
+              <p className="fund-src" style={{ marginBottom: 4 }}>
+                <Link to={lang === 'en' ? '/en/pension-funds' : '/mirovinski-fondovi'}>
+                  {t('fund.backToFunds')}</Link></p>
+              <div className="mk-title">
+                <h1>{unit.fund} OMF — {t('fund.category')} {unit.category}</h1>
+                <span>{t('fund.detailTitle')}</span>
+              </div>
+
+              <section style={{ marginTop: 8 }}>
+                <div className="sec-label">{t('fund.overview')}</div>
+                <table>
+                  <tbody>
+                    <tr><td>{t('fund.category')}</td>
+                      <td><b>{unit.category}</b> — {catNote}</td></tr>
+                    <tr><td>{t('fund.unit')}</td>
+                      <td className="mono">{unit.unit_value !== null && unit.unit_value !== undefined
+                        ? `${num(unit.unit_value, 4)} €` : <span className="np">{t('fund.awaitingImport')}</span>}
+                        {unit.value_date ? <span className="fund-src"> · {fmtDate(unit.value_date)}</span> : null}</td></tr>
+                    <tr><td>{t('fund.aum')}</td>
+                      <td className="mono">{aum?.net_assets_eur
+                        ? meur(aum.net_assets_eur, 1) : <span className="np">{t('fund.awaitingImport')}</span>}
+                        {aum?.value_date ? <span className="fund-src"> · {fmtDate(aum.value_date)}</span> : null}</td></tr>
+                    {aum?.members ? (
+                      <tr><td>{t('fund.members')}</td>
+                        <td className="mono">{num(aum.members, 0)}</td></tr>
+                    ) : null}
+                  </tbody>
+                </table>
+                <p className="fund-src" style={{ marginTop: 6 }}>{t('fund.aumWhy')}</p>
+              </section>
+
+              <section style={{ marginTop: 22 }}>
+                <div className="sec-label">{t('fund.returnsTitle')}</div>
+                <div className="mk-scroll">
+                <table>
+                  <thead><tr><th className="num">YTD</th><th className="num">{t('fund.y1')}</th>
+                    <th className="num">{t('fund.y3')}</th><th className="num">{t('fund.y5')}</th>
+                    <th className="num">{t('fund.y10')}</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td className="num">{pct(unit.ytd, na)}</td>
+                      <td className="num">{pct(unit.y1, na)}</td>
+                      <td className="num">{pct(unit.y3, na)}</td>
+                      <td className="num">{pct(unit.y5, na)}</td>
+                      <td className="num">{pct(unit.y10, na)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+                <p className="fund-src" style={{ marginTop: 6 }}>{t('fund.aumNote')}</p>
+              </section>
+
+              <section style={{ marginTop: 22 }}>
+                <div className="sec-label">{t('fund.holdingsTitle')}
+                  {holdings[0]?.as_of ? ` · ${t('fund.snapshot')} ${fmtDate(holdings[0].as_of)}` : ''}</div>
+                {holdings.length ? (
+                  <table>
+                    <thead><tr><th>{t('fund.stock')}</th><th className="num">{t('fund.share')}</th></tr></thead>
+                    <tbody>
+                      {holdings.map((h) => (
+                        <tr key={h.ticker}>
+                          <td><Link to={lang === 'en'
+                            ? `/en/stock/${h.ticker.toLowerCase()}`
+                            : `/dionica/${h.ticker.toLowerCase()}`}><b>{h.ticker}</b></Link>{' '}
+                            <span className="basis">{h.company_name}</span></td>
+                          <td className="num">{num(h.pct, 2)} %</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : <div className="subnote">{t('fund.noHoldings')}</div>}
+                <p className="fund-src" style={{ marginTop: 6 }}>{t('fund.holdingsNote')}</p>
+              </section>
+
+              <div className="disc" style={{ marginTop: 24 }}>{t('fund.disc')}</div>
+            </>
+          )}
       </main>
       <SiteFooter />
     </div>

@@ -78,3 +78,7 @@ glosar. Novi pojam = novi red OVDJE + ključ u `frontend/src/i18n/strings.mjs`.
 | tržišni profil | market profile | |
 | profil poslovanja | business profile | |
 | u slučaju spora mjerodavna je hrvatska verzija | in case of dispute, the Croatian version prevails | pravne stranice |
+| imovina pod upravljanjem | assets under management | OMF: neto imovina fonda |
+| neto imovina | net assets | |
+| broj članova (fonda) | members (of a fund) | OMF |
+| obvezni mirovinski fond (OMF) | mandatory pension fund | kategorije A/B/C |

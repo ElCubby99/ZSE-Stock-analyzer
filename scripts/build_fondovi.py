@@ -24,6 +24,15 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "frontend" / "public" / "data" / "fondovi.json"
 OUT_SERIES = ROOT / "frontend" / "public" / "data" / "fondovi_series.json"
 
+# M-FOND3: slug za zasebnu stranicu fonda (obitelj-kategorija), npr. "az-a",
+# "erste-plavi-b", "pbz-co-c", "raiffeisen-a". Isti slug čita frontend ruta.
+_SLUG = {"AZ": "az", "Erste Plavi": "erste-plavi", "PBZ CO": "pbz-co",
+         "Raiffeisen": "raiffeisen"}
+
+
+def fund_slug(fund: str, cat: str) -> str:
+    return f"{_SLUG.get(fund, fund.lower().replace(' ', '-'))}-{cat.lower()}"
+
 
 def _return(series, years):
     """Prinos prema vrijednosti ~years unatrag (ili None)."""
@@ -86,6 +95,18 @@ def main() -> int:
     units, mirex, synergy, chart_series = [], [], [], []
     with get_conn() as conn, conn.cursor() as cur:
         ensure_tables(conn)
+        # M-FOND3: zadnja neto imovina (AUM) po fondu/kategoriji
+        aum = {}
+        try:
+            cur.execute(
+                """SELECT DISTINCT ON (fund, category) fund, category,
+                          net_assets_eur::float, members, value_date::text, source
+                   FROM fund_aum ORDER BY fund, category, value_date DESC""")
+            for f, c, na, mem, vd, src in cur.fetchall():
+                aum[(f, c)] = {"net_assets_eur": na, "members": mem,
+                               "value_date": vd, "source": src}
+        except Exception:  # noqa: BLE001 — tablica možda još prazna
+            conn.rollback()
         for fund in sorted(FUNDS):
             for cat in CATEGORIES:
                 cur.execute(
@@ -98,8 +119,10 @@ def main() -> int:
                 last = series[-1] if series else None
                 units.append({
                     "fund": fund, "category": cat,
+                    "slug": fund_slug(fund, cat),
                     "unit_value": last[1] if last else None,
                     "value_date": last[0].isoformat() if last else None,
+                    "aum": aum.get((fund, cat)),
                     **_returns(series),
                 })
                 if series:
@@ -138,6 +161,7 @@ def main() -> int:
             synergy.append({
                 "ticker": ticker, "company_name": name,
                 "fund": m[0], "category": m[1],
+                "slug": fund_slug(m[0], m[1]),
                 "pct": pct, "holder_name": holder, "as_of": snap,
             })
 
