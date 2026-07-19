@@ -350,6 +350,58 @@ def parse_hanfa_aum(raw: bytes) -> list[dict]:
              "net_assets_eur": v} for c, (d, v) in latest.items()]
 
 
+def fetch_rmf_nav(conn, log=print) -> int:
+    """M-FOND5: AUTOMATSKI NAV Raiffeisen OMF-ova (A/B/C) s rmf.hr fond-
+    stranica. IZMJERENO (L3 izviđanje 19.07.2026., dostupno s GH runnera):
+    stranica sadrži rečenicu 'Neto vrijednost imovine Raiffeisen obveznog
+    mirovinskog fonda A na dan 16.07.2026 je 255.576.395,07 EUR'. STROGI
+    regex — promjena formulacije znači 0 uvezenih uz log (nikad kriva
+    brojka). Pokreće se iz mjesečnog workflowa (otvorena mreža)."""
+    import datetime as dt
+
+    import requests
+    urls = {
+        "A": "https://www.rmf.hr/default.aspx?id=32",
+        "B": "https://www.rmf.hr/default.aspx?id=33",
+        "C": "https://www.rmf.hr/default.aspx?id=34",
+    }
+    pat = re.compile(
+        r"Neto\s+vrijednost\s+imovine\s+Raiffeisen\s+obveznog\s+mirovinskog"
+        r"\s+fonda\s+([ABC])\s+na\s+dan\s+(\d{1,2})\.(\d{1,2})\.(\d{4})\.?"
+        r"\s*(?:godine)?\s*je\s+([\d.\s]+,\d{2})\s*EUR", re.I | re.S)
+    rows, n_ok = [], 0
+    for cat, url in urls.items():
+        try:
+            r = requests.get(url, timeout=60, headers={
+                "User-Agent": "Mozilla/5.0 (podaci; burzovnilist.com)"})
+            r.raise_for_status()
+            plain = re.sub(r"<[^>]+>", " ", r.text)
+            plain = re.sub(r"\s+", " ", plain)
+            m = pat.search(plain)
+            if not m:
+                log(f"[rmf-nav] {cat}: NAV rečenica nije prepoznata na {url} "
+                    "— format se promijenio, prilagodi fetch_rmf_nav()")
+                continue
+            found_cat = m.group(1).upper()
+            if found_cat != cat:
+                log(f"[rmf-nav] {cat}: stranica tvrdi kategoriju {found_cat} — preskačem")
+                continue
+            d = dt.date(int(m.group(4)), int(m.group(3)), int(m.group(2)))
+            val = float(m.group(5).replace(".", "").replace(" ", "").replace(",", "."))
+            if not (AUM_MIN <= val <= 50e9):
+                log(f"[rmf-nav] {cat}: iznos {val:,.0f} izvan raspona — preskačem")
+                continue
+            rows.append({"fund": "Raiffeisen", "category": cat,
+                         "value_date": d, "net_assets_eur": val})
+            log(f"[rmf-nav] Raiffeisen {cat} {d}: {val / 1e6:,.1f} M EUR")
+            n_ok += 1
+        except Exception as e:  # noqa: BLE001 — po kategoriji, ne ruši ostale
+            log(f"[rmf-nav] {cat}: {type(e).__name__}: {str(e)[:100]}")
+    if rows:
+        import_aum(conn, rows, "rmf.hr fond-stranica (automatski dohvat)")
+    return n_ok
+
+
 def parse_nav_lines(text: str) -> list[dict]:
     """M-FOND5 (opcija C): ručni/poluautomatski unos NETO IMOVINE POJEDINOG
     fonda. Format po retku: 'Fond;Kategorija;YYYY-MM-DD;iznos_eur'
@@ -432,10 +484,14 @@ if __name__ == "__main__":
                     "linije direktno kao argument (za CI workflow)")
     ap.add_argument("--nav-source", default="mjesečni izvještaj fonda (ručni unos)",
                     help="izvor uz NAV unos (piše se uz svaku brojku)")
+    ap.add_argument("--fetch-rmf-nav", action="store_true",
+                    help="automatski NAV Raiffeisen OMF-ova s rmf.hr")
     a = ap.parse_args()
     with get_conn() as conn:
         ensure_tables(conn)
-        if a.import_nav or a.import_nav_lines:
+        if a.fetch_rmf_nav:
+            print(f"rmf-nav: {fetch_rmf_nav(conn)}/3 kategorije uvezene")
+        elif a.import_nav or a.import_nav_lines:
             text = (open(a.import_nav, encoding="utf-8").read()
                     if a.import_nav else a.import_nav_lines)
             rows = parse_nav_lines(text)
