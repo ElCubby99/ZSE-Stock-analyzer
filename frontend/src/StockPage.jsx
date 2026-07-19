@@ -553,6 +553,9 @@ function DividendSanity({ rec }) {
           <div className="plain">
             {t('sp.dsPlain1')} <b>{t('sp.dsPlain1b')}</b> {t('sp.dsPlain1c')}
           </div>
+          {ds.fallback_raw && (
+            <div className="plain"><span className="flag">{t('sp.dsFallback')}</span></div>
+          )}
         </div>
         <div className="ctrl">
           <div className="top">
