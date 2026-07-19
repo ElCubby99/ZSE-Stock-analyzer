@@ -368,11 +368,11 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri -0.5% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri -11.6% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
-        "txt": "Vrijednost i dividende matice ovise o društvima: KONČAR D&ST (KODT) (53%), Dalekovod (DLKV) (75%), KONČAR standalone (ex-uvrštene kćeri) (100%), KPT (Siemens JV, 49%) (49%)."
+        "txt": "Vrijednost i dividende matice ovise o društvima: KONČAR standalone (ex-uvrštene kćeri) (100%), KPT (Siemens JV, 49%) (49%), KONČAR D&ST (KODT) (53%), Dalekovod (DLKV) (75%)."
       },
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
@@ -823,8 +823,8 @@
         "div_type": "Izglasana dividenda",
         "ex_date": "2025-06-26",
         "payout_type": "redovna",
-        "payout_ratio": null,
-        "classified_reason": "unutar 150% medijana prethodnih redovnih (2.25 €); payout n/p: dobit FY2024 nije u bazi",
+        "payout_ratio": 0.07606147122772813,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (2.25 €)",
         "record_date": "2025-06-27",
         "payment_date": "2025-07-12",
         "status": "paid",
@@ -838,8 +838,8 @@
         "div_type": "Izglasana dividenda",
         "ex_date": "2024-06-26",
         "payout_type": "redovna",
-        "payout_ratio": null,
-        "classified_reason": "unutar 150% medijana prethodnih redovnih (2.00 €); payout n/p: dobit FY2023 nije u bazi",
+        "payout_ratio": 0.13804160441575306,
+        "classified_reason": "unutar 150% medijana prethodnih redovnih (2.00 €)",
         "record_date": "2024-06-27",
         "payment_date": "2024-07-12",
         "status": "paid",
@@ -853,8 +853,8 @@
         "div_type": "Izglasana dividenda",
         "ex_date": "2023-06-27",
         "payout_type": "redovna",
-        "payout_ratio": null,
-        "classified_reason": "prva zabilježena isplata klase; payout n/p: dobit FY2022 nije u bazi",
+        "payout_ratio": 0.14887025644173993,
+        "classified_reason": "prva zabilježena isplata klase",
         "record_date": "2023-06-28",
         "payment_date": "2023-07-13",
         "status": "paid",
@@ -894,9 +894,23 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": null,
-      "suppressed_one_off": 4.0,
-      "note": "zadnja isplata je jednokratna/iz zadržane dobiti, a održiva baza nije izračunljiva — DDM se ne računa (radije prazno nego krivo)"
+      "d_sust_ps": 8.1442,
+      "payout_used": 0.138,
+      "payout_basis": "medijan payout ratija redovnih isplata (3 g.); isključene godine s jednokratnim/iz zadržane dobiti: FY2025",
+      "coverage_announced": 16.965,
+      "flags": [],
+      "excluded_years": [
+        "FY2025"
+      ],
+      "subsidiary_inflows": {
+        "total_eur": 22796569.0,
+        "per_holding": [
+          "KONČAR D&ST (KODT): 19,393,676 €",
+          "Dalekovod (DLKV): 3,402,893 €"
+        ],
+        "note": "pokrivenost najave matice uključuje očekivane priljeve dividendi kćeri — činjenično iz zadnje izglasane isplate kćeri × naš udio (v3 FAZA SOTP)"
+      },
+      "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
     }
   },
   "prices": [
@@ -4987,23 +5001,23 @@
         "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=12.82 (n=2), P/B=7.28 (n=2), EV/EBITDA=7.0 (n=1). Skup ['ADPL', 'IG'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda. Po peeru: ADPL P/E=8.8 P/B=1.1; IG P/E=16.84 P/B=13.47"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=12.82 (n=2), P/B=7.28 (n=2), EV/EBITDA=10.46 (n=2). Skup ['ADPL', 'IG'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda. Po peeru: ADPL P/E=8.8 P/B=1.1; IG P/E=16.84 P/B=13.47"
       },
       "growth": {
         "g1": 0.1,
         "signals": {
           "g_obs": 0.2007,
-          "g_sust": 0.2238,
+          "g_sust": 0.1929,
           "g_terminal": 0.04
         },
-        "origin": "serija",
-        "winner": "g_obs",
+        "origin": "održivi rast",
+        "winner": "g_sust",
         "badges": [
           "cap 10% nakon medijana"
         ],
         "ttm_context": 0.0205,
         "short_series": false,
-        "source": "g1=10.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +20.1%; održivi rast: ROE 22.4% × (1 − payout 0%) = +22.4%; sidro terminala 4.0%} — pobjednik 'serija'; cap 10% nakon medijana. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "source": "g1=10.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +20.1%; održivi rast: ROE 22.4% × (1 − payout 14%) = +19.3%; sidro terminala 4.0%} — pobjednik 'održivi rast'; cap 10% nakon medijana. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -5042,9 +5056,9 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 693.3509501032103,
-        "base": 815.7070001214239,
-        "high": 938.0630501396374,
+        "low": 642.9006054132798,
+        "base": 756.353653427388,
+        "high": 869.8067014414962,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -5055,8 +5069,12 @@
               "per_share": 756.35
             },
             "ev_ebitda": {
-              "mult": 7.0,
-              "per_share": 761.71
+              "mult": 10.46,
+              "per_share": 1100.08
+            },
+            "ev_ebit": {
+              "mult": 17.98,
+              "per_share": 1624.41
             },
             "pb": {
               "mult": 3.52,
@@ -5067,11 +5085,12 @@
           "carrier": "pe",
           "carrier_reason": "nositelj po arhetipu 'holding_operating' (v2 §2)",
           "intra_spread": {
-            "spread_pct": 23.0,
-            "rule": "leće konzistentne (<40%) -> prosjek"
+            "spread_pct": 115.0,
+            "rule": "leće razmaknute 115% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
+            "anomaly": "ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=12.82 (n=2), P/B=7.28 (n=2), EV/EBITDA=7.0 (n=1). Skup ['ADPL', 'IG'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda. Po peeru: ADPL P/E=8.8 P/B=1.1; IG P/E=16.84 P/B=13.47"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=12.82 (n=2), P/B=7.28 (n=2), EV/EBITDA=10.46 (n=2). Skup ['ADPL', 'IG'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). USKI SKUP (n=2) -> snižena pouzdanost multipl-metoda. Po peeru: ADPL P/E=8.8 P/B=1.1; IG P/E=16.84 P/B=13.47"
           },
           "narrow_peers": "uski peer skup (n=2) -> snižena pouzdanost"
         }
@@ -5089,7 +5108,7 @@
           "g_terminal": 0.04,
           "g1_explicit": 0.1,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=10.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +20.1%; održivi rast: ROE 22.4% × (1 − payout 0%) = +22.4%; sidro terminala 4.0%} — pobjednik 'serija'; cap 10% nakon medijana. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=10.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +20.1%; održivi rast: ROE 22.4% × (1 − payout 14%) = +19.3%; sidro terminala 4.0%} — pobjednik 'održivi rast'; cap 10% nakon medijana. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
           "placeholder": false,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -5100,9 +5119,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 750.0364271949773,
-        "base": 769.7742279106345,
-        "high": 789.5120286262919,
+        "low": 858.2777503645863,
+        "base": 880.8640069531282,
+        "high": 903.4502635416699,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -5115,29 +5134,11 @@
           "placeholder": false,
           "parts": [
             {
-              "name": "KONČAR D&ST (KODT)",
-              "value_eur": 1530450309.0,
-              "value_market_eur": 1190089819.0,
-              "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 4,780–6,575 €/dionici × 511,232 dionica × 0.5273",
-              "pct": 0.5273,
-              "placeholder": false
-            },
-            {
-              "name": "Dalekovod (DLKV)",
-              "value_eur": 193094343.0,
-              "value_market_eur": 522808171.0,
-              "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–7 €/dionici × 41,247,193 dionica × 0.7500",
-              "pct": 0.75,
-              "placeholder": false
-            },
-            {
               "name": "KONČAR standalone (ex-uvrštene kćeri)",
-              "value_eur": 64520000.0,
-              "value_market_eur": 64520000.0,
+              "value_eur": 98030100.0,
+              "value_market_eur": 98030100.0,
               "fair_basis": "multiple",
-              "basis": "standalone_separate EV/EBITDA (M41): vlastito OPERATIVNO poslovanje matice iz NEKONSOLIDIRANOG izvještaja FY2025 — operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koji je u HR klasifikaciji unutar poslovnih prihoda; kćeri su već u NAV-u kroz udjele pa se uklanja — bez dvostrukog brojanja) na 293 M€ prihoda × EV/EBITDA 7.0 − neto dug 3.3 M€ = 65 M€ × 1.00",
+              "basis": "standalone_separate EV/EBITDA (M41): vlastito OPERATIVNO poslovanje matice iz NEKONSOLIDIRANOG izvještaja FY2025 — operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koji je u HR klasifikaciji unutar poslovnih prihoda; kćeri su već u NAV-u kroz udjele pa se uklanja — bez dvostrukog brojanja) na 293 M€ prihoda × EV/EBITDA 10.5 − neto dug 3.3 M€ = 98 M€ × 1.00",
               "pct": 1.0,
               "placeholder": false
             },
@@ -5149,6 +5150,24 @@
               "basis": "associate_book (v3 SOTP): udio u knjigovodstvenoj vrijednosti JV-a po metodi udjela = 44,232,000 € — KOEI GI 2025, bilješka 16, str. 131 — knjigovodstvena vrijednost ulaganja po metodi udjela 31.12.2025. (44.232 tis. €); udio u dobiti 2025.: 43.551 tis. €, isplaćena dividenda KOEI-ju 2025.: 42.980 tis. €. Napomena: objavljena dobit JV-a (100%) je 87,700,000 € (naš udio ~42,973,000 €/g) — knjigovodstveno pravilo je namjerno konzervativno (JV isplaćuje gotovo svu dobit pa knjiga ostaje niska)",
               "pct": 0.49,
               "placeholder": true
+            },
+            {
+              "name": "KONČAR D&ST (KODT)",
+              "value_eur": 1790176637.0,
+              "value_market_eur": 1190089819.0,
+              "fair_basis": "our_estimate",
+              "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5,591–7,691 €/dionici × 511,232 dionica × 0.5273",
+              "pct": 0.5273,
+              "placeholder": false
+            },
+            {
+              "name": "Dalekovod (DLKV)",
+              "value_eur": 192920615.0,
+              "value_market_eur": 522808171.0,
+              "fair_basis": "our_estimate",
+              "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–7 €/dionici × 41,247,193 dionica × 0.7500",
+              "pct": 0.75,
+              "placeholder": false
             }
           ],
           "missing": [
@@ -5160,27 +5179,13 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 1832296653.0,
-          "nav_total_eur": 2030718890.0,
+          "nav_gross_eur": 2125359351.0,
+          "nav_total_eur": 2323781588.0,
           "identity": [
             {
-              "item": "KONČAR D&ST (KODT)",
-              "eur": 1530450309.0,
-              "per_share": 595.0153585428978,
-              "basis": "our_estimate",
-              "pct": 0.5273
-            },
-            {
-              "item": "Dalekovod (DLKV)",
-              "eur": 193094343.0,
-              "per_share": 75.07208764446746,
-              "basis": "our_estimate",
-              "pct": 0.75
-            },
-            {
               "item": "KONČAR standalone (ex-uvrštene kćeri)",
-              "eur": 64520000.0,
-              "per_share": 25.08437595616688,
+              "eur": 98030100.0,
+              "per_share": 38.11258343801356,
               "basis": "multiple",
               "pct": 1.0
             },
@@ -5192,6 +5197,20 @@
               "pct": 0.49
             },
             {
+              "item": "KONČAR D&ST (KODT)",
+              "eur": 1790176637.0,
+              "per_share": 695.992929176294,
+              "basis": "our_estimate",
+              "pct": 0.5273
+            },
+            {
+              "item": "Dalekovod (DLKV)",
+              "eur": 192920615.0,
+              "per_share": 75.00454489080794,
+              "basis": "our_estimate",
+              "pct": 0.75
+            },
+            {
               "item": "neto novac (−neto dug) centra/grupe",
               "eur": 198422237.0,
               "per_share": 77.14349025064548,
@@ -5199,31 +5218,31 @@
             },
             {
               "item": "holding diskont (2% sredina)",
-              "eur": -50767972.0,
-              "per_share": -19.7378007156573,
+              "eur": -58094540.0,
+              "per_share": -22.586256588541747,
               "basis": "v2 §4 taksonomija"
             }
           ],
           "identity_note": "Σ stavki = sidro po dionici (v2 §5); svaka stavka s osnovom: our_estimate / market_fallback / multiple",
           "sotp_fair": {
-            "nav_eur": 2030718890.0,
-            "base_per_share": 769.7742279106345,
+            "nav_eur": 2323781588.0,
+            "base_per_share": 880.8640069531282,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
-            "nav_eur": 2020072228.0,
-            "base_per_share": 765.7384522068867,
+            "nav_eur": 2053582328.0,
+            "base_per_share": 778.4409545016872,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": -0.5,
+          "market_vs_fair_pct": -11.6,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
             "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji"
           },
           "market_check": {
             "own_market_cap_eur": 2613272904.0,
-            "nav_pre_discount_eur": 2030718890.0,
-            "price_vs_nav_pct": 28.7,
+            "nav_pre_discount_eur": 2323781588.0,
+            "price_vs_nav_pct": 12.5,
             "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
           },
           "market_based_share_of_gross": 0.98
@@ -5248,9 +5267,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 794.7914360157464,
-      "zone_high": 836.6225642271015,
-      "dispersion": 0.05000000000000005,
+      "zone_low": 858.2777503645863,
+      "zone_high": 903.4502635416699,
+      "dispersion": 0.05000000000000012,
       "divergent": false,
       "archetype": "holding_operating",
       "anchor_methods": [
@@ -5261,12 +5280,12 @@
         "comps": {
           "role": "secondary",
           "note": "integrirani operativni parent: SOTP BEZ holding diskonta; konsolidirani DCF je potvrda (v2 §2/§4)",
-          "vs_zone_pct": 0.0
+          "vs_zone_pct": -0.11875421085295768
         },
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "konsolidirani DCF diskontira novčane tokove CIJELE grupe; nekontrolirajući interes (manjinski udjeli) ODUZET je knjigovodstveno, ali metoda i dalje vrednuje kćeri po punoj vrijednosti rasta iako ih matica drži samo djelomično — zato stoji iznad SOTP-a, koji vrednuje svaku kću po stvarnom vlasničkom udjelu. Sidro je SOTP; konsolidirani DCF je gornji kontekst, ne fer-procjena za dioničara matice",
-          "vs_zone_pct": 0.7710690595065353
+          "vs_zone_pct": 0.6400640940421813
         },
         "sotp_nav": {
           "role": "anchor",
@@ -5275,22 +5294,22 @@
         }
       },
       "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, dcf_fcf, sotp_nav) ± osjetljivost primarnog sidra 'sotp_nav' (r/wacc ±1 p.b.) — v3 triangulacija",
-      "all_methods_low": 769.7742279106345,
+      "all_methods_low": 756.353653427388,
       "all_methods_high": 1444.6734295379476,
-      "dispersion_all": 0.46716385020188766,
+      "dispersion_all": 0.47645354447385807,
       "method_bases": {
-        "comps": 815.7070001214239,
+        "comps": 756.353653427388,
         "dcf_fcf": 1444.6734295379476,
-        "sotp_nav": 769.7742279106345
+        "sotp_nav": 880.8640069531282
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: dcf_fcf +77% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: dcf_fcf +64% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
       ],
-      "vs_market_pct": 24.6,
+      "vs_market_pct": 15.3,
       "anchor_inconsistency": [
-        "dcf_fcf +77% vs primarno sidro"
+        "dcf_fcf +64% vs primarno sidro"
       ],
-      "reasoning": "Rast +10.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'serija' (višegodišnja serija: +20.1%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,031 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 769.77 € po dionici. Od toga vlastito poslovanje matice (bez uvrštenih kćeri) vrijedi 65 M€ (25.08 € po dionici), vrednovano iz nekonsolidiranog izvještaja. Tržište te iste kćeri trenutačno vrednuje 0.5% niže nego mi. Kontrolne metode uz sidro: DCF (FCF) +77% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +10.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održivi rast' (višegodišnja serija: +20.1%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,324 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 880.86 € po dionici. Od toga vlastito poslovanje matice (bez uvrštenih kćeri) vrijedi 98 M€ (38.11 € po dionici), vrednovano iz nekonsolidiranog izvještaja. Tržište te iste kćeri trenutačno vrednuje 11.6% niže nego mi. Kontrolne metode uz sidro: DCF (FCF) +64% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
@@ -5300,35 +5319,31 @@
       ],
       "class_zones": null,
       "recalibrating": null,
-      "dividend_sanity": null,
+      "dividend_sanity": {
+        "d_sust_ps": 8.1442,
+        "fallback_raw": false,
+        "zone_low": 858.28,
+        "zone_high": 903.45,
+        "implied_yield_low": 0.0095,
+        "threshold": 0.0803,
+        "r": 0.1053,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je sotp_nav — ista pretpostavka rasta kojom je zona izračunata)",
+        "dividend_floor": null,
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 8.14 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (858.28 €), samo od te dividende dobivao bi 0.9% godišnje. Fer cijena to ne dopušta iznad 8.0% (traženi prinos 10.5% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
       "low_float_note": null
     },
     "sotp": {
       "parts": [
         {
-          "name": "KONČAR D&ST (KODT)",
-          "value_eur": 1530450309.0,
-          "value_market_eur": 1190089819.0,
-          "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 4,780–6,575 €/dionici × 511,232 dionica × 0.5273",
-          "pct": 0.5273,
-          "placeholder": false
-        },
-        {
-          "name": "Dalekovod (DLKV)",
-          "value_eur": 193094343.0,
-          "value_market_eur": 522808171.0,
-          "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–7 €/dionici × 41,247,193 dionica × 0.7500",
-          "pct": 0.75,
-          "placeholder": false
-        },
-        {
           "name": "KONČAR standalone (ex-uvrštene kćeri)",
-          "value_eur": 64520000.0,
-          "value_market_eur": 64520000.0,
+          "value_eur": 98030100.0,
+          "value_market_eur": 98030100.0,
           "fair_basis": "multiple",
-          "basis": "standalone_separate EV/EBITDA (M41): vlastito OPERATIVNO poslovanje matice iz NEKONSOLIDIRANOG izvještaja FY2025 — operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koji je u HR klasifikaciji unutar poslovnih prihoda; kćeri su već u NAV-u kroz udjele pa se uklanja — bez dvostrukog brojanja) na 293 M€ prihoda × EV/EBITDA 7.0 − neto dug 3.3 M€ = 65 M€ × 1.00",
+          "basis": "standalone_separate EV/EBITDA (M41): vlastito OPERATIVNO poslovanje matice iz NEKONSOLIDIRANOG izvještaja FY2025 — operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koji je u HR klasifikaciji unutar poslovnih prihoda; kćeri su već u NAV-u kroz udjele pa se uklanja — bez dvostrukog brojanja) na 293 M€ prihoda × EV/EBITDA 10.5 − neto dug 3.3 M€ = 98 M€ × 1.00",
           "pct": 1.0,
           "placeholder": false
         },
@@ -5340,6 +5355,24 @@
           "basis": "associate_book (v3 SOTP): udio u knjigovodstvenoj vrijednosti JV-a po metodi udjela = 44,232,000 € — KOEI GI 2025, bilješka 16, str. 131 — knjigovodstvena vrijednost ulaganja po metodi udjela 31.12.2025. (44.232 tis. €); udio u dobiti 2025.: 43.551 tis. €, isplaćena dividenda KOEI-ju 2025.: 42.980 tis. €. Napomena: objavljena dobit JV-a (100%) je 87,700,000 € (naš udio ~42,973,000 €/g) — knjigovodstveno pravilo je namjerno konzervativno (JV isplaćuje gotovo svu dobit pa knjiga ostaje niska)",
           "pct": 0.49,
           "placeholder": true
+        },
+        {
+          "name": "KONČAR D&ST (KODT)",
+          "value_eur": 1790176637.0,
+          "value_market_eur": 1190089819.0,
+          "fair_basis": "our_estimate",
+          "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5,591–7,691 €/dionici × 511,232 dionica × 0.5273",
+          "pct": 0.5273,
+          "placeholder": false
+        },
+        {
+          "name": "Dalekovod (DLKV)",
+          "value_eur": 192920615.0,
+          "value_market_eur": 522808171.0,
+          "fair_basis": "our_estimate",
+          "basis": "fer-procjena: fer-procjena DLKV: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5–7 €/dionici × 41,247,193 dionica × 0.7500",
+          "pct": 0.75,
+          "placeholder": false
         }
       ],
       "net_cash": {
@@ -5347,8 +5380,8 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 1832296653.0,
-      "nav_total_eur": 2030718890.0,
+      "nav_gross_eur": 2125359351.0,
+      "nav_total_eur": 2323781588.0,
       "holding_discount_range": [
         0.0,
         0.05
@@ -5356,44 +5389,30 @@
       "holding_discount_reason": "integrirani operativni parent (v2 §4): kontrola + konsolidacija iste djelatnosti -> diskont 0–5%, NE tretira se kao pasivni holding",
       "market_check": {
         "own_market_cap_eur": 2613272904.0,
-        "nav_pre_discount_eur": 2030718890.0,
-        "price_vs_nav_pct": 28.7,
+        "nav_pre_discount_eur": 2323781588.0,
+        "price_vs_nav_pct": 12.5,
         "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
       },
       "sotp_fair": {
-        "nav_eur": 2030718890.0,
-        "base_per_share": 769.7742279106345,
+        "nav_eur": 2323781588.0,
+        "base_per_share": 880.8640069531282,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
-        "nav_eur": 2020072228.0,
-        "base_per_share": 765.7384522068867,
+        "nav_eur": 2053582328.0,
+        "base_per_share": 778.4409545016872,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": -0.5,
+      "market_vs_fair_pct": -11.6,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
       "missing": [
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
       ],
       "identity": [
         {
-          "item": "KONČAR D&ST (KODT)",
-          "eur": 1530450309.0,
-          "per_share": 595.0153585428978,
-          "basis": "our_estimate",
-          "pct": 0.5273
-        },
-        {
-          "item": "Dalekovod (DLKV)",
-          "eur": 193094343.0,
-          "per_share": 75.07208764446746,
-          "basis": "our_estimate",
-          "pct": 0.75
-        },
-        {
           "item": "KONČAR standalone (ex-uvrštene kćeri)",
-          "eur": 64520000.0,
-          "per_share": 25.08437595616688,
+          "eur": 98030100.0,
+          "per_share": 38.11258343801356,
           "basis": "multiple",
           "pct": 1.0
         },
@@ -5405,6 +5424,20 @@
           "pct": 0.49
         },
         {
+          "item": "KONČAR D&ST (KODT)",
+          "eur": 1790176637.0,
+          "per_share": 695.992929176294,
+          "basis": "our_estimate",
+          "pct": 0.5273
+        },
+        {
+          "item": "Dalekovod (DLKV)",
+          "eur": 192920615.0,
+          "per_share": 75.00454489080794,
+          "basis": "our_estimate",
+          "pct": 0.75
+        },
+        {
           "item": "neto novac (−neto dug) centra/grupe",
           "eur": 198422237.0,
           "per_share": 77.14349025064548,
@@ -5412,8 +5445,8 @@
         },
         {
           "item": "holding diskont (2% sredina)",
-          "eur": -50767972.0,
-          "per_share": -19.7378007156573,
+          "eur": -58094540.0,
+          "per_share": -22.586256588541747,
           "basis": "v2 §4 taksonomija"
         }
       ],
@@ -5422,15 +5455,15 @@
     },
     "value_vs_book": {
       "kind": "iznad_knjige",
-      "zone_low": 794.7914360157464,
-      "zone_high": 836.6225642271015,
+      "zone_low": 858.2777503645863,
+      "zone_high": 903.4502635416699,
       "bvps": 245.0,
       "roe": 0.201383,
       "r": 0.10528409999999999,
       "price": 1016.0,
       "pb_market": 4.15,
       "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
-      "plain": "Fer-zona (794,79–836,62 €) viša je od knjigovodstvene vrijednosti (245,00 € po dionici). Firma na vlastitom kapitalu zarađuje oko 20,1 % godišnje, više od zahtijevanog prinosa od 10,5 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
+      "plain": "Fer-zona (858,28–903,45 €) viša je od knjigovodstvene vrijednosti (245,00 € po dionici). Firma na vlastitom kapitalu zarađuje oko 20,1 % godišnje, više od zahtijevanog prinosa od 10,5 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
     }
   },
   "methodology": {
@@ -5449,7 +5482,7 @@
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
         "v": "10,0%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'serija'"
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održivi rast'"
       },
       {
         "k": "Peer multipli",

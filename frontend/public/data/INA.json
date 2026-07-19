@@ -737,7 +737,7 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 20.0,
+      "d_sust_ps": 16.8,
       "fallback_raw": true,
       "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
     }
@@ -2985,9 +2985,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 355.2940591280373,
-      "zone_high": 389.92754519766095,
-      "dispersion": 0.08882031160960259,
+      "zone_low": 298.44700966755136,
+      "zone_high": 362.02304270046534,
+      "dispersion": 0.17561322218242398,
       "divergent": false,
       "archetype": "cyclical",
       "anchor_methods": [
@@ -3011,7 +3011,7 @@
           "vs_zone_pct": -0.3840994019811116
         }
       },
-      "zone_note": "dvije kvalificirane metode razmaknute 56% > 40% — NE prosječi (v2 §3): sredinu nosi sidro 'dcf_fcf', druga metoda je kontekst — v3 triangulacija; isključeno (nepozitivna baza/conf): comps; DIVIDENDNI POD (v3.1): V_div 355.29 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (262.92 → 355.29) — održiva dividenda podržava vrijednost, ne gasi zonu",
+      "zone_note": "dvije kvalificirane metode razmaknute 56% > 40% — NE prosječi (v2 §3): sredinu nosi sidro 'dcf_fcf', druga metoda je kontekst — v3 triangulacija; isključeno (nepozitivna baza/conf): comps; DIVIDENDNI POD (v3.1): V_div 298.45 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (262.92 → 298.45) — održiva dividenda podržava vrijednost, ne gasi zonu",
       "all_methods_low": 205.7688164350819,
       "all_methods_high": 321.45111256781695,
       "dispersion_all": 0.3598752395306437,
@@ -3021,9 +3021,10 @@
         "justified_pb_roe": 205.7688164350819
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: justified_pb_roe -38% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: justified_pb_roe -38% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "fer-zona odstupa +56% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 38.2,
+      "vs_market_pct": 55.9,
       "anchor_inconsistency": [
         "justified_pb_roe -38% vs primarno sidro"
       ],
@@ -3047,46 +3048,47 @@
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 20.0,
-        "zone_low": 355.29,
-        "zone_high": 389.93,
+        "d_sust_ps": 16.8,
+        "fallback_raw": true,
+        "zone_low": 298.45,
+        "zone_high": 362.02,
         "implied_yield_low": 0.0563,
         "threshold": 0.0563,
         "r": 0.0963,
         "g_used": 0.04,
         "g_source": "terminalni g 4.0% (sidro zone je dcf_fcf)",
         "dividend_floor": {
-          "v_div": 355.29,
+          "v_div": 298.45,
           "confidence": 0.8,
-          "formula": "V_div = D_sust 20.00 € / (r 9.63% − g 4.0%) = 355.29 € — Gordonova donja granica iz stvarno isplaćenog novca",
+          "formula": "V_div = D_sust 16.80 € / (r 9.63% − g 4.0%) = 298.45 € — Gordonova donja granica iz stvarno isplaćenog novca",
           "applied_floor": true,
           "zone_before": [
             262.92,
             405.26
           ],
           "zone_after": [
-            355.29,
-            389.93
+            298.45,
+            362.02
           ]
         },
         "passes": true,
         "verdict": "prolazi (uz dividendni pod)",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 20.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (355.29 €), samo od te dividende dobivao bi 5.6% godišnje. Fer cijena to ne dopušta iznad 5.6% (traženi prinos 9.6% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: Dividendni pod primijenjen: održiva dividenda od 20.00 € podržava vrijednost od najmanje 355.29 € (Gordonov izračun) — uključeno u zonu."
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 16.80 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (298.45 €), samo od te dividende dobivao bi 5.6% godišnje. Fer cijena to ne dopušta iznad 5.6% (traženi prinos 9.6% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: Dividendni pod primijenjen: održiva dividenda od 16.80 € podržava vrijednost od najmanje 298.45 € (Gordonov izračun) — uključeno u zonu."
       },
       "low_float_note": "free float ~1% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null,
     "value_vs_book": {
       "kind": "iznad_knjige",
-      "zone_low": 355.2940591280373,
-      "zone_high": 389.92754519766095,
+      "zone_low": 298.44700966755136,
+      "zone_high": 362.02304270046534,
       "bvps": 163.75,
       "roe": 0.114722,
       "r": 0.0962914,
       "price": 515.0,
       "pb_market": 3.15,
       "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
-      "plain": "Fer-zona (355,29–389,93 €) viša je od knjigovodstvene vrijednosti (163,75 € po dionici). Firma na vlastitom kapitalu zarađuje oko 11,5 % godišnje, više od zahtijevanog prinosa od 9,6 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
+      "plain": "Fer-zona (298,45–362,02 €) viša je od knjigovodstvene vrijednosti (163,75 € po dionici). Firma na vlastitom kapitalu zarađuje oko 11,5 % godišnje, više od zahtijevanog prinosa od 9,6 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
     }
   },
   "methodology": {
@@ -3115,6 +3117,7 @@
     ],
     "limitations": [
       "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
+      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
       "β = 1.12 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "komponente r-a: rf 2.70% · ERP 4.23% · CRP 1.2 p.b. — vrijednosti su ručno unesene s datumom (tržišni izvori nedostupni iz build okruženja) i označene exact_unverified; rizik zemlje se računa točno jednom — u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"

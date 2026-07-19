@@ -843,7 +843,7 @@
         "ex_date": "2026-06-09",
         "payout_type": "jednokratna",
         "payout_ratio": 0.40945910774733346,
-        "classified_reason": "1.25 € > 150% medijana prethodnih redovnih isplata (0.72 €)",
+        "classified_reason": "1.25 € > 150% medijana prethodnih redovnih isplata (0.70 €)",
         "record_date": "2026-06-10",
         "payment_date": "2026-06-16",
         "status": "paid",
@@ -857,8 +857,8 @@
         "div_type": "Izglasana dividenda",
         "ex_date": "2025-06-05",
         "payout_type": "jednokratna",
-        "payout_ratio": null,
-        "classified_reason": "1.10 € > 150% medijana prethodnih redovnih isplata (0.72 €); payout n/p: dobit FY2024 nije u bazi",
+        "payout_ratio": 0.9488998729102346,
+        "classified_reason": "1.10 € > 150% medijana prethodnih redovnih isplata (0.70 €)",
         "record_date": "2025-06-06",
         "payment_date": "2025-06-12",
         "status": "paid",
@@ -871,9 +871,9 @@
         "amount_eur": 0.75,
         "div_type": "Izglasana dividenda",
         "ex_date": "2024-05-03",
-        "payout_type": "redovna",
-        "payout_ratio": null,
-        "classified_reason": "unutar 150% medijana prethodnih redovnih (0.70 €); payout n/p: dobit FY2023 nije u bazi",
+        "payout_type": "iz_zadrzane_dobiti",
+        "payout_ratio": 1.0527208021885632,
+        "classified_reason": "payout 105% > 100% dobiti FY2023 — isplata crpi zadržanu dobit",
         "record_date": "2024-05-06",
         "payment_date": "2024-05-15",
         "status": "paid",
@@ -887,8 +887,8 @@
         "div_type": "Izglasana dividenda",
         "ex_date": "2023-05-04",
         "payout_type": "redovna",
-        "payout_ratio": null,
-        "classified_reason": "prva zabilježena isplata klase; payout n/p: dobit FY2022 nije u bazi",
+        "payout_ratio": 0.7464592491395874,
+        "classified_reason": "prva zabilježena isplata klase",
         "record_date": "2023-05-05",
         "payment_date": "2023-05-16",
         "status": "paid",
@@ -928,9 +928,18 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": null,
-      "suppressed_one_off": 1.25,
-      "note": "zadnja isplata je jednokratna/iz zadržane dobiti, a održiva baza nije izračunljiva — DDM se ne računa (radije prazno nego krivo)"
+      "d_sust_ps": 2.1485,
+      "payout_used": 0.7465,
+      "payout_basis": "medijan payout ratija redovnih isplata (1 g.); isključene godine s jednokratnim/iz zadržane dobiti: FY2023, FY2024, FY2025",
+      "coverage_announced": 2.303,
+      "flags": [],
+      "excluded_years": [
+        "FY2023",
+        "FY2024",
+        "FY2025"
+      ],
+      "subsidiary_inflows": null,
+      "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
     }
   },
   "prices": [
@@ -4176,20 +4185,18 @@
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.42 (n=3), P/B=2.48 (n=3), EV/EBITDA=10.64 (n=3). Skup ['RIVP', 'PLAG', 'MAIS'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: RIVP P/E=23.92 P/B=3.3; PLAG P/E=15.5 P/B=2.48; MAIS P/E=20.42 P/B=1.76"
       },
       "growth": {
-        "g1": 0.0636,
+        "g1": 0.04,
         "signals": {
           "g_obs": 0.0676,
-          "g_sust": 0.0698,
+          "g_sust": 0.0177,
           "g_terminal": 0.04
         },
-        "origin": "serija",
-        "winner": "g_obs",
-        "badges": [
-          "TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r)"
-        ],
+        "origin": "sidro terminala",
+        "winner": "g_terminal",
+        "badges": [],
         "ttm_context": -0.0066,
         "short_series": false,
-        "source": "g1=6.4% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +6.8%; održivi rast: ROE 7.0% × (1 − payout 0%) = +7.0%; sidro terminala 4.0%} — pobjednik 'serija'; TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "source": "g1=4.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +6.8%; održivi rast: ROE 7.0% × (1 − payout 75%) = +1.8%; sidro terminala 4.0%} — pobjednik 'sidro terminala'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
       }
     },
     "assumption_flags": [
@@ -4264,17 +4271,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 50.72545462412609,
-        "base": 79.8057790443414,
-        "high": 140.14085336621469,
+        "low": 46.33692917862747,
+        "base": 73.82868240901715,
+        "high": 130.86557613418356,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.06860999999999999,
           "g_terminal": 0.04,
-          "g1_explicit": 0.0636,
+          "g1_explicit": 0.04,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=6.4% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +6.8%; održivi rast: ROE 7.0% × (1 − payout 0%) = +7.0%; sidro terminala 4.0%} — pobjednik 'serija'; TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule pucaju kad g → r). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=4.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +6.8%; održivi rast: ROE 7.0% × (1 − payout 75%) = +1.8%; sidro terminala 4.0%} — pobjednik 'sidro terminala'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
           "placeholder": false,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -4324,25 +4331,25 @@
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": 0.3578535719279283
+          "vs_zone_pct": 0.2561564002040104
         }
       },
       "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps) ± osjetljivost primarnog sidra 'comps' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 58.77347947837288,
-      "all_methods_high": 79.8057790443414,
-      "dispersion_all": 0.2635435656142475,
+      "all_methods_high": 73.82868240901715,
+      "dispersion_all": 0.20392078578941952,
       "method_bases": {
         "comps": 58.77347947837288,
-        "dcf_fcf": 79.8057790443414
+        "dcf_fcf": 73.82868240901715
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: dcf_fcf +36% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: dcf_fcf +26% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
       ],
       "vs_market_pct": -30.9,
       "anchor_inconsistency": [
-        "dcf_fcf +36% vs primarno sidro"
+        "dcf_fcf +26% vs primarno sidro"
       ],
-      "reasoning": "Rast +6.4% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'serija' (višegodišnja serija: +6.8%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 25 € operativne zarade (EBITDA marža 24.7%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 58.77 € po dionici. Leće se razilaze (81%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 4.7); visok D&A (46% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: DCF (FCF) +36% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je. Tržišna cijena implicira ~+2.7% trajnog rasta godišnje / multipl P/E 14.1×; naš kompozitni rast (serija/održivi/terminal) je +6.4% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +4.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'sidro terminala' (višegodišnja serija: +6.8%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 25 € operativne zarade (EBITDA marža 24.7%). Usporedili smo firmu sa sličnima kroz više leća, a bazu nosi cijena/zarada (P/E) kao sektorski primjerena — sidro je 58.77 € po dionici. Leće se razilaze (81%) pa se ne prosječe; razlog: poluga (neto dug/EBITDA 4.7); visok D&A (46% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana). Kontrolne metode uz sidro: DCF (FCF) +26% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je. Tržišna cijena implicira ~+2.7% trajnog rasta godišnje / multipl P/E 14.1×; naš kompozitni rast (serija/održivi/terminal) je +4.0% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 2.7,
@@ -4352,14 +4359,28 @@
         "implied_pe": 14.1,
         "peer_pe": 20.42,
         "implied_pe_note": "cijena implicira P/E 14.1× vs peer medijan 20.42×",
-        "narrative": "Tržišna cijena implicira ~+2.7% trajnog rasta godišnje / multipl P/E 14.1×; naš kompozitni rast (serija/održivi/terminal) je +6.4% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~+2.7% trajnog rasta godišnje / multipl P/E 14.1×; naš kompozitni rast (serija/održivi/terminal) je +4.0% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
         "comps"
       ],
       "class_zones": null,
       "recalibrating": null,
-      "dividend_sanity": null,
+      "dividend_sanity": {
+        "d_sust_ps": 2.1485,
+        "fallback_raw": false,
+        "zone_low": 49.96,
+        "zone_high": 67.59,
+        "implied_yield_low": 0.043,
+        "threshold": 0.0436,
+        "r": 0.0686,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je comps — ista pretpostavka rasta kojom je zona izračunata)",
+        "dividend_floor": null,
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 2.15 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (49.96 €), samo od te dividende dobivao bi 4.3% godišnje. Fer cijena to ne dopušta iznad 4.4% (traženi prinos 6.9% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
       "low_float_note": "free float ~9% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
     "sotp": null,
@@ -4380,8 +4401,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "6,4%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'serija'"
+        "v": "4,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'sidro terminala'"
       },
       {
         "k": "Peer multipli",
