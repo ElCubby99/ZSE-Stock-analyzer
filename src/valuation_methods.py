@@ -379,6 +379,31 @@ def compute_dcf(c: Ctx) -> ValueRange:
     if fcf is None:
         return _missing(c, "free_cash_flow|operating_cf+capex|guidance")
     net_debt = c.val("net_debt") or 0.0
+    # M41 equity bridge: konsolidirani DCF diskontira 100% novčanih tokova kćeri,
+    # pa se do vrijednosti PRIPADAJUĆE DIONIČARU MATICE mora oduzeti nekontrolirajući
+    # interes (NCI) — inače se manjinski udjeli krivo pripisuju matici (KOEI tip).
+    # NCI = knjigovodstveni manjinski interes iz bilance (ukupni kapital − kapital
+    # matice); konzervativno jer fer vrijednost kćeri iznad knjige NIJE procijenjena
+    # (zato konsolidirani DCF holdinga i nakon ovoga ostaje kontekst, a ne sidro —
+    # sidro je SOTP koji poštuje vlasnički udjel po kćeri, v2 §4).
+    te, ep = c.val("total_equity"), c.val("equity_parent")
+    nci, nci_note = 0.0, None
+    if te is not None and ep is not None and te - ep > 0:
+        nci = te - ep
+        nci_note = (
+            f"NCI oduzet {nci / 1e6:,.1f} M€ (knjigovodstveni manjinski interes = "
+            f"ukupni kapital {te / 1e6:,.0f} − kapital matice {ep / 1e6:,.0f}, "
+            f"izvor: bilanca); konsolidirani DCF broji 100% kćeri pa se do vrijednosti "
+            f"za dioničara matice oduzima udjel manjine — konzervativno (fer "
+            f"vrijednost kćeri iznad knjige nije procijenjena)")
+    else:
+        mi = c.val("minority_interests")
+        if mi is not None and mi > 0:
+            nci = mi
+            nci_note = (
+                f"NCI oduzet {nci / 1e6:,.1f} M€ (stavka manjinskih interesa iz "
+                f"bilance); konsolidirani DCF broji 100% kćeri pa se do vrijednosti "
+                f"za dioničara matice oduzima udjel manjine")
     gT = p.terminal_growth
     gh = c.growth_hint or {}
     g1 = gh.get("g1")
@@ -395,7 +420,7 @@ def compute_dcf(c: Ctx) -> ValueRange:
                 f *= (1 + g_yr)
                 ev += f / (1 + wacc) ** yr
             ev += (f * (1 + gT) / (wacc - gT)) / (1 + wacc) ** 5
-        return _per_share(ev - net_debt, c)
+        return _per_share(ev - net_debt - nci, c)
 
     base = ps(p.wacc)
     if base is None:
@@ -569,24 +594,64 @@ def composite_g1(g_obs, g_sust, g_terminal, r):
 
 
 def _separate_standalone(c: "Ctx", h: dict, p: "Params"):
-    """v3 FAZA SOTP: standalone dio matice iz NEKONSOLIDIRANOG izvještaja
-    (filings.basis='separate'): NI − prihod od dividendi kćeri (obavezno
-    isključenje — kći je već u NAV-u kroz udio), × peer P/E × pct.
-    None -> izvještaja nema u bazi ('u obradi')."""
+    """v3 FAZA SOTP + M41: standalone (vlastito) poslovanje matice iz
+    NEKONSOLIDIRANOG izvještaja (filings.basis='separate').
+
+    PRIMARNO (M41): EV/EBITDA na stvarno operativno poslovanje matice —
+    EBITDA je čisto operativna (prihod od dividendi kćeri je financijski
+    prihod ISPOD EBIT-a pa je automatski isključen, nema dvostrukog brojanja).
+      standalone equity = EBITDA × peer EV/EBITDA − standalone neto dug
+    Ovo je metodološki ispravnije od P/E na tanki NI (koji operativno
+    poslovanje matice s ~293 M€ prihoda podcjenjuje jer NI nosi i HQ troškove
+    grupe, kamate i amortizaciju, a bez dividendi ostaje tanak).
+
+    FALLBACK: ako standalone EBITDA nije u bazi — P/E na NI − prihod od
+    dividendi kćeri (stara aproksimacija, uz OZNAKU).
+    None -> nekonsolidiranog izvještaja nema u bazi ('u obradi')."""
     sep = getattr(c, "separate_fin", None)
     if not sep or sep.get("net_income") is None:
         return None
+    pct = float(h.get("ownership_pct") or 1.0)
+
+    # --- PRIMARNO: EV/EBITDA na vlastito OPERATIVNO poslovanje matice ---
+    # OPREZ (KOEI): u HR klasifikaciji prihod od dividendi kćeri može biti unutar
+    # POSLOVNIH prihoda pa je i u prijavljenoj EBITDA-i. Kćeri su već u NAV-u kroz
+    # udjele, pa se dividendni prihod MORA ukloniti — inače dvostruko brojanje.
+    ebitda_rep = sep.get("ebitda")
+    div_inc = sep.get("dividend_income") or 0.0
+    ebitda_op = (ebitda_rep - div_inc) if ebitda_rep is not None else None
+    mult = getattr(p, "peer_ev_ebitda", None)
+    if ebitda_op is not None and ebitda_op > 0 and mult:
+        nd = sep.get("net_debt") or 0.0
+        equity = ebitda_op * mult - nd
+        if equity > 0:
+            stake = equity * pct
+            rev = sep.get("revenue")
+            basis = (
+                f"standalone_separate EV/EBITDA (M41): vlastito OPERATIVNO poslovanje "
+                f"matice iz NEKONSOLIDIRANOG izvještaja FY{sep.get('fy')} — operativna "
+                f"EBITDA {ebitda_op / 1e6:,.1f} M€ (prijavljena {ebitda_rep / 1e6:,.1f} M€ "
+                f"− prihod od dividendi kćeri {div_inc / 1e6:,.1f} M€, koji je u HR "
+                f"klasifikaciji unutar poslovnih prihoda; kćeri su već u NAV-u kroz "
+                f"udjele pa se uklanja — bez dvostrukog brojanja)"
+                + (f" na {rev / 1e6:,.0f} M€ prihoda" if rev else "")
+                + f" × EV/EBITDA {mult:.1f} − neto dug {nd / 1e6:,.1f} M€ = "
+                f"{equity / 1e6:,.0f} M€ × {pct:.2f}")
+            return stake, basis
+
+    # --- FALLBACK: P/E na NI bez dividendi kćeri (uz oznaku) ---
     div_inc = sep.get("dividend_income") or 0.0
     ni = sep["net_income"] - div_inc
     if ni <= 0:
         return None
-    pct = float(h.get("ownership_pct") or 1.0)
     stake = ni * p.peer_pe * pct
-    basis = (f"standalone_separate (v3 SOTP): NI iz NEKONSOLIDIRANOG "
-             f"izvještaja FY{sep.get('fy')} {sep['net_income']:,.0f} € − "
-             f"prihod od dividendi kćeri {div_inc:,.0f} € (isključen: kćeri "
-             f"su već u NAV-u kroz udjele) = {ni:,.0f} € × P/E {p.peer_pe}"
-             f" × {pct:.2f}")
+    basis = (f"standalone_separate P/E (v3 SOTP, fallback — standalone EBITDA "
+             f"nije u bazi): NI iz NEKONSOLIDIRANOG izvještaja FY{sep.get('fy')} "
+             f"{sep['net_income']:,.0f} € − prihod od dividendi kćeri "
+             f"{div_inc:,.0f} € (isključen: kćeri su već u NAV-u kroz udjele) = "
+             f"{ni:,.0f} € × P/E {p.peer_pe} × {pct:.2f}. NAPOMENA: P/E na tanki NI "
+             f"podcjenjuje operativno poslovanje matice — EV/EBITDA se aktivira "
+             f"kad se standalone EBITDA ekstrahira")
     return stake, basis
 
 
@@ -1188,6 +1253,17 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
                          f"sa sličnima, minus dug grupe — ukupno "
                          f"{sf['nav_eur'] / 1e6:,.0f} M€, {disc_txt}; sidro je "
                          f"{results[prim]['range'].base:,.2f} € po dionici")
+            # M41: eksplicitno istakni koliko vrijedi VLASTITO poslovanje matice
+            # (standalone iz nekonsolidiranog izvještaja) — inače "nestane" u NAV-u
+            std = next((x for x in (a.get("parts") or [])
+                        if "standalone" in str(x.get("basis", "")).lower()), None)
+            if std and std.get("value_eur"):
+                ps_std = _per_share(std["value_eur"], c)
+                parts.append(
+                    f"Od toga vlastito poslovanje matice (bez uvrštenih kćeri) "
+                    f"vrijedi {std['value_eur'] / 1e6:,.0f} M€"
+                    + (f" ({ps_std:,.2f} € po dionici)" if ps_std else "")
+                    + ", vrednovano iz nekonsolidiranog izvještaja")
         if a.get("market_vs_fair_pct") is not None:
             mv = a["market_vs_fair_pct"]
             parts.append(f"Tržište te iste kćeri trenutačno vrednuje "
@@ -1418,9 +1494,18 @@ def reconcile(results: dict, sector: Optional[str] = None,
             continue
         if k in anchors:
             dev = (bases[k] / mid - 1) if (mid and bases.get(k)) else None
-            roles[k] = {"role": "anchor_alt",
-                        "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-                        "vs_zone_pct": dev}
+            note = "sidro-potvrda: ista r/rast pretpostavka, druga leća"
+            # M41: kod holdinga konsolidirani DCF strukturno stoji IZNAD SOTP-a —
+            # objasni ZAŠTO (manjinski udjeli), da razlika ne izgleda kao greška
+            if k == "dcf_fcf" and arche in ("holding_operating", "holding_passive"):
+                note = ("konsolidirani DCF diskontira novčane tokove CIJELE grupe; "
+                        "nekontrolirajući interes (manjinski udjeli) ODUZET je "
+                        "knjigovodstveno, ali metoda i dalje vrednuje kćeri po punoj "
+                        "vrijednosti rasta iako ih matica drži samo djelomično — zato "
+                        "stoji iznad SOTP-a, koji vrednuje svaku kću po stvarnom "
+                        "vlasničkom udjelu. Sidro je SOTP; konsolidirani DCF je gornji "
+                        "kontekst, ne fer-procjena za dioničara matice")
+            roles[k] = {"role": "anchor_alt", "note": note, "vs_zone_pct": dev}
             if dev is not None and abs(dev) > 0.25:
                 inconsistent.append(f"{k} {dev:+.0%} vs primarno sidro")
             continue
@@ -2109,7 +2194,11 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                       MAX(fin.value_eur) FILTER (WHERE fin.item IN
                           ('net_income_parent','net_income')),
                       MAX(fin.value_eur) FILTER (WHERE fin.item IN
-                          ('dividend_income_from_subsidiaries','dividend_income'))
+                          ('dividend_income_from_subsidiaries','dividend_income')),
+                      MAX(fin.value_eur) FILTER (WHERE fin.item='ebitda'),
+                      MAX(fin.value_eur) FILTER (WHERE fin.item='ebit'),
+                      MAX(fin.value_eur) FILTER (WHERE fin.item='net_debt'),
+                      MAX(fin.value_eur) FILTER (WHERE fin.item='revenue')
                FROM financials fin JOIN filings f ON f.id = fin.filing_id
                WHERE f.company_id=%s AND f.period_type='annual'
                      AND f.basis='separate'
@@ -2117,9 +2206,14 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
             (company_id,))
         r_sep = cur.fetchone()
         if r_sep and r_sep[1] is not None:
+            def _f(i):
+                return float(r_sep[i]) if r_sep[i] is not None else None
             separate_fin = {"fy": r_sep[0], "net_income": float(r_sep[1]),
-                            "dividend_income": (float(r_sep[2])
-                                                if r_sep[2] is not None else None)}
+                            "dividend_income": _f(2),
+                            # v3 SOTP M41: standalone operativni pokazatelji za
+                            # EV/EBITDA vrednovanje vlastitog poslovanja matice
+                            "ebitda": _f(3), "ebit": _f(4),
+                            "net_debt": _f(5), "revenue": _f(6)}
     except Exception:  # noqa: BLE001
         conn.rollback()
 
