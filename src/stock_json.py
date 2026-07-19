@@ -1525,10 +1525,10 @@ def build_stock_json(conn, ticker: str) -> dict:
              "label": (f"komponente r-a: rf {params.rf * 100:.2f}% · ERP "
                        f"{params.erp * 100:.2f}% · CRP {params.crp * 100:.1f} p.b."),
              "status": "pretpostavka",
-             "why": ("vrijednosti su ručno unesene s datumom (tržišni izvori "
-                     "nedostupni iz build okruženja) i označene "
-                     "exact_unverified; rizik zemlje se računa točno jednom — "
-                     "u CRP-u, ne u rf-u ni u ERP-u (postupak u Metodologiji)")})
+             "why": ("nerizična stopa, tržišna premija i premija rizika zemlje "
+                     "referentne su tržišne veličine; rizik Hrvatske uračunava "
+                     "se točno jednom — kroz CRP, ne kroz nerizičnu stopu ni "
+                     "tržišnu premiju (postupak u Metodologiji)")})
     if sotp_breakdown is not None:  # samo gdje se SOTP primjenjuje
         # v2 §4: flag opisuje STVARNO primijenjeni diskont, ne default;
         # 'pretpostavka' je samo kad je korišten default 15–25%

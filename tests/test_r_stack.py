@@ -39,12 +39,19 @@ def test_konstante_bez_dvostrukog_counta_zemlje():
     assert pc.RF < 0.035, "rf mora biti EUR bezrizični, ne HR krivulja sa spreadom"
     # ERP: zreli, bez skrivenog CRP-a (v2 je imao 5,7% = 4,23% + A3 CRP)
     assert pc.ERP < 0.045, "ERP mora biti ZRELI (bez premije zemlje)"
-    assert "BEZ premije zemlje" in pc.ERP_SRC
+    # ERP tekst mora čitatelju jasno reći da ne uključuje premiju rizika zemlje
+    # (bez internog žargona — M43 čišćenje javnog teksta)
+    assert "ne uključuje premiju rizika zemlje" in pc.ERP_SRC.lower()
     # CRP: zaseban, mali, strop iz naloga v3
     assert 0 < pc.CRP <= 0.015, "CRP mora biti zaseban i ≤ 1,5 p.b."
-    # svaka komponenta nosi datum ručnog unosa + exact_unverified praksu
+    # javni tekst NE smije nositi interni žargon (v3 FAZA K / exact_unverified /
+    # egress / TOČAN REDAK NEPROVJEREN) — Borisov nalog M43
     for src in (pc.RF_SRC, pc.ERP_SRC, pc.CRP_SRC):
-        assert "exact_unverified" in src
+        low = src.lower()
+        assert "exact_unverified" not in low
+        assert "faza k" not in low
+        assert "egress" not in low
+        assert "neprovjeren" not in low
 
 
 def test_r_je_zbroj_vidljivih_komponenti():

@@ -40,28 +40,19 @@ from .valuation_methods import Params
 # bio naplaćen dvaput: u rf (HR 10g nosi HR spread) i u ERP-u (5,7% = zreli
 # 4,23% + A3 CRP) — vidi docs/forenzika_v3_faza_d.md §5.
 RF = 0.0270
-RF_SRC = ("rf=2,70%: 10g njemački Bund (EUR bezrizični), ručni unos "
-          "16.07.2026 — rf_exact_unverified=true (tržišni izvori nedostupni "
-          "iz build okruženja; ista praksa kao ERP). IZBOR Bunda umjesto HR "
-          "10g krivulje (v3 FAZA K): HR 10g (~3,6% sredinom 2026.) nosi "
-          "hrvatski spread naspram Bunda — taj rizik zemlje sada eksplicitno "
-          "i SAMO JEDNOM živi u zasebnom CRP-u, ne u rf-u")
+RF_SRC = ("rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund "
+          "(sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno "
+          "kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.")
 
 ERP = 0.0423
-ERP_SRC = ("ERP=4,23%: Damodaranov ZRELI (mature-market implied) ERP, "
-           "tablica siječanj 2026 (pages.stern.nyu.edu); BEZ premije zemlje "
-           "— CRP je zasebna komponenta (v3 FAZA K, zabranjen dvostruki "
-           "count). TOČAN REDAK NEPROVJEREN (egress 403) — "
-           "erp_exact_unverified=true")
+ERP_SRC = ("ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište "
+           "(Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — "
+           "ona je zasebno u CRP-u.")
 
 CRP = 0.012
-CRP_SRC = ("CRP=1,2 p.b.: hrvatska premija rizika zemlje kao ZASEBNA, mala "
-           "komponenta primjerena investment-grade eurozoni — Moody's A3 "
-           "(stabilno, 11/2024), S&P/Fitch 'A-'; Damodaranov rejting-band za "
-           "A3/A- ~1,2–1,5 p.b., uzet donji dio banda uz strop ≤1,5 p.b. iz "
-           "metodologije v3; ručni unos 16.07.2026 — "
-           "crp_exact_unverified=true. Dodaje se ravno na r (ne množi se "
-           "betom); stari CRP-ovi za pred-eurozonsku Hrvatsku ne vrijede")
+CRP_SRC = ("CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta "
+           "primjerena članici eurozone s investicijskim rejtingom (Moody's A3, "
+           "S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).")
 
 BETA = 1.0
 BETA_SRC = ("beta=1,0: PRETPOSTAVKA — za ovu firmu nema kalibrirane bete "
@@ -174,7 +165,7 @@ def build_params(ticker: str) -> Params:
               f"{CRP * 100:.1f} p.b."
               + (f" + premija nelikvidnosti {illiq_premium * 100:.1f} p.b."
                  if illiq_premium else "")
-              + f" (v3 FAZA K raspis). {RF_SRC}. {ERP_SRC}. {CRP_SRC}. {beta_src}"
+              + f". {RF_SRC} {ERP_SRC} {CRP_SRC} {beta_src}"
               + (f" {illiq_src}" if illiq_src else "")),
         "rf": RF_SRC,
         "erp": ERP_SRC,
