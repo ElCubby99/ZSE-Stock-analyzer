@@ -451,8 +451,18 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     groups.append({"key": "efik", "title": "Učinkovitost", "items": g})
 
     # 9) DIVIDENDE --------------------------------------------------------
+    # M42 fix: zadnja STVARNA isplata (bez prijedloga). Prije: ORDER BY
+    # COALESCE(ex_date,payment_date) DESC — ali DESC u Postgresu stavlja NULL
+    # PRVE, pa su se povijesne isplate bez ex_date (npr. NT-obrazac) birale
+    # proizvoljno umjesto stvarne zadnje (CIAK je pokazivao 0,18 mj. 0,28;
+    # IKBA 12 mj. 17). Sad: fiskalna godina DESC (NULLS LAST) pa datum.
     cur.execute("""SELECT amount_eur, ex_date, payment_date FROM dividends
-                   WHERE company_id=%s ORDER BY COALESCE(ex_date, payment_date) DESC
+                   WHERE company_id=%s AND div_type NOT ILIKE '%%rijedlog%%'
+                         AND amount_eur IS NOT NULL
+                   ORDER BY COALESCE(fiscal_year,
+                              EXTRACT(YEAR FROM COALESCE(ex_date, payment_date))::int - 1)
+                            DESC NULLS LAST,
+                            COALESCE(ex_date, payment_date) DESC NULLS LAST
                    LIMIT 1""", (company_id,))
     dv = cur.fetchone()
     cur.execute("""SELECT amount_eur, ex_date FROM dividends
@@ -463,7 +473,7 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     if dv:
         dps = float(dv[0])
         price = (mcap / shares) if (mcap and shares) else None
-        g.append(_i("DPS (zadnja)", dps, "eur", str(dv[1] or dv[2] or ""), "dividends tablica"))
+        g.append(_i("DPS (zadnja)", dps, "eur_per_share", str(dv[1] or dv[2] or ""), "dividends tablica"))
         g.append(_i("Dividendni prinos", (dps / price) if price else None, "%",
                     "zadnja isplata / zadnja cijena", "DPS / cijena")
                  if price else _np("Dividendni prinos", "nema cijene"))
@@ -473,7 +483,11 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
         g.append(_i("Zadnja isplata", None, "date", str(dv[2] or ""), "dividends tablica",
                     note=str(dv[2] or "n/p")))
     else:
-        g.append(_np("Dividenda", "nema zapisa u bazi"))
+        # dv je None kad nema NIJEDNE stvarne (isplaćene/izglasane) dividende —
+        # npr. postoji samo prijedlog koji još nije izglasan (ADPL tip); tada
+        # nadolazeći ex-datum ispod i dalje pokazuje najavu
+        g.append(_np("DPS (zadnja)", "nema evidentirane isplaćene dividende "
+                     "(moguć samo prijedlog — vidi nadolazeći ex-datum)"))
     g.append(_i("Sljedeći ex-datum", None, "date", str(nxt[1]) if nxt else None,
                 "dividends tablica", note=str(nxt[1]) if nxt else "n/p")
              if nxt else _np("Sljedeći ex-datum", "nema najave"))

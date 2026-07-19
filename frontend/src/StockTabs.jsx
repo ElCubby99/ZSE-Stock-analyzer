@@ -58,6 +58,7 @@ function fmtIndVal(it, lang) {
     case 'x': return `${num(v, 2)}×`
     case 'meur': return meur(v, 1)
     case 'eur': return eur(v, 0)
+    case 'eur_per_share': return eur(v, 2)
     case 'days': return `${num(v, 0)} d`
     case 'count': return num(v, 0)
     case 'date': return dateNote() || dash
