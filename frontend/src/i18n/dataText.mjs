@@ -198,6 +198,8 @@ export const DATA_TX = {
   'nedostaju ulazi (WC/RE/EBIT/knjiga)': 'inputs missing (WC/RE/EBIT/book value)',
   'nema cijene': 'no price',
   'nema dobiti/dionica': 'no profit or share count',
+  'nema evidentirane isplaćene dividende (moguć samo prijedlog — vidi nadolazeći ex-datum)':
+    'no recorded paid dividend (only a proposal may exist — see the upcoming ex-date)',
   'nema najave': 'no announcement',
   'nema podataka': 'no data',
   'nema u bazi': 'not in the database',

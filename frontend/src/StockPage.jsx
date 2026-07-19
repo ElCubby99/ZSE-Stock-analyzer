@@ -87,7 +87,7 @@ function TrendBlock({ trend }) {
                   </>
                 )}
                 <text x={cx} y={H - 7} textAnchor="middle"
-                  fontFamily="IBM Plex Mono" fontSize="10.5" fill="#5C6772">FY{r.year}</text>
+                  fontFamily="IBM Plex Mono" fontSize="10.5" fill="#5C6772">FY{r.year}{r.preliminary ? '*' : ''}</text>
               </g>
             )
           })}
@@ -100,7 +100,11 @@ function TrendBlock({ trend }) {
           </div>
         </div>
       </div>
-      <div className="subnote">{tx(trend.note, lang)}.</div>
+      <div className="subnote">{tx(trend.note, lang)}.
+        {(trend.preliminary_years || []).length > 0 && (
+          <> {trend.preliminary_years.map((y) => `FY${y}`).join('/')}* — {t('sp.prelimStar')}.</>
+        )}
+      </div>
     </section>
   )
 }
@@ -218,7 +222,7 @@ function Fin3Y({ f3 }) {
         <thead>
           <tr>
             <th>{t('fin.item')}</th>
-            {f3.years.map((y) => <th className="num" key={y}>FY{y}</th>)}
+            {f3.years.map((y) => <th className="num" key={y}>FY{y}{(f3.preliminary_years || []).includes(y) ? '*' : ''}</th>)}
             <th className="num">YoY</th><th className="num">CAGR</th>
           </tr>
         </thead>
@@ -233,7 +237,11 @@ function Fin3Y({ f3 }) {
           ))}
         </tbody>
       </table>
-      <div className="subnote">{tx(f3.note, lang)}. {t('sp.finYoyNote')}</div>
+      <div className="subnote">{tx(f3.note, lang)}. {t('sp.finYoyNote')}
+        {(f3.preliminary_years || []).length > 0 && (
+          <> {f3.preliminary_years.map((y) => `FY${y}`).join('/')}* — {t('sp.prelimStar')}.</>
+        )}
+      </div>
     </section>
   )
 }

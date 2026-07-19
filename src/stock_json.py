@@ -168,37 +168,59 @@ def _bank_kpi(cur, company_id: int, fiscal_year: int | None) -> dict | None:
     }
 
 
-def _vfc(cur, company_id: int, fiscal_year: int, item: str):
-    """Jedna stavka iz v_financials_current (annual/consolidated)."""
+def _vfc(cur, company_id: int, fiscal_year: int, item: str, allow_q4: bool = False):
+    """Jedna stavka iz v_financials_current za PUNU godinu (konsolidirano).
+    Godišnji (revidirani) red ima prednost; uz allow_q4=True, ako godišnjeg
+    nema, uzima se q4 kumulativ (TFI kraj godine — nerevidirano) kako puna
+    godina koja postoji samo kao kvartalni kumulativ ne bi bila nevidljiva
+    (isti izvor koji KPI kartica koristi za TTM)."""
     cur.execute(
-        """SELECT value_eur, confidence FROM v_financials_current
+        """SELECT value_eur FROM v_financials_current
            WHERE company_id=%s AND fiscal_year=%s AND item=%s
-             AND period_type='annual' AND basis='consolidated'""",
-        (company_id, fiscal_year, item),
+             AND basis='consolidated' AND period_type = ANY(%s)
+           ORDER BY (period_type='annual') DESC LIMIT 1""",
+        (company_id, fiscal_year, item,
+         ["annual", "q4"] if allow_q4 else ["annual"]),
     )
     r = cur.fetchone()
     return _f(r[0]) if r else None
 
 
+def _full_years(cur, company_id: int, limit: int = 3):
+    """Fiskalne godine s PUNIM podacima (uzlazno) + je li godina nerevidirana.
+    Godišnji (annual) red = revidirano; ako ga nema, q4 kumulativ (TFI kraj
+    godine) drži godinu vidljivom, ali označenu kao nerevidiranu. Vraća
+    [(godina:int, preliminary:bool)]."""
+    cur.execute(
+        """SELECT fiscal_year, bool_or(period_type='annual') AS has_annual
+           FROM v_financials_current
+           WHERE company_id=%s AND basis='consolidated'
+             AND period_type IN ('annual','q4')
+             AND statement IN ('income','balance','cashflow') AND item <> 'dps'
+           GROUP BY fiscal_year
+           ORDER BY fiscal_year DESC LIMIT %s""", (company_id, limit))
+    return sorted((fy, not has_annual) for fy, has_annual in cur.fetchall())
+
+
 def _financials_3y(cur, company_id: int, shares: float | None,
                    rows_spec=None) -> dict:
-    """DIO 1: zadnje 3 fiskalne godine + YoY (FY0 vs FY-1) + CAGR (FY-2 -> FY0)."""
-    cur.execute(
-        """SELECT DISTINCT fiscal_year FROM v_financials_current
-           WHERE company_id=%s AND period_type='annual' AND basis='consolidated'
-             AND statement IN ('income','balance','cashflow') AND item <> 'dps'
-           ORDER BY fiscal_year DESC LIMIT 3""", (company_id,))
-    years = sorted(r[0] for r in cur.fetchall())
+    """DIO 1: zadnje 3 fiskalne godine + YoY (FY0 vs FY-1) + CAGR (FY-2 -> FY0).
+    Puna godina koja postoji samo kao q4 kumulativ (TFI kraj godine) ulazi
+    NEREVIDIRANA i označena — inače bi zadnja godina 'nestala' iz tablice
+    dok se KPI kartica već oslanja na nju (TTM)."""
+    fy_list = _full_years(cur, company_id, limit=3)
+    years = [fy for fy, _ in fy_list]
+    prelim_years = [fy for fy, prelim in fy_list if prelim]
     rows = []
     for item, label in (rows_spec or THREE_Y_ROWS):
         vals = {}
         for y in years:
             if item == "eps":
-                ni = _vfc(cur, company_id, y, "net_income_parent")
+                ni = _vfc(cur, company_id, y, "net_income_parent", allow_q4=True)
                 # EPS uz KANONSKI (današnji) broj dionica — napomena u note sekcije
                 vals[str(y)] = (ni / shares) if (ni is not None and shares) else None
             else:
-                vals[str(y)] = _vfc(cur, company_id, y, item)
+                vals[str(y)] = _vfc(cur, company_id, y, item, allow_q4=True)
         v = [vals.get(str(y)) for y in years]
         yoy = ((v[-1] / v[-2] - 1) if len(v) >= 2 and v[-1] is not None
                and v[-2] not in (None, 0) else None)
@@ -210,6 +232,9 @@ def _financials_3y(cur, company_id: int, shares: float | None,
                      "unit": "eur_per_share" if item == "eps" else "eur"})
     return {
         "years": years,
+        # NEREVIDIRANE godine (samo q4 kumulativ) — frontend prikazuje ogradu
+        # kroz i18n ključ (bez dinamičkog HR teksta u podacima)
+        "preliminary_years": prelim_years,
         "rows": rows,
         "note": ("konsolidirano, godišnje (v_financials_current); EPS uz kanonski "
                  "današnji broj dionica bez trezorskih; prazno = nema u bazi, "
@@ -244,21 +269,19 @@ def _trend(cur, company_id: int, sector: str) -> dict | None:
     is_fin = sector in FINANCIAL_SECTORS
     rev_item = "total_operating_income" if is_bank else "revenue"
     rev_label = "Ukupni operativni prihod" if is_bank else "Prihodi"
-    cur.execute(
-        """SELECT DISTINCT fiscal_year FROM v_financials_current
-           WHERE company_id=%s AND period_type='annual' AND basis='consolidated'
-             AND statement IN ('income','balance','cashflow') AND item <> 'dps'
-           ORDER BY fiscal_year DESC LIMIT 3""", (company_id,))
-    years = sorted(r[0] for r in cur.fetchall())
+    fy_list = _full_years(cur, company_id, limit=3)
+    years = [fy for fy, _ in fy_list]
+    prelim = {fy for fy, p in fy_list if p}
     if not years:
         return None
     series = []
     for y in years:
-        rev = _vfc(cur, company_id, y, rev_item)
-        ebd = None if is_fin else _vfc(cur, company_id, y, "ebitda")
+        rev = _vfc(cur, company_id, y, rev_item, allow_q4=True)
+        ebd = None if is_fin else _vfc(cur, company_id, y, "ebitda", allow_q4=True)
         series.append({
             "year": y, "revenue": _f(rev), "ebitda": _f(ebd),
             "ebitda_margin": (_f(ebd / rev) if (ebd is not None and rev) else None),
+            "preliminary": y in prelim,
         })
 
     # naracija — SAMO brojke i smjer; rečenice se grade iz podataka
@@ -302,6 +325,8 @@ def _trend(cur, company_id: int, sector: str) -> dict | None:
         "series": series,
         "revenue_label": rev_label,
         "narration": " ".join(parts) if parts else None,
+        # NEREVIDIRANE godine (samo q4 kumulativ) — ograda ide kroz i18n ključ
+        "preliminary_years": sorted(prelim),
         "note": ("naracija je izvedena isključivo iz brojki u bazi (bez ocjena); "
                  "smjer = usporedba ruba razdoblja uz prag ±1%"),
     }
