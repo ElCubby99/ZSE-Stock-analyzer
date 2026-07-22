@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-21",
+  "generated_at": "2026-07-22",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -456,7 +456,7 @@
     "leverage_note": "n/p — kod osiguratelja/banaka depoziti, pričuve i obveze iz ugovora nisu financijski dug pa net_debt i net_debt/EBITDA nemaju smisla (sektorski KPI dolaze zasebno)"
   },
   "liquidity": {
-    "as_of": "2026-07-21",
+    "as_of": "2026-07-22",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -467,14 +467,14 @@
       {
         "class_ticker": "HPB",
         "last_trade": {
-          "date": "2026-07-20",
-          "close_eur": 334.0,
-          "volume": 140.0,
-          "turnover_eur": 46760.0
+          "date": "2026-07-22",
+          "close_eur": 336.0,
+          "volume": 108.0,
+          "turnover_eur": 36288.0
         },
-        "days_since_trade": 1,
+        "days_since_trade": 0,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-20: 140 kom / 46,760 € prometa (1 d)"
+        "note": "zadnja trgovina 2026-07-22: 108 kom / 36,288 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -735,9 +735,9 @@
       "is_primary": true,
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, listing); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
-        "close_eur": 334.0,
-        "trade_date": "2026-07-21",
-        "volume": 0.0,
+        "close_eur": 336.0,
+        "trade_date": "2026-07-22",
+        "volume": 108.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -749,15 +749,15 @@
     "dps": 21.83,
     "dps_label": null,
     "shares_ex_treasury": 2024625.0,
-    "market_cap_eur": 676224750.0,
+    "market_cap_eur": 680274000.0,
     "ebitda_eur": null,
     "per_class": [
       {
         "class_ticker": "HPB",
-        "price": 334.0,
-        "pe": 11.506490787946609,
-        "pb": 1.1745033941280496,
-        "div_yield": 0.06535928143712574,
+        "price": 336.0,
+        "pe": 11.575391930389403,
+        "pb": 1.181536348583906,
+        "div_yield": 0.0649702380952381,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -958,16 +958,16 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-21",
+    "as_of": "2026-07-22",
     "classes": [
       {
         "class_ticker": "HPB",
         "last": {
-          "date": "2026-07-21",
-          "close_eur": 334.0
+          "date": "2026-07-22",
+          "close_eur": 336.0
         },
         "prev_close_eur": 334.0,
-        "change_pct": 0.0,
+        "change_pct": 0.0059880239520957446,
         "high_52w_eur": 336.0,
         "low_52w_eur": 270.0,
         "avg_turnover_20d_eur": 60081.1,
@@ -978,7 +978,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-21",
+    "as_of": "2026-07-22",
     "events": [
       {
         "class_ticker": "HPB",
@@ -4806,6 +4806,14 @@
       "volume": 0.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "HPB",
+      "trade_date": "2026-07-22",
+      "close_eur": 336.0,
+      "volume": 108.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -4831,7 +4839,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 225/247 trgovanih dana (91%), prosj. promet 50,515 €/dan.",
+        "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 224/247 trgovanih dana (91%), prosj. promet 50,502 €/dan.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -4944,7 +4952,7 @@
             "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
           },
           "sources": {
-            "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 225/247 trgovanih dana (91%), prosj. promet 50,515 €/dan.",
+            "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 224/247 trgovanih dana (91%), prosj. promet 50,502 €/dan.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
@@ -4965,7 +4973,7 @@
           "placeholder": true,
           "roe_rule": "ROE pravilo (v3 G): TTM 9.9%×0,9 = 9.0% (nema 3g serije za medijan)",
           "sources": {
-            "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 225/247 trgovanih dana (91%), prosj. promet 50,515 €/dan.",
+            "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 224/247 trgovanih dana (91%), prosj. promet 50,502 €/dan.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
@@ -4989,7 +4997,7 @@
           "equivalence_note": "jednostupanjski RI ≡ opravdani P/B ((ROE−g)/(COE−g)); razlika prema justified_pb_roe dolazi SAMO iz 5g fadea ROE→COE — konzistencijska provjera, prava dodana vrijednost traži eksplicitne ROE forecaste",
           "placeholder": true,
           "sources": {
-            "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 225/247 trgovanih dana (91%), prosj. promet 50,515 €/dan.",
+            "r": "r=0.0758 = rf 2.70% + β 0.87×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.87: IZMJERENA regresijom (OLS tjednih log-prinosa HPB vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.136) uz Blume prilagodbu 0,67·0.807 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 224/247 trgovanih dana (91%), prosj. promet 50,502 €/dan.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
@@ -5052,7 +5060,7 @@
       "qa_flags": [
         "metode se međusobno razilaze 91% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": 7.6,
+      "vs_market_pct": 8.2,
       "anchor_inconsistency": [],
       "reasoning": "Rast +4.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'sidro terminala' (višegodišnja serija: -2.0%) — nijedna procjena 'iz glave'. Firma ima 590 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 9.9% godišnje — više od 7.6% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 369.70 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -4% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.",
       "red_rules": [],
@@ -5177,37 +5185,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.024539877300613577,
+            "v": 0.030674846625766916,
             "unit": "%",
-            "basis": "EOD do 2026-07-21",
+            "basis": "EOD do 2026-07-22",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": 0.1283783783783783,
+            "v": 0.1351351351351351,
             "unit": "%",
-            "basis": "EOD do 2026-07-21",
+            "basis": "EOD do 2026-07-22",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": 0.16783216783216792,
+            "v": 0.1748251748251748,
             "unit": "%",
-            "basis": "EOD do 2026-07-21",
+            "basis": "EOD do 2026-07-22",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
-            "v": 0.06369426751592355,
+            "v": 0.07006369426751591,
             "unit": "%",
-            "basis": "EOD do 2026-07-21",
+            "basis": "EOD do 2026-07-22",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": 0.15172413793103456,
+            "v": 0.15068493150684925,
             "unit": "%",
-            "basis": "EOD do 2026-07-21",
+            "basis": "EOD do 2026-07-22",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
@@ -5240,7 +5248,7 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": 676224750.0,
+            "v": 680274000.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase",
@@ -5280,7 +5288,7 @@
           },
           {
             "k": "P/E",
-            "v": 11.525406352853713,
+            "v": 11.594420762152238,
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "trž.kap / neto dobit matici",
@@ -5320,7 +5328,7 @@
           },
           {
             "k": "Earnings yield",
-            "v": 0.08676483669075999,
+            "v": 0.08624837932950546,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "neto dobit / trž.kap",
@@ -5328,7 +5336,7 @@
           },
           {
             "k": "P/B",
-            "v": 1.1462702272329817,
+            "v": 1.1531341208092272,
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
             "formula": "trž.kap / knjiga (matici)",
@@ -5625,7 +5633,7 @@
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.06535928143712574,
+            "v": 0.0649702380952381,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
