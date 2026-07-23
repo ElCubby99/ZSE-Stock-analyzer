@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": false,
-  "generated_at": "2026-07-22",
+  "generated_at": "2026-07-23",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -161,6 +161,10 @@
   "risks": {
     "cards": [
       {
+        "l": "KONCENTRACIJA I LIKVIDNOST",
+        "txt": "INGR: zadnja trgovina 2026-07-23: 5 kom / 10 € prometa (0 d)."
+      },
+      {
         "l": "PRETPOSTAVKE PROCJENE",
         "txt": "Procjena počiva na označenim pretpostavkama: β = 1.80 (clamp); TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); ROE pravilo (TTM + 3g medijan); komponente traženog prinosa r = 11.51%: nerizična stopa 2.70% + β 1.80 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.; peer multipli (P/E 12, P/B 1,5)."
       },
@@ -187,7 +191,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-22",
+    "as_of": "2026-07-23",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -198,14 +202,14 @@
       {
         "class_ticker": "INGR",
         "last_trade": {
-          "date": "2026-07-22",
+          "date": "2026-07-23",
           "close_eur": 2.1,
-          "volume": 3000.0,
-          "turnover_eur": 6300.0
+          "volume": 5.0,
+          "turnover_eur": 10.5
         },
         "days_since_trade": 0,
-        "flag": "ok",
-        "note": "zadnja trgovina 2026-07-22: 3000 kom / 6,300 € prometa (0 d)"
+        "flag": "low",
+        "note": "zadnja trgovina 2026-07-23: 5 kom / 10 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -366,8 +370,8 @@
       "note": "masovni onboard (M15): ISIN i broj dionica sa zse.hr (Uvrštena količina, NACE 7112); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 2.1,
-        "trade_date": "2026-07-22",
-        "volume": 3000.0,
+        "trade_date": "2026-07-23",
+        "volume": 5.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -564,12 +568,12 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-22",
+    "as_of": "2026-07-23",
     "classes": [
       {
         "class_ticker": "INGR",
         "last": {
-          "date": "2026-07-22",
+          "date": "2026-07-23",
           "close_eur": 2.1
         },
         "prev_close_eur": 2.1,
@@ -584,7 +588,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-22",
+    "as_of": "2026-07-23",
     "events": [],
     "upcoming_count": 0,
     "history": null,
@@ -3935,6 +3939,14 @@
       "volume": 3000.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "INGR",
+      "trade_date": "2026-07-23",
+      "close_eur": 2.1,
+      "volume": 5.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -3960,7 +3972,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.1151 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.93: SEKTORSKA unlevered 0.9 (Engineering/Construction) relevered s D/E=1.40 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 194/247 trgovanih dana (79%), prosj. promet 12,460 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). CLAMP: izračunata beta 1.93 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8.",
+        "r": "r=0.1151 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.93: SEKTORSKA unlevered 0.9 (Engineering/Construction) relevered s D/E=1.40 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 193/247 trgovanih dana (78%), prosj. promet 12,455 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). CLAMP: izračunata beta 1.93 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -4088,7 +4100,7 @@
           "placeholder": true,
           "roe_rule": "ROE pravilo (v3 G): max(3g medijan 4.9%, TTM 3.5%×0,9) = 4.9%",
           "sources": {
-            "r": "r=0.1151 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.93: SEKTORSKA unlevered 0.9 (Engineering/Construction) relevered s D/E=1.40 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 194/247 trgovanih dana (79%), prosj. promet 12,460 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). CLAMP: izračunata beta 1.93 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8.",
+            "r": "r=0.1151 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.93: SEKTORSKA unlevered 0.9 (Engineering/Construction) relevered s D/E=1.40 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 193/247 trgovanih dana (78%), prosj. promet 12,455 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). CLAMP: izračunata beta 1.93 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
@@ -4281,37 +4293,37 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": 0.06598984771573613,
+            "v": 0.1170212765957448,
             "unit": "%",
-            "basis": "EOD do 2026-07-22",
+            "basis": "EOD do 2026-07-23 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
             "v": 0.10526315789473695,
             "unit": "%",
-            "basis": "EOD do 2026-07-22",
+            "basis": "EOD do 2026-07-23 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
             "v": 0.0,
             "unit": "%",
-            "basis": "EOD do 2026-07-22",
+            "basis": "EOD do 2026-07-23 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": 0.01941747572815533,
             "unit": "%",
-            "basis": "EOD do 2026-07-22",
+            "basis": "EOD do 2026-07-23 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
             "v": -0.01869158878504673,
             "unit": "%",
-            "basis": "EOD do 2026-07-22",
+            "basis": "EOD do 2026-07-23 · ilikvidna (indikativno)",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
