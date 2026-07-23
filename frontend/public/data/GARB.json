@@ -121,7 +121,14 @@
     "note": "naracija je izvedena isključivo iz brojki u bazi (bez ocjena); smjer = usporedba ruba razdoblja uz prag ±1%"
   },
   "news": {
-    "items": [],
+    "items": [
+      {
+        "date": "2026-07-21",
+        "title": "THE GARDEN COLLECTIVE d.d. - Odluke Glavne skupštine 21.07.2026.",
+        "url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67774",
+        "category": "dividend"
+      }
+    ],
     "note": "službene objave izdavatelja s EHO-a (zse.hr) — bez medijskih napisa i bez komentara platforme; prazno = nema objava u bazi"
   },
   "business_profile": {
@@ -395,8 +402,8 @@
     "eps": 2.57684359028302,
     "bvps": 80.88321556300815,
     "roe": 0.031858817337394985,
-    "dps": 5.0,
-    "dps_label": "zadnja isplata FY2024",
+    "dps": 3.0,
+    "dps_label": null,
     "shares_ex_treasury": 80807.0,
     "market_cap_eur": 9292805.0,
     "ebitda_eur": 2209198.0,
@@ -406,7 +413,7 @@
         "price": 115.0,
         "pe": 44.628242254846874,
         "pb": 1.4218030180861791,
-        "div_yield": 0.043478260869565216,
+        "div_yield": 0.02608695652173913,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -573,13 +580,13 @@
       "item": "dps",
       "label": "Dividenda po dionici",
       "unit": "eur_per_share",
-      "value_eur": null,
-      "confidence": null,
-      "source_page": null,
-      "fiscal_year": null,
-      "source_url": null,
+      "value_eur": 3.0,
+      "confidence": 0.9,
+      "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67774",
       "audited": null,
-      "missing": true
+      "missing": false
     }
   ],
   "price_summary": {
@@ -605,6 +612,21 @@
   "dividend_calendar": {
     "as_of": "2026-07-23",
     "events": [
+      {
+        "class_ticker": "GARB",
+        "fiscal_year": 2025,
+        "amount_eur": 3.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-07-23",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "record_date": "2026-07-24",
+        "payment_date": "2026-07-27",
+        "status": "upcoming",
+        "status_hr": "izglasana — nadolazeća",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67774"
+      },
       {
         "class_ticker": "GARB",
         "fiscal_year": 2024,
@@ -651,9 +673,13 @@
         "source_url": "GARB_2024_4Q.xlsx: NT redak 'isplaćene dividende' 969,683 EUR u 2023. / 80,807 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
-    "upcoming_count": 0,
+    "upcoming_count": 1,
     "history": {
       "per_year": [
+        {
+          "fiscal_year": 2025,
+          "amount_eur": 3.0
+        },
         {
           "fiscal_year": 2024,
           "amount_eur": 5.0
@@ -668,18 +694,18 @@
         }
       ],
       "continuity": {
-        "paid_years": 3,
+        "paid_years": 4,
         "window": 5,
         "coverage_from": 2022,
-        "note": "isplata u 3 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2022"
+        "note": "isplata u 4 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2022"
       },
-      "avg_amount_5y": 7.3333,
-      "growth_cagr": -0.3545,
-      "growth_note": "CAGR FY2022->FY2024"
+      "avg_amount_5y": 6.25,
+      "growth_cagr": -0.37,
+      "growth_note": "CAGR FY2022->FY2025"
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 5.0,
+      "d_sust_ps": 3.0,
       "fallback_raw": true,
       "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
     }
@@ -1006,11 +1032,11 @@
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 5.0,
+        "d_sust_ps": 3.0,
         "fallback_raw": true,
         "zone_low": 212.41,
         "zone_high": 296.57,
-        "implied_yield_low": 0.0235,
+        "implied_yield_low": 0.0141,
         "threshold": 0.0709,
         "r": 0.1109,
         "g_used": 0.04,
@@ -1018,7 +1044,7 @@
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 5.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (212.41 €), samo od te dividende dobivao bi 2.4% godišnje. Fer cijena to ne dopušta iznad 7.1% (traženi prinos 11.1% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 3.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (212.41 €), samo od te dividende dobivao bi 1.4% godišnje. Fer cijena to ne dopušta iznad 7.1% (traženi prinos 11.1% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": "free float ~4% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
@@ -1549,21 +1575,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 5.0,
+            "v": 3.0,
             "unit": "eur_per_share",
-            "basis": "2025-07-03",
+            "basis": "2026-07-23",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.043478260869565216,
+            "v": 0.02608695652173913,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 1.8888990649964823,
+            "v": 1.1333394389978895,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"
@@ -1572,9 +1598,9 @@
             "k": "Zadnja isplata",
             "v": null,
             "unit": "date",
-            "basis": "2025-07-07",
+            "basis": "2026-07-27",
             "formula": "dividends tablica",
-            "note": "2025-07-07"
+            "note": "2026-07-27"
           },
           {
             "k": "Sljedeći ex-datum",

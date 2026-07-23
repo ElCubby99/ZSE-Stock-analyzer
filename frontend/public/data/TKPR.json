@@ -121,7 +121,14 @@
     "note": "naracija je izvedena isključivo iz brojki u bazi (bez ocjena); smjer = usporedba ruba razdoblja uz prag ±1%"
   },
   "news": {
-    "items": [],
+    "items": [
+      {
+        "date": "2026-07-22",
+        "title": "TEKSTILPROMET d.d. - Odluke Glavne skupštine 22.07.2026.",
+        "url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67792",
+        "category": "dividend"
+      }
+    ],
     "note": "službene objave izdavatelja s EHO-a (zse.hr) — bez medijskih napisa i bez komentara platforme; prazno = nema objava u bazi"
   },
   "business_profile": {
@@ -439,8 +446,8 @@
     "eps": 16.640196964883557,
     "bvps": 349.78170132694703,
     "roe": 0.04757309173623601,
-    "dps": 6.0,
-    "dps_label": "zadnja isplata FY2024",
+    "dps": 7.2,
+    "dps_label": null,
     "shares_ex_treasury": 81842.0,
     "market_cap_eur": 31099960.0,
     "ebitda_eur": 4238490.0,
@@ -450,7 +457,7 @@
         "price": 380.0,
         "pe": 22.8362681524701,
         "pb": 1.086391879730745,
-        "div_yield": 0.015789473684210527,
+        "div_yield": 0.018947368421052633,
         "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
@@ -617,13 +624,13 @@
       "item": "dps",
       "label": "Dividenda po dionici",
       "unit": "eur_per_share",
-      "value_eur": null,
-      "confidence": null,
-      "source_page": null,
-      "fiscal_year": null,
-      "source_url": null,
+      "value_eur": 7.2,
+      "confidence": 0.9,
+      "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67792",
       "audited": null,
-      "missing": true
+      "missing": false
     }
   ],
   "price_summary": {
@@ -651,6 +658,21 @@
     "events": [
       {
         "class_ticker": "TKPR",
+        "fiscal_year": 2025,
+        "amount_eur": 7.2,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-08-06",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "record_date": "2026-08-07",
+        "payment_date": "2026-08-14",
+        "status": "upcoming",
+        "status_hr": "izglasana — nadolazeća",
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67792"
+      },
+      {
+        "class_ticker": "TKPR",
         "fiscal_year": 2024,
         "amount_eur": 6.0,
         "div_type": "cash",
@@ -665,27 +687,31 @@
         "source_url": "https://zse.hr/hr/papir/310?isin=HRTKPRRA0000 (zse.hr stranica papira, blok 'Dividenda')"
       }
     ],
-    "upcoming_count": 0,
+    "upcoming_count": 1,
     "history": {
       "per_year": [
+        {
+          "fiscal_year": 2025,
+          "amount_eur": 7.2
+        },
         {
           "fiscal_year": 2024,
           "amount_eur": 6.0
         }
       ],
       "continuity": {
-        "paid_years": 1,
+        "paid_years": 2,
         "window": 5,
         "coverage_from": 2024,
-        "note": "isplata u 1 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2024"
+        "note": "isplata u 2 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2024"
       },
-      "avg_amount_5y": 6.0,
+      "avg_amount_5y": 6.6,
       "growth_cagr": null,
       "growth_note": "rast n/p (manje od 3 godine podataka)"
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 6.0,
+      "d_sust_ps": 7.2,
       "fallback_raw": true,
       "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
     }
@@ -1011,11 +1037,11 @@
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 6.0,
+        "d_sust_ps": 7.2,
         "fallback_raw": true,
         "zone_low": 507.85,
         "zone_high": 762.71,
-        "implied_yield_low": 0.0118,
+        "implied_yield_low": 0.0142,
         "threshold": 0.0536,
         "r": 0.0936,
         "g_used": 0.04,
@@ -1023,7 +1049,7 @@
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 6.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (507.85 €), samo od te dividende dobivao bi 1.2% godišnje. Fer cijena to ne dopušta iznad 5.4% (traženi prinos 9.4% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 7.20 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (507.85 €), samo od te dividende dobivao bi 1.4% godišnje. Fer cijena to ne dopušta iznad 5.4% (traženi prinos 9.4% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": null
     },
@@ -1568,21 +1594,21 @@
         "items": [
           {
             "k": "DPS (zadnja)",
-            "v": 6.0,
+            "v": 7.2,
             "unit": "eur_per_share",
-            "basis": "2025-08-06",
+            "basis": "2026-08-06",
             "formula": "dividends tablica"
           },
           {
             "k": "Dividendni prinos",
-            "v": 0.015789473684210527,
+            "v": 0.018947368421052633,
             "unit": "%",
             "basis": "zadnja isplata / zadnja cijena",
             "formula": "DPS / cijena"
           },
           {
             "k": "Payout",
-            "v": 0.4513494931817597,
+            "v": 0.5416193918181117,
             "unit": "%",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "DPS × dionice / neto dobit"
@@ -1591,17 +1617,17 @@
             "k": "Zadnja isplata",
             "v": null,
             "unit": "date",
-            "basis": "2025-08-14",
+            "basis": "2026-08-14",
             "formula": "dividends tablica",
-            "note": "2025-08-14"
+            "note": "2026-08-14"
           },
           {
             "k": "Sljedeći ex-datum",
             "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema najave"
+            "unit": "date",
+            "basis": "2026-08-06",
+            "formula": "dividends tablica",
+            "note": "2026-08-06"
           }
         ]
       },

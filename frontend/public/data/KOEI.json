@@ -373,7 +373,7 @@
     "cards": [
       {
         "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri -9.6% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
+        "txt": "Tržište vrednuje uvrštene kćeri +1.3% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
       },
       {
         "l": "OVISNOST O KĆERIMA",
@@ -5156,9 +5156,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 848.986357904757,
-        "base": 871.3281041654084,
-        "high": 893.6698504260601,
+        "low": 757.4483960531627,
+        "base": 777.3812485808775,
+        "high": 797.3141011085922,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -5190,10 +5190,10 @@
             },
             {
               "name": "KONČAR D&ST (KODT)",
-              "value_eur": 1768002485.0,
+              "value_eur": 1520164032.0,
               "value_market_eur": 1217799350.0,
               "fair_basis": "our_estimate",
-              "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5,522–7,595 €/dionici × 511,232 dionica × 0.5273",
+              "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 4,742–6,537 €/dionici × 511,232 dionica × 0.5273",
               "pct": 0.5273,
               "placeholder": false
             },
@@ -5216,8 +5216,8 @@
             "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
           },
           "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-          "nav_gross_eur": 2100202965.0,
-          "nav_total_eur": 2298625202.0,
+          "nav_gross_eur": 1852364511.0,
+          "nav_total_eur": 2050786748.0,
           "identity": [
             {
               "item": "KONČAR standalone (ex-uvrštene kćeri)",
@@ -5235,8 +5235,8 @@
             },
             {
               "item": "KONČAR D&ST (KODT)",
-              "eur": 1768002485.0,
-              "per_share": 687.3719625724938,
+              "eur": 1520164032.0,
+              "per_share": 591.0162134800139,
               "basis": "our_estimate",
               "pct": 0.5273
             },
@@ -5255,15 +5255,15 @@
             },
             {
               "item": "holding diskont (2% sredina)",
-              "eur": -57465630.0,
-              "per_share": -22.3417462606515,
+              "eur": -51269669.0,
+              "per_share": -19.932852527714807,
               "basis": "v2 §4 taksonomija"
             }
           ],
           "identity_note": "Σ stavki = sidro po dionici (v2 §5); svaka stavka s osnovom: our_estimate / market_fallback / multiple",
           "sotp_fair": {
-            "nav_eur": 2298625202.0,
-            "base_per_share": 871.3281041654084,
+            "nav_eur": 2050786748.0,
+            "base_per_share": 777.3812485808775,
             "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
           },
           "sotp_market": {
@@ -5271,15 +5271,15 @@
             "base_per_share": 787.6597294169223,
             "note": "kćeri po tržišnoj kapitalizaciji"
           },
-          "market_vs_fair_pct": -9.6,
+          "market_vs_fair_pct": 1.3,
           "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
           "sources": {
             "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji"
           },
           "market_check": {
             "own_market_cap_eur": 2597840190.0,
-            "nav_pre_discount_eur": 2298625202.0,
-            "price_vs_nav_pct": 13.0,
+            "nav_pre_discount_eur": 2050786748.0,
+            "price_vs_nav_pct": 26.7,
             "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
           },
           "market_based_share_of_gross": 0.98
@@ -5304,9 +5304,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 849.5449015612733,
-      "zone_high": 893.1113067695436,
-      "dispersion": 0.04878048780487796,
+      "zone_low": 757.9467173663555,
+      "zone_high": 796.8157797953993,
+      "dispersion": 0.04878048780487792,
       "divergent": false,
       "archetype": "holding_operating",
       "anchor_methods": [
@@ -5317,12 +5317,12 @@
         "comps": {
           "role": "secondary",
           "note": "integrirani operativni parent: SOTP BEZ holding diskonta; konsolidirani DCF je potvrda (v2 §2/§4)",
-          "vs_zone_pct": -0.14233536333120556
+          "vs_zone_pct": -0.03868622604088201
         },
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "konsolidirani DCF diskontira novčane tokove CIJELE grupe; nekontrolirajući interes (manjinski udjeli) ODUZET je knjigovodstveno, ali metoda i dalje vrednuje kćeri po punoj vrijednosti rasta iako ih matica drži samo djelomično — zato stoji iznad SOTP-a, koji vrednuje svaku kću po stvarnom vlasničkom udjelu. Sidro je SOTP; konsolidirani DCF je gornji kontekst, ne fer-procjena za dioničara matice",
-          "vs_zone_pct": 0.658013121155677
+          "vs_zone_pct": 0.8583847142894474
         },
         "sotp_nav": {
           "role": "anchor",
@@ -5337,16 +5337,16 @@
       "method_bases": {
         "comps": 728.6246193313762,
         "dcf_fcf": 1444.6734295379476,
-        "sotp_nav": 871.3281041654084
+        "sotp_nav": 777.3812485808775
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: dcf_fcf +66% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
+        "ULAZI NEKONZISTENTNI: dcf_fcf +86% vs primarno sidro — uskladi pretpostavke, ne širi zonu"
       ],
-      "vs_market_pct": 15.9,
+      "vs_market_pct": 29.9,
       "anchor_inconsistency": [
-        "dcf_fcf +66% vs primarno sidro"
+        "dcf_fcf +86% vs primarno sidro"
       ],
-      "reasoning": "Rast +10.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održivi rast' (višegodišnja serija: +20.1%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,299 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 871.33 € po dionici. Od toga vlastito poslovanje matice (bez uvrštenih kćeri) vrijedi 95 M€ (36.79 € po dionici), vrednovano iz nekonsolidiranog izvještaja. Tržište te iste kćeri trenutačno vrednuje 9.6% niže nego mi. Kontrolne metode uz sidro: DCF (FCF) +66% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +10.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održivi rast' (višegodišnja serija: +20.1%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,051 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 777.38 € po dionici. Od toga vlastito poslovanje matice (bez uvrštenih kćeri) vrijedi 95 M€ (36.79 € po dionici), vrednovano iz nekonsolidiranog izvještaja. Tržište te iste kćeri trenutačno vrednuje 1.3% više nego mi. Kontrolne metode uz sidro: DCF (FCF) +86% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
@@ -5359,9 +5359,9 @@
       "dividend_sanity": {
         "d_sust_ps": 8.1442,
         "fallback_raw": false,
-        "zone_low": 849.54,
-        "zone_high": 893.11,
-        "implied_yield_low": 0.0096,
+        "zone_low": 757.95,
+        "zone_high": 796.82,
+        "implied_yield_low": 0.0107,
         "threshold": 0.0803,
         "r": 0.1053,
         "g_used": 0.025,
@@ -5369,7 +5369,7 @@
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 8.14 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (849.54 €), samo od te dividende dobivao bi 1.0% godišnje. Fer cijena to ne dopušta iznad 8.0% (traženi prinos 10.5% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 8.14 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (757.95 €), samo od te dividende dobivao bi 1.1% godišnje. Fer cijena to ne dopušta iznad 8.0% (traženi prinos 10.5% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": null
     },
@@ -5395,10 +5395,10 @@
         },
         {
           "name": "KONČAR D&ST (KODT)",
-          "value_eur": 1768002485.0,
+          "value_eur": 1520164032.0,
           "value_market_eur": 1217799350.0,
           "fair_basis": "our_estimate",
-          "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 5,522–7,595 €/dionici × 511,232 dionica × 0.5273",
+          "basis": "fer-procjena: fer-procjena KODT: sidro industrial_forward (dcf_fcf, comps, conf 0.7) sredina zone 4,742–6,537 €/dionici × 511,232 dionica × 0.5273",
           "pct": 0.5273,
           "placeholder": false
         },
@@ -5417,8 +5417,8 @@
         "basis": "−net_debt (dug − novac, izvedeno iz ekstrakcije)"
       },
       "net_cash_note": "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su već vrednovana tržišno/multiplom — gruba NAV aproksimacija",
-      "nav_gross_eur": 2100202965.0,
-      "nav_total_eur": 2298625202.0,
+      "nav_gross_eur": 1852364511.0,
+      "nav_total_eur": 2050786748.0,
       "holding_discount_range": [
         0.0,
         0.05
@@ -5426,13 +5426,13 @@
       "holding_discount_reason": "integrirani operativni parent (v2 §4): kontrola + konsolidacija iste djelatnosti -> diskont 0–5%, NE tretira se kao pasivni holding",
       "market_check": {
         "own_market_cap_eur": 2597840190.0,
-        "nav_pre_discount_eur": 2298625202.0,
-        "price_vs_nav_pct": 13.0,
+        "nav_pre_discount_eur": 2050786748.0,
+        "price_vs_nav_pct": 26.7,
         "note": "tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama"
       },
       "sotp_fair": {
-        "nav_eur": 2298625202.0,
-        "base_per_share": 871.3281041654084,
+        "nav_eur": 2050786748.0,
+        "base_per_share": 777.3812485808775,
         "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"
       },
       "sotp_market": {
@@ -5440,7 +5440,7 @@
         "base_per_share": 787.6597294169223,
         "note": "kćeri po tržišnoj kapitalizaciji"
       },
-      "market_vs_fair_pct": -9.6,
+      "market_vs_fair_pct": 1.3,
       "market_vs_fair_note": "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene (fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka",
       "missing": [
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
@@ -5462,8 +5462,8 @@
         },
         {
           "item": "KONČAR D&ST (KODT)",
-          "eur": 1768002485.0,
-          "per_share": 687.3719625724938,
+          "eur": 1520164032.0,
+          "per_share": 591.0162134800139,
           "basis": "our_estimate",
           "pct": 0.5273
         },
@@ -5482,8 +5482,8 @@
         },
         {
           "item": "holding diskont (2% sredina)",
-          "eur": -57465630.0,
-          "per_share": -22.3417462606515,
+          "eur": -51269669.0,
+          "per_share": -19.932852527714807,
           "basis": "v2 §4 taksonomija"
         }
       ],
@@ -5492,15 +5492,15 @@
     },
     "value_vs_book": {
       "kind": "iznad_knjige",
-      "zone_low": 849.5449015612733,
-      "zone_high": 893.1113067695436,
+      "zone_low": 757.9467173663555,
+      "zone_high": 796.8157797953993,
       "bvps": 245.0,
       "roe": 0.201383,
       "r": 0.10528409999999999,
       "price": 1010.0,
       "pb_market": 4.12,
       "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
-      "plain": "Fer-zona (849,54–893,11 €) viša je od knjigovodstvene vrijednosti (245,00 € po dionici). Firma na vlastitom kapitalu zarađuje oko 20,1 % godišnje, više od zahtijevanog prinosa od 10,5 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
+      "plain": "Fer-zona (757,95–796,82 €) viša je od knjigovodstvene vrijednosti (245,00 € po dionici). Firma na vlastitom kapitalu zarađuje oko 20,1 % godišnje, više od zahtijevanog prinosa od 10,5 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
     }
   },
   "methodology": {
