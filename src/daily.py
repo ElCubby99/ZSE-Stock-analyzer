@@ -126,6 +126,15 @@ def stage_extract_queue(conn, run_id, log) -> list[int]:
                 touched.append(cid)
                 conn.commit()
                 continue
+            # PDF ruta = LLM ekstrakcija — bez API ključa filing ostaje
+            # pending (obradi ga prvi run s ključem/kreditom); XLSX gore
+            # radi uvijek jer je parser deterministički
+            from . import config as _cfg
+            if not _cfg.ANTHROPIC_API_KEY:
+                log("extract", cid, "skipped",
+                    f"{ticker}: PDF ekstrakcija čeka ANTHROPIC_API_KEY — "
+                    "filing ostaje pending")
+                continue
             os.makedirs("data/reports/auto", exist_ok=True)
             path = f"data/reports/auto/{ticker.lower()}_{year}_q.pdf"
             r = requests.get(url, timeout=180,
@@ -636,14 +645,29 @@ def main(argv=None) -> int:
 
         # 3. podaci su tu -> puni prolaz (watcher/extract/recompute se rade
         #    JEDNOM dnevno, u runu koji je našao podatke — ne 7x).
-        #    Bez API ključa: watcher/extract se PRESKAČU s razlogom —
-        #    cijene i exporti NE OVISE o Anthropic API-ju.
+        #    M44 (incident 20.-23.07.2026., potrošen API kredit): izvješća i
+        #    dividende prvo ulaze DETERMINISTIČKI iz strukturiranih EHO
+        #    feedova (0 kredita) — vijesti i valuacije ne smiju stati kad
+        #    LLM watcher ne radi. LLM watcher ostaje za slobodne kategorije
+        #    (buyback, kapitalne promjene, ostalo).
         from . import config as _cfg
         touched = []
+        try:
+            from .report_sync import sync_dividend_news, sync_reports
+            n_rep = len(sync_reports(conn, log))
+            n_div = sync_dividend_news(conn, log)
+            conn.commit()
+            log("watcher", None, "ok",
+                f"deterministički sync (EHO feedovi): {n_rep} novih izvješća "
+                f"u queueu, {n_div} dividendnih događaja")
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("watcher", None, "failed",
+                f"deterministički sync: {type(e).__name__}: {e}")
         if not _cfg.ANTHROPIC_API_KEY:
             log("watcher", None, "skipped",
-                "ANTHROPIC_API_KEY nije postavljen — klasifikacija objava i "
-                "ekstrakcija novih izvješća se preskaču (cijene rade bez API-ja)")
+                "ANTHROPIC_API_KEY nije postavljen — LLM klasifikacija ostalih "
+                "objava se preskače (izvješća/dividende/cijene rade bez API-ja)")
         else:
             from .watcher import run_watcher
             try:
@@ -653,7 +677,9 @@ def main(argv=None) -> int:
             except Exception as e:  # noqa: BLE001
                 conn.rollback()
                 log("watcher", None, "failed", f"{type(e).__name__}: {e}")
-            touched = stage_extract_queue(conn, run_id, log)
+        # extract queue UVIJEK: XLSX (TFI) ruta je deterministička i ne treba
+        # API; PDF ruta bez ključa preskače s razlogom (filing ostaje pending)
+        touched = stage_extract_queue(conn, run_id, log)
         stage_recompute(conn, run_id, log, touched)
         # M39: brana svježine — nijedan valuacijski ulaz ne smije biti stariji
         # od zadnjeg dostupnog izvješća (fer vrijednost uvijek iz zadnjeg).

@@ -1,0 +1,95 @@
+# M44: ručni sync izvješća/dividendi s EHO feedova (deterministički, 0 API
+# kredita za XLSX put) + obrada queuea + revalorizacija + regen + vijesti.
+# Namjena: nadoknada kad je dnevni watcher bio mrtav (npr. potrošen API
+# kredit 20.-23.07.2026.) ili kad treba odmah povući svježa izvješća bez
+# čekanja večernjeg daily-eod runa. Idempotentan (dedup na svim razinama).
+name: reports-sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      lookback:
+        description: 'Koliko dana unatrag skenirati EHO feedove'
+        required: false
+        default: '7'
+        type: string
+
+concurrency:
+  group: daily-eod    # ista baza kao daily run — bez preklapanja
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      # sync + extract (XLSX deterministički; PDF samo uz API ključ/kredit)
+      # + recompute dirnutih + regen exporta. Deploy hook NIJE u env-u —
+      # okida se tek nakon commita (isti princip kao daily-eod).
+      - name: Sync izvješća i dividendi (EHO feedovi)
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python -m src.report_sync --lookback-days "${{ inputs.lookback }}" \
+            --extract --recompute --regen
+
+      # vijesti PRIJE deploya — nova izvješća/dividende iz ovog synca odmah
+      # postaju objavljene vijesti (news-ingest auto-publisha činjenične
+      # kategorije) i ulaze u isti Vercel build
+      - name: Auto-vijesti (published za činjenične kategorije, dedup)
+        continue-on-error: true
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          BLOG_API_KEY: ${{ secrets.BLOG_API_KEY }}
+        run: python scripts/generate_news.py --lookback-days 3
+
+      - name: Commit exporta (ako ima promjena)
+        id: commit
+        run: |
+          git config user.name "reports-sync bot"
+          git config user.email "noreply@burzovnilist.com"
+          git add frontend/public/data
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "nema promjena u exportima"
+          else
+            git commit -m "Reports sync $(TZ=Europe/Zagreb date +%F): nova izvješća + exporti [skip ci]"
+            ok=false
+            for i in 1 2 3 4; do
+              if git pull --rebase -X theirs origin main && git push origin main; then
+                ok=true; break
+              fi
+              git rebase --abort 2>/dev/null || true
+              echo "push nije prošao — retry za $((2**i))s"; sleep $((2**i))
+            done
+            [ "$ok" = "true" ] || { echo "::error::push nije uspio"; exit 1; }
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Deploy hook (nakon potvrđenih novih podataka)
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "VERCEL_DEPLOY_HOOK_URL nije postavljen"; exit 1; fi
+          for i in 1 2 3; do
+            curl -fsS -X POST "$HOOK" -o /dev/null && { echo "Vercel build pokrenut"; exit 0; }
+            echo "hook nije prošao — retry za $((4*i))s"; sleep $((4*i))
+          done
+          echo "::error::Vercel deploy hook nije prošao (3 pokušaja)"
+          exit 1

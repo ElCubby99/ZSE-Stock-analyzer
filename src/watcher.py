@@ -44,7 +44,9 @@ def _route(conn, run_id: str, cur, ann_id: int, cid, ticker, category: str,
         upsert_dps_financials(conn, ticker, verbose=False)
         return f"dividende: +{n} događaja, dps osvježen"
     if category == "financial_report" and ticker:
-        from scripts.parse_tfi_universe import LABEL_TO_PT
+        # M44: feed za polugodišnje koristi i '1H' (uz '2Q') — proširena mapa
+        from .report_sync import _period_labels
+        LABEL_TO_PT = _period_labels()
         d = eho.feed("financialReports", ticker=ticker,
                      date_from=(item.get("publishDate") or "")[:10] or date.today().isoformat(),
                      date_to=date.today().isoformat())

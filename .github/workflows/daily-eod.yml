@@ -105,10 +105,22 @@ jobs:
             echo "did_work=true" >> "$GITHUB_OUTPUT"
           fi
 
-      # GLAVNI ISHOD ODMAH: commit + deploy idu PRIJE sporednih koraka
-      # (16.07.2026.: pad Auto-vijesti preskočio je commit/deploy pa su
-      # svježi exporti bačeni s runnerom — objava cijena ne smije ovisiti
-      # o vijestima/alarmu). [skip ci] sprječava petlju workflowa.
+      # Auto-vijesti PRIJE deploya da nova vijest uđe u ISTI Vercel build
+      # kao i dnevne cijene (prerender /vijesti čita Supabase pri buildu).
+      # continue-on-error čuva pouzdanost objave cijena (16.07.2026.: pad
+      # vijesti ne smije preskočiti commit/deploy) — pad se vidi u logu,
+      # a SPA ionako čita vijesti uživo pa ne ovisi o buildu.
+      - name: Auto-vijesti (published za činjenične kategorije, dedup)
+        if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
+        continue-on-error: true   # vijesti su nice-to-have, ne uvjet objave
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          BLOG_API_KEY: ${{ secrets.BLOG_API_KEY }}
+        run: python scripts/generate_news.py --lookback-days 3
+
+      # GLAVNI ISHOD: commit + deploy neovisni o sporednim koracima.
+      # [skip ci] sprječava petlju workflowa.
       - name: Commit exporta (ako ima promjena)
         if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
         id: commit
@@ -158,15 +170,6 @@ jobs:
           exit 1
 
       # Sporedni koraci NAKON objave — njihov pad ne smije dirati exporte.
-      - name: Auto-vijesti (draftovi u news_items, dedup)
-        if: steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work == 'true'
-        continue-on-error: true   # vijesti su nice-to-have, ne uvjet objave
-        env:
-          ZSE_DSN: ${{ secrets.ZSE_DSN }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          BLOG_API_KEY: ${{ secrets.BLOG_API_KEY }}
-        run: python scripts/generate_news.py --lookback-days 3
-
       - name: Digest artefakt
         if: always() && steps.guard.outputs.run == 'true' && steps.daily.outputs.did_work != 'false'
         uses: actions/upload-artifact@v4
