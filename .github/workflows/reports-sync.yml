@@ -13,6 +13,11 @@ on:
         required: false
         default: '7'
         type: string
+      recompute:
+        description: "Dodatni tickeri za revalorizaciju (zarezom; 'svi' = sve firme — nakon promjene metodologije)"
+        required: false
+        default: ''
+        type: string
 
 concurrency:
   group: daily-eod    # ista baza kao daily run — bez preklapanja
@@ -45,7 +50,8 @@ jobs:
           PYTHONUNBUFFERED: '1'
         run: |
           python -m src.report_sync --lookback-days "${{ inputs.lookback }}" \
-            --extract --recompute --regen
+            --extract --recompute --regen \
+            --recompute-tickers "${{ inputs.recompute }}"
 
       # vijesti PRIJE deploya — nova izvješća/dividende iz ovog synca odmah
       # postaju objavljene vijesti (news-ingest auto-publisha činjenične

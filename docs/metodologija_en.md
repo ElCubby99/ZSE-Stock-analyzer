@@ -240,6 +240,40 @@ estimates" (backlog, guidance, management expectations) are not used for
 the growth rate; the historical average and the TTM comparison remain on
 the page as context.
 
+## EV and EV/EBITDA — numerator and denominator must cover the same scope
+
+Enterprise value (EV) and EBITDA only make sense if they measure the SAME
+business:
+
+- **Minority interests are ADDED to EV.** When a company consolidates a
+  subsidiary (control, typically >50%), consolidated EBITDA contains 100%
+  of that subsidiary — including the part belonging to the subsidiary's
+  other shareholders. The parent's market capitalisation reflects only the
+  owners' part, so the minority interest from the balance sheet "buys back"
+  the rest, making EV cover the same 100% that EBITDA measures. Without it,
+  the multiple is artificially low precisely for companies with large
+  consolidated subsidiaries.
+- **Short-term financial assets are deducted alongside cash.** Marketable
+  securities, short-term deposits and financial assets at fair value are
+  de facto cash; the formal "cash and equivalents" line would understate
+  liquid assets. The figure carries the `incl. short-term fin. assets`
+  badge and the click-through breakdown shows both components separately.
+  Long-term financial assets and strategic stakes are NOT deducted — they
+  are not cash.
+- **Associates (<50%, no control) are excluded from EV.** They are not
+  consolidated, so their profit is NOT in EBITDA — consistently, they do
+  not enter as minority interest either; instead, the book value of the
+  investment (equity method) is DEDUCTED from EV as a separate asset. When
+  such an unconsolidated stake is significant, a note accompanies the
+  multiple — the multiple is not distorted, but the reader can see that
+  part of the company's value lives outside it.
+- **Formula**: EV = market capitalisation (all classes) + total debt − cash
+  and equivalents − short-term financial assets + minority interests −
+  book value of associates. The same principles apply to peer multiples
+  (peer EV uses the same formula) and to the bridge from implied EV back to
+  per-share value in the peer comparison (− net debt − minority interest +
+  short-term financial assets + associates).
+
 ## How we guard against errors
 
 - **Input validations**: the balance sheet must balance, parent profit +
@@ -305,6 +339,15 @@ assumptions fair-value zones are computed with TODAY:
   calibration target.** When too many liquid names end up on the same side
   of their zones, an automatic alarm demands a review of OUR inputs — zones
   are reviewed, not fitted to prices.
+
+- **EV must contain minority interests — an acknowledged error (July
+  2026).** External expert feedback confirmed an inconsistency: the
+  displayed indicators did add minority interests to EV, but the bridge
+  from peer multiples back to per-share value and the peer EV used in
+  calibration did NOT — overvaluing companies with large minority
+  interests (multiple × 100% of EBITDA, with only net debt deducted).
+  Fixed everywhere with a single formula; associates (equity method) are
+  consistently excluded, with a visible note where significant.
 
 We are not infallible now either — which is why every stock has a visible
 history of its zone changes with reasons, and we continuously measure the
