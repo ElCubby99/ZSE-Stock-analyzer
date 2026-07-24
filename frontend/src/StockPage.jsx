@@ -847,11 +847,8 @@ function Narrative({ data }) {
         </p>
       )}
       <p>
-        {t('sp.nrZone1')} <b>{t('sp.nrZone2')}</b> ({ARCH_KEYS[rec.archetype] ? t(ARCH_KEYS[rec.archetype]) : rec.archetype}
-        {rec.anchor_methods?.length ? `: ${rec.anchor_methods.map((k) => methodName(k)).join(', ')}` : ''}):{' '}
-        {eur(rec.zone_low, 0)}–{eur(rec.zone_high, 0)} {t('sp.nrPerShare')}
-        ({t('vs.dispersion')} {num(rec.dispersion * 100, 0)}%).
-        {rec.zone_note ? ` ${tx(rec.zone_note, lang)}.` : ''}
+        {t('sp.nrZone1')}: <b>{eur(rec.zone_low, 0)}–{eur(rec.zone_high, 0)} {t('sp.nrPerShare')}</b>.
+        {' '}{t('sp.nrZoneExpl')}
       </p>
       {(() => {
         const secOut = ran.filter((m) => {
