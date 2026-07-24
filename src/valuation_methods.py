@@ -575,62 +575,15 @@ def compute_justified_pb_roe(c: Ctx) -> ValueRange:
                       0.7 if p.rates_calibrated else 0.5)
 
 
-GROWTH_CAP_SERIES = 0.10   # cap kad postoji ≥3g serija (g_obs)
-GROWTH_CAP_SHORT = 0.08    # cap bez serije (kratka serija — bez g_obs)
-
-
-def composite_g1(g_obs, g_sust, g_terminal, r):
-    """v3.1 DIO 2: KOMPOZITNA stopa rasta eksplicitne faze.
-
-    Tri signala (svi iz postojećih v3 ulaza):
-      g_obs      — CAGR prihoda/zarade iz ≥3g serije (None kad serije nema;
-                   jedna godišnja usporedba NIKAD nije samostalan izvor);
-      g_sust     — održivi rast iz zadržane dobiti = ROE_TTM × (1 − payout_sust);
-      g_terminal — sidro skupljanja (2,5% kapitalni / 4% DCF kontekst).
-
-    g1 = medijan raspoloživih signala (bez g_obs: sredina {g_sust, g_term});
-    cap NAKON medijana (10% sa serijom / 8% bez); g1 ≥ 0 osim kad ≥3g serija
-    dokazuje skupljanje (g_obs < 0) — tada smije negativan uz badge;
-    TVRDI clamp g1 ≤ r − 0,5 p.b. (formule pucaju kad g → r).
-    -> (g1, meta) ; meta nosi signale, pobjednika i badgeove za UI raspis."""
-    signals = {"g_obs": g_obs, "g_sust": g_sust, "g_terminal": g_terminal}
-    avail = [(k, v) for k, v in signals.items() if v is not None]
-    if not avail:
-        return None, {"signals": signals, "badges": ["nema signala"],
-                      "origin": "nema signala"}
-    vals = sorted(v for _, v in avail)
-    n = len(vals)
-    med = vals[n // 2] if n % 2 else (vals[n // 2 - 1] + vals[n // 2]) / 2
-    winner = min(avail, key=lambda kv: abs(kv[1] - med))[0]
-    cap = GROWTH_CAP_SERIES if g_obs is not None else GROWTH_CAP_SHORT
-    origin = ("serija" if winner == "g_obs" else
-              "održivi rast" if winner == "g_sust" else "sidro terminala")
-    if g_obs is None:
-        origin += " (kratka serija — bez g_obs)"
-    badges = []
-    g1 = med
-    if g1 > cap:
-        g1 = cap
-        badges.append(f"cap {cap:.0%} nakon medijana")
-    if g1 < 0:
-        if g_obs is not None and g_obs < 0:
-            badges.append("negativan g1 — višegodišnje skupljanje "
-                          "dokazano ≥3g serijom")
-        else:
-            g1 = 0.0
-            badges.append("donja granica 0 (trajno skupljanje se ne "
-                          "pretpostavlja bez ≥3g dokaza)")
-    hard = r - 0.005
-    if g1 > hard:
-        g1 = hard
-        badges.append("TVRDI clamp g1 ≤ r − 0,5 p.b. (vrijednosne formule "
-                      "pucaju kad g → r)")
-    # zaokruživanje ne smije probiti tvrdi clamp (round-up preko r−0,5 p.b.)
-    g1 = min(round(g1, 4), hard)
-    return g1, {"signals": {k: (round(v, 4) if v is not None else None)
-                                      for k, v in signals.items()},
-                          "median": round(med, 4), "winner": winner,
-                          "cap": cap, "badges": badges, "origin": origin}
+# M47: verdikt procjene rasta -> kratki HR naziv (badge/origin u UI)
+_VERDICT_HR = {
+    "odrziv_samofinanciran": "održiv (samofinanciran)",
+    "odrziv_serija": "održiv (serija)",
+    "odrziv_backlog": "održiv (knjiga narudžbi)",
+    "iznad_samofinanciranja": "iznad kapaciteta samofinanciranja",
+    "samofinanciranje_bez_serije": "iz kapaciteta samofinanciranja",
+    "nema_signala": "nema signala rasta",
+}
 
 
 def _separate_standalone(c: "Ctx", h: dict, p: "Params"):
@@ -2232,48 +2185,89 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
     # snapshot pa lijeni prvi poziv ne bi stigao u polje
     data("dps")
 
-    # v3.1 DIO 2: KOMPOZITNI g1 = medijan {g_obs, g_sust, g_terminal}
-    _g_obs = _c3[0] if _c3 else None
+    # M47: PROCJENA ODRŽIVOG RASTA — bez slijepog capa 10%. Za svaku firmu
+    # iz PUNE serije (svih godina) utvrdi je li rast strukturno održiv
+    # (samofinanciran / potkrijepljen backlogom) ili djelomično jednokratan,
+    # i to obrazloži; g1 fadea prema terminalu (reversion to mean).
+    from .growth_assessment import assess_growth
+    cur.execute(
+        """SELECT f.fiscal_year,
+                  MAX(fin.value_eur) FILTER (WHERE fin.item=%s),
+                  MAX(fin.value_eur) FILTER (WHERE fin.item='net_income_parent'),
+                  MAX(fin.value_eur) FILTER (WHERE fin.item='ebit')
+           FROM financials fin JOIN filings f ON f.id = fin.filing_id
+           WHERE f.company_id=%s AND f.period_type='annual' AND f.basis='consolidated'
+           GROUP BY f.fiscal_year ORDER BY f.fiscal_year""",
+        (rev_item, company_id))
+    _rows = cur.fetchall()
+    _rev_series = [(fy, float(rv)) for fy, rv, _, _ in _rows if rv is not None]
+    _ni_series = [(fy, float(ni)) for fy, _, ni, _ in _rows if ni is not None]
+    _marg_series = [(fy, (float(eb) / float(rv)))
+                    for fy, rv, _, eb in _rows
+                    if rv is not None and eb is not None and float(rv) > 0]
     _roe_for_g = (roe_hint or {}).get("ttm_or_annual")
     _payout_for_g = (dsust_holder.get("hint") or {}).get("payout_used")
     g_sust = None
     if _roe_for_g is not None:
         g_sust = _roe_for_g * (1.0 - (_payout_for_g if _payout_for_g
                                       is not None else 0.0))
+    # backlog: objavljena tvrda brojka knjige narudžbi (nullable; ručni unos).
+    # SAVEPOINT: tablica je opcionalna nadogradnja — ako ne postoji, proba se
+    # vraća samo do savepointa, NE ruši vanjsku transakciju (inače bi
+    # pozivateljev neizvršeni unos nestao — npr. sintetički testovi).
+    _backlog = None
+    try:
+        cur.execute("SAVEPOINT bk_probe")
+        cur.execute(
+            """SELECT growth_rate::float, source FROM backlogs
+               WHERE company_id=%s ORDER BY fiscal_year DESC, created_at DESC
+               LIMIT 1""", (company_id,))
+        _bk = cur.fetchone()
+        cur.execute("RELEASE SAVEPOINT bk_probe")
+        if _bk and _bk[0] is not None:
+            _backlog = {"g": _bk[0], "src": _bk[1]}
+    except Exception:  # noqa: BLE001 — tablica je opcionalna nadogradnja
+        cur.execute("ROLLBACK TO SAVEPOINT bk_probe")
     gT_for_g = params.terminal_growth
-    g1_comp, g_meta = composite_g1(_g_obs, g_sust, gT_for_g,
-                                   params.cost_of_equity)
+    _g_item = "prihoda" if rev_item != "net_income_parent" else "zarade"
+    g1_comp, g_meta = assess_growth(
+        _rev_series, g_sust, gT_for_g, params.cost_of_equity,
+        backlog=_backlog, ni_series=_ni_series, margins=_marg_series,
+        item=_g_item)
     if g1_comp is not None:
-        sig = g_meta["signals"]
+        sg = g_meta["signals"]
         parts_txt = []
-        if _c3:
-            parts_txt.append(f"serija: 3g CAGR {_c3_item} FY{_c3[1]}->"
-                             f"FY{_c3[2]} iz baze = {sig['g_obs']:+.1%}")
-        else:
-            parts_txt.append("serija: nema ≥3 godišnja izvješća (g_obs se ne "
-                             "računa — jedna godišnja usporedba nije stopa "
-                             "rasta"
-                             + (f"; kontekst: TTM vs lani {_ttm_ctx:+.1%}"
-                                if _ttm_ctx is not None else "") + ")")
-        if g_sust is not None:
-            parts_txt.append(f"održivi rast: ROE {_roe_for_g:.1%} × (1 − "
-                             f"payout {(_payout_for_g or 0.0):.0%}) = "
-                             f"{sig['g_sust']:+.1%}")
-        parts_txt.append(f"sidro terminala {sig['g_terminal']:.1%}")
+        if sg.get("g_median") is not None:
+            parts_txt.append(
+                f"opaženi rast {_g_item} (medijan god. stopa) {sg['g_median']:+.1%}"
+                + (f", CAGR {sg['g_cagr']:+.1%}" if sg.get("g_cagr") is not None
+                   else ""))
+        if sg.get("g_sust") is not None:
+            parts_txt.append(f"samofinanciranje (ROE×zadržano) {sg['g_sust']:+.1%}")
+        if sg.get("backlog") is not None:
+            parts_txt.append(f"knjiga narudžbi {sg['backlog']:+.1%}")
+        parts_txt.append(f"sidro terminala {sg['g_terminal']:.1%}")
         growth_hint = {
             "g1": g1_comp,
-            "rev_cagr_3y": round(_g_obs, 4) if _g_obs is not None else None,
+            "rev_cagr_3y": sg.get("g_median"),   # kompat: frontend čita kao opaženi
             "ttm_vs_lani_kontekst": (round(_ttm_ctx, 4)
                                      if _ttm_ctx is not None else None),
-            "signals": g_meta, "short_series": _c3 is None,
+            # kompat sa StockPage.jsx (čita signals.g_obs/g_sust/g_terminal, origin)
+            "signals": {"signals": {"g_obs": sg.get("g_median"),
+                                    "g_sust": sg.get("g_sust"),
+                                    "g_terminal": sg.get("g_terminal")},
+                        "origin": _VERDICT_HR.get(g_meta["verdict"], "procjena"),
+                        "badges": g_meta["badges"]},
+            "short_series": len(_rev_series) < 3,
             "archetype": "growth" if g1_comp > 0.08 else "mature",
-            "source": (f"g1={g1_comp:.1%} = KOMPOZIT (v3.1): medijan "
-                       f"{{{'; '.join(parts_txt)}}} — pobjednik "
-                       f"'{g_meta['origin']}'"
-                       + (f"; {'; '.join(g_meta['badges'])}"
-                          if g_meta['badges'] else "")
-                       + ". Eksplicitna faza 5 g s linearnim fadeom prema "
-                         "terminalnom g."),
+            "verdict": g_meta["verdict"],
+            "assessment": g_meta["narrative"],
+            "source": (f"g1={g1_comp:.1%} = PROCJENA ODRŽIVOG RASTA (M47): "
+                       + "; ".join(parts_txt)
+                       + f". Verdikt: {_VERDICT_HR.get(g_meta['verdict'], 'procjena')}. "
+                       + g_meta["narrative"]
+                       + " Eksplicitna faza 5 g s linearnim fadeom prema "
+                         "terminalnom g (reversion to mean)."),
         }
     if fw and fw[0] == "R0" and (fw[2] or {}):
         if growth_hint is None:

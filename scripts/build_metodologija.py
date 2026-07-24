@@ -33,8 +33,8 @@ def main() -> int:
         body = "\n".join(lines[1:])
         out.write_text(json.dumps({
             "title": title,
-            "version": "v2.4",
-            "updated": "2026-07-23",
+            "version": "v2.5",
+            "updated": "2026-07-24",
             "html": md_to_html(body),
         }, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"[metodologija] zapisano {out}")

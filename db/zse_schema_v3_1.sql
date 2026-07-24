@@ -62,6 +62,22 @@ CREATE TABLE IF NOT EXISTS growth_estimates (
   UNIQUE (company_id, fiscal_year, method)
 );
 
+-- M47: knjiga narudžbi (backlog) — objavljena TVRDA brojka koja potkrjepljuje
+-- near-term rast (npr. proizvođači opreme: KODT). Ručni unos iz izvještaja
+-- (0 API), s izvorom (dokument + stranica). growth_rate = implicirani godišnji
+-- rast prihoda iz backloga (npr. backlog / godišnji prihod − 1, ili navod
+-- uprave); NULL kad se ne može izvesti kao stopa.
+CREATE TABLE IF NOT EXISTS backlogs (
+  id           SERIAL PRIMARY KEY,
+  company_id   INT NOT NULL REFERENCES companies(id),
+  fiscal_year  INT NOT NULL,
+  backlog_eur  NUMERIC,
+  growth_rate  NUMERIC,               -- implicirana godišnja stopa rasta (ili NULL)
+  source       TEXT NOT NULL,         -- dokument + stranica / navod uprave
+  created_at   TIMESTAMPTZ DEFAULT now(),
+  UNIQUE (company_id, fiscal_year)
+);
+
 -- povijest promjena fer-zona (transparentnost po dionici)
 CREATE TABLE IF NOT EXISTS valuation_changelog (
   id          SERIAL PRIMARY KEY,

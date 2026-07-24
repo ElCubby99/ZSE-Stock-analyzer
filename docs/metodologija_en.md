@@ -75,7 +75,15 @@ a single weak method would stretch the zone into uselessness.
   beta** is used (Damodaran, Europe), relevered with the company's leverage
   where debt is known. The final beta is bounded to **[0.7, 1.8]**. The
   beta's origin (regression / sector / clamp) is visible next to every
-  estimate.
+  estimate. **R² credibility (M47)**: beta measures how much a stock SWINGS
+  relative to the market, not how fundamentally "good" the company is — a
+  stock that rose strongly and volatilely gets a high beta even with
+  excellent results. When the regression has a low R² (the market explains
+  less than 50% of the stock's movement), the beta is statistically noisy,
+  so the Blume regression beta is blended with the sector beta in proportion
+  to how much the market explains (weight = R²/0.5). This keeps high momentum
+  from pushing the required return above what fundamentals justify (e.g.
+  KOEI: R² 0.35 lowers beta from ~1.57 to ~1.36).
 - **Illiquidity premium (v2.2)** — stocks below the liquidity threshold get
   +1.0 to +2.0 percentage points added to the cost of equity (graded by
   liquidity): exiting a thinly traded position carries a real cost. It is
@@ -215,30 +223,46 @@ a single weak method would stretch the zone into uselessness.
   0–5%; the default 15–25% is used only where measurement is impossible,
   clearly tagged.
 
-## Growth: three signals from the numbers, never one year
+## Growth: a sustainability assessment, not a blind cap
 
-The growth rate is the most sensitive input of any valuation, so the
-strictest rules apply to it. Explicit-phase growth (g1) is a **composite —
-the median of three signals**, each derived exclusively from published
-numbers: the multi-year series (three-year CAGR, only with ≥3 annual
-reports), sustainable growth from retained earnings (ROE × the share of
-profit not paid out) and the conservative terminal anchor. The median means
-no single signal can drag the estimate on its own — an extreme on either
-side drops out.
+The growth rate is the most sensitive input of any valuation. Instead of
+cutting every company's growth to the same ceiling, we assess **for each
+company whether its growth is STRUCTURALLY SUSTAINABLE** — and explain it on
+the page. The inputs are strictly published numbers:
 
-**Why one year is not a growth rate**: comparing the trailing 12 months
-with last year measures one-off effects (asset sales, state aid, one large
-contract) and the base effect (a bad prior year "inflates" the percentage).
-Such a number is legitimate **context** — and that is how we show it — but
-never a standalone source of g1. Growing "forever" off one good year would
-be making things up, and that violates this project's first rule.
+- **Observed growth** = the MEDIAN of annual rates across the whole series of
+  annual reports (the median is robust to a single exceptional year, unlike
+  CAGR which one base or peak year distorts).
+- **Self-funding capacity** = ROE × the retained share of profit — the growth
+  a company can fund from its own earnings without new debt or issuance.
+- **Order book (backlog)**, when published as a hard figure — corroborates
+  higher near-term growth (forward visibility, not an estimate).
 
-The composite is capped from above (10% with a series, 8% without), cannot
-be negative without multi-year evidence of contraction, and is always at
-least 0.5 percentage points below the cost of equity. Manual "forward
-estimates" (backlog, guidance, management expectations) are not used for
-the growth rate; the historical average and the TTM comparison remain on
-the page as context.
+**How we judge sustainability.** When observed growth MATCHES self-funding
+capacity (e.g. both ~20%), the growth is funded from own earnings and is
+deemed structurally sustainable — such a company **may carry growth above
+10%** (there is no blind cap). Rising margins over the period further confirm
+quality (growth carries profitability, not just volume). When observed growth
+SUBSTANTIALLY EXCEEDS self-funding capacity without a published order book,
+part of the growth needs external financing or is cyclical — we then anchor to
+the fundable rate and say so clearly.
+
+**One-off effects are named and excluded.** If one year stands out (e.g. +31%
+vs a median of ~8% — likely an acquisition or one-off revenue), the
+representative growth uses the MEDIAN, not the CAGR that year would inflate;
+the year is named with an explanation. When growth is decelerating (the last
+year well below the median), the near-term rate moves toward the more recent
+signal.
+
+**Reversion to the mean.** The estimated near-term rate (g1) fades LINEARLY
+over 5 years toward the terminal anchor (~4%, nominal GDP) — no company grows
+above-average forever. The only upper limit is a **sanity ceiling of 25%**
+(five-year growth above that is implausible), not an arbitrary 10%. Growth
+cannot be negative without multi-year evidence of contraction.
+
+**Why one year is not a growth rate**: comparing the last 12 months with the
+prior year captures both one-off effects and base effects; it stays as
+context, never a standalone source of g1.
 
 ## EV and EV/EBITDA — numerator and denominator must cover the same scope
 

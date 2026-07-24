@@ -45,9 +45,13 @@ def _live_tickers(conn):
         return [r[0] for r in cur.fetchall()]
 
 
-def test_g1_ispod_r_na_svim_firmama(conn):
-    """TVRDI: g1 ≤ r − 0,5 p.b. za svaku živu firmu; g_obs nikad iz
-    TTM-vs-lani (kratka serija => g_obs is None)."""
+def test_g1_zdravlje_na_svim_firmama(conn):
+    """M47 (bez capa 10% i bez g1≤r clampa): g1 SMIJE biti visok/iznad r jer
+    dvofazni DCF eksplicitnu fazu samo COMPOUNDA (ne dijeli s r−g1) — terminal
+    koristi gT<r. TVRDI zahtjevi: (a) terminalni g < r (inače Gordon puca);
+    (b) g1 ≤ sanity strop 25%; (c) kratka serija => g_obs (medijan) is None
+    (jedna godišnja usporedba nije stopa rasta); (d) svaka firma nosi verdikt."""
+    from src.growth_assessment import SANITY_MAX
     from src.params_calibrated import build_params
     from src.valuation_methods import build_ctx
     fails = []
@@ -61,12 +65,16 @@ def test_g1_ispod_r_na_svim_firmama(conn):
         g1 = gh.get("g1")
         if g1 is None:
             continue
-        hard = ctx.params.cost_of_equity - 0.005
-        if g1 > hard + 1e-12:
-            fails.append(f"{t}: g1={g1:.4f} > r−0,5p.b.={hard:.4f}")
+        if ctx.params.terminal_growth >= ctx.params.cost_of_equity:
+            fails.append(f"{t}: terminal g {ctx.params.terminal_growth} ≥ r "
+                         f"{ctx.params.cost_of_equity} (Gordon puca)")
+        if g1 > SANITY_MAX + 1e-9:
+            fails.append(f"{t}: g1={g1:.4f} > sanity {SANITY_MAX}")
         sig = (gh.get("signals") or {}).get("signals", {})
         if gh.get("short_series") and sig.get("g_obs") is not None:
             fails.append(f"{t}: kratka serija a g_obs postoji (TTM curi u g1?)")
+        if not gh.get("verdict"):
+            fails.append(f"{t}: g1 postoji bez verdikta održivosti")
     assert not fails, "; ".join(fails)
 
 
