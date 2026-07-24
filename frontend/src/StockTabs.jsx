@@ -128,7 +128,10 @@ export function IndicatorGroups({ indicators }) {
                       ) : (
                         <>
                           <b>{val}</b>
-                          {it.basis && (
+                          {it.badge && (
+                            <span className="ind-basis" title={tx(it.basis || '', lang)}>{tx(it.badge, lang)}</span>
+                          )}
+                          {it.basis && !it.badge && (
                             <span className="ind-basis" title={tx(it.basis, lang)}>{shortBasis(it.basis)}</span>
                           )}
                         </>
@@ -139,6 +142,7 @@ export function IndicatorGroups({ indicators }) {
                     <tr className="ind-poprow">
                       <td colSpan={2}>
                         {it.formula && <div><b>{t('ind.formula')}:</b> {tx(it.formula, lang)}</div>}
+                        {it.note && <div>{tx(it.note, lang)}</div>}
                         {it.why && <div><b>{t('ind.why')}:</b> {tx(it.why, lang)}</div>}
                         {np && it.np_reason && <div><b>{t('common.na')}:</b> {tx(it.np_reason, lang)}</div>}
                         {it.basis && <div className="dim">{t('ind.basis')}: {tx(it.basis, lang)}</div>}

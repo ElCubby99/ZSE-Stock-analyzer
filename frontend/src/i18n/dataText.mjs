@@ -113,6 +113,11 @@ export const DATA_TX = {
   'EV / Prihod': 'EV / revenue',
   'EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli':
     'EV = market cap + debt − cash − short-term financial assets + minority interests',
+  'EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli − pridružena društva':
+    'EV = market cap + debt − cash − short-term financial assets + minority interests − associates',
+  'uklj. kratk. fin. imovinu': 'incl. short-term fin. assets',
+  "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri, a knjigovodstvena vrijednost pridruženih društava (<50%, metoda udjela) se IZUZIMA jer njihova dobit nije u konsolidiranim rezultatima. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču.":
+    "The value of the WHOLE business, not just shareholders: debt is added (creditors also have a claim on that cash), cash and short-term financial assets are deducted (a buyer 'gets them back'), minority interests are ADDED because consolidated results include 100% of subsidiaries — so the part belonging to others must be in the same measure, and the book value of associates (<50%, equity method) is EXCLUDED because their profit is not in the consolidated results. This is why our EV can differ from portals that skip minority interests.",
   'NT B)': 'cash-flow statement, section B',
   'NT C)': 'cash-flow statement, section C',
   'NT izvještaj': 'cash-flow statement',
@@ -212,6 +217,8 @@ export const DATA_TX = {
   // ---- indicators: osnovice (fiksne) i napomena ----
   'trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)':
     'market cap + debt − cash − short-term fin. assets + minorities (latest balance sheet)',
+  'trž.kap + dug − novac − kratk. fin. imovina + manjinski − pridružena društva (zadnja bilanca)':
+    'market cap + debt − cash − short-term fin. assets + minorities − associates (latest balance sheet)',
   'zadnja isplata / zadnja cijena': 'last payment / last price',
   'zadnji EOD × dionice ex-trezor': 'latest EOD × shares ex-treasury',
   'n/p': 'n/a',
@@ -347,6 +354,15 @@ export const DATA_TX = {
 /* Pattern pravila za stringove s dinamičkim dijelovima (datumi, n=,
    popisi peera). Primjenjuju se redom NAKON promašaja exact mape. */
 const PATTERNS = [
+  // ---- M45: EV raspis s brojkama + nekonsolidirani udjeli + EV most ----
+  [/Raspis \(M€\): trž\. kap\. ([\d.,−-]+) \+ dug ([\d.,−-]+) − novac ([\d.,−-]+) − kratkotrajna fin\. imovina ([\d.,−-]+) \+ manjinski udjeli ([\d.,−-]+) − pridružena društva ([\d.,−-]+) = EV ([\d.,−-]+)/g,
+    'Breakdown (€m): market cap $1 + debt $2 − cash $3 − short-term financial assets $4 + minority interests $5 − associates $6 = EV $7'],
+  [/EV\/EBITDA ne uključuje nekonsolidirane udjele: (.+?) \(metoda udjela — njihova dobit nije u konsolidiranoj EBITDA\); knjigovodstvena vrijednost tih udjela izuzeta je iz EV-a\. Za punu sliku vidi analizu vrijednosti\./g,
+    'EV/EBITDA does not include unconsolidated stakes: $1 (equity method — their profit is not in consolidated EBITDA); the book value of these stakes is excluded from EV. See the valuation analysis for the full picture.'],
+  [/Oprez: grupa konsolidira osiguratelja \((.+?)\) — EBITDA je strukturno neusporediva s industrijskim firmama, pa EV\/EBITDA tretiraj kao indikativan; u analizi vrijednosti EV metode za ovu firmu nisu nositelj\./g,
+    'Caution: the group consolidates an insurer ($1) — its EBITDA is structurally incomparable with industrial companies, so treat EV/EBITDA as indicative; in the valuation analysis EV methods are not the carrier for this company.'],
+  [/EV leće: vrijednost dioničarima = multipl × EBITDA − neto dug − manjinski interes \+ kratkotrajna fin\. imovina \+ knjigovodstvena vrijednost pridruženih društava \(konzistentnost opsega: konsolidirana EBITDA = 100% kćeri\)/g,
+    'EV lenses: shareholder value = multiple × EBITDA − net debt − minority interest + short-term financial assets + book value of associates (scope consistency: consolidated EBITDA = 100% of subsidiaries)'],
   // M40: izvor profila — ručna ekstrakcija (put do datoteke ostaje kako jest)
   [/ručna ekstrakcija u Claude Code sesiji \(([^,]+), početak izvješća; ista shema kao API pipeline\)/g,
     'manual extraction in a Claude Code session ($1, start of the report; same schema as the API pipeline)'],

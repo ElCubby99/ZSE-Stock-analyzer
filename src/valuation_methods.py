@@ -278,13 +278,42 @@ def compute_comps(c: Ctx) -> ValueRange:
             assum["lenses"]["pe"] = {"mult": p.peer_pe, "per_share": round(v, 2)}
     ev_ok = (c.sector not in FINANCIAL_SECTORS and not c.consolidates_insurer
              and net_debt is not None)
+    # M45: most EV -> vrijednost dioničarima MORA biti konzistentan s opsegom
+    # EBITDA-e (konsolidirano = 100% kćeri): od implicirane EV se uz neto dug
+    # ODUZIMA i knjigovodstveni manjinski interes (dio kćeri koji ne pripada
+    # dioničarima matice), DODAJE kratkotrajna fin. imovina (de facto gotovina,
+    # nije u net_debt) i DODAJE knjigovodstvena vrijednost pridruženih društava
+    # (<50%, metoda udjela — nisu u EBITDA, ali jesu imovina dioničara).
+    # Prije M45 most je bio samo "− neto dug" -> precijenjena vrijednost za
+    # firme s velikim manjinskim udjelima (priznata greška, vidi Metodologiju).
+    nci_b = c.val("minority_interests")
+    if nci_b is None:
+        te_b, ep_b = c.val("total_equity"), c.val("equity_parent")
+        nci_b = (te_b - ep_b) if (te_b is not None and ep_b is not None
+                                  and te_b - ep_b > 0) else 0.0
+    stfa_b = c.val("short_term_fin_assets") or 0.0
+    assoc_rows = [h for h in (c.holdings or [])
+                  if h.get("ownership_pct") and float(h["ownership_pct"]) < 0.5
+                  and h.get("jv_book_value_eur")]
+    assoc_b = float(sum(float(h["jv_book_value_eur"]) for h in assoc_rows))
+    ev_bridge = net_debt + nci_b - stfa_b - assoc_b if net_debt is not None else None
+    if ev_ok:
+        assum["ev_bridge"] = {
+            "net_debt_eur": round(net_debt, 0),
+            "nci_eur": round(nci_b, 0), "stfa_eur": round(stfa_b, 0),
+            "assoc_book_eur": round(assoc_b, 0),
+            "note": ("EV leće: vrijednost dioničarima = multipl × EBITDA − neto dug "
+                     "− manjinski interes + kratkotrajna fin. imovina + knjigovodstvena "
+                     "vrijednost pridruženih društava (konzistentnost opsega: "
+                     "konsolidirana EBITDA = 100% kćeri)"),
+        }
     if ev_ok and ebitda and ebitda > 0 and p.peer_ev_ebitda:
-        v = _per_share(p.peer_ev_ebitda * ebitda - net_debt, c)
+        v = _per_share(p.peer_ev_ebitda * ebitda - ev_bridge, c)
         if v is not None and v > 0:
             lenses["ev_ebitda"] = v
             assum["lenses"]["ev_ebitda"] = {"mult": p.peer_ev_ebitda, "per_share": round(v, 2)}
     if ev_ok and ebit and ebit > 0 and getattr(p, "peer_ev_ebit", None):
-        v = _per_share(p.peer_ev_ebit * ebit - net_debt, c)
+        v = _per_share(p.peer_ev_ebit * ebit - ev_bridge, c)
         if v is not None and v > 0:
             lenses["ev_ebit"] = v
             assum["lenses"]["ev_ebit"] = {"mult": p.peer_ev_ebit, "per_share": round(v, 2)}

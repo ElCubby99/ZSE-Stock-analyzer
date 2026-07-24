@@ -66,11 +66,18 @@ def peer_row(cur, ticker: str) -> dict:
     ebit = _latest(cur, cid, "ebit")
     out["pe"] = mcap / ni if ni and ni > 0 else None
     out["pb"] = mcap / eq if eq and eq > 0 else None
-    out["ev_ebitda"] = ((mcap + net_debt) / ebitda
-                        if ebitda and ebitda > 0 and net_debt is not None else None)
+    # M45 (konzistentnost opsega): konsolidirana EBITDA sadrži 100% kćeri,
+    # pa i EV peera mora — manjinski udjeli se DODAJU; kratkotrajna fin.
+    # imovina (de facto gotovina) se ODBIJA. Bez toga peer multipli
+    # sustavno podcjenjuju EV firmi s velikim manjinskim udjelima.
+    mi = _latest(cur, cid, "minority_interests") or 0.0
+    stfa = _latest(cur, cid, "short_term_fin_assets") or 0.0
+    ev = (mcap + net_debt + mi - stfa) if net_debt is not None else None
+    out["ev_ebitda"] = (ev / ebitda if ebitda and ebitda > 0 and ev is not None
+                        else None)
     # EV/EBIT: manje laska firmama s visokim D&A/dugom (doktrina v2 §2)
-    out["ev_ebit"] = ((mcap + net_debt) / ebit
-                      if ebit and ebit > 0 and net_debt is not None else None)
+    out["ev_ebit"] = (ev / ebit if ebit and ebit > 0 and ev is not None
+                      else None)
     # ROE peera: P/B je funkcija ROE (opravdani P/B) pa peer P/B bez peer ROE
     # konteksta nije prenosiv na firmu drugačije profitabilnosti
     out["roe"] = ni / eq if (ni and eq and ni > 0 and eq > 0) else None

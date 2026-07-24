@@ -177,6 +177,10 @@ def main(argv=None) -> int:
                    help="obradi pending filings queue nakon synca")
     p.add_argument("--recompute", action="store_true",
                    help="revaloriziraj dirnute firme")
+    p.add_argument("--recompute-tickers", default="",
+                   help="zarezom odvojeni tickeri za revalorizaciju uz sync "
+                        "('svi' = sve firme s financijama u bazi — npr. nakon "
+                        "promjene metodologije)")
     p.add_argument("--regen", action="store_true",
                    help="regeneriraj exporte (+ deploy hook iz env-a)")
     a = p.parse_args(argv)
@@ -196,8 +200,19 @@ def main(argv=None) -> int:
               f"dividendnih događaja: {n_div}")
         if a.extract:
             touched = sorted(set(touched + stage_extract_queue(conn, run_id, log)))
-        if a.recompute and touched:
-            stage_recompute(conn, run_id, log, touched)
+        extra: list[int] = []
+        if a.recompute_tickers.strip():
+            arg = a.recompute_tickers.strip()
+            with conn.cursor() as cur:
+                if arg.lower() in ("svi", "all", "*"):
+                    cur.execute("SELECT DISTINCT company_id FROM financials")
+                else:
+                    tks = [t.strip().upper() for t in arg.split(",") if t.strip()]
+                    cur.execute("SELECT id FROM companies WHERE ticker = ANY(%s)",
+                                (tks,))
+                extra = [r[0] for r in cur.fetchall()]
+        if (a.recompute and touched) or extra:
+            stage_recompute(conn, run_id, log, sorted(set(touched + extra)))
         if a.regen:
             stage_regen(conn, run_id, log, changed=bool(touched or n_div))
         conn.commit()

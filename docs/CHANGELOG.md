@@ -1,5 +1,32 @@
 # Changelog (tehnički — interni)
 
+## 2026-07-23 — M45: EV/EBITDA konzistentnost opsega (manjinski udjeli, kratkotrajna fin. imovina, pridružena društva)
+
+Povod: vanjska stručna primjedba (KOEI) + interna revizija. Načelo: EV i
+EBITDA moraju pokrivati ISTI opseg — konsolidirana EBITDA nosi 100% kćeri,
+pa EV mora sadržavati manjinske udjele; pridružena društva (<50%, metoda
+udjela) nisu u EBITDA pa se knjigovodstvena vrijednost izuzima iz EV-a.
+
+- PRIZNATA GREŠKA: pokazatelji (od M18) jesu dodavali manjinske udjele u
+  EV, ali (a) most iz peer multipla u vrijednost po dionici (peer
+  usporedba) odbijao je SAMO neto dug — bez manjinskog interesa,
+  kratkotrajne fin. imovine i pridruženih; (b) EV peera u kalibraciji
+  multipla računao se kao trž.kap + neto dug — bez manjinskih i
+  kratkotrajne fin. imovine. Firme s velikim manjinskim udjelima time su
+  u peer metodi bile PRECIJENJENE.
+- Ispravak: jedna formula svugdje — EV = trž.kap (sve klase) + dug − novac
+  − kratkotrajna fin. imovina + manjinski udjeli − pridružena društva
+  (knjigov.); most u vrijednost po dionici simetričan.
+- Pokazatelji: EV sada izuzima i knjigovodstvenu vrijednost pridruženih
+  (KOEI: KPT 44,2 M€, GI 2025 bilj. 16 str. 131); badge
+  `uklj. kratk. fin. imovinu` + numerički raspis EV-a iza klika; napomena
+  o nekonsolidiranim udjelima uz EV/EBITDA (KOEI: 49% KPT).
+- Dirnute firme (ne-nulti manjinski udio, 20): ADRS, ATGR, CIAK, CKML,
+  CROS, DDJH, GARB, GRNL, HIMR, HT, INA, KODT, KOEI, MAIS, PODR, RIVP,
+  STJD, TRFM, ZABA, ZITO; peer rekalibracija dira sve firme s peer skupom.
+- Metodologija v2.4: nova sekcija "EV i EV/EBITDA — brojnik i nazivnik
+  moraju pokrivati isti opseg" + priznata greška (HR + EN).
+
 ## 2026-07-17 — M37: tab FINANCIJE (as-reported izvještaji po dionici)
 
 - Nova javna ruta `/dionica/<ticker>/financije` (kroz route registry →

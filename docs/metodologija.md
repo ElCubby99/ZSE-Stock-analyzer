@@ -223,6 +223,37 @@ postotnih bodova ispod troška kapitala. Ručne "forward procjene" (backlog,
 guidance, očekivanja uprave) se za stopu rasta ne koriste; povijesni
 prosjek i TTM usporedba ostaju na stranici kao kontekst.
 
+## EV i EV/EBITDA — brojnik i nazivnik moraju pokrivati isti opseg
+
+Enterprise value (EV) i EBITDA imaju smisla samo ako mjere ISTO poslovanje:
+
+- **Manjinski udjeli se DODAJU u EV.** Kad firma konsolidira kćer (kontrola,
+  u pravilu >50%), u konsolidiranoj EBITDA je 100% te kćeri — i dio koji
+  pripada drugim dioničarima kćeri. Tržišna kapitalizacija matice odražava
+  samo vlasnički dio, pa manjinski udio iz bilance "dokupljuje" ostatak da
+  EV pokrije istih 100% koje mjeri EBITDA. Bez toga je multipl umjetno
+  nizak upravo kod firmi s velikim konsolidiranim kćerima.
+- **Kratkotrajna financijska imovina odbija se uz novac.** Utrživi
+  vrijednosni papiri, kratkoročni depoziti i financijska imovina po fer
+  vrijednosti de facto su gotovina; formalna stavka "novac i ekvivalenti"
+  podcijenila bi likvidnu imovinu. Brojka nosi oznaku
+  `uklj. kratk. fin. imovinu`, a raspis iza klika prikazuje obje
+  komponente odvojeno. Dugoročna financijska imovina i strateška ulaganja
+  se NE odbijaju — to nije gotovina.
+- **Pridružena društva (<50%, bez kontrole) izuzimaju se iz EV-a.** Ne
+  konsolidiraju se, pa njihova dobit NIJE u EBITDA — dosljedno, ne ulaze ni
+  kao manjinski udio, nego se knjigovodstvena vrijednost ulaganja (metoda
+  udjela) ODUZIMA od EV-a kao zasebna imovina. Kad je takav neuključeni
+  udio značajan, uz multipl stoji napomena — multipl se ne iskrivljuje,
+  ali čitatelj vidi da dio vrijednosti firme živi izvan njega.
+- **Formula**: EV = tržišna kapitalizacija (sve klase) + ukupni dug − novac
+  i ekvivalenti − kratkotrajna financijska imovina + manjinski udjeli −
+  knjigovodstvena vrijednost pridruženih društava. Isti principi vrijede i
+  za peer multiple (EV peera računa se istom formulom) i za most iz
+  implicirane EV natrag u vrijednost po dionici u peer usporedbi
+  (− neto dug − manjinski interes + kratkotrajna fin. imovina +
+  pridružena društva).
+
 ## Kako se čuvamo grešaka
 
 - **Validacije na ulazu**: bilanca se mora zatvarati, dobit matice + manjine
@@ -286,6 +317,15 @@ kojima se fer-zone računaju DANAS:
   meta.** Kad prevelik dio likvidnih imena završi na istoj strani zone,
   automatski alarm traži provjeru NAŠIH ulaza — zone se provjeravaju, ne
   prilagođavaju cijenama.
+
+- **EV mora sadržavati manjinske udjele — priznata greška (srpanj 2026.).**
+  Vanjska stručna primjedba potvrdila je nekonzistentnost: prikazani
+  pokazatelji jesu dodavali manjinske udjele u EV, ali most iz peer
+  multipla natrag u vrijednost po dionici i EV peera u kalibraciji NISU —
+  time je vrijednost firmi s velikim manjinskim udjelima bila precijenjena
+  (multipl × 100% EBITDA-e, a odbitak samo neto duga). Ispravljeno na svim
+  mjestima istom formulom; pridružena društva (metoda udjela) dosljedno se
+  izuzimaju, uz vidljivu napomenu kad su značajna.
 
 Nismo nepogrešivi ni sada — zato svaka dionica ima vidljivu povijest
 promjena svoje zone s razlogom, a distribuciju naših zona prema tržištu

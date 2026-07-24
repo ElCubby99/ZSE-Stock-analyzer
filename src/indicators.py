@@ -120,12 +120,28 @@ class Ind:
         return (qs[(fy, q)] / prev - 1), f"{fy}{q} vs {fy - 1}{q}"
 
 
-def _i(k, v, unit, basis, formula, note=None, why=None):
+def _i(k, v, unit, basis, formula, note=None, why=None, badge=None):
     """why = 'zašto baš ovako' — obrazloženje izbora formule OBIČNIM jezikom
-    (balončić u UI-ju; reasoning vidljiv čitatelju, ne samo brojka)."""
+    (balončić u UI-ju; reasoning vidljiv čitatelju, ne samo brojka).
+    badge = kratka vidljiva oznaka uz brojku (M45: normalizacija EV-a)."""
     return {"k": k, "v": v, "unit": unit, "basis": basis, "formula": formula,
             **({"note": note} if note else {}),
-            **({"why": why} if why else {})}
+            **({"why": why} if why else {}),
+            **({"badge": badge} if badge else {})}
+
+
+def ev_components(mcap, total_debt, cash, stfa=None, minority=None,
+                  assoc_book=None):
+    """M45: EV = trž.kap + dug − novac − kratkotrajna fin. imovina
+    + manjinski udjeli − pridružena društva (knjigovodstveno).
+    Konzistentnost opsega: konsolidirana EBITDA nosi 100% kćeri pa EV mora
+    sadržavati i manjinski dio; pridružena društva (<50%, metoda udjela)
+    nisu u EBITDA pa se njihova vrijednost izuzima. Čist izračun —
+    unit-testabilan (tests/test_ev_consistency.py)."""
+    if mcap is None or total_debt is None or cash is None:
+        return None
+    return (mcap + total_debt - cash - (stfa or 0) + (minority or 0)
+            - (assoc_book or 0))
 
 
 def _np(k, reason):
@@ -225,9 +241,42 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     cash, _cb = ix.bal("cash_and_equivalents")
     stfa, _ = ix.bal("short_term_fin_assets")
     mi, _ = ix.bal("minority_interests")
-    ev = (mcap + (td or 0) - (cash or 0) - (stfa or 0) + (mi or 0)) \
-        if (mcap is not None and td is not None and cash is not None) else None
-    ev_b = "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)"
+    # M45: pridružena društva (<50%, metoda udjela) — knjigovodstvena
+    # vrijednost iz kuriranih holdings zapisa (izvor: bilješke GI); njihova
+    # dobit NIJE u konsolidiranoj EBITDA pa se vrijednost izuzima iz EV-a
+    cur.execute("""SELECT held_name, ownership_pct::float, jv_book_value_eur::float
+                   FROM holdings
+                   WHERE parent_company_id=%s AND ownership_pct < 0.5""",
+                (company_id,))
+    assoc_rows = cur.fetchall()
+    assoc = sum(v for _, _, v in assoc_rows if v) or None
+    ev = ev_components(mcap, td, cash, stfa, mi, assoc)
+    ev_b = ("trž.kap + dug − novac − kratk. fin. imovina + manjinski "
+            "− pridružena društva (zadnja bilanca)")
+    _m = lambda v: f"{(v or 0) / 1e6:,.1f}"  # noqa: E731
+    ev_note = (f"Raspis (M€): trž. kap. {_m(mcap)} + dug {_m(td)} − novac "
+               f"{_m(cash)} − kratkotrajna fin. imovina {_m(stfa)} + manjinski "
+               f"udjeli {_m(mi)} − pridružena društva {_m(assoc)} = EV {_m(ev)}"
+               ) if ev is not None else None
+    assoc_note = None
+    if assoc_rows:
+        stakes = ", ".join(f"{p * 100:.0f}% {n}" for n, p, _ in assoc_rows)
+        assoc_note = (f"EV/EBITDA ne uključuje nekonsolidirane udjele: {stakes} "
+                      "(metoda udjela — njihova dobit nije u konsolidiranoj "
+                      "EBITDA); knjigovodstvena vrijednost tih udjela izuzeta "
+                      "je iz EV-a. Za punu sliku vidi analizu vrijednosti.")
+    # ADRS-tip oprez: grupa koja konsolidira OSIGURATELJA ima strukturno
+    # neusporedivu EBITDA (premije/pričuve nisu operativni prihod industrije)
+    cur.execute("""SELECT held_name FROM holdings
+                   WHERE parent_company_id=%s AND is_insurance
+                     AND ownership_pct > 0.5""", (company_id,))
+    _ins = [r[0] for r in cur.fetchall()]
+    if _ins:
+        ins_note = (f"Oprez: grupa konsolidira osiguratelja ({', '.join(_ins)}) "
+                    "— EBITDA je strukturno neusporediva s industrijskim "
+                    "firmama, pa EV/EBITDA tretiraj kao indikativan; u analizi "
+                    "vrijednosti EV metode za ovu firmu nisu nositelj.")
+        assoc_note = f"{assoc_note} {ins_note}" if assoc_note else ins_note
     g = [_i("Tržišna kap.", mcap, "meur", "zadnji EOD × dionice ex-trezor",
             "Σ close klase × dionice klase",
             why="Zbrajamo SVE klase dionica (svaku po svojoj cijeni), a "
@@ -241,15 +290,20 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     else:
         g.append(_i("EV", ev, "meur", ev_b,
                     "EV = trž. kap. + dug − novac − kratkoročna fin. imovina "
-                    "+ manjinski udjeli",
+                    "+ manjinski udjeli − pridružena društva",
+                    note=ev_note,
+                    badge="uklj. kratk. fin. imovinu",
                     why="Vrijednost CIJELOG poslovanja, ne samo dioničara: dug "
                         "se dodaje (i vjerovnici imaju pravo na taj novac), "
                         "novac i kratkoročna financijska imovina se odbijaju "
-                        "(kupac ih 'dobije natrag'), a manjinski udjeli se "
+                        "(kupac ih 'dobije natrag'), manjinski udjeli se "
                         "DODAJU jer konsolidirani rezultati uključuju 100% "
                         "kćeri — pa i dio koji pripada drugima mora biti u "
-                        "istoj mjeri. Zato se naš EV zna razlikovati od "
-                        "portala koji manjinske udjele preskaču."))
+                        "istoj mjeri, a knjigovodstvena vrijednost pridruženih "
+                        "društava (<50%, metoda udjela) se IZUZIMA jer njihova "
+                        "dobit nije u konsolidiranim rezultatima. Zato se naš "
+                        "EV zna razlikovati od portala koji manjinske udjele "
+                        "preskaču."))
         for lab, num_v, num_b, w in (
                 ("EV/Prihod", rev, rev_b,
                  "Koliko se plaća po euru prihoda cijelog poslovanja — "
@@ -266,7 +320,11 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
                  "kapitalno intenzivnim firmama kojima se oprema stvarno "
                  "troši.")):
             g.append(_i(lab, (ev / num_v) if (ev and num_v and num_v > 0) else None,
-                        "x", num_b, f"EV / {lab.split('/')[1]}", why=w)
+                        "x", num_b, f"EV / {lab.split('/')[1]}",
+                        note=(assoc_note if lab in ("EV/EBITDA", "EV/EBIT") else None),
+                        why=w,
+                        badge=("uklj. kratk. fin. imovinu"
+                               if lab in ("EV/EBITDA", "EV/EBIT") else None))
                      if ev and num_v and num_v > 0 else _np(lab, "nema ulaza"))
     for lab, num_v, num_b, f, w in (
             ("P/E", ni, ni_b, "trž.kap / neto dobit matici",
