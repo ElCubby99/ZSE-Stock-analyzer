@@ -179,7 +179,9 @@ def assess_growth(series, g_sust, g_terminal, r, *, backlog=None,
             g1 = 0.0
             badges.append("donja granica 0 (bez ≥3g dokaza skupljanja)")
 
-    # --- sanity strop (NE 10% cap): 5-god. rast > 25% nije plauzibilan ---
+    # --- sanity strop/pod (NE 10% cap): |5-god. rast| > 25% nije plauzibilan;
+    #     jednako vrijedi za skupljanje — pad od 40–60%/god. 5 g je jednokratni
+    #     kolaps (izgubljen ugovor), ne trajna stopa ---
     if g1 is not None and g1 > SANITY_MAX:
         badges.append(f"sanity strop {SANITY_MAX:.0%} (5-god. rast iznad toga "
                       f"nije plauzibilan)")
@@ -187,6 +189,13 @@ def assess_growth(series, g_sust, g_terminal, r, *, backlog=None,
                     f"{SANITY_MAX:.0%} — ni najbrže firme ne održe to 5 godina; "
                     f"ograničeno na {SANITY_MAX:.0%}.")
         g1 = SANITY_MAX
+    elif g1 is not None and g1 < -SANITY_MAX:
+        badges.append(f"sanity pod −{SANITY_MAX:.0%} (5-god. pad ispod toga je "
+                      f"jednokratni kolaps, ne trajna stopa)")
+        narr.append(f"Procijenjeni {g1:+.1%} probija sanity pod −{SANITY_MAX:.0%} "
+                    f"— pad te dubine 5 g zaredom je jednokratni kolaps, a ne "
+                    f"održiva stopa; ograničeno na −{SANITY_MAX:.0%}.")
+        g1 = -SANITY_MAX
 
     # --- terminal mora biti < r (inače Gordon puca); g1 SMIJE biti blizu/iznad
     #     r jer eksplicitna faza ne dijeli s (r−g1), samo terminal s (r−gT) ---

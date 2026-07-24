@@ -153,6 +153,8 @@ export const DATA_TX = {
     'floor 0 (no ≥3y evidence of contraction)',
   'sanity strop 25% (5-god. rast iznad toga nije plauzibilan)':
     'sanity ceiling 25% (5-year growth above that is implausible)',
+  'sanity pod −25% (5-god. pad ispod toga je jednokratni kolaps, ne trajna stopa)':
+    'sanity floor −25% (a 5-year decline below that is a one-off collapse, not a lasting rate)',
   "Povrat na ULOŽENI kapital (vlasnički + dužnički): koliko operativne dobiti firma vrati na SAV kapital koji koristi, neovisno je li vlastiti ili posuđen. Uloženi kapital = ukupna imovina − kratkoročne obveze (ono što financira dugoročni pogon). Za razliku od ROE (samo vlasnici), ROCE gleda cijelu operaciju pa je usporediv među različito zaduženim firmama. Naš EBIT NE uključuje dobit pridruženih društava (metoda udjela), pa broj može biti niži od portala koji je uključuju.":
     'Return on CAPITAL EMPLOYED (equity + debt): how much operating profit the company returns on ALL the capital it uses, regardless of whether it is own or borrowed. Capital employed = total assets − current liabilities (what funds the long-term operation). Unlike ROE (owners only), ROCE looks at the whole operation and is comparable across differently leveraged companies. Our EBIT does NOT include the profit of associates (equity method), so the figure can be lower than portals that include it.',
   "Ovdje je 'dug' SAMO kamatonosni financijski dug (krediti, obveznice, leasing) naspram knjige matici — mjera stvarne financijske poluge. NE uključuje obveze prema dobavljačima, primljene predujmove ni rezerviranja; za sve obveze vidi 'Obveze/kapital'. Portali koji pod 'dug/kapital' zbrajaju SVE obveze pokazuju višestruko veći broj.":
