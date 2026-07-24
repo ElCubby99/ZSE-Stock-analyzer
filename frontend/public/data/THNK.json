@@ -1086,20 +1086,22 @@
         "peers": "THNK: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": -0.025,
+        "g1": 0.1049,
         "signals": {
-          "g_obs": -0.09,
+          "g_obs": 0.1049,
           "g_sust": null,
           "g_terminal": 0.04
         },
-        "origin": "serija",
-        "winner": "g_obs",
+        "origin": "održiv (serija)",
+        "winner": null,
         "badges": [
-          "negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom"
+          "jednokratni skok FY2023 (+85%) izuzet iz stope"
         ],
         "ttm_context": 0.1347,
         "short_series": false,
-        "source": "g1=-2.5% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = -9.0%; sidro terminala 4.0%} — pobjednik 'serija'; negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "verdict": "odrziv_serija",
+        "assessment": "Rast +10.5% (medijan godišnjih stopa) iz dosljedne serije. FY2023 je iznimna godina (+85% vs medijan +10.5%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +15.2%).",
+        "source": "g1=10.5% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +10.5%, CAGR +15.2%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast +10.5% (medijan godišnjih stopa) iz dosljedne serije. FY2023 je iznimna godina (+85% vs medijan +10.5%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +15.2%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -1153,17 +1155,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -56.13847528351355,
-        "base": -56.075849079219665,
-        "high": -55.99935122568703,
+        "low": -55.92982884604605,
+        "base": -55.84453994273713,
+        "high": -55.740297905974586,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.14014,
           "g_terminal": 0.04,
-          "g1_explicit": -0.025,
+          "g1_explicit": 0.1049,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=-2.5% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = -9.0%; sidro terminala 4.0%} — pobjednik 'serija'; negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=10.5% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +10.5%, CAGR +15.2%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast +10.5% (medijan godišnjih stopa) iz dosljedne serije. FY2023 je iznimna godina (+85% vs medijan +10.5%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +15.2%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",

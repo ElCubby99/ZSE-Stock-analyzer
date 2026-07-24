@@ -207,7 +207,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 61–127 € (raspon 52%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 61–125 € (raspon 51%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -679,20 +679,22 @@
         "peers": "VDZG: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": -0.0581,
+        "g1": -0.0639,
         "signals": {
-          "g_obs": -0.2595,
+          "g_obs": -0.0697,
           "g_sust": -0.0581,
           "g_terminal": 0.04
         },
-        "origin": "održivi rast",
-        "winner": "g_sust",
+        "origin": "održiv (samofinanciran)",
+        "winner": null,
         "badges": [
-          "negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom"
+          "negativan rast — višegodišnje skupljanje dokazano"
         ],
         "ttm_context": -0.018,
         "short_series": false,
-        "source": "g1=-5.8% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = -25.9%; održivi rast: ROE -5.8% × (1 − payout 0%) = -5.8%; sidro terminala 4.0%} — pobjednik 'održivi rast'; negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "verdict": "odrziv_samofinanciran",
+        "assessment": "Opaženi rast -7.0% POKLAPA SE s kapacitetom samofinanciranja -5.8% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu.",
+        "source": "g1=-6.4% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -7.0%, CAGR -1.0%; samofinanciranje (ROE×zadržano) -5.8%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -7.0% POKLAPA SE s kapacitetom samofinanciranja -5.8% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -772,17 +774,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 110.59167283113464,
-        "base": 126.61893724508307,
-        "high": 148.33192797962272,
+        "low": 109.09416599303653,
+        "base": 124.8835426850254,
+        "high": 146.273765496429,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.1063,
           "g_terminal": 0.04,
-          "g1_explicit": -0.0581,
+          "g1_explicit": -0.0639,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=-5.8% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = -25.9%; održivi rast: ROE -5.8% × (1 − payout 0%) = -5.8%; sidro terminala 4.0%} — pobjednik 'održivi rast'; negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=-6.4% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -7.0%, CAGR -1.0%; samofinanciranje (ROE×zadržano) -5.8%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -7.0% POKLAPA SE s kapacitetom samofinanciranja -5.8% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -824,9 +826,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 110.59167283113464,
-      "zone_high": 148.33192797962272,
-      "dispersion": 0.25443109694948945,
+      "zone_low": 109.09416599303653,
+      "zone_high": 146.273765496429,
+      "dispersion": 0.2541781800530742,
       "divergent": false,
       "archetype": "cyclical",
       "anchor_methods": [
@@ -851,26 +853,26 @@
       },
       "zone_note": "zona = MEDIJAN kvalificiranih metoda (dcf_fcf) ± osjetljivost primarnog sidra 'dcf_fcf' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): comps",
       "all_methods_low": 60.61037576274058,
-      "all_methods_high": 126.61893724508307,
-      "dispersion_all": 0.5213166601973337,
+      "all_methods_high": 124.8835426850254,
+      "dispersion_all": 0.5146648272494252,
       "method_bases": {
         "comps": 60.61037576274058,
-        "dcf_fcf": 126.61893724508307,
+        "dcf_fcf": 124.8835426850254,
         "justified_pb_roe": 0
       },
       "qa_flags": [
         "fer-zona odstupa -61% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": -61.4,
+      "vs_market_pct": -60.8,
       "anchor_inconsistency": [],
-      "reasoning": "Rast -5.8% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održivi rast' (višegodišnja serija: -25.9%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje -19 € operativne zarade (EBITDA marža -19.1%). Firma je lani stvorila 3.9 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 10.6%, uz izračunati rast -5.8% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 126.62 € po dionici. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~-8.6% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je -5.8% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast -6.4% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: -7.0%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje -19 € operativne zarade (EBITDA marža -19.1%). Firma je lani stvorila 3.9 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 10.6%, uz izračunati rast -6.4% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 124.88 € po dionici. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~-8.6% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je -6.4% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": -8.6,
         "implied_g_note": "uz naš r=10.6% cijena implicira trajni rast FCF-a ~-8.6% godišnje",
         "implied_r_pct": 25.86,
         "implied_r_note": "uz naš trajni rast 4.0% cijena implicira trošak kapitala ~25.9% (naš: 10.6%)",
-        "narrative": "Tržišna cijena implicira ~-8.6% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je -5.8% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~-8.6% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je -6.4% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
         "dcf_fcf"
@@ -898,8 +900,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "-5,8%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održivi rast'"
+        "v": "-6,4%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (samofinanciran)'"
       },
       {
         "k": "Peer multipli",

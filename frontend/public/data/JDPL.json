@@ -207,7 +207,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -75–15 € (raspon 592%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -57–15 € (raspon 477%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -3467,20 +3467,23 @@
         "peers": "JDPL: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": -0.0098,
+        "g1": -0.25,
         "signals": {
-          "g_obs": -0.0098,
+          "g_obs": -0.2638,
           "g_sust": -0.3086,
           "g_terminal": 0.04
         },
-        "origin": "serija",
-        "winner": "g_obs",
+        "origin": "održiv (samofinanciran)",
+        "winner": null,
         "badges": [
-          "negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom"
+          "negativan rast — višegodišnje skupljanje dokazano",
+          "sanity pod −25% (5-god. pad ispod toga je jednokratni kolaps, ne trajna stopa)"
         ],
         "ttm_context": -0.0762,
         "short_series": false,
-        "source": "g1=-1.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = -1.0%; održivi rast: ROE -30.9% × (1 − payout 0%) = -30.9%; sidro terminala 4.0%} — pobjednik 'serija'; negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "verdict": "odrziv_samofinanciran",
+        "assessment": "Opaženi rast -26.4% POKLAPA SE s kapacitetom samofinanciranja -30.9% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Procijenjeni -28.6% probija sanity pod −25% — pad te dubine 5 g zaredom je jednokratni kolaps, a ne održiva stopa; ograničeno na −25%.",
+        "source": "g1=-25.0% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -26.4%, CAGR -10.7%; samofinanciranje (ROE×zadržano) -30.9%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -26.4% POKLAPA SE s kapacitetom samofinanciranja -30.9% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Procijenjeni -28.6% probija sanity pod −25% — pad te dubine 5 g zaredom je jednokratni kolaps, a ne održiva stopa; ograničeno na −25%. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -3555,17 +3558,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -70.54336309794438,
-        "base": -75.02379035075225,
-        "high": -80.87871782450087,
+        "low": -55.09849827995285,
+        "base": -57.42201539337379,
+        "high": -60.45481280684268,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.11513999999999999,
           "g_terminal": 0.04,
-          "g1_explicit": -0.0098,
+          "g1_explicit": -0.25,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=-1.0% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = -1.0%; održivi rast: ROE -30.9% × (1 − payout 0%) = -30.9%; sidro terminala 4.0%} — pobjednik 'serija'; negativan g1 — višegodišnje skupljanje dokazano ≥3g serijom. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=-25.0% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -26.4%, CAGR -10.7%; samofinanciranje (ROE×zadržano) -30.9%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -26.4% POKLAPA SE s kapacitetom samofinanciranja -30.9% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Procijenjeni -28.6% probija sanity pod −25% — pad te dubine 5 g zaredom je jednokratni kolaps, a ne održiva stopa; ograničeno na −25%. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -3609,7 +3612,7 @@
     "reconciliation": {
       "zone_low": 14.852674486489063,
       "zone_high": 15.614350101180808,
-      "dispersion": 5.924917438844007,
+      "dispersion": 4.769453444863974,
       "divergent": true,
       "archetype": "cyclical",
       "anchor_methods": [],
@@ -3631,16 +3634,16 @@
         }
       },
       "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
-      "all_methods_low": -75.02379035075225,
+      "all_methods_low": -57.42201539337379,
       "all_methods_high": 15.233512293834936,
-      "dispersion_all": 5.924917438844007,
+      "dispersion_all": 4.769453444863974,
       "method_bases": {
         "comps": 15.233512293834936,
-        "dcf_fcf": -75.02379035075225,
+        "dcf_fcf": -57.42201539337379,
         "justified_pb_roe": 0
       },
       "qa_flags": [
-        "metode se međusobno razilaze 592% (sve metode) — provjeri ulaze/pretpostavke"
+        "metode se međusobno razilaze 477% (sve metode) — provjeri ulaze/pretpostavke"
       ],
       "vs_market_pct": -18.6,
       "anchor_inconsistency": [],
@@ -3671,8 +3674,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "-1,0%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'serija'"
+        "v": "-25,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (samofinanciran)'"
       },
       {
         "k": "Peer multipli",

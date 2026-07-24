@@ -449,11 +449,11 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: godišnji podatak; komponente traženog prinosa r = 8.27%: nerizična stopa 2.70% + β 1.03 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.; peer multipli (P/E 12, P/B 1,5)."
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 1.04 (regresija (R²-blend sa sektorskom)); godišnji podatak; komponente traženog prinosa r = 8.31%: nerizična stopa 2.70% + β 1.04 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.; peer multipli (P/E 12, P/B 1,5)."
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 10–31 € (raspon 66%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 10–31 € (raspon 67%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -5197,12 +5197,12 @@
   "share_class_explainer": null,
   "valuation": {
     "params": {
-      "r": 0.0827382,
+      "r": 0.0831189,
       "g": 0.025,
       "g_terminal": 0.04,
-      "beta": 1.034,
-      "beta_calibrated": true,
-      "beta_origin": "regresija",
+      "beta": 1.043,
+      "beta_calibrated": false,
+      "beta_origin": "regresija (R²-blend sa sektorskom)",
       "illiq_premium": 0.0,
       "illiq_src": null,
       "holding_discount_low": 0.15,
@@ -5217,7 +5217,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.0827 = rf 2.70% + β 1.03×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.03: IZMJERENA regresijom (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.218) uz Blume prilagodbu 0,67·1.05 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
+        "r": "r=0.0831 = rf 2.70% + β 1.04×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.04: regresijska (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj.) Blume-prilagođena na 1.03 (0,67·1.05+0,33·1), ali R²=0.22 je NIZAK (<0.5) — tržište objašnjava tek 22% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 1.05 u omjeru 44%/56% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -5227,21 +5227,29 @@
         "peers": "ZABA: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": 0.0429,
+        "g1": 0.0536,
         "signals": {
-          "g_obs": 0.0429,
+          "g_obs": 0.0437,
           "g_sust": 0.0636,
           "g_terminal": 0.04
         },
-        "origin": "serija",
-        "winner": "g_obs",
+        "origin": "održiv (samofinanciran)",
+        "winner": null,
         "badges": [],
         "ttm_context": 0.0091,
         "short_series": false,
-        "source": "g1=4.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +4.3%; održivi rast: ROE 21.2% × (1 − payout 70%) = +6.4%; sidro terminala 4.0%} — pobjednik 'serija'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "verdict": "odrziv_samofinanciran",
+        "assessment": "Opaženi rast +4.4% POKLAPA SE s kapacitetom samofinanciranja +6.4% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan).",
+        "source": "g1=5.4% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +4.4%, CAGR +4.3%; samofinanciranje (ROE×zadržano) +6.4%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +4.4% POKLAPA SE s kapacitetom samofinanciranja +6.4% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
+      {
+        "key": "beta",
+        "label": "β = 1.04 (regresija (R²-blend sa sektorskom))",
+        "status": "pretpostavka",
+        "why": "vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji"
+      },
       {
         "key": "annual_data",
         "label": "godišnji podatak",
@@ -5250,7 +5258,7 @@
       },
       {
         "key": "r_components",
-        "label": "komponente traženog prinosa r = 8.27%: nerizična stopa 2.70% + β 1.03 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.",
+        "label": "komponente traženog prinosa r = 8.31%: nerizična stopa 2.70% + β 1.04 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.",
         "status": "pretpostavka",
         "why": "nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju (postupak u Metodologiji)"
       },
@@ -5298,18 +5306,18 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 24.776472567382562,
-        "base": 30.575527606081433,
-        "high": 39.91733184626702,
+        "low": 25.205541498243228,
+        "base": 31.059579622325423,
+        "high": 40.449089216996256,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "dps": 1.2481,
-          "r": 0.0827382,
+          "r": 0.0831189,
           "g_terminal": 0.04,
-          "g1_explicit": 0.0429,
+          "g1_explicit": 0.0536,
           "model": "dvofazni DDM",
-          "growth_source": "g1=4.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +4.3%; održivi rast: ROE 21.2% × (1 − payout 70%) = +6.4%; sidro terminala 4.0%} — pobjednik 'serija'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=5.4% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +4.4%, CAGR +4.3%; samofinanciranje (ROE×zadržano) +6.4%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +4.4% POKLAPA SE s kapacitetom samofinanciranja +6.4% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "d_sust": {
             "d_sust_ps": 1.2481,
@@ -5324,7 +5332,7 @@
             "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
           },
           "sources": {
-            "r": "r=0.0827 = rf 2.70% + β 1.03×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.03: IZMJERENA regresijom (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.218) uz Blume prilagodbu 0,67·1.05 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
+            "r": "r=0.0831 = rf 2.70% + β 1.04×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.04: regresijska (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj.) Blume-prilagođena na 1.03 (0,67·1.05+0,33·1), ali R²=0.22 je NIZAK (<0.5) — tržište objašnjava tek 22% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 1.05 u omjeru 44%/56% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
@@ -5332,20 +5340,20 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 23.21875157540456,
-        "base": 27.24013630430234,
-        "high": 32.946286997940206,
+        "low": 23.08898760791894,
+        "base": 27.06170347279576,
+        "high": 32.68562743464771,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "roe": 0.212,
-          "r": 0.0827382,
+          "r": 0.0831189,
           "g": 0.025,
           "bvps": 8.41,
           "placeholder": true,
           "roe_rule": "ROE 21.2% iz zadnjeg GODIŠNJEG (kvartali nedostupni/nekonzistentni — TTM se ne gradi)",
           "sources": {
-            "r": "r=0.0827 = rf 2.70% + β 1.03×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.03: IZMJERENA regresijom (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.218) uz Blume prilagodbu 0,67·1.05 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
+            "r": "r=0.0831 = rf 2.70% + β 1.04×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.04: regresijska (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj.) Blume-prilagođena na 1.03 (0,67·1.05+0,33·1), ali R²=0.22 je NIZAK (<0.5) — tržište objašnjava tek 22% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 1.05 u omjeru 44%/56% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
@@ -5353,14 +5361,14 @@
       {
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
-        "low": 10.134851496670505,
-        "base": 10.31319979715827,
-        "high": 10.497931613164367,
+        "low": 10.128183942305874,
+        "base": 10.306295094255482,
+        "high": 10.490778342631346,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "roe0": 0.212,
-          "r": 0.0827382,
+          "r": 0.0831189,
           "g": 0.025,
           "roe_rule": "ROE 21.2% iz zadnjeg GODIŠNJEG (kvartali nedostupni/nekonzistentni — TTM se ne gradi)",
           "fade_years": 5,
@@ -5369,7 +5377,7 @@
           "equivalence_note": "jednostupanjski RI ≡ opravdani P/B ((ROE−g)/(COE−g)); razlika prema justified_pb_roe dolazi SAMO iz 5g fadea ROE→COE — konzistencijska provjera, prava dodana vrijednost traži eksplicitne ROE forecaste",
           "placeholder": true,
           "sources": {
-            "r": "r=0.0827 = rf 2.70% + β 1.03×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.03: IZMJERENA regresijom (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.218) uz Blume prilagodbu 0,67·1.05 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
+            "r": "r=0.0831 = rf 2.70% + β 1.04×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.04: regresijska (OLS tjednih log-prinosa ZABA vs CROBEX, 2024-07-01..2026-07-14, n=106 tj.) Blume-prilagođena na 1.03 (0,67·1.05+0,33·1), ali R²=0.22 je NIZAK (<0.5) — tržište objašnjava tek 22% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 1.05 u omjeru 44%/56% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 237/246 trgovanih dana (96%), prosj. promet 110,255 €/dan.",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
@@ -5388,9 +5396,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 23.21875157540456,
-      "zone_high": 32.946286997940206,
-      "dispersion": 0.2952543764079943,
+      "zone_low": 23.08898760791894,
+      "zone_high": 32.68562743464771,
+      "dispersion": 0.29360427135493966,
       "divergent": false,
       "archetype": "bank",
       "anchor_methods": [
@@ -5401,7 +5409,7 @@
         "comps": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": -0.45674713288956614
+          "vs_zone_pct": -0.45369396102333803
         },
         "ddm_gordon": {
           "role": "secondary",
@@ -5416,28 +5424,28 @@
         "residual_income": {
           "role": "anchor_alt",
           "note": "sidro-potvrda: ista r/rast pretpostavka, druga leća",
-          "vs_zone_pct": -0.6327537536116716
+          "vs_zone_pct": -0.6304306148454878
         }
       },
       "zone_note": "zona = MEDIJAN kvalificiranih metoda (ddm_gordon, justified_pb_roe, residual_income) ± osjetljivost primarnog sidra 'justified_pb_roe' (r/wacc ±1 p.b.) — v3 triangulacija",
-      "all_methods_low": 10.31319979715827,
-      "all_methods_high": 30.575527606081433,
-      "dispersion_all": 0.6626975687867774,
+      "all_methods_low": 10.306295094255482,
+      "all_methods_high": 31.059579622325423,
+      "dispersion_all": 0.6681766070379335,
       "method_bases": {
         "comps": 12.613653364063431,
-        "ddm_gordon": 30.575527606081433,
-        "justified_pb_roe": 27.24013630430234,
-        "residual_income": 10.31319979715827
+        "ddm_gordon": 31.059579622325423,
+        "justified_pb_roe": 27.06170347279576,
+        "residual_income": 10.306295094255482
       },
       "qa_flags": [
         "ULAZI NEKONZISTENTNI: residual_income -63% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
-        "metode se međusobno razilaze 66% (sve metode) — provjeri ulaze/pretpostavke"
+        "metode se međusobno razilaze 67% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": -19.9,
+      "vs_market_pct": -19.3,
       "anchor_inconsistency": [
         "residual_income -63% vs primarno sidro"
       ],
-      "reasoning": "Rast +4.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'serija' (višegodišnja serija: +4.3%) — nijedna procjena 'iz glave'. Firma ima 2,693 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 21.2% godišnje — više od 8.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 27.24 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -63% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +5.4% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +4.4%) — nijedna procjena 'iz glave'. Firma ima 2,693 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 21.2% godišnje — više od 8.3% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 27.06 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -63% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
@@ -5450,17 +5458,17 @@
       "dividend_sanity": {
         "d_sust_ps": 1.2481,
         "fallback_raw": false,
-        "zone_low": 23.22,
-        "zone_high": 32.95,
-        "implied_yield_low": 0.0538,
-        "threshold": 0.0577,
-        "r": 0.0827,
+        "zone_low": 23.09,
+        "zone_high": 32.69,
+        "implied_yield_low": 0.0541,
+        "threshold": 0.0581,
+        "r": 0.0831,
         "g_used": 0.025,
         "g_source": "kapitalni trajni g 2.5% (sidro zone je justified_pb_roe — ista pretpostavka rasta kojom je zona izračunata)",
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 1.25 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (23.22 €), samo od te dividende dobivao bi 5.4% godišnje. Fer cijena to ne dopušta iznad 5.8% (traženi prinos 8.3% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 1.25 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (23.09 €), samo od te dividende dobivao bi 5.4% godišnje. Fer cijena to ne dopušta iznad 5.8% (traženi prinos 8.3% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": "free float ~3% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
@@ -5472,8 +5480,8 @@
     "parameters": [
       {
         "k": "Trošak kapitala r",
-        "v": "8,27%",
-        "why": "CAPM: nerizična stopa 2.70% (HR 10g obveznica) + beta 1.034 × premija rizika 4.23% (Damodaran, HR). Beta je izmjerena iz burzovne serije ove dionice. Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+        "v": "8,31%",
+        "why": "CAPM: nerizična stopa 2.70% (HR 10g obveznica) + beta 1.043 × premija rizika 4.23% (Damodaran, HR). Beta je pretpostavka 1,0 (serija prekratka/nelikvidna). Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
       },
       {
         "k": "Dugoročni rast g",
@@ -5482,8 +5490,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "4,3%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'serija'"
+        "v": "5,4%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (samofinanciran)'"
       },
       {
         "k": "Peer multipli",
@@ -5494,8 +5502,9 @@
     "limitations": [
       "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
       "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
+      "β = 1.04 (regresija (R²-blend sa sektorskom)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "godišnji podatak — TTM se ne gradi: nema novijih interima od godišnjeg — vrednuje se iz zadnjeg godišnjeg izvješća",
-      "komponente traženog prinosa r = 8.27%: nerizična stopa 2.70% + β 1.03 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju (postupak u Metodologiji)",
+      "komponente traženog prinosa r = 8.31%: nerizična stopa 2.70% + β 1.04 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
     "changelog": [

@@ -173,7 +173,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -30–8 € (raspon 461%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -29–8 € (raspon 451%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -801,18 +801,23 @@
         "peers": "CRAL: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": 0.0328,
+        "g1": 0.0,
         "signals": {
-          "g_obs": 0.0328,
+          "g_obs": 0.0561,
           "g_sust": -0.95,
           "g_terminal": 0.04
         },
-        "origin": "serija",
-        "winner": "g_obs",
-        "badges": [],
+        "origin": "iznad kapaciteta samofinanciranja",
+        "winner": null,
+        "badges": [
+          "jednokratni skok FY2023 (+20%) izuzet iz stope",
+          "donja granica 0 (bez ≥3g dokaza skupljanja)"
+        ],
         "ttm_context": 0.0147,
         "short_series": false,
-        "source": "g1=3.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +3.3%; održivi rast: ROE -95.0% × (1 − payout 0%) = -95.0%; sidro terminala 4.0%} — pobjednik 'serija'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "verdict": "iznad_samofinanciranja",
+        "assessment": "Opaženi rast (prihoda) +5.6% PREMAŠUJE kapacitet samofinanciranja -95.0% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (-44.7%). FY2023 je iznimna godina (+20% vs medijan +5.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +8.7%).",
+        "source": "g1=0.0% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +5.6%, CAGR +8.7%; samofinanciranje (ROE×zadržano) -95.0%; sidro terminala 4.0%. Verdikt: iznad kapaciteta samofinanciranja. Opaženi rast (prihoda) +5.6% PREMAŠUJE kapacitet samofinanciranja -95.0% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (-44.7%). FY2023 je iznimna godina (+20% vs medijan +5.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +8.7%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -893,17 +898,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -29.232670775951803,
-        "base": -30.304103084017736,
-        "high": -31.61321856950731,
+        "low": -28.47851171054406,
+        "base": -29.46829619937846,
+        "high": -30.67746497005295,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.14014,
           "g_terminal": 0.04,
-          "g1_explicit": 0.0328,
+          "g1_explicit": 0.0,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=3.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +3.3%; održivi rast: ROE -95.0% × (1 − payout 0%) = -95.0%; sidro terminala 4.0%} — pobjednik 'serija'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=0.0% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +5.6%, CAGR +8.7%; samofinanciranje (ROE×zadržano) -95.0%; sidro terminala 4.0%. Verdikt: iznad kapaciteta samofinanciranja. Opaženi rast (prihoda) +5.6% PREMAŠUJE kapacitet samofinanciranja -95.0% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (-44.7%). FY2023 je iznimna godina (+20% vs medijan +5.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +8.7%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -947,7 +952,7 @@
     "reconciliation": {
       "zone_low": 8.19420452268768,
       "zone_high": 8.614420139235767,
-      "dispersion": 4.605780210282829,
+      "dispersion": 4.506330445480521,
       "divergent": true,
       "archetype": "cyclical",
       "anchor_methods": [],
@@ -969,16 +974,16 @@
         }
       },
       "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
-      "all_methods_low": -30.304103084017736,
+      "all_methods_low": -29.46829619937846,
       "all_methods_high": 8.404312330961725,
-      "dispersion_all": 4.605780210282829,
+      "dispersion_all": 4.506330445480521,
       "method_bases": {
         "comps": 8.404312330961725,
-        "dcf_fcf": -30.304103084017736,
+        "dcf_fcf": -29.46829619937846,
         "justified_pb_roe": 0
       },
       "qa_flags": [
-        "metode se međusobno razilaze 461% (sve metode) — provjeri ulaze/pretpostavke",
+        "metode se međusobno razilaze 451% (sve metode) — provjeri ulaze/pretpostavke",
         "fer-zona odstupa -58% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
       "vs_market_pct": -58.4,
@@ -988,7 +993,7 @@
       "market_implied": {
         "implied_r_pct": -138.37,
         "implied_r_note": "uz naš trajni rast 2.5% i ROE -85.5% cijena implicira trošak kapitala ~-138.4% (naš: 14.0%)",
-        "narrative": "Tržišna cijena implicira ; naš kompozitni rast (serija/održivi/terminal) je +3.3% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ; naš kompozitni rast (serija/održivi/terminal) je +0.0% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [],
       "class_zones": null,
@@ -1014,8 +1019,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "3,3%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'serija'"
+        "v": "0,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'iznad kapaciteta samofinanciranja'"
       },
       {
         "k": "Peer multipli",

@@ -218,7 +218,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju -249–119 € (raspon 310%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju -252–119 € (raspon 312%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -2600,18 +2600,20 @@
         "peers": "KRAS: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": 0.0629,
+        "g1": 0.0679,
         "signals": {
-          "g_obs": 0.0661,
+          "g_obs": 0.0729,
           "g_sust": 0.0629,
           "g_terminal": 0.04
         },
-        "origin": "održivi rast",
-        "winner": "g_sust",
+        "origin": "održiv (samofinanciran)",
+        "winner": null,
         "badges": [],
         "ttm_context": 0.0098,
         "short_series": false,
-        "source": "g1=6.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +6.6%; održivi rast: ROE 6.3% × (1 − payout 0%) = +6.3%; sidro terminala 4.0%} — pobjednik 'održivi rast'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g."
+        "verdict": "odrziv_samofinanciran",
+        "assessment": "Opaženi rast +7.3% POKLAPA SE s kapacitetom samofinanciranja +6.3% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan).",
+        "source": "g1=6.8% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +7.3%, CAGR +9.1%; samofinanciranje (ROE×zadržano) +6.3%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +7.3% POKLAPA SE s kapacitetom samofinanciranja +6.3% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -2701,17 +2703,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -204.24824912223914,
-        "base": -249.02328235947766,
-        "high": -319.88804143676134,
+        "low": -206.4868429176141,
+        "base": -251.7919635865137,
+        "high": -323.4965437821531,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.08432909999999999,
           "g_terminal": 0.04,
-          "g1_explicit": 0.0629,
+          "g1_explicit": 0.0679,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=6.3% = KOMPOZIT (v3.1): medijan {serija: 3g CAGR prihoda FY2023->FY2025 iz baze = +6.6%; održivi rast: ROE 6.3% × (1 − payout 0%) = +6.3%; sidro terminala 4.0%} — pobjednik 'održivi rast'. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g.",
+          "growth_source": "g1=6.8% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +7.3%, CAGR +9.1%; samofinanciranje (ROE×zadržano) +6.3%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +7.3% POKLAPA SE s kapacitetom samofinanciranja +6.3% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -2785,21 +2787,21 @@
         }
       },
       "zone_note": "zona = MEDIJAN kvalificiranih metoda (justified_pb_roe) ± osjetljivost primarnog sidra 'justified_pb_roe' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): dcf_fcf, comps",
-      "all_methods_low": -249.02328235947766,
+      "all_methods_low": -251.7919635865137,
       "all_methods_high": 118.75074351687317,
-      "dispersion_all": 3.097025037355612,
+      "dispersion_all": 3.1203401017083894,
       "method_bases": {
         "comps": 118.75074351687317,
-        "dcf_fcf": -249.02328235947766,
+        "dcf_fcf": -251.7919635865137,
         "justified_pb_roe": 49.633346377563065
       },
       "qa_flags": [
-        "metode se međusobno razilaze 310% (sve metode) — provjeri ulaze/pretpostavke",
+        "metode se međusobno razilaze 312% (sve metode) — provjeri ulaze/pretpostavke",
         "fer-zona odstupa +151% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
       "vs_market_pct": 150.6,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +6.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održivi rast' (višegodišnja serija: +6.6%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 8 € operativne zarade (EBITDA marža 8.0%). Firma ima 119 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 6.3% godišnje — manje od 8.4% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 49.63 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira multipl P/E 25.7×; naš kompozitni rast (serija/održivi/terminal) je +6.3% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +6.8% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +7.3%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 8 € operativne zarade (EBITDA marža 8.0%). Firma ima 119 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 6.3% godišnje — manje od 8.4% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 49.63 € po dionici. Glavni rizik za procjenu: različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke. Tržišna cijena implicira multipl P/E 25.7×; naš kompozitni rast (serija/održivi/terminal) je +6.8% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_r_pct": 4.8,
@@ -2807,7 +2809,7 @@
         "implied_pe": 25.7,
         "peer_pe": 12.0,
         "implied_pe_note": "cijena implicira P/E 25.7× vs peer medijan 12.0× (placeholder)",
-        "narrative": "Tržišna cijena implicira multipl P/E 25.7×; naš kompozitni rast (serija/održivi/terminal) je +6.3% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira multipl P/E 25.7×; naš kompozitni rast (serija/održivi/terminal) je +6.8% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
         "justified_pb_roe"
@@ -2849,8 +2851,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "6,3%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održivi rast'"
+        "v": "6,8%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (samofinanciran)'"
       },
       {
         "k": "Peer multipli",
