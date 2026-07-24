@@ -63,7 +63,7 @@ def dump() -> int:
     out = {"companies": [], "filings": [], "dividends": [], "holdings": [],
            "dividend_policies": [], "growth_estimates": [],
            "valuation_changelog": [], "share_classes": [],
-           "business_profiles": []}
+           "business_profiles": [], "backlogs": []}
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(f"""SELECT ticker, {', '.join(COMPANY_COLS)}
                         FROM companies ORDER BY ticker""")
@@ -125,6 +125,16 @@ def dump() -> int:
                        FROM valuation_changelog v
                        JOIN companies c ON c.id=v.company_id ORDER BY v.id""")
         out["valuation_changelog"] = [[_j(x) for x in r] for r in cur.fetchall()]
+
+        # M47: knjiga narudžbi (backlog) — kurirani ručni unos iz izvještaja
+        try:
+            cur.execute("""SELECT c.ticker, b.fiscal_year, b.backlog_eur,
+                                  b.growth_rate, b.source
+                           FROM backlogs b JOIN companies c ON c.id=b.company_id
+                           ORDER BY c.ticker, b.fiscal_year""")
+            out["backlogs"] = [[_j(x) for x in r] for r in cur.fetchall()]
+        except Exception:  # noqa: BLE001 — tablica opcionalna nadogradnja
+            conn.rollback()
 
     DUMP.parent.mkdir(parents=True, exist_ok=True)
     with gzip.open(DUMP, "wt", encoding="utf-8") as f:
@@ -301,6 +311,20 @@ def apply() -> int:
                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
                    ON CONFLICT (company_id, changed_on, reason) DO NOTHING""",
                 (cid, changed_on, ol, oh, nl, nh, reason, kind))
+
+        for row in d.get("backlogs", []):
+            ticker, fy, bl_eur, gr, src = row
+            cid = cid_of.get(ticker)
+            if cid is None:
+                continue
+            cur.execute(
+                """INSERT INTO backlogs (company_id, fiscal_year, backlog_eur,
+                     growth_rate, source)
+                   VALUES (%s,%s,%s,%s,%s)
+                   ON CONFLICT (company_id, fiscal_year) DO UPDATE SET
+                     backlog_eur=EXCLUDED.backlog_eur, growth_rate=EXCLUDED.growth_rate,
+                     source=EXCLUDED.source""",
+                (cid, fy, bl_eur, gr, src))
 
     print(f"[sync] apply: {stats}")
     return 0

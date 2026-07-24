@@ -165,6 +165,41 @@ def sync_dividend_news(conn, log, lookback_days: int = 7) -> int:
     return n_total
 
 
+def import_backlogs(conn, log, path="data/sync/backlogs.json") -> int:
+    """M47: upsert kuriranih backlog redova iz verzioniranog seed JSON-a
+    (ticker, fiscal_year, backlog_eur, growth_rate, source). Surgical — dira
+    SAMO tablicu backlogs; idempotentno (ON CONFLICT UPDATE). Vraća broj
+    redova. Nepostojeći file / prazan -> 0 bez greške."""
+    import json
+    import pathlib
+    p = pathlib.Path(path)
+    if not p.exists():
+        return 0
+    rows = json.loads(p.read_text(encoding="utf-8"))
+    cur = conn.cursor()
+    n = 0
+    for r in rows:
+        cur.execute("SELECT id FROM companies WHERE ticker=%s", (r["ticker"],))
+        c = cur.fetchone()
+        if not c:
+            log("backlog", None, "skipped", f"{r['ticker']}: firma nije u bazi")
+            continue
+        cur.execute(
+            """INSERT INTO backlogs (company_id, fiscal_year, backlog_eur,
+                 growth_rate, source)
+               VALUES (%s,%s,%s,%s,%s)
+               ON CONFLICT (company_id, fiscal_year) DO UPDATE SET
+                 backlog_eur=EXCLUDED.backlog_eur, growth_rate=EXCLUDED.growth_rate,
+                 source=EXCLUDED.source""",
+            (c[0], r["fiscal_year"], r.get("backlog_eur"), r.get("growth_rate"),
+             r["source"]))
+        n += 1
+        log("backlog", c[0], "ok",
+            f"{r['ticker']} FY{r['fiscal_year']}: backlog upsert "
+            f"(g={r.get('growth_rate')})")
+    return n
+
+
 def main(argv=None) -> int:
     sys.path.insert(0, ".")
     from .daily import (_logger, ensure_schema, stage_extract_queue,
@@ -195,9 +230,15 @@ def main(argv=None) -> int:
             log("schema", None, "failed", f"{type(e).__name__}: {e}")
         touched = sync_reports(conn, log, a.lookback_days)
         n_div = sync_dividend_news(conn, log, a.lookback_days)
+        try:
+            n_bl = import_backlogs(conn, log)
+        except Exception as e:  # noqa: BLE001 — seed opcionalan, ne ruši sync
+            conn.rollback()
+            log("backlog", None, "failed", f"{type(e).__name__}: {e}")
+            n_bl = 0
         conn.commit()
         print(f"[report-sync] novih filinga: {len(touched)}, "
-              f"dividendnih događaja: {n_div}")
+              f"dividendnih događaja: {n_div}, backlog redova: {n_bl}")
         if a.extract:
             touched = sorted(set(touched + stage_extract_queue(conn, run_id, log)))
         extra: list[int] = []
