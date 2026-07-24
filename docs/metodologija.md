@@ -359,6 +359,17 @@ kojima se fer-zone računaju DANAS:
   automatski alarm traži provjeru NAŠIH ulaza — zone se provjeravaju, ne
   prilagođavaju cijenama.
 
+- **Konsolidirani DCF matice s uvrštenim kćerima ≠ SOTP — i zašto (srpanj
+  2026.).** Kad matica konsolidira kćeri (KONČAR: KODT, DLKV), konsolidirani
+  DCF diskontira 100% njihovih novčanih tokova. Dvije posljedice: (1)
+  manjinski udjel se mora ukloniti PROPORCIONALNO (manjina drži udjel u
+  rastućem toku, ne u statičnoj knjizi — raniji statični odbitak knjigovodstvenog
+  NCI-ja podcjenjivao je manjinu, npr. KOEI 156 M€ statično vs ~800 M€
+  proporcionalno; ispravljeno); (2) i nakon toga konsolidirani DCF raste tuđe
+  (tržišno već vrednovane) kćeri po grupnoj stopi rasta pa ih vrednuje iznad
+  njihove tržišne cijene — zato STRUKTURNO nadmašuje SOTP. Za takve matice
+  sidro je SOTP (svaka kći po tržištu, poštovan vlasnički udjel), a
+  konsolidirani DCF ostaje kontekst uz jasnu ogradu.
 - **EV mora sadržavati manjinske udjele — priznata greška (srpanj 2026.).**
   Vanjska stručna primjedba potvrdila je nekonzistentnost: prikazani
   pokazatelji jesu dodavali manjinske udjele u EV, ali most iz peer

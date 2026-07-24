@@ -419,31 +419,31 @@ def compute_dcf(c: Ctx) -> ValueRange:
     if fcf is None:
         return _missing(c, "free_cash_flow|operating_cf+capex|guidance")
     net_debt = c.val("net_debt") or 0.0
-    # M41 equity bridge: konsolidirani DCF diskontira 100% novčanih tokova kćeri,
-    # pa se do vrijednosti PRIPADAJUĆE DIONIČARU MATICE mora oduzeti nekontrolirajući
-    # interes (NCI) — inače se manjinski udjeli krivo pripisuju matici (KOEI tip).
-    # NCI = knjigovodstveni manjinski interes iz bilance (ukupni kapital − kapital
-    # matice); konzervativno jer fer vrijednost kćeri iznad knjige NIJE procijenjena
-    # (zato konsolidirani DCF holdinga i nakon ovoga ostaje kontekst, a ne sidro —
-    # sidro je SOTP koji poštuje vlasnički udjel po kćeri, v2 §4).
+    # M47.2 equity bridge (PROPORCIONALNI NCI): konsolidirani DCF diskontira
+    # 100% novčanih tokova kćeri, pa se do vrijednosti DIONIČARU MATICE mora
+    # ukloniti manjinski udjel. RANIJE se oduzimao STATIČNI knjigovodstveni NCI
+    # — ali manjina ima udjel u RASTUĆEM toku, ne u fiksnoj knjizi, pa je
+    # statični odbitak drastično podcjenjivao manjinu (KOEI: 156 M€ statično
+    # vs ~800 M€ proporcionalno). Ispravno: manjina drži udjel mf = NCI/ukupni
+    # kapital u CIJELOM poduzeću, pa je vrijednost matici = (EV − neto dug) ×
+    # (1 − mf). (Konsolidirani DCF ipak ostaje KONTEKST, ne sidro, za matice s
+    # UVRŠTENIM kćerima — vidi caveat niže; sidro je SOTP.)
     te, ep = c.val("total_equity"), c.val("equity_parent")
-    nci, nci_note = 0.0, None
-    if te is not None and ep is not None and te - ep > 0:
-        nci = te - ep
+    nci_book = c.val("minority_interests")
+    if nci_book is None and te is not None and ep is not None and te - ep > 0:
+        nci_book = te - ep
+    minority_frac = 0.0
+    nci_note = None
+    if nci_book and nci_book > 0 and te and te > 0:
+        minority_frac = min(0.9, nci_book / te)
         nci_note = (
-            f"NCI oduzet {nci / 1e6:,.1f} M€ (knjigovodstveni manjinski interes = "
-            f"ukupni kapital {te / 1e6:,.0f} − kapital matice {ep / 1e6:,.0f}, "
-            f"izvor: bilanca); konsolidirani DCF broji 100% kćeri pa se do vrijednosti "
-            f"za dioničara matice oduzima udjel manjine — konzervativno (fer "
-            f"vrijednost kćeri iznad knjige nije procijenjena)")
-    else:
-        mi = c.val("minority_interests")
-        if mi is not None and mi > 0:
-            nci = mi
-            nci_note = (
-                f"NCI oduzet {nci / 1e6:,.1f} M€ (stavka manjinskih interesa iz "
-                f"bilance); konsolidirani DCF broji 100% kćeri pa se do vrijednosti "
-                f"za dioničara matice oduzima udjel manjine")
+            f"Manjinski interes uklonjen PROPORCIONALNO: manjina drži "
+            f"{minority_frac:.1%} kapitala (NCI {nci_book / 1e6:,.0f} M€ / ukupni "
+            f"kapital {te / 1e6:,.0f} M€), pa vrijednost dioničaru matice = "
+            f"(EV − neto dug) × (1 − {minority_frac:.1%}). Konsolidirani DCF broji "
+            f"100% kćeri — proporcionalni odbitak poštuje udjel manjine u "
+            f"RASTUĆEM toku (statični knjigovodstveni NCI bi drastično podcijenio "
+            f"manjinu i precijenio maticu).")
     gT = p.terminal_growth
     gh = c.growth_hint or {}
     g1 = gh.get("g1")
@@ -460,7 +460,7 @@ def compute_dcf(c: Ctx) -> ValueRange:
                 f *= (1 + g_yr)
                 ev += f / (1 + wacc) ** yr
             ev += (f * (1 + gT) / (wacc - gT)) / (1 + wacc) ** 5
-        return _per_share(ev - net_debt - nci, c)
+        return _per_share((ev - net_debt) * (1 - minority_frac), c)
 
     base = ps(p.wacc)
     if base is None:
@@ -472,6 +472,24 @@ def compute_dcf(c: Ctx) -> ValueRange:
                        "jednofazni Gordon — RAST NIJE IZVEDEN (nema 3g serije prihoda)"),
              "growth_source": gh.get("source"),
              "placeholder": p.placeholder}
+    if nci_note:
+        assum["nci_bridge"] = nci_note
+    # M47.2 caveat: matica koja KONSOLIDIRA UVRŠTENE kćeri (KOEI: KODT, DLKV) —
+    # konsolidirani DCF raste 100% toka tih kćeri po vlastitom g1 i vrednuje ih
+    # DALEKO iznad njihove TRŽIŠNE cijene (koju SOTP koristi). Zato konsolidirani
+    # DCF strukturno NADMAŠUJE SOTP i NIJE usporediv — ostaje kontekst, sidro je
+    # SOTP koji svaku kćer uzima po tržištu i poštuje vlasnički udjel.
+    _listed_kids = [h for h in (c.holdings or [])
+                    if h.get("valuation_basis") == "market"
+                    and h.get("ownership_pct") and float(h["ownership_pct"]) > 0]
+    if _listed_kids and getattr(c, "holding_type", "passive") == "operating":
+        names = ", ".join(str(h.get("held_name", "")).split("(")[0].strip()
+                          for h in _listed_kids)
+        assum["consolidated_double_count"] = (
+            f"OPREZ: konsolidirani DCF raste 100% novčanih tokova UVRŠTENIH kćeri "
+            f"({names}) po grupnom g1 i vrednuje ih znatno iznad njihove tržišne "
+            f"cijene — zato ovaj broj STRUKTURNO nadmašuje SOTP (koji kćeri uzima "
+            f"po tržištu). DCF je ovdje samo kontekst; sidro je SOTP.")
     if guidance_fcf_note:
         assum["guidance_fcf"] = guidance_fcf_note
     src = {k: p.sources[k] for k in ("wacc", "g") if p.sources.get(k)}
@@ -1067,12 +1085,18 @@ def _dcf_crosscheck(c: Ctx) -> Optional[dict]:
     if p.wacc <= gT or not c.shares_ex_treasury:
         return None
     net_debt = c.val("net_debt") or 0.0
-    te, ep = c.val("total_equity"), c.val("equity_parent")
-    nci = (te - ep) if (te is not None and ep is not None and te - ep > 0) else 0.0
+    # M47.2: proporcionalni NCI (kao u compute_dcf) — manjina drži udjel u
+    # cijelom poduzeću, ne u statičnoj knjizi
+    te = c.val("total_equity")
+    nci_book = c.val("minority_interests")
+    if nci_book is None:
+        ep = c.val("equity_parent")
+        nci_book = (te - ep) if (te is not None and ep is not None and te - ep > 0) else 0.0
+    minority_frac = min(0.9, nci_book / te) if (nci_book and te and te > 0) else 0.0
 
     def ps(wacc):
         ev = fcf_norm * (1 + gT) / (wacc - gT)
-        return _per_share(ev - net_debt - nci, c)
+        return _per_share((ev - net_debt) * (1 - minority_frac), c)
 
     base = ps(p.wacc)
     if base is None or base <= 0:

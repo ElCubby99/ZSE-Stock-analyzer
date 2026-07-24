@@ -381,6 +381,17 @@ assumptions fair-value zones are computed with TODAY:
   of their zones, an automatic alarm demands a review of OUR inputs — zones
   are reviewed, not fitted to prices.
 
+- **A parent's consolidated DCF with listed subsidiaries ≠ SOTP — and why
+  (July 2026).** When a parent consolidates subsidiaries (KONČAR: KODT, DLKV),
+  the consolidated DCF discounts 100% of their cash flows. Two consequences:
+  (1) the minority interest must be removed PROPORTIONALLY (minorities hold a
+  share of the growing stream, not of static book value — the earlier static
+  book-NCI deduction understated minorities, e.g. KOEI €156m static vs ~€800m
+  proportional; fixed); (2) even then the consolidated DCF grows others'
+  (already market-priced) subsidiaries at the group rate and values them above
+  their market price — so it STRUCTURALLY exceeds SOTP. For such parents the
+  anchor is SOTP (each subsidiary at market, ownership share respected), and
+  the consolidated DCF stays context with a clear caveat.
 - **EV must contain minority interests — an acknowledged error (July
   2026).** External expert feedback confirmed an inconsistency: the
   displayed indicators did add minority interests to EV, but the bridge
