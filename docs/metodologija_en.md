@@ -274,6 +274,23 @@ business:
   per-share value in the peer comparison (− net debt − minority interest +
   short-term financial assets + associates).
 
+### Leverage and ROCE — two numbers because there are two definitions
+
+- **Debt/equity** for us means **only interest-bearing** financial debt
+  (loans, bonds, leases) against parent book equity — a measure of real
+  financial leverage. Alongside it we show **Liabilities/equity** = **total**
+  liabilities (including suppliers, customer advances and provisions) against
+  total equity — the classic accounting ratio most portals call
+  "debt/equity". For companies with large customer advances on long-cycle
+  contracts (e.g. equipment makers) the first ratio can be a few percent while
+  the second is ~100% — same company, two true numbers; we show both so the
+  definitional difference is obvious.
+- **ROCE** (return on capital employed) = EBIT / (total assets − current
+  liabilities) — the whole operation in numerator and denominator, comparable
+  across differently leveraged companies. Our EBIT does not include the profit
+  of associates (equity method), so the figure can be lower than portals that
+  include it.
+
 ## How we guard against errors
 
 - **Input validations**: the balance sheet must balance, parent profit +

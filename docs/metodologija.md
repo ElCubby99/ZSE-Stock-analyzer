@@ -254,6 +254,22 @@ Enterprise value (EV) i EBITDA imaju smisla samo ako mjere ISTO poslovanje:
   (− neto dug − manjinski interes + kratkotrajna fin. imovina +
   pridružena društva).
 
+### Poluga i ROCE — dvije brojke jer postoje dvije definicije
+
+- **Dug/kapital** kod nas znači **samo kamatonosni** financijski dug (krediti,
+  obveznice, leasing) naspram knjige matici — mjera stvarne financijske
+  poluge. Uz njega prikazujemo i **Obveze/kapital** = **ukupne** obveze
+  (uključujući dobavljače, primljene predujmove i rezerviranja) naspram
+  ukupnog kapitala — klasični računovodstveni omjer koji većina portala zove
+  „dug/kapital". Kod firmi s velikim predujmovima kupaca na dugim ugovorima
+  (npr. proizvođači opreme) prvi omjer zna biti nekoliko posto, a drugi ~100%
+  — ista firma, dvije istinite brojke; prikazujemo obje da razlika u definiciji
+  bude očita.
+- **ROCE** (povrat na uloženi kapital) = EBIT / (ukupna imovina − kratkoročne
+  obveze) — cijela operacija u brojniku i nazivniku, usporedivo među različito
+  zaduženim firmama. Naš EBIT ne uključuje dobit pridruženih društava (metoda
+  udjela), pa broj može biti niži od portala koji je uključuju.
+
 ## Kako se čuvamo grešaka
 
 - **Validacije na ulazu**: bilanca se mora zatvarati, dobit matice + manjine

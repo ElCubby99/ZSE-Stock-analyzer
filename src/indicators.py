@@ -411,6 +411,34 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
     g.append(_i("ROA", (ni / ta) if (ni is not None and ta and ta > 0) else None, "%",
                 ta_b, "neto dobit / ukupna imovina")
              if ni is not None and ta and ta > 0 else _np("ROA", "nema ulaza"))
+    # M46: ROCE — povrat na ULOŽENI (vlasnički + dužnički) kapital. Cijela
+    # operacija u brojniku (EBIT) i nazivniku (uloženi kapital) — usporedivo
+    # među različito zaduženim firmama. Uloženi kapital = ukupna imovina −
+    # kratkoročne obveze (klasična def.); gdje kratkoročne obveze nisu u bazi,
+    # pada na kapital + kamatonosni dug (isti opseg, cijela firma).
+    te_all = ix.bal("total_equity")[0]
+    cl_p = ix.bal("current_liabilities")[0]
+    cap_empl, ce_b = None, None
+    if ta is not None and cl_p is not None and (ta - cl_p) > 0:
+        cap_empl, ce_b = ta - cl_p, "ukupna imovina − kratkoročne obveze"
+    elif te_all is not None and td is not None and (te_all + td) > 0:
+        cap_empl, ce_b = te_all + td, "ukupni kapital + kamatonosni dug"
+    if fin:
+        g.append(_np("ROCE", "n/p za banke/osiguranje — uloženi kapital nije smislen"))
+    elif ebit is not None and cap_empl:
+        g.append(_i("ROCE", ebit / cap_empl, "%", ebit_b,
+                    f"EBIT / uloženi kapital ({ce_b})",
+                    why="Povrat na ULOŽENI kapital (vlasnički + dužnički): koliko "
+                        "operativne dobiti firma vrati na SAV kapital koji koristi, "
+                        "neovisno je li vlastiti ili posuđen. Uloženi kapital = "
+                        "ukupna imovina − kratkoročne obveze (ono što financira "
+                        "dugoročni pogon). Za razliku od ROE (samo vlasnici), ROCE "
+                        "gleda cijelu operaciju pa je usporediv među različito "
+                        "zaduženim firmama. Naš EBIT NE uključuje dobit pridruženih "
+                        "društava (metoda udjela), pa broj može biti niži od portala "
+                        "koji je uključuju."))
+    else:
+        g.append(_np("ROCE", "nema ulaza (EBIT / uloženi kapital)"))
     groups.append({"key": "profit", "title": "Profitabilnost", "items": g})
 
     # 5) BILANCA (zadnje stanje) -----------------------------------------
@@ -452,13 +480,39 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
         g.append(_i("Dug/kapital", (td / eq) if (td is not None and eq) else None, "x",
                     eq_b, "kamatonosni dug / knjiga") if td is not None and eq
                  else _np("Dug/kapital", "nema ulaza"))
+        g.append(_np("Obveze/kapital", "n/p za banke/osiguranje — obveze (depoziti/"
+                     "tehničke pričuve) su posao, ne struktura financiranja"))
     else:
         g.append(_i("Tekući omjer", (ca / cl) if (ca and cl) else None, "x", ca_b,
                     "kratkotrajna imovina / kratkoročne obveze")
                  if ca and cl else _np("Tekući omjer", "stavke još nisu u bazi"))
         g.append(_i("Dug/kapital", (td / eq) if (td is not None and eq) else None, "x",
-                    eq_b, "kamatonosni dug / knjiga") if td is not None and eq
+                    eq_b, "kamatonosni dug / knjiga",
+                    why="Ovdje je 'dug' SAMO kamatonosni financijski dug (krediti, "
+                        "obveznice, leasing) naspram knjige matici — mjera stvarne "
+                        "financijske poluge. NE uključuje obveze prema dobavljačima, "
+                        "primljene predujmove ni rezerviranja; za sve obveze vidi "
+                        "'Obveze/kapital'. Portali koji pod 'dug/kapital' zbrajaju "
+                        "SVE obveze pokazuju višestruko veći broj.")
+                 if td is not None and eq
                  else _np("Dug/kapital", "nema ulaza"))
+        # M46: klasični računovodstveni debt-to-equity (ono što portali obično
+        # zovu 'dug/kapital') — SVE obveze / ukupni kapital; jasno odvojeno od
+        # gornje financijske poluge da čitatelj vidi razliku u definiciji
+        te_le = ix.bal("total_equity")[0]
+        tl_le = (ta - te_le) if (ta is not None and te_le is not None) else None
+        g.append(_i("Obveze/kapital", (tl_le / te_le) if (tl_le is not None and te_le)
+                    else None, "x", ta_b, "ukupne obveze / ukupni kapital",
+                    why="Klasični računovodstveni omjer koji većina portala zove "
+                        "'dug/kapital': UKUPNE obveze (dobavljači, primljeni "
+                        "predujmovi, rezerviranja, sve ostalo) naspram ukupnog "
+                        "kapitala. Kod firmi s velikim predujmovima kupaca na dugim "
+                        "ugovorima (npr. proizvođači opreme) zna biti ~100% iako je "
+                        "financijski dug tek nekoliko posto — bilancu drže "
+                        "operativne, a ne dužničke obveze. Zato ga prikazujemo uz, "
+                        "a ne umjesto, financijske poluge iznad.")
+                 if tl_le is not None and te_le
+                 else _np("Obveze/kapital", "nema ulaza"))
         nd = (td - (cash or 0)) if td is not None and cash is not None else None
         g.append(_i("Neto dug/EBITDA", (nd / ebitda) if (nd is not None and ebitda and ebitda > 0)
                     else None, "x", ebitda_b, "(dug − novac) / EBITDA")
