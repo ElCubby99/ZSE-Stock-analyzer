@@ -131,24 +131,6 @@ def assess_growth(series, g_sust, g_terminal, r, *, backlog=None,
             narr.append(f"Rast {g_repr:+.1%} (medijan godišnjih stopa) iz "
                         f"dosljedne serije.")
 
-    # --- backlog potkrepljuje near-term (smije podići IZNAD trailing rasta;
-    #     to mu je smisao — forward vidljivost). Konzervativno: blenda s
-    #     opaženim (pola-pola), a sanity strop hvata pretjerane tvrdnje. ---
-    if backlog and backlog.get("g") is not None:
-        gb = backlog["g"]
-        if gb > g1:
-            gb_eff = min(gb, SANITY_MAX)
-            g1 = (g1 + gb_eff) / 2       # korobracija backloga s trailing rastom
-            verdict = "odrziv_backlog"
-            narr.append(
-                f"Knjiga narudžbi potkrepljuje veći near-term rast ~{gb:+.1%} "
-                f"({backlog.get('src', 'objavljeno')}) — objavljena tvrda "
-                f"brojka, ne procjena; near-term stopa podignuta (blend s "
-                f"trailing rastom radi opreza) na {g1:+.1%}.")
-        else:
-            narr.append(f"Knjiga narudžbi ({gb:+.1%}, {backlog.get('src','')}) "
-                        f"ne nadmašuje procijenjeni rast — bez korekcije naviše.")
-
     # --- jednokratni efekt: imenuj godinu i skini je iz reprezentativnog ---
     if one_off:
         y_out, g_out = one_off
@@ -160,14 +142,45 @@ def assess_growth(series, g_sust, g_terminal, r, *, backlog=None,
             f"(koji bi ta godina napuhala na {cagr:+.1%}).")
 
     # --- usporavanje: zadnja godina bitno ispod medijana ---
-    if (g_recent is not None and g_med is not None
-            and g_recent < g_med - DECEL_BAND and verdict.startswith("odrziv")):
+    decel = (g_recent is not None and g_med is not None
+             and g_recent < g_med - DECEL_BAND and verdict.startswith("odrziv"))
+    if decel:
         g1 = (g1 + g_recent) / 2
         badges.append(f"usporavanje (zadnja YoY {g_recent:+.0%})")
         narr.append(
             f"Zadnja godina ({g_recent:+.1%}) bitno je ispod medijana "
             f"({g_med:+.1%}) — rast usporava; near-term pomaknut prema "
             f"recentnijem signalu na {g1:+.1%}.")
+
+    # --- backlog: OBJAVLJENA knjiga narudžbi je forward vidljivost i djeluje
+    #     NAKON usporavanja — ako je zadnja godina prihoda usporila zbog odgode
+    #     priznavanja na dugim ugovorima, backlog to pobija (narudžbe su
+    #     ugovorene). Backlog je POD na near-term rast: g1 se ne spušta ispod
+    #     backlog-implicirane stope; iznad trailing rasta blenda pola-pola
+    #     (oprez), a sanity strop hvata pretjerane tvrdnje. ---
+    if backlog and backlog.get("g") is not None:
+        gb = min(backlog["g"], SANITY_MAX)
+        src = backlog.get("src", "objavljeno")
+        if gb > g1:
+            new_g1 = (g1 + gb) / 2 if not decel else max(g1, gb)
+            # kod usporavanja backlog je POD (ugovorene narudžbe), ne polovica
+            verdict = "odrziv_backlog"
+            if decel:
+                narr.append(
+                    f"ALI knjiga narudžbi (+{gb:.1%}, {src}) pobija usporavanje: "
+                    f"pad prihoda zadnje godine je odgoda priznavanja na dugim "
+                    f"ugovorima, ne pad potražnje — ugovorene narudžbe su POD na "
+                    f"near-term rast, pa je g1 vraćen na {new_g1:+.1%}.")
+            else:
+                narr.append(
+                    f"Knjiga narudžbi potkrepljuje veći near-term rast ~{gb:+.1%} "
+                    f"({src}) — objavljena tvrda brojka, ne procjena; near-term "
+                    f"stopa podignuta (blend s trailing rastom radi opreza) na "
+                    f"{new_g1:+.1%}.")
+            g1 = new_g1
+        else:
+            narr.append(f"Knjiga narudžbi ({gb:+.1%}, {src}) ne nadmašuje "
+                        f"procijenjeni rast — bez korekcije naviše.")
 
     # --- skupljanje: negativan rast dopušten samo uz ≥3g dokaz ---
     if g1 is not None and g1 < 0:
