@@ -797,3 +797,56 @@ td.pos{color:var(--zone)} td.neg{color:var(--ordinary)}
 .fnd-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12.5px; }
 .fnd-leg-item { display: inline-flex; align-items: center; gap: 6px; }
 .fnd-leg-item .swatch { width: 14px; height: 4px; display: inline-block; border-radius: 1px; }
+
+/* ── Mobilna optimizacija naslovnice i headera (M48) ───────────────────────
+   Uzrok prijave (iPhone 13 i sl.): .hdr-in je GLOBALNO flex-wrap:nowrap
+   (l.482), pa su na uskom ekranu logo + tražilica + EN + ☰ stajali u JEDNOM
+   redu širem od viewporta → hamburger je “ispadao” desno i cijela se
+   stranica morala povlačiti udesno da se meni vidi. Uz to je tablica
+   “Sve dionice” imala min-width:1020px pa je ime društva gutalo širinu, a
+   cijena je bila izvan ekrana.
+   Rješenje: (1) header se na mobitelu LOMI — logo + EN + ☰ u prvom redu,
+   tražilica puni drugi red; (2) tablica prelazi u kompaktni prikaz BEZ
+   vodoravnog scrolla — 1. linija: TICKER ime… | cijena | promjena,
+   2. linija: fer-zona (band) + odmak u punoj širini; (3) manje bočne
+   margine da sadržaj dobije prostor. Pravila za tablicu su scope-ana na
+   .mk-table (naslovnica) da NE diraju .div-table (/dividende) i .usp-table
+   (/usporedba) koje dijele .mk-hd/.mk-row s drukčijim brojem stupaca. */
+@media(max-width:680px){
+  /* -- Header: dopusti lom; tražilica ide u zaseban red pune širine -- */
+  .hdr-in{flex-wrap:wrap; gap:8px 12px; padding:0 14px}
+  .hdr-logo{flex:0 1 auto; min-width:0; margin-right:auto}
+  .hdr-name{font-size:16px}
+  .hdr-lang{order:1; flex:none; margin-left:0}
+  .hdr-burger{order:2; flex:none}
+  .hdr-search{order:3; flex:0 0 100%; margin-left:0; padding:2px 0 11px}
+  .hdr-search input{width:100%; box-sizing:border-box}
+  .hdr-search-dd{width:100%; left:0; right:auto; top:44px}
+
+  /* -- Više prostora za sadržaj (manje bočne margine) -- */
+  .wrap-wide{padding:20px 14px 48px}
+  .wrap{padding:18px 16px 60px}
+
+  /* -- Dobitnici/gubitnici: jedan stupac, uže brojčane kolone -- */
+  .mk-movers-grid{grid-template-columns:1fr; gap:26px}
+  .mk-mrow{gap:10px}
+  .mk-mrow b{width:46px}
+  .mk-mrow .mono{width:64px}
+
+  /* -- Tablica 'Sve dionice' (samo naslovnica): kompaktno, bez scrolla -- */
+  .mk-table{min-width:0}
+  .mk-table .mk-hd,.mk-table .mk-row{grid-template-columns:minmax(0,1fr) 70px 62px;
+    gap:5px 10px; padding:10px 4px}
+  /* sakrij PROMET (4) i raspon fer-zone (5) svugdje; u zaglavlju i ODMAK (6) */
+  .mk-table .mk-hd button:nth-child(4),.mk-table .mk-hd button:nth-child(5),
+  .mk-table .mk-hd button:nth-child(6){display:none}
+  .mk-table .mk-row>:nth-child(4),.mk-table .mk-row>:nth-child(5){display:none}
+  .mk-table .mk-hd button{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  /* fer-zona (GapCell) puni drugi red pune širine ispod cijene/promjene */
+  .mk-table .mk-row>.mk-gap{grid-column:1 / -1; margin-top:3px}
+  .mk-table .mk-name{overflow:hidden}
+  .mk-table .mk-name b{font-size:13px}
+  .mk-table .mk-name em{font-size:11px}
+  .mk-table .mk-row .pine{font-size:12px}
+  .mk-band{width:104px}
+}
