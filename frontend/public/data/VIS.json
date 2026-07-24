@@ -1856,6 +1856,14 @@
             "unit": "%",
             "basis": "Kvartalno (31.03.2026.)",
             "formula": "neto dobit / ukupna imovina"
+          },
+          {
+            "k": "ROCE",
+            "v": -0.05780903306905603,
+            "unit": "%",
+            "basis": "TTM (do 31.03.2026.)",
+            "formula": "EBIT / uloženi kapital (ukupna imovina − kratkoročne obveze)",
+            "why": "Povrat na ULOŽENI kapital (vlasnički + dužnički): koliko operativne dobiti firma vrati na SAV kapital koji koristi, neovisno je li vlastiti ili posuđen. Uloženi kapital = ukupna imovina − kratkoročne obveze (ono što financira dugoročni pogon). Za razliku od ROE (samo vlasnici), ROCE gleda cijelu operaciju pa je usporediv među različito zaduženim firmama. Naš EBIT NE uključuje dobit pridruženih društava (metoda udjela), pa broj može biti niži od portala koji je uključuju."
           }
         ]
       },
@@ -1971,7 +1979,16 @@
             "v": 0.08386427000281581,
             "unit": "x",
             "basis": "Kvartalno (31.03.2026.)",
-            "formula": "kamatonosni dug / knjiga"
+            "formula": "kamatonosni dug / knjiga",
+            "why": "Ovdje je 'dug' SAMO kamatonosni financijski dug (krediti, obveznice, leasing) naspram knjige matici — mjera stvarne financijske poluge. NE uključuje obveze prema dobavljačima, primljene predujmove ni rezerviranja; za sve obveze vidi 'Obveze/kapital'. Portali koji pod 'dug/kapital' zbrajaju SVE obveze pokazuju višestruko veći broj."
+          },
+          {
+            "k": "Obveze/kapital",
+            "v": 0.23970088203668832,
+            "unit": "x",
+            "basis": "Kvartalno (31.03.2026.)",
+            "formula": "ukupne obveze / ukupni kapital",
+            "why": "Klasični računovodstveni omjer koji većina portala zove 'dug/kapital': UKUPNE obveze (dobavljači, primljeni predujmovi, rezerviranja, sve ostalo) naspram ukupnog kapitala. Kod firmi s velikim predujmovima kupaca na dugim ugovorima (npr. proizvođači opreme) zna biti ~100% iako je financijski dug tek nekoliko posto — bilancu drže operativne, a ne dužničke obveze. Zato ga prikazujemo uz, a ne umjesto, financijske poluge iznad."
           },
           {
             "k": "Neto dug/EBITDA",
