@@ -127,7 +127,7 @@ export function AnchorPanel({ data }) {
         <div className="anch-chain">
           <div className="prof-klabel">{t('ab.howAnchor')}</div>
           <p>{tx(rec.reasoning, lang)}</p>
-          {rec.zone_note && <div className="anch-chain-note">{tx(rec.zone_note, lang)}</div>}
+          <div className="anch-chain-note">{t('ab.zoneExpl')}</div>
         </div>
       )}
       {(rec.qa_flags || []).length > 0 && (
@@ -137,12 +137,6 @@ export function AnchorPanel({ data }) {
             return (
               <div className="anch-qa-row" key={i}>
                 <span className="flag">QA</span> {pf === f ? tx(f, lang) : pf}
-                {pf !== f && (
-                  <details className="anch-qa-tech">
-                    <summary>{t('ab.techRecord')}</summary>
-                    {f}
-                  </details>
-                )}
               </div>
             )
           })}

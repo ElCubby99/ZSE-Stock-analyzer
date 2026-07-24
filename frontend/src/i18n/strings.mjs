@@ -1170,8 +1170,12 @@ export const STR = {
     hr: 'SOTP gleda kroz maticu na tržišnu vrijednost udjela; metode vezane uz knjigu i dividendu taj dio ne hvataju. Raskorak između tih leća odražava holding prirodu društva.',
     en: 'SOTP looks through the parent at the market value of its stakes; methods tied to book value and dividends do not capture that part. The gap between those lenses reflects the holding nature of the company.',
   },
-  'sp.nrZone1': { hr: 'Fer-zona je', en: 'The fair-value zone is' },
+  'sp.nrZone1': { hr: 'Naša glavna procjena vrijednosti (fer-zona) je', en: 'Our main value estimate (fair-value zone) is' },
   'sp.nrZone2': { hr: 'sidrena arhetipom', en: 'anchored by archetype' },
+  'sp.nrZoneExpl': {
+    hr: 'To je raspon, a ne jedna brojka — širina odražava koliko se metode i pretpostavke međusobno slažu. Pojedine metode niže na stranici mogu dati i višu i nižu vrijednost.',
+    en: 'This is a range, not a single figure — its width reflects how well the methods and assumptions agree. Individual methods further down the page may give higher or lower values.',
+  },
   'sp.nrPerShare': { hr: 'po dionici', en: 'per share' },
   'sp.nrSec': { hr: 'Sekundarne leće izvan zone:', en: 'Secondary lenses outside the zone:' },
   'sp.nrAllRange': { hr: 'Raspon svih metoda:', en: 'Range of all methods:' },
@@ -1274,16 +1278,20 @@ export const STR = {
 
   /* ---------- analiza vrijednosti — blokovi (AnalysisBlocks.jsx) ---------- */
   'ab.qa1': {
-    hr: 'Neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu podataka još fali kalibracija (npr. multiplikatori usporedivih firmi). Razliku bilježimo, ne skrivamo je.',
-    en: 'Some methods disagree with the main estimate — most often because part of the data still lacks calibration (e.g. peer multiples). We record the difference, we do not hide it.',
+    hr: 'Pojedine metode daju osjetno drukčiju vrijednost od glavne procjene. To je uobičajeno kad se ista firma može gledati iz više kutova — po imovini, po zaradi ili po budućem rastu. Kao glavnu procjenu uzimamo metodu najprimjereniju ovom tipu firme, a ostale prikazujemo uz objašnjenje razlike.',
+    en: 'Some methods give a noticeably different value from the main estimate. That is normal when the same company can be viewed from several angles — by assets, by earnings, or by future growth. As the main estimate we use the method best suited to this type of company, and we show the others with an explanation of the difference.',
   },
   'ab.qa2': {
-    hr: 'Različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke.',
-    en: 'Different methods give very different figures — that is a signal to check the input data, not to pick the prettiest number.',
+    hr: 'Raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti. Zato ne ističemo jednu brojku kao točnu, nego prikazujemo cijeli raspon i objašnjavamo svaku metodu.',
+    en: 'The range of estimates is wide because the methods rely on different assumptions about the future. That is why we do not single out one figure as correct, but show the whole range and explain each method.',
   },
   'ab.qa3': {
-    hr: 'Naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu.',
-    en: 'Our estimate is far from the market price — that is a question for checking the assumptions, not a conclusion that the market is wrong.',
+    hr: 'Naša procjena osjetno se razlikuje od trenutne tržišne cijene. Prikazujemo obje i objašnjavamo zašto se razlikuju — ovo je usporedba, a ne tvrdnja da je tržište u krivu.',
+    en: 'Our estimate differs noticeably from the current market price. We show both and explain why they differ — this is a comparison, not a claim that the market is wrong.',
+  },
+  'ab.zoneExpl': {
+    hr: 'Fer-zona je raspon oko naše glavne procjene, a ne jedna brojka; njezina širina pokazuje koliko se različite metode i pretpostavke međusobno slažu.',
+    en: 'The fair-value zone is a range around our main estimate, not a single figure; its width shows how well the different methods and assumptions agree.',
   },
   'ab.m.sotp_nav': { hr: 'SOTP / NAV', en: 'SOTP / NAV' },
   'ab.m.residual_income': { hr: 'REZIDUALNI DOHODAK', en: 'RESIDUAL INCOME' },
