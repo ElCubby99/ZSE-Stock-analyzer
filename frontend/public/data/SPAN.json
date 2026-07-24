@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-23",
+  "generated_at": "2026-07-24",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -455,7 +455,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-23",
+    "as_of": "2026-07-24",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -471,9 +471,9 @@
           "volume": 94.0,
           "turnover_eur": 5245.2
         },
-        "days_since_trade": 0,
+        "days_since_trade": 1,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-23: 94 kom / 5,245 € prometa (0 d)"
+        "note": "zadnja trgovina 2026-07-23: 94 kom / 5,245 € prometa (1 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -832,7 +832,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-23",
+    "as_of": "2026-07-24",
     "classes": [
       {
         "class_ticker": "SPAN",
@@ -852,7 +852,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-23",
+    "as_of": "2026-07-24",
     "events": [
       {
         "class_ticker": "SPAN",
@@ -5048,7 +5048,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.0809 = rf 2.70% + β 0.99×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.99: IZMJERENA regresijom (OLS tjednih log-prinosa SPAN vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.188) uz Blume prilagodbu 0,67·0.987 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 237/247 trgovanih dana (96%), prosj. promet 52,147 €/dan.",
+        "r": "r=0.0809 = rf 2.70% + β 0.99×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.99: IZMJERENA regresijom (OLS tjednih log-prinosa SPAN vs CROBEX, 2024-07-01..2026-07-14, n=106 tj., R²=0.188) uz Blume prilagodbu 0,67·0.987 + 0,33·1 (regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: 236/246 trgovanih dana (96%), prosj. promet 51,963 €/dan.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -5116,18 +5116,25 @@
             },
             "ev_ebitda": {
               "mult": 7.0,
-              "per_share": 54.83
+              "per_share": 55.03
             },
             "pb": {
               "mult": 1.5,
               "per_share": 29.75
             }
           },
+          "ev_bridge": {
+            "net_debt_eur": -12674793.0,
+            "nci_eur": 152000.0,
+            "stfa_eur": 540448.0,
+            "assoc_book_eur": 0.0,
+            "note": "EV leće: vrijednost dioničarima = multipl × EBITDA − neto dug − manjinski interes + kratkotrajna fin. imovina + knjigovodstvena vrijednost pridruženih društava (konzistentnost opsega: konsolidirana EBITDA = 100% kćeri)"
+          },
           "carrier": "pe",
           "carrier_reason": "nositelj po arhetipu 'industrial_forward' (v2 §2)",
           "intra_spread": {
-            "spread_pct": 96.0,
-            "rule": "leće razmaknute 96% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
+            "spread_pct": 97.0,
+            "rule": "leće razmaknute 97% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
             "anomaly": "razlika nazivnika (marža/knjiga/zarada)"
           },
           "sources": {
@@ -5391,9 +5398,11 @@
             "k": "EV",
             "v": 96046992.77000001,
             "unit": "meur",
-            "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski (zadnja bilanca)",
-            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli",
-            "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), a manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču."
+            "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski − pridružena društva (zadnja bilanca)",
+            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli − pridružena društva",
+            "note": "Raspis (M€): trž. kap. 109.4 + dug 24.9 − novac 37.6 − kratkotrajna fin. imovina 0.7 + manjinski udjeli 0.1 − pridružena društva 0.0 = EV 96.0",
+            "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri, a knjigovodstvena vrijednost pridruženih društava (<50%, metoda udjela) se IZUZIMA jer njihova dobit nije u konsolidiranim rezultatima. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču.",
+            "badge": "uklj. kratk. fin. imovinu"
           },
           {
             "k": "EV/Prihod",
@@ -5409,7 +5418,8 @@
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBITDA",
-            "why": "Omjer neovisan o strukturi financiranja i amortizacijskim politikama. Brojnik i nazivnik pokrivaju ISTI opseg: konsolidirana EBITDA uključuje 100% kćeri, pa EV uključuje i manjinske udjele; EBITDA je TTM (zadnjih 12 mj.) gdje kvartali postoje — zato se brojka može razlikovati od izračuna s godišnjom EBITDA-om ili bez manjinskih udjela."
+            "why": "Omjer neovisan o strukturi financiranja i amortizacijskim politikama. Brojnik i nazivnik pokrivaju ISTI opseg: konsolidirana EBITDA uključuje 100% kćeri, pa EV uključuje i manjinske udjele; EBITDA je TTM (zadnjih 12 mj.) gdje kvartali postoje — zato se brojka može razlikovati od izračuna s godišnjom EBITDA-om ili bez manjinskih udjela.",
+            "badge": "uklj. kratk. fin. imovinu"
           },
           {
             "k": "EV/EBIT",
@@ -5417,7 +5427,8 @@
             "unit": "x",
             "basis": "TTM (do 31.03.2026.)",
             "formula": "EV / EBIT",
-            "why": "Kao EV/EBITDA, ali NAKON amortizacije — strože prema kapitalno intenzivnim firmama kojima se oprema stvarno troši."
+            "why": "Kao EV/EBITDA, ali NAKON amortizacije — strože prema kapitalno intenzivnim firmama kojima se oprema stvarno troši.",
+            "badge": "uklj. kratk. fin. imovinu"
           },
           {
             "k": "P/E",
