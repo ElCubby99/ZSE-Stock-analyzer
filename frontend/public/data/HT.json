@@ -5147,9 +5147,9 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 40.94527915309839,
-        "base": 54.16852989858638,
-        "high": 80.17809005934127,
+        "low": 40.5571126591634,
+        "base": 53.53250522253773,
+        "high": 79.05453909924175,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -5159,6 +5159,7 @@
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
           "growth_source": "g1=3.0% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +5.0%, CAGR +4.6%; samofinanciranje (ROE×zadržano) +1.0%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +5.0% POKLAPA SE s kapacitetom samofinanciranja +1.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
+          "nci_bridge": "Manjinski interes uklonjen PROPORCIONALNO: manjina drži 1.9% kapitala (NCI 30 M€ / ukupni kapital 1,599 M€), pa vrijednost dioničaru matice = (EV − neto dug) × (1 − 1.9%). Konsolidirani DCF broji 100% kćeri — proporcionalni odbitak poštuje udjel manjine u RASTUĆEM toku (statični knjigovodstveni NCI bi drastično podcijenio manjinu i precijenio maticu).",
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
@@ -5190,8 +5191,8 @@
     ],
     "reconciliation": {
       "zone_low": 57.54708679483878,
-      "zone_high": 73.95059132288712,
-      "dispersion": 0.22181708400986894,
+      "zone_high": 73.41547266651173,
+      "dispersion": 0.21614498000652757,
       "divergent": false,
       "archetype": "industrial_forward",
       "anchor_methods": [
@@ -5209,18 +5210,18 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = MEDIJAN kvalificiranih metoda (dcf_fcf) ± osjetljivost primarnog sidra 'dcf_fcf' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): comps; DIVIDENDNI POD (v3.1): V_div 57.55 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (40.95 → 57.55) — održiva dividenda podržava vrijednost, ne gasi zonu",
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (dcf_fcf) ± osjetljivost primarnog sidra 'dcf_fcf' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): comps; DIVIDENDNI POD (v3.1): V_div 57.55 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (40.56 → 57.55) — održiva dividenda podržava vrijednost, ne gasi zonu",
       "all_methods_low": 23.64792595532332,
-      "all_methods_high": 54.16852989858638,
-      "dispersion_all": 0.5634379223583017,
+      "all_methods_high": 53.53250522253773,
+      "dispersion_all": 0.5582510876892923,
       "method_bases": {
         "comps": 23.64792595532332,
-        "dcf_fcf": 54.16852989858638
+        "dcf_fcf": 53.53250522253773
       },
       "qa_flags": [],
-      "vs_market_pct": -38.7,
+      "vs_market_pct": -38.5,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +3.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +5.0%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 41.3%). Firma je lani stvorila 124.4 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 7.1%, uz izračunati rast 3.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 54.17 € po dionici. Glavni rizik za procjenu: hoće li se dosadašnji tempo rasta održati sljedećih pet godina. Tržišna cijena implicira ~+2.8% trajnog rasta godišnje / multipl P/E 20.4×; naš kompozitni rast (serija/održivi/terminal) je +3.0% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +3.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +5.0%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 41 € operativne zarade (EBITDA marža 41.3%). Firma je lani stvorila 124.4 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 7.1%, uz izračunati rast 3.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 53.53 € po dionici. Glavni rizik za procjenu: hoće li se dosadašnji tempo rasta održati sljedećih pet godina. Tržišna cijena implicira ~+2.8% trajnog rasta godišnje / multipl P/E 20.4×; naš kompozitni rast (serija/održivi/terminal) je +3.0% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 2.8,
@@ -5242,7 +5243,7 @@
         "d_sust_ps": 1.7657,
         "fallback_raw": false,
         "zone_low": 57.55,
-        "zone_high": 73.95,
+        "zone_high": 73.42,
         "implied_yield_low": 0.0307,
         "threshold": 0.0307,
         "r": 0.0707,
@@ -5254,12 +5255,12 @@
           "formula": "V_div = D_sust 1.77 € / (r 7.07% − g 4.0%) = 57.55 € — Gordonova donja granica iz stvarno isplaćenog novca",
           "applied_floor": true,
           "zone_before": [
-            40.95,
-            80.18
+            40.56,
+            79.05
           ],
           "zone_after": [
             57.55,
-            73.95
+            73.42
           ]
         },
         "passes": true,
@@ -5272,14 +5273,14 @@
     "value_vs_book": {
       "kind": "iznad_knjige",
       "zone_low": 57.54708679483878,
-      "zone_high": 73.95059132288712,
+      "zone_high": 73.41547266651173,
       "bvps": 21.32,
       "roe": 0.086527,
       "r": 0.0706827,
       "price": 40.3,
       "pb_market": 1.89,
       "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
-      "plain": "Fer-zona (57,55–73,95 €) viša je od knjigovodstvene vrijednosti (21,32 € po dionici). Firma na vlastitom kapitalu zarađuje oko 8,7 % godišnje, više od zahtijevanog prinosa od 7,1 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
+      "plain": "Fer-zona (57,55–73,42 €) viša je od knjigovodstvene vrijednosti (21,32 € po dionici). Firma na vlastitom kapitalu zarađuje oko 8,7 % godišnje, više od zahtijevanog prinosa od 7,1 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
     }
   },
   "methodology": {

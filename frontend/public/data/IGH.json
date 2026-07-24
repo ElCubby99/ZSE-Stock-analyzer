@@ -2894,9 +2894,9 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 0.3191534152626305,
-        "base": 0.8366862067971622,
-        "high": 1.562888101134549,
+        "low": 0.35621539332673235,
+        "base": 0.8666085114451091,
+        "high": 1.5827920176830896,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -2906,6 +2906,7 @@
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
           "growth_source": "g1=-4.0% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -4.0%, CAGR -6.3%; samofinanciranje (ROE×zadržano) +29.8%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast -4.0% (medijan godišnjih stopa) iz dosljedne serije. Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
+          "nci_bridge": "Manjinski interes uklonjen PROPORCIONALNO: manjina drži 1.4% kapitala (NCI 0 M€ / ukupni kapital 5 M€), pa vrijednost dioničaru matice = (EV − neto dug) × (1 − 1.4%). Konsolidirani DCF broji 100% kćeri — proporcionalni odbitak poštuje udjel manjine u RASTUĆEM toku (statični knjigovodstveni NCI bi drastično podcijenio manjinu i precijenio maticu).",
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
@@ -2936,9 +2937,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 0.8366862067971622,
+      "zone_low": 0.8666085114451091,
       "zone_high": 11.071939022439304,
-      "dispersion": 0.9244318267015863,
+      "dispersion": 0.9217292915279998,
       "divergent": true,
       "archetype": "industrial_forward",
       "anchor_methods": [],
@@ -2955,18 +2956,18 @@
         }
       },
       "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; sidra isključena zbog degenerirane osjetljivosti: dcf_fcf",
-      "all_methods_low": 0.8366862067971622,
+      "all_methods_low": 0.8666085114451091,
       "all_methods_high": 11.071939022439304,
-      "dispersion_all": 0.9244318267015863,
+      "dispersion_all": 0.9217292915279998,
       "method_bases": {
         "comps": 11.071939022439304,
-        "dcf_fcf": 0.8366862067971622
+        "dcf_fcf": 0.8666085114451091
       },
       "qa_flags": [
         "metode se međusobno razilaze 92% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa +95% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +94% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 94.8,
+      "vs_market_pct": 94.3,
       "anchor_inconsistency": [],
       "reasoning": "Sidro nije dostupno — vidi preskočene metode i razloge.",
       "red_rules": [],

@@ -221,7 +221,7 @@
     "cards": [
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: β = 1.80 (clamp); premija nelikvidnosti +2.5 p.b.; TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); komponente traženog prinosa r = 14.01%: nerizična stopa 2.70% + β 1.80 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 2.5 p.b.; peer multipli (P/E 12, P/B 1,5)."
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 1.80 (clamp); premija nelikvidnosti +2.5 p.b.; TTM podaci (FY2025 + h1 FY2026 − h1 FY2025); komponente traženog prinosa r = 14.01%: nerizična stopa 2.70% + β 1.80 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 2.5 p.b.; peer multipli (P/E 12, P/B 1,5)."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -778,7 +778,7 @@
       },
       {
         "key": "ttm",
-        "label": "TTM podaci (FY2025 + q1 FY2026 − q1 FY2025)",
+        "label": "TTM podaci (FY2025 + h1 FY2026 − h1 FY2025)",
         "status": "izvor",
         "why": "zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali) — v3 FAZA G; kvartalni izvještaji su nerevidirani"
       },
@@ -814,9 +814,9 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": -104.69057966446877,
-        "base": -104.7158184889324,
-        "high": -104.74662971518633,
+        "low": -104.32118018171018,
+        "base": -104.3464190061738,
+        "high": -104.37723023242773,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -954,27 +954,27 @@
           },
           {
             "k": "EV",
-            "v": 66096328.199999996,
+            "v": 65796236.57000001,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski − pridružena društva (zadnja bilanca)",
             "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli − pridružena društva",
-            "note": "Raspis (M€): trž. kap. 5.7 + dug 60.8 − novac 0.3 − kratkotrajna fin. imovina 0.2 + manjinski udjeli 0.0 − pridružena društva 0.0 = EV 66.1",
+            "note": "Raspis (M€): trž. kap. 5.7 + dug 60.4 − novac 0.0 − kratkotrajna fin. imovina 0.3 + manjinski udjeli 0.0 − pridružena društva 0.0 = EV 65.8",
             "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri, a knjigovodstvena vrijednost pridruženih društava (<50%, metoda udjela) se IZUZIMA jer njihova dobit nije u konsolidiranim rezultatima. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču.",
             "badge": "uklj. kratk. fin. imovinu"
           },
           {
             "k": "EV/Prihod",
-            "v": 4.282525266394575,
+            "v": 3.9066282262148824,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "EV / Prihod",
             "why": "Koliko se plaća po euru prihoda cijelog poslovanja — neovisno o tome financira li se firma dugom ili kapitalom."
           },
           {
             "k": "EV/EBITDA",
-            "v": 101.65405127739794,
+            "v": 27.40550070772713,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "EV / EBITDA",
             "why": "Omjer neovisan o strukturi financiranja i amortizacijskim politikama. Brojnik i nazivnik pokrivaju ISTI opseg: konsolidirana EBITDA uključuje 100% kćeri, pa EV uključuje i manjinske udjele; EBITDA je TTM (zadnjih 12 mj.) gdje kvartali postoje — zato se brojka može razlikovati od izračuna s godišnjom EBITDA-om ili bez manjinskih udjela.",
             "badge": "uklj. kratk. fin. imovinu"
@@ -997,33 +997,33 @@
           },
           {
             "k": "P/S",
-            "v": 0.3720367038427658,
+            "v": 0.340929214865668,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "trž.kap / prihod",
             "why": "Gruba mjera kad je dobit mala ili volatilna — prihod se teže 'friziran' od dobiti, ali ništa ne govori o marži."
           },
           {
             "k": "P/CF",
-            "v": 25.11153356292908,
+            "v": 4.4253081508072265,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "trž.kap / operativni CF",
             "why": "Novac iz poslovanja umjesto računovodstvene dobiti — otporniji na nenovčane stavke (rezervacije, revalorizacije)."
           },
           {
             "k": "P/FCF",
-            "v": 97.92420134730203,
+            "v": 4.4418449706680425,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "trž.kap / slobodni novčani tok",
             "why": "Novac koji NAKON ulaganja stvarno ostaje vlasnicima — najbliže onome što DCF diskontira."
           },
           {
             "k": "EPS",
-            "v": -12.818747706896552,
+            "v": -11.285238896551725,
             "unit": "eur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "neto dobit matici / dionice ex-trezor",
             "why": "Zarada po dionici: dobit koja pripada matici podijeljena brojem dionica bez trezorskih. TTM (zadnjih 12 mj.) gdje kvartali postoje — svježije od zadnjeg godišnjeg izvješća."
           },
@@ -1059,9 +1059,9 @@
         "items": [
           {
             "k": "Prihod YoY (kvartal)",
-            "v": -0.06873049559495858,
+            "v": 0.4254897614680231,
             "unit": "%",
-            "basis": "2026Q1 vs 2025Q1",
+            "basis": "2026Q2 vs 2025Q2",
             "formula": "diskretni kvartal vs isti lanjski (Q2=H1−Q1...)"
           },
           {
@@ -1074,16 +1074,16 @@
           },
           {
             "k": "Prihod (TTM/FY)",
-            "v": 15433961.059999999,
+            "v": 16842205.8,
             "unit": "meur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "kumulativna derivacija"
           },
           {
             "k": "EBITDA (TTM/FY)",
-            "v": 650208.5,
+            "v": 2400840.5200000014,
             "unit": "meur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "EBIT + amortizacija"
           }
         ]
@@ -1094,23 +1094,23 @@
         "items": [
           {
             "k": "EBITDA marža",
-            "v": 0.04212842688097336,
+            "v": 0.1425490549462352,
             "unit": "%",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "EBITDA / prihod"
           },
           {
             "k": "EBIT marža",
-            "v": -0.20578910155679764,
+            "v": -0.08553066962285893,
             "unit": "%",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "EBIT / prihod"
           },
           {
             "k": "Neto marža",
-            "v": -0.4817216812389703,
+            "v": -0.3886330946033209,
             "unit": "%",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "Neto / prihod"
           },
           {
@@ -1123,16 +1123,16 @@
           },
           {
             "k": "ROA",
-            "v": -0.12190890619089237,
+            "v": -0.10831874175747332,
             "unit": "%",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "neto dobit / ukupna imovina"
           },
           {
             "k": "ROCE",
-            "v": -0.06886537270960756,
+            "v": -0.03177776980676927,
             "unit": "%",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "EBIT / uloženi kapital (ukupni kapital + kamatonosni dug)",
             "why": "Povrat na ULOŽENI kapital (vlasnički + dužnički): koliko operativne dobiti firma vrati na SAV kapital koji koristi, neovisno je li vlastiti ili posuđen. Uloženi kapital = ukupna imovina − kratkoročne obveze (ono što financira dugoročni pogon). Za razliku od ROE (samo vlasnici), ROCE gleda cijelu operaciju pa je usporediv među različito zaduženim firmama. Naš EBIT NE uključuje dobit pridruženih društava (metoda udjela), pa broj može biti niži od portala koji je uključuju."
           }
@@ -1144,51 +1144,51 @@
         "items": [
           {
             "k": "Ukupna imovina",
-            "v": 60987124.75,
+            "v": 60427571.94,
             "unit": "meur",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "bilanca"
           },
           {
             "k": "Novac",
-            "v": 264999.79,
+            "v": 36265.15,
             "unit": "meur",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "novac i ekvivalenti"
           },
           {
             "k": "BVPS",
-            "v": -25.366040103448274,
+            "v": -25.963984810344826,
             "unit": "eur",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "knjiga matici / dionice ex-trezor"
           },
           {
             "k": "Ukupne obveze",
-            "v": 75699428.01,
+            "v": 75486683.13,
             "unit": "meur",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "imovina − kapital (izvedeno)"
           },
           {
             "k": "Kratkoročni dug",
-            "v": 49786195.12,
+            "v": 49543731.96,
             "unit": "meur",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "kamatonosni"
           },
           {
             "k": "Dugoročni dug",
-            "v": 11047124.48,
+            "v": 10846601.3,
             "unit": "meur",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "kamatonosni"
           },
           {
             "k": "Kapital (ukupni)",
-            "v": -14712303.26,
+            "v": -15059111.19,
             "unit": "meur",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "bilanca"
           }
         ]
@@ -1199,37 +1199,37 @@
         "items": [
           {
             "k": "Operativni CF",
-            "v": 228659.87,
+            "v": 1297536.76,
             "unit": "meur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "NT izvještaj"
           },
           {
             "k": "Capex",
-            "v": 170022.68,
+            "v": 4830.679999999993,
             "unit": "meur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "izdaci za dugotrajnu imovinu"
           },
           {
             "k": "FCF",
-            "v": 58637.189999999944,
+            "v": 1292706.08,
             "unit": "meur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "OCF − capex"
           },
           {
             "k": "Investicijski CF",
-            "v": 36508.78,
+            "v": 205119.8,
             "unit": "meur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "NT B)"
           },
           {
             "k": "Financijski CF",
-            "v": -2042656.6,
+            "v": -1379656.1500000004,
             "unit": "meur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "NT C)"
           }
         ]
@@ -1240,46 +1240,46 @@
         "items": [
           {
             "k": "Tekući omjer",
-            "v": 0.04490212516930507,
+            "v": 0.05507800961748883,
             "unit": "x",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "kratkotrajna imovina / kratkoročne obveze"
           },
           {
             "k": "Dug/kapital",
-            "v": -4.134860363121688,
+            "v": -4.010218962995784,
             "unit": "x",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "kamatonosni dug / knjiga",
             "why": "Ovdje je 'dug' SAMO kamatonosni financijski dug (krediti, obveznice, leasing) naspram knjige matici — mjera stvarne financijske poluge. NE uključuje obveze prema dobavljačima, primljene predujmove ni rezerviranja; za sve obveze vidi 'Obveze/kapital'. Portali koji pod 'dug/kapital' zbrajaju SVE obveze pokazuju višestruko veći broj."
           },
           {
             "k": "Obveze/kapital",
-            "v": -5.145314548797576,
+            "v": -5.012691796852321,
             "unit": "x",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "ukupne obveze / ukupni kapital",
             "why": "Klasični računovodstveni omjer koji većina portala zove 'dug/kapital': UKUPNE obveze (dobavljači, primljeni predujmovi, rezerviranja, sve ostalo) naspram ukupnog kapitala. Kod firmi s velikim predujmovima kupaca na dugim ugovorima (npr. proizvođači opreme) zna biti ~100% iako je financijski dug tek nekoliko posto — bilancu drže operativne, a ne dužničke obveze. Zato ga prikazujemo uz, a ne umjesto, financijske poluge iznad."
           },
           {
             "k": "Neto dug/EBITDA",
-            "v": 93.15215013338029,
+            "v": 25.13872437891042,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "(dug − novac) / EBITDA"
           },
           {
             "k": "Pokriće kamata",
-            "v": -0.7527890395841973,
+            "v": -0.3480608985038303,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "EBIT / rashodi od kamata"
           },
           {
             "k": "Altman Z'",
-            "v": -0.6971794960619097,
+            "v": -0.5846238653971882,
             "unit": "x",
-            "basis": "Kvartalno (31.03.2026.) + TTM (do 31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.) + TTM (do 30.06.2026.)",
             "formula": "Z' (privatna varijanta): 0,717·WC/TA + 0,847·RE/TA + 3,107·EBIT/TA + 0,420·BVE/TL + 0,998·S/TA"
           }
         ]
@@ -1290,37 +1290,37 @@
         "items": [
           {
             "k": "Obrtaj imovine",
-            "v": 0.25306917030877074,
+            "v": 0.27871723551499034,
             "unit": "x",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "prihod / imovina"
           },
           {
             "k": "DSO",
-            "v": 12.652555668687167,
+            "v": 13.328482665257539,
             "unit": "days",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "kupci / prihod × 365"
           },
           {
             "k": "DIO",
-            "v": 19.1406651359358,
+            "v": 18.594593832344586,
             "unit": "days",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "zalihe / materijalni troškovi × 365 (COGS proxy)"
           },
           {
             "k": "DPO",
-            "v": 280.31342860181417,
+            "v": 304.60392438640054,
             "unit": "days",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "dobavljači / materijalni troškovi × 365"
           },
           {
             "k": "Novčani jaz",
-            "v": -248.5202077971912,
+            "v": -272.68084788879844,
             "unit": "days",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "DSO + DIO − DPO"
           }
         ]
@@ -1355,21 +1355,21 @@
             "k": "Broj zaposlenih",
             "v": 27.0,
             "unit": "count",
-            "basis": "Kvartalno (31.03.2026.)",
+            "basis": "Kvartalno (30.06.2026.)",
             "formula": "TFI Opći podaci"
           },
           {
             "k": "Prihod/zaposlenom",
-            "v": 571628.1874074073,
+            "v": 623785.4,
             "unit": "eur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "prihod / broj zaposlenih"
           },
           {
             "k": "Dobit/zaposlenom",
-            "v": -275365.6914814815,
+            "v": -242423.6503703704,
             "unit": "eur",
-            "basis": "TTM (do 31.03.2026.)",
+            "basis": "TTM (do 30.06.2026.)",
             "formula": "neto dobit matici / broj zaposlenih"
           }
         ]

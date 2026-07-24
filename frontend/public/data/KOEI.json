@@ -5148,9 +5148,9 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 1804.813866883787,
-        "base": 2133.9742920678414,
-        "high": 2605.1019862279486,
+        "low": 1577.1273948971352,
+        "base": 1850.5710084938623,
+        "high": 2241.951166313862,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
@@ -5160,6 +5160,8 @@
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
           "growth_source": "g1=21.3% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +23.4%, CAGR +22.1%; samofinanciranje (ROE×zadržano) +19.3%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +23.4% POKLAPA SE s kapacitetom samofinanciranja +19.3% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": false,
+          "nci_bridge": "Manjinski interes uklonjen PROPORCIONALNO: manjina drži 16.9% kapitala (NCI 156 M€ / ukupni kapital 919 M€), pa vrijednost dioničaru matice = (EV − neto dug) × (1 − 16.9%). Konsolidirani DCF broji 100% kćeri — proporcionalni odbitak poštuje udjel manjine u RASTUĆEM toku (statični knjigovodstveni NCI bi drastično podcijenio manjinu i precijenio maticu).",
+          "consolidated_double_count": "OPREZ: konsolidirani DCF raste 100% novčanih tokova UVRŠTENIH kćeri (KONČAR D&ST, Dalekovod) po grupnom g1 i vrednuje ih znatno iznad njihove tržišne cijene — zato ovaj broj STRUKTURNO nadmašuje SOTP (koji kćeri uzima po tržištu). DCF je ovdje samo kontekst; sidro je SOTP.",
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
@@ -5335,7 +5337,7 @@
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "konsolidirani DCF diskontira novčane tokove CIJELE grupe; nekontrolirajući interes (manjinski udjeli) ODUZET je knjigovodstveno, ali metoda i dalje vrednuje kćeri po punoj vrijednosti rasta iako ih matica drži samo djelomično — zato stoji iznad SOTP-a, koji vrednuje svaku kću po stvarnom vlasničkom udjelu. Sidro je SOTP; konsolidirani DCF je gornji kontekst, ne fer-procjena za dioničara matice",
-          "vs_zone_pct": 1.7092591030996975
+          "vs_zone_pct": 1.3494548970578664
         },
         "sotp_nav": {
           "role": "anchor",
@@ -5345,22 +5347,22 @@
       },
       "zone_note": "zona = MEDIJAN kvalificiranih metoda (comps, dcf_fcf, sotp_nav) ± osjetljivost primarnog sidra 'sotp_nav' (r/wacc ±1 p.b.) — v3 triangulacija",
       "all_methods_low": 728.6246193313762,
-      "all_methods_high": 2133.9742920678414,
-      "dispersion_all": 0.6585597951954089,
+      "all_methods_high": 1850.5710084938623,
+      "dispersion_all": 0.6062703803382357,
       "method_bases": {
         "comps": 728.6246193313762,
-        "dcf_fcf": 2133.9742920678414,
+        "dcf_fcf": 1850.5710084938623,
         "sotp_nav": 787.6597294169223
       },
       "qa_flags": [
-        "ULAZI NEKONZISTENTNI: dcf_fcf +171% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
-        "metode se međusobno razilaze 66% (sve metode) — provjeri ulaze/pretpostavke"
+        "ULAZI NEKONZISTENTNI: dcf_fcf +135% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
+        "metode se međusobno razilaze 61% (sve metode) — provjeri ulaze/pretpostavke"
       ],
       "vs_market_pct": 28.2,
       "anchor_inconsistency": [
-        "dcf_fcf +171% vs primarno sidro"
+        "dcf_fcf +135% vs primarno sidro"
       ],
-      "reasoning": "Rast +21.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +23.4%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,078 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 787.66 € po dionici. Od toga vlastito poslovanje matice (bez uvrštenih kćeri) vrijedi 95 M€ (36.79 € po dionici), vrednovano iz nekonsolidiranog izvještaja. Tržište te iste kćeri trenutačno vrednuje 0.0% niže nego mi. Kontrolne metode uz sidro: DCF (FCF) +171% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +21.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +23.4%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 2,078 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 787.66 € po dionici. Od toga vlastito poslovanje matice (bez uvrštenih kćeri) vrijedi 95 M€ (36.79 € po dionici), vrednovano iz nekonsolidiranog izvještaja. Tržište te iste kćeri trenutačno vrednuje 0.0% niže nego mi. Kontrolne metode uz sidro: DCF (FCF) +135% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
