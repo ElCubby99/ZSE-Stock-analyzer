@@ -70,6 +70,8 @@ export const DATA_TX = {
   'Dividendni prinos': 'Dividend yield',
   'Dobit/zaposlenom': 'Profit/employee',
   'Dug/kapital': 'Debt/equity',
+  'Obveze/kapital': 'Liabilities/equity',
+  'ROCE': 'ROCE',
   'Dugoročni dug': 'Long-term debt',
   'EBIT marža': 'EBIT margin',
   'EBITDA marža': 'EBITDA margin',
@@ -136,6 +138,22 @@ export const DATA_TX = {
   'izdaci za dugotrajnu imovinu': 'payments for non-current assets',
   'kamatonosni': 'interest-bearing',
   'kamatonosni dug / knjiga': 'interest-bearing debt / book equity',
+  'ukupne obveze / ukupni kapital': 'total liabilities / total equity',
+  "Povrat na ULOŽENI kapital (vlasnički + dužnički): koliko operativne dobiti firma vrati na SAV kapital koji koristi, neovisno je li vlastiti ili posuđen. Uloženi kapital = ukupna imovina − kratkoročne obveze (ono što financira dugoročni pogon). Za razliku od ROE (samo vlasnici), ROCE gleda cijelu operaciju pa je usporediv među različito zaduženim firmama. Naš EBIT NE uključuje dobit pridruženih društava (metoda udjela), pa broj može biti niži od portala koji je uključuju.":
+    'Return on CAPITAL EMPLOYED (equity + debt): how much operating profit the company returns on ALL the capital it uses, regardless of whether it is own or borrowed. Capital employed = total assets − current liabilities (what funds the long-term operation). Unlike ROE (owners only), ROCE looks at the whole operation and is comparable across differently leveraged companies. Our EBIT does NOT include the profit of associates (equity method), so the figure can be lower than portals that include it.',
+  "Ovdje je 'dug' SAMO kamatonosni financijski dug (krediti, obveznice, leasing) naspram knjige matici — mjera stvarne financijske poluge. NE uključuje obveze prema dobavljačima, primljene predujmove ni rezerviranja; za sve obveze vidi 'Obveze/kapital'. Portali koji pod 'dug/kapital' zbrajaju SVE obveze pokazuju višestruko veći broj.":
+    "Here 'debt' is ONLY interest-bearing financial debt (loans, bonds, leases) against parent book equity — a measure of real financial leverage. It does NOT include trade payables, customer advances or provisions; for all liabilities see 'Liabilities/equity'. Portals that add ALL liabilities under 'debt/equity' show a multiple times larger figure.",
+  "Klasični računovodstveni omjer koji većina portala zove 'dug/kapital': UKUPNE obveze (dobavljači, primljeni predujmovi, rezerviranja, sve ostalo) naspram ukupnog kapitala. Kod firmi s velikim predujmovima kupaca na dugim ugovorima (npr. proizvođači opreme) zna biti ~100% iako je financijski dug tek nekoliko posto — bilancu drže operativne, a ne dužničke obveze. Zato ga prikazujemo uz, a ne umjesto, financijske poluge iznad.":
+    "The classic accounting ratio most portals call 'debt/equity': TOTAL liabilities (suppliers, customer advances, provisions, everything else) against total equity. For companies with large customer advances on long-cycle contracts (e.g. equipment makers) it can be ~100% even though financial debt is only a few percent — the balance sheet is held by operating, not debt, liabilities. That is why we show it alongside, not instead of, the financial leverage above.",
+  'EBIT / uloženi kapital (ukupna imovina − kratkoročne obveze)':
+    'EBIT / capital employed (total assets − current liabilities)',
+  'EBIT / uloženi kapital (ukupni kapital + kamatonosni dug)':
+    'EBIT / capital employed (total equity + interest-bearing debt)',
+  'nema ulaza (EBIT / uloženi kapital)': 'no inputs (EBIT / capital employed)',
+  'n/p za banke/osiguranje — uloženi kapital nije smislen':
+    'n/a for banks/insurers — capital employed is not meaningful',
+  'n/p za banke/osiguranje — obveze (depoziti/tehničke pričuve) su posao, ne struktura financiranja':
+    'n/a for banks/insurers — liabilities (deposits/technical provisions) are the business, not financing structure',
   'knjiga (matici) / dionice ex-trezor': 'book equity (parent) / shares ex-treasury',
   'knjiga matici / dionice ex-trezor': 'book equity (parent) / shares ex-treasury',
   'kratkotrajna imovina / kratkoročne obveze': 'current assets / current liabilities',
