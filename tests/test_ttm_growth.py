@@ -92,29 +92,33 @@ def test_nekonzistentan_q4_blokira_ttm(conn):
     assert meta["basis"] == "annual" and "nekonzistentna" in meta["reason"]
 
 
-def test_rast_iskljucivo_iz_podataka_s_capom(conn):
-    """v3.1: g1 = KOMPOZIT (medijan {serija, održivi rast, terminal}) s
-    capom NAKON medijana (10% sa serijom / 8% bez) i tvrdim clampom
-    g1 ≤ r − 0,5 p.b.; nikad iz growth_estimates (forward flag ne postoji);
-    TTM-vs-lani smije biti samo kontekst, nikad izvor."""
+def test_rast_procjena_odrzivosti_bez_capa(conn):
+    """M47: g1 = PROCJENA ODRŽIVOG RASTA (bez slijepog capa 10%). Rast smije
+    biti > 10% kad je samofinanciran; source raspisuje procjenu i verdikt;
+    signali raspisani; kratka serija => g_obs (medijan) is None (jedna
+    godišnja usporedba nije stopa rasta); sanity strop 25%."""
+    from src.growth_assessment import SANITY_MAX
     from src.params_calibrated import build_params
     from src.valuation_methods import build_ctx
     for t in ("KOEI", "HT", "CROS"):
         ctx = build_ctx(conn, t, params=build_params(t))
         gh = ctx.growth_hint or {}
-        assert "forward" not in gh, f"{t}: ručni forward signal ne smije postojati"
         if gh.get("g1") is not None:
-            cap = 0.08 if gh.get("short_series") else 0.10
-            hard = ctx.params.cost_of_equity - 0.005
-            assert gh["g1"] <= cap + 1e-9, f"{t}: g1 {gh['g1']} izvan capa {cap}"
-            assert gh["g1"] <= hard + 1e-12, f"{t}: g1 {gh['g1']} probija r−0,5p.b."
-            assert "KOMPOZIT" in gh["source"], f"{t}: source mora raspisati kompozit"
+            assert gh["g1"] <= SANITY_MAX + 1e-9, f"{t}: g1 iznad sanity stropa"
+            assert "PROCJENA ODRŽIVOG RASTA" in gh["source"], \
+                f"{t}: source mora raspisati procjenu"
+            assert gh.get("verdict"), f"{t}: nedostaje verdikt održivosti"
             sig = (gh.get("signals") or {}).get("signals", {})
             assert "g_terminal" in sig, f"{t}: signali moraju biti raspisani"
-            # jedna godišnja usporedba NIKAD nije izvor g1 — samo kontekst
             if gh.get("short_series"):
                 assert sig.get("g_obs") is None, (
-                    f"{t}: kratka serija ne smije imati g_obs")
+                    f"{t}: kratka serija ne smije imati g_obs (medijan)")
+
+    # KOEI je školski primjer: samofinanciran rast MORA smjeti preko 10%
+    koei = build_ctx(conn, "KOEI", params=build_params("KOEI")).growth_hint or {}
+    if koei.get("g1") is not None:
+        assert koei["g1"] > 0.10, ("KOEI samofinanciran rast prignječen na "
+                                   f"≤10% — cap nije uklonjen ({koei['g1']})")
 
 
 def test_roe_pravilo_max_medijan_ttm09(conn):

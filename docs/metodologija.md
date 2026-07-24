@@ -69,6 +69,14 @@ metoda razvukla zonu u beskorisno.
   beta** (Damodaran, Europa), relevered s polugom firme gdje je dug
   poznat. Finalna beta je ograničena na raspon **[0,7, 1,8]**. Porijeklo
   bete (regresija / sektorska / clamp) je vidljivo uz svaku procjenu.
+  **R²-kredibilitet (M47)**: beta mjeri koliko dionica NJIŠE u odnosu na
+  tržište, ne koliko je firma fundamentalno "dobra" — dionica koja je
+  snažno i volatilno rasla dobiva visoku betu iako su rezultati odlični.
+  Kad regresija ima nizak R² (tržište objašnjava manje od 50% kretanja
+  dionice), beta je statistički bučna, pa se Blumeova regresijska beta
+  miješa sa sektorskom u omjeru koliko tržište objašnjava (ponder = R²/0,5).
+  Time visok momentum ne diže traženi prinos preko onoga što fundamenti
+  nose (npr. KOEI: R² 0,35 spušta betu s ~1,57 na ~1,36).
 - **Premija nelikvidnosti (v2.2)** — dionicama ispod praga likvidnosti na
   trošak kapitala dodaje se +1,0 do +2,0 postotna boda (stupnjevano po
   likvidnosti): izlazak iz slabo trgovane pozicije nosi stvaran trošak.
@@ -200,28 +208,45 @@ metoda razvukla zonu u beskorisno.
   poput Končara (kontrola + ista djelatnost) dobiva 0–5%; default 15–25%
   koristi se samo gdje mjerenje nije moguće, uz jasnu oznaku.
 
-## Rast: tri signala iz brojki, nikad jedna godina
+## Rast: procjena održivosti, ne slijepi cap
 
-Stopa rasta je najosjetljiviji ulaz svake procjene, pa za nju vrijede
-najstroža pravila. Rast eksplicitne faze (g1) je **kompozit — medijan tri
-signala**, svaki izveden isključivo iz objavljenih brojki: višegodišnja
-serija (trogodišnji CAGR, samo uz ≥3 godišnja izvješća), održivi rast iz
-zadržane dobiti (ROE × dio dobiti koji se ne isplaćuje) i konzervativno
-terminalno sidro. Medijan znači da nijedan pojedini signal ne može sam
-odvući procjenu — ekstrem s bilo koje strane ispada.
+Stopa rasta je najosjetljiviji ulaz svake procjene. Umjesto da za sve firme
+režemo rast na istu gornju granicu, za **svaku firmu procjenjujemo je li
+njezin rast STRUKTURNO ODRŽIV** — i to obrazložimo na stranici. Ulazi su
+isključivo objavljene brojke:
+
+- **Opaženi rast** = MEDIJAN godišnjih stopa iz cijele serije godišnjih
+  izvješća (medijan je otporan na jednu iznimnu godinu, za razliku od
+  CAGR-a koji jedna bazna ili vršna godina iskrivi).
+- **Kapacitet samofinanciranja** = ROE × dio dobiti koji se zadržava — rast
+  koji firma može financirati iz vlastite dobiti bez novog duga ili emisije.
+- **Knjiga narudžbi (backlog)**, kad je objavljena kao tvrda brojka —
+  potkrepljuje veći near-term rast (forward vidljivost, ne procjena).
+
+**Kako sudimo održivost.** Kad se opaženi rast POKLAPA s kapacitetom
+samofinanciranja (npr. oba ~20%), rast je financiran iz vlastite dobiti i
+smatra se strukturno održivim — takva firma **smije nositi rast i iznad
+10%** (nema slijepog capa). Rastuće marže kroz razdoblje dodatno potvrđuju
+kvalitetu (rast nosi profitabilnost, ne samo obujam). Kad opaženi rast
+BITNO PREMAŠUJE kapacitet samofinanciranja bez objavljene knjige narudžbi,
+dio rasta traži vanjsko financiranje ili je ciklički — tada sidrimo prema
+fundabilnoj stopi i to jasno kažemo.
+
+**Jednokratni efekti se imenuju i izuzimaju.** Ako jedna godina strši
+(npr. +31% naspram medijana ~8% — vjerojatno akvizicija ili jednokratni
+prihod), reprezentativni rast uzima MEDIJAN, ne CAGR koji bi ta godina
+napuhala; godina se imenuje uz obrazloženje. Kad rast usporava (zadnja
+godina bitno ispod medijana), near-term se pomiče prema recentnijem signalu.
+
+**Reversion to the mean.** Procijenjena near-term stopa (g1) kroz 5 godina
+LINEARNO pada prema terminalnom sidru (~4%, nominalni BDP) — nijedna firma
+ne raste iznadprosječno zauvijek. Jedini gornji limit je **sanity strop od
+25%** (petogodišnji rast iznad toga je neplauzibilan), a ne arbitrarnih
+10%. Rast ne može biti negativan bez višegodišnjeg dokaza skupljanja.
 
 **Zašto jedna godina nije stopa rasta**: usporedba zadnjih 12 mjeseci s
-prošlom godinom mjeri i jednokratne efekte (prodaja imovine, državna
-potpora, jedan veliki ugovor) i bazni efekt (loša prošla godina "napuše"
-postotak). Takva brojka je legitiman **kontekst** — i tako je prikazujemo —
-ali nikad samostalan izvor g1. Rast "zauvijek" iz jedne dobre godine bio
-bi izmišljanje, a to je protivno prvom pravilu ovog projekta.
-
-Kompozit je ograničen odozgo (10% sa serijom, 8% bez), ne može biti
-negativan bez višegodišnjeg dokaza skupljanja i uvijek je barem 0,5
-postotnih bodova ispod troška kapitala. Ručne "forward procjene" (backlog,
-guidance, očekivanja uprave) se za stopu rasta ne koriste; povijesni
-prosjek i TTM usporedba ostaju na stranici kao kontekst.
+prošlom godinom mjeri i jednokratne efekte i bazni efekt; ostaje kao
+kontekst, nikad samostalan izvor g1.
 
 ## EV i EV/EBITDA — brojnik i nazivnik moraju pokrivati isti opseg
 

@@ -1,5 +1,31 @@
 # Changelog (tehnički — interni)
 
+## 2026-07-24 — M47: procjena održivog rasta (bez capa 10%) + backlog + beta R²-blend
+
+Povod: KOEI/KODT rastu >20% 5 godina uz rekordnu knjigu narudžbi, a stara
+doktrina ih je slijepo capirala na g1=10%. Boris: makni cap, procijeni
+REALNI održivi rast po firmi (i obrazloži), tretiraj jednokratne prihode,
+uključi backlog i sniži bučnu betu.
+
+- Novi src/growth_assessment.py: g1 = PROCJENA ODRŽIVOSTI iz pune serije.
+  Opaženi rast = MEDIJAN godišnjih stopa (otporan na outlier), kapacitet
+  samofinanciranja = ROE×zadržano, backlog kad je objavljen. Verdikt +
+  narativ po firmi. NEMA capa 10% ni clampa g1≤r (dvofazni DCF ne dijeli s
+  r−g1); jedini limit = sanity 25% + fade na terminal 4% (reversion).
+  KOEI: 10% -> 21,3% (samofinanciran, marže rastu); PODR: FY2025 +31%
+  prepoznat kao jednokratan -> medijan 7,6%; KODT: usporavanje označeno.
+- Backlog: tablica backlogs (ručni unos, izvor+stranica) -> smije podići
+  near-term rast (blend s trailing radi opreza).
+- Beta R²-kredibilitet (beta_discipline): nizak R² (<0,5) miješa Blume betu
+  sa sektorskom (ponder=R²/0,5) — bučna beta ne diže r preko fundamenata.
+  KOEI: 1,57 -> 1,36 (R² 0,35).
+- Metodologija v2.5 (HR+EN): nove sekcije rasta i R²-bete.
+- Testovi: uklonjen test_composite_g1 (stara doktrina), dodan
+  test_growth_assessment (7); test_v31_db/test_ttm_growth prepravljeni na
+  novu doktrinu. 123/123.
+- NAPOMENA: mijenja fer-zone firmama gdje DCF/DDM/RI sidri; KOEI zona
+  ostaje SOTP (rast/beta ne diraju SOTP sidro).
+
 ## 2026-07-23 — M45: EV/EBITDA konzistentnost opsega (manjinski udjeli, kratkotrajna fin. imovina, pridružena društva)
 
 Povod: vanjska stručna primjedba (KOEI) + interna revizija. Načelo: EV i

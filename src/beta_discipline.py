@@ -30,6 +30,8 @@ VLOW_RATIO = 0.20
 VLOW_TURNOVER = 300.0
 BETA_MIN, BETA_MAX = 0.7, 1.8
 HR_TAX = 0.18
+R2_REF = 0.50   # M47: iznad ovog R² regresijska beta je pouzdana; ispod se
+                # miješa sa sektorskom (ponder = R²/R2_REF) jer je bučna
 
 # Sektorske UNLEVERED bete (Damodaran, Europe; korigirano za novac).
 # NAPOMENA O IZVORU: pages.stern.nyu.edu je nedostupan iz build okruženja
@@ -144,12 +146,35 @@ def resolve_beta(conn, ticker: str, sector: str | None) -> dict:
     origin, beta, src = None, None, None
     if cal and liquid:
         raw = float(cal["beta"])
-        beta = 0.67 * raw + 0.33 * 1.0  # Blume adjustment
-        origin = "regresija"
-        src = (f"beta={beta:.2f}: IZMJERENA regresijom (OLS tjednih log-prinosa "
-               f"{cal['class_ticker']} vs CROBEX, {cal['period']}, n={cal['n_weeks']} tj., "
-               f"R²={cal['r2']}) uz Blume prilagodbu 0,67·{raw} + 0,33·1 "
-               f"(regresijske bete mean-revertiraju prema 1). Likvidnost iznad praga: {liq_txt}.")
+        blume = 0.67 * raw + 0.33 * 1.0  # Blume adjustment
+        r2 = float(cal.get("r2") or 0.0)
+        # M47: R²-kredibilitet. R² = udio varijance dionice koji objašnjava
+        # tržište; kad je nizak, regresijska beta je BUČNA (jaka idiosinkratska
+        # komponenta) pa se ne uzima slijepo. Ispod R²_REF miješamo Blume betu
+        # sa SEKTORSKOM, ponder = R²/R²_REF (koliko tržište objašnjava). Iznad
+        # R²_REF regresija je dovoljno pouzdana i uzima se cijela.
+        sb0 = (SECTOR_BETA.get(sector) or SECTOR_BETA["other"])[0]
+        if r2 < R2_REF:
+            w = max(0.0, min(1.0, r2 / R2_REF))  # kredibilitet regresije
+            beta = w * blume + (1 - w) * sb0
+            origin = "regresija (R²-blend sa sektorskom)"
+            src = (f"beta={beta:.2f}: regresijska (OLS tjednih log-prinosa "
+                   f"{cal['class_ticker']} vs CROBEX, {cal['period']}, n={cal['n_weeks']} tj.) "
+                   f"Blume-prilagođena na {blume:.2f} (0,67·{raw}+0,33·1), ali R²={r2:.2f} "
+                   f"je NIZAK (<{R2_REF}) — tržište objašnjava tek {r2:.0%} kretanja "
+                   f"dionice, pa se bučna regresijska beta miješa sa sektorskom "
+                   f"{sb0:.2f} u omjeru {w:.0%}/{1 - w:.0%} (ponder = R²/{R2_REF}). "
+                   f"Time visok momentum (npr. dionica koja je snažno i volatilno "
+                   f"rasla) ne diže traženi prinos preko onoga što fundamenti nose. "
+                   f"Likvidnost iznad praga: {liq_txt}.")
+        else:
+            beta = blume
+            origin = "regresija"
+            src = (f"beta={beta:.2f}: IZMJERENA regresijom (OLS tjednih log-prinosa "
+                   f"{cal['class_ticker']} vs CROBEX, {cal['period']}, n={cal['n_weeks']} tj., "
+                   f"R²={cal['r2']}) uz Blume prilagodbu 0,67·{raw} + 0,33·1 "
+                   f"(regresijske bete mean-revertiraju prema 1; R² dovoljno visok "
+                   f"da je regresija pouzdana). Likvidnost iznad praga: {liq_txt}.")
     else:
         sb, levered, branch = SECTOR_BETA.get(sector) or SECTOR_BETA["other"]
         why_sector = (f"vlastita regresijska beta ODBAČENA — likvidnost ispod praga "

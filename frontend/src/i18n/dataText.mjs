@@ -139,6 +139,20 @@ export const DATA_TX = {
   'kamatonosni': 'interest-bearing',
   'kamatonosni dug / knjiga': 'interest-bearing debt / book equity',
   'ukupne obveze / ukupni kapital': 'total liabilities / total equity',
+  // ---- M47: verdikti procjene rasta (badge na kartici g1) ----
+  'održiv (samofinanciran)': 'sustainable (self-funded)',
+  'održiv (serija)': 'sustainable (track record)',
+  'održiv (knjiga narudžbi)': 'sustainable (order book)',
+  'iznad kapaciteta samofinanciranja': 'above self-funding capacity',
+  'iz kapaciteta samofinanciranja': 'from self-funding capacity',
+  'nema signala rasta': 'no growth signal',
+  'procjena': 'estimate',
+  'negativan rast — višegodišnje skupljanje dokazano':
+    'negative growth — multi-year contraction is proven',
+  'donja granica 0 (bez ≥3g dokaza skupljanja)':
+    'floor 0 (no ≥3y evidence of contraction)',
+  'sanity strop 25% (5-god. rast iznad toga nije plauzibilan)':
+    'sanity ceiling 25% (5-year growth above that is implausible)',
   "Povrat na ULOŽENI kapital (vlasnički + dužnički): koliko operativne dobiti firma vrati na SAV kapital koji koristi, neovisno je li vlastiti ili posuđen. Uloženi kapital = ukupna imovina − kratkoročne obveze (ono što financira dugoročni pogon). Za razliku od ROE (samo vlasnici), ROCE gleda cijelu operaciju pa je usporediv među različito zaduženim firmama. Naš EBIT NE uključuje dobit pridruženih društava (metoda udjela), pa broj može biti niži od portala koji je uključuju.":
     'Return on CAPITAL EMPLOYED (equity + debt): how much operating profit the company returns on ALL the capital it uses, regardless of whether it is own or borrowed. Capital employed = total assets − current liabilities (what funds the long-term operation). Unlike ROE (owners only), ROCE looks at the whole operation and is comparable across differently leveraged companies. Our EBIT does NOT include the profit of associates (equity method), so the figure can be lower than portals that include it.',
   "Ovdje je 'dug' SAMO kamatonosni financijski dug (krediti, obveznice, leasing) naspram knjige matici — mjera stvarne financijske poluge. NE uključuje obveze prema dobavljačima, primljene predujmove ni rezerviranja; za sve obveze vidi 'Obveze/kapital'. Portali koji pod 'dug/kapital' zbrajaju SVE obveze pokazuju višestruko veći broj.":
@@ -372,6 +386,11 @@ export const DATA_TX = {
 /* Pattern pravila za stringove s dinamičkim dijelovima (datumi, n=,
    popisi peera). Primjenjuju se redom NAKON promašaja exact mape. */
 const PATTERNS = [
+  // ---- M47: badgevi procjene rasta (s brojkama) ----
+  [/jednokratni skok FY(\d{4}) \(\+(\d+)%\) izuzet iz stope/g,
+    'one-off jump FY$1 (+$2%) excluded from the rate'],
+  [/usporavanje \(zadnja YoY ([+−-][\d.]+)%\)/g,
+    'deceleration (last YoY $1%)'],
   // ---- M45: EV raspis s brojkama + nekonsolidirani udjeli + EV most ----
   [/Raspis \(M€\): trž\. kap\. ([\d.,−-]+) \+ dug ([\d.,−-]+) − novac ([\d.,−-]+) − kratkotrajna fin\. imovina ([\d.,−-]+) \+ manjinski udjeli ([\d.,−-]+) − pridružena društva ([\d.,−-]+) = EV ([\d.,−-]+)/g,
     'Breakdown (€m): market cap $1 + debt $2 − cash $3 − short-term financial assets $4 + minority interests $5 − associates $6 = EV $7'],

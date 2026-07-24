@@ -1713,6 +1713,9 @@ def build_stock_json(conn, ticker: str) -> dict:
                     "badges": (_gh.get("signals") or {}).get("badges") or [],
                     "ttm_context": _f(_gh.get("ttm_vs_lani_kontekst")),
                     "short_series": bool(_gh.get("short_series")),
+                    # M47: verdikt održivosti + narativ (zašto je rast održiv/nije)
+                    "verdict": _gh.get("verdict"),
+                    "assessment": _gh.get("assessment"),
                     "source": _gh.get("source"),
                 } if _gh.get("g1") is not None else None),
             },
