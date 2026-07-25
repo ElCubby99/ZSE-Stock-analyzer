@@ -372,10 +372,6 @@
   "risks": {
     "cards": [
       {
-        "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri -17.7% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
-      },
-      {
         "l": "OVISNOST O KĆERIMA",
         "txt": "Vrijednost i dividende matice ovise o društvima: KONČAR – Generatori i motori d.o.o. (100%), KONČAR – Obnovljivi izvori d.o.o. (100%), KONČAR – Motori i električni sustavi d.o.o. (100%), KONČAR – Električna vozila d.d. (86%)."
       },
@@ -386,6 +382,10 @@
       {
         "l": "PRETPOSTAVKE PROCJENE",
         "txt": "Procjena počiva na označenim pretpostavkama: β = 1.36 (regresija (R²-blend sa sektorskom)); TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); ROE pravilo (TTM + 3g medijan); komponente traženog prinosa r = 9.64%: nerizična stopa 2.70% + β 1.36 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.; holding diskont 0–5%; SOTP dijelovi na pretpostavljenim multiplama: KONČAR – Generatori i motori d.o.o., KONČAR – Obnovljivi izvori d.o.o., KONČAR – Motori i električni sustavi d.o.o.."
+      },
+      {
+        "l": "RASKORAK METODA",
+        "txt": "Sve metode zajedno raspinju 701–1,851 € (raspon 62%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -5456,14 +5456,20 @@
               "eur": 1213599089.0,
               "per_share": 471.828515321414,
               "basis": "market",
-              "pct": 0.5273
+              "pct": 0.5273,
+              "listed": true,
+              "our_eur": 2014915536.0,
+              "our_per_share": 783.3679297108727
             },
             {
               "item": "Dalekovod (DLKV)",
               "eur": 511980783.0,
               "per_share": 199.05019285655135,
               "basis": "market",
-              "pct": 0.75
+              "pct": 0.75,
+              "listed": true,
+              "our_eur": 275349630.0,
+              "our_per_share": 107.0516682937298
             },
             {
               "item": "KONČAR standalone (ex-uvrštene kćeri)",
@@ -5531,15 +5537,14 @@
           "sotp_market": {
             "nav_eur": 2620380261.0,
             "base_per_share": 993.2941493221402,
-            "note": "PRIMARNI SOTP (sidro): uvrštene tvrtke kćeri po burzovnoj cijeni, ostalo po našoj procjeni"
+            "note": "GLAVNA procjena (sidro fer-zone): uvrštene tvrtke kćeri uzete po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstveno"
           },
           "sotp_fair": {
             "nav_eur": 3185065555.0,
             "base_per_share": 1207.3465170429527,
-            "note": "USPOREDNI SOTP: sve tvrtke kćeri po NAŠOJ procjeni (uključivo uvrštene) — pokazuje vrijednost ako se naša procjena kćeri ostvari; nije primarno sidro"
+            "note": "USPOREDBA: uvrštene tvrtke kćeri ovdje su po NAŠOJ procjeni umjesto po burzi — pokazuje vrijednost matice ako se naša procjena tih kćeri ostvari. Nije glavna procjena. Naša procjena uvrštenih kćeri je 21.5% iznad njihove današnje burzovne cijene."
           },
-          "market_vs_fair_pct": -17.7,
-          "market_vs_fair_note": "razlika primarnog SOTP-a (uvrštene kćeri po burzi) i usporednog (uvrštene kćeri po našoj procjeni) — negativno znači da tržište vrednuje uvrštene kćeri ISPOD naše procjene; činjenica, ne preporuka",
+          "our_vs_market_pct": 21.5,
           "sources": {
             "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji"
           },
@@ -5614,7 +5619,7 @@
       "anchor_inconsistency": [
         "dcf_fcf +86% vs primarno sidro"
       ],
-      "reasoning": "Rast +21.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +23.4%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 3,185 M€, bez holding popusta (integrirani parent s kontrolom); sidro je 993.29 € po dionici. Tržište te iste kćeri trenutačno vrednuje 17.7% niže nego mi. Kontrolne metode uz sidro: DCF (FCF) +86% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je.",
+      "reasoning": "Rast +21.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +23.4%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 19 € operativne zarade (EBITDA marža 18.7%). Vrijednost smo složili po dijelovima (SOTP): uvrštene tvrtke-kćeri po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstvenoj vrijednosti, minus dug grupe — ukupno 2,620 M€, bez holding popusta (integrirani parent s kontrolom); glavna procjena je 993.29 € po dionici. Zasebno prikazujemo i koliko bi izašlo ako se uvrštene kćeri uzmu po NAŠOJ procjeni.. Kontrolne metode uz sidro: DCF (FCF) +86% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: pojedine metode daju osjetno drukčiju vrijednost od glavne procjene — uobičajeno kad se firma može gledati iz više kutova; glavnu procjenu nosi metoda najprimjerenija ovom tipu firme.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
@@ -5840,15 +5845,15 @@
       "sotp_fair": {
         "nav_eur": 3185065555.0,
         "base_per_share": 1207.3465170429527,
-        "note": "USPOREDNI SOTP: sve tvrtke kćeri po NAŠOJ procjeni (uključivo uvrštene) — pokazuje vrijednost ako se naša procjena kćeri ostvari; nije primarno sidro"
+        "note": "USPOREDBA: uvrštene tvrtke kćeri ovdje su po NAŠOJ procjeni umjesto po burzi — pokazuje vrijednost matice ako se naša procjena tih kćeri ostvari. Nije glavna procjena. Naša procjena uvrštenih kćeri je 21.5% iznad njihove današnje burzovne cijene."
       },
       "sotp_market": {
         "nav_eur": 2620380261.0,
         "base_per_share": 993.2941493221402,
-        "note": "PRIMARNI SOTP (sidro): uvrštene tvrtke kćeri po burzovnoj cijeni, ostalo po našoj procjeni"
+        "note": "GLAVNA procjena (sidro fer-zone): uvrštene tvrtke kćeri uzete po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstveno"
       },
-      "market_vs_fair_pct": -17.7,
-      "market_vs_fair_note": "razlika primarnog SOTP-a (uvrštene kćeri po burzi) i usporednog (uvrštene kćeri po našoj procjeni) — negativno znači da tržište vrednuje uvrštene kćeri ISPOD naše procjene; činjenica, ne preporuka",
+      "market_vs_fair_pct": null,
+      "market_vs_fair_note": null,
       "missing": [
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
       ],
@@ -5928,14 +5933,20 @@
           "eur": 1213599089.0,
           "per_share": 471.828515321414,
           "basis": "market",
-          "pct": 0.5273
+          "pct": 0.5273,
+          "listed": true,
+          "our_eur": 2014915536.0,
+          "our_per_share": 783.3679297108727
         },
         {
           "item": "Dalekovod (DLKV)",
           "eur": 511980783.0,
           "per_share": 199.05019285655135,
           "basis": "market",
-          "pct": 0.75
+          "pct": 0.75,
+          "listed": true,
+          "our_eur": 275349630.0,
+          "our_per_share": 107.0516682937298
         },
         {
           "item": "KONČAR standalone (ex-uvrštene kćeri)",
@@ -6045,8 +6056,8 @@
       }
     ],
     "limitations": [
-      "neke metode se ne slažu s glavnom procjenom — najčešće zato što dijelu ulaza još fali kalibracija (npr. multiplikatori usporedivih firmi); razliku bilježimo, ne skrivamo je",
-      "različite metode daju vrlo različite brojke — to je signal za provjeru ulaznih podataka, ne za izbor najljepše brojke",
+      "pojedine metode daju osjetno drukčiju vrijednost od glavne procjene — uobičajeno kad se firma može gledati iz više kutova; glavnu procjenu nosi metoda najprimjerenija ovom tipu firme",
+      "raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu",
       "β = 1.36 (regresija (R²-blend sa sektorskom)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "komponente traženog prinosa r = 9.64%: nerizična stopa 2.70% + β 1.36 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju (postupak u Metodologiji)",
       "SOTP dijelovi na pretpostavljenim multiplama: KONČAR – Generatori i motori d.o.o., KONČAR – Obnovljivi izvori d.o.o., KONČAR – Motori i električni sustavi d.o.o. — default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"

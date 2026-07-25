@@ -372,10 +372,6 @@
   "risks": {
     "cards": [
       {
-        "l": "SOTP RASKORAK",
-        "txt": "Tržište vrednuje uvrštene kćeri +48.6% u odnosu na našu fer-procjenu; fer-zona matice koristi našu procjenu, pa razlika ostaje otvoreno pitanje tržišta."
-      },
-      {
         "l": "OVISNOST O KĆERIMA",
         "txt": "Vrijednost i dividende matice ovise o društvima: Croatia osiguranje (67%), Maistra (94%), HUP-Zagreb (100%), Cromaris (100%)."
       },
@@ -386,6 +382,10 @@
       {
         "l": "PRETPOSTAVKE PROCJENE",
         "txt": "Procjena počiva na označenim pretpostavkama: β = 0.97 (regresija (R²-blend sa sektorskom)); TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); ROE pravilo (TTM + 3g medijan); komponente traženog prinosa r = 8.02%: nerizična stopa 2.70% + β 0.97 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.; holding diskont 0–5%; SOTP dijelovi na pretpostavljenim multiplama: HUP-Zagreb, Cromaris, Energetika."
+      },
+      {
+        "l": "RASKORAK METODA",
+        "txt": "Sve metode zajedno raspinju 68–104 € (raspon 35%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -8232,14 +8232,20 @@
               "eur": 985480179.0,
               "per_share": 62.06457043116378,
               "basis": "market",
-              "pct": 0.6747
+              "pct": 0.6747,
+              "listed": true,
+              "our_eur": 618682952.0,
+              "our_per_share": 38.964042572554185
             },
             {
               "item": "Maistra",
               "eur": 655189421.0,
               "per_share": 41.26318401113973,
               "basis": "market",
-              "pct": 0.9354
+              "pct": 0.9354,
+              "listed": true,
+              "our_eur": 469985541.0,
+              "our_per_share": 29.59922617684948
             },
             {
               "item": "HUP-Zagreb",
@@ -8279,15 +8285,14 @@
           "sotp_market": {
             "nav_eur": 1688226575.0,
             "base_per_share": 103.6647747322488,
-            "note": "PRIMARNI SOTP (sidro): uvrštene tvrtke kćeri po burzovnoj cijeni, ostalo po našoj procjeni"
+            "note": "GLAVNA procjena (sidro fer-zone): uvrštene tvrtke kćeri uzete po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstveno"
           },
           "sotp_fair": {
             "nav_eur": 1136225468.0,
             "base_per_share": 69.76940117185205,
-            "note": "USPOREDNI SOTP: sve tvrtke kćeri po NAŠOJ procjeni (uključivo uvrštene) — pokazuje vrijednost ako se naša procjena kćeri ostvari; nije primarno sidro"
+            "note": "USPOREDBA: uvrštene tvrtke kćeri ovdje su po NAŠOJ procjeni umjesto po burzi — pokazuje vrijednost matice ako se naša procjena tih kćeri ostvari. Nije glavna procjena. Naša procjena uvrštenih kćeri je 32.7% ispod njihove današnje burzovne cijene."
           },
-          "market_vs_fair_pct": 48.6,
-          "market_vs_fair_note": "razlika primarnog SOTP-a (uvrštene kćeri po burzi) i usporednog (uvrštene kćeri po našoj procjeni) — negativno znači da tržište vrednuje uvrštene kćeri ISPOD naše procjene; činjenica, ne preporuka",
+          "our_vs_market_pct": -32.7,
           "sources": {
             "holding_discount": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.22 (2026-07-14). serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)"
           },
@@ -8357,7 +8362,7 @@
       ],
       "vs_market_pct": 53.4,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +4.2% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +6.6%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 42 € operativne zarade (EBITDA marža 41.9%). Vrijednost smo složili po dijelovima: uvrštene tvrtke-kćeri po našoj procjeni (ili tržištu gdje je naša procjena low-confidence), neuvrštene usporedbom sa sličnima, minus dug grupe — ukupno 1,136 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa se popust klampa na 0 (v2 §4); sidro je 103.66 € po dionici. Tržište te iste kćeri trenutačno vrednuje 48.6% više nego mi. Glavni rizik za procjenu: naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu. Tržišna cijena implicira ~+5.3% trajnog rasta godišnje / multipl P/E 31.4×; naš kompozitni rast (serija/održivi/terminal) je +4.2% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +4.2% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +6.6%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 42 € operativne zarade (EBITDA marža 41.9%). Vrijednost smo složili po dijelovima (SOTP): uvrštene tvrtke-kćeri po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstvenoj vrijednosti, minus dug grupe — ukupno 1,688 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa se popust klampa na 0 (v2 §4); glavna procjena je 103.66 € po dionici. Zasebno prikazujemo i koliko bi izašlo ako se uvrštene kćeri uzmu po NAŠOJ procjeni.. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira ~+5.3% trajnog rasta godišnje / multipl P/E 31.4×; naš kompozitni rast (serija/održivi/terminal) je +4.2% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 5.3,
@@ -8485,15 +8490,15 @@
       "sotp_fair": {
         "nav_eur": 1136225468.0,
         "base_per_share": 69.76940117185205,
-        "note": "USPOREDNI SOTP: sve tvrtke kćeri po NAŠOJ procjeni (uključivo uvrštene) — pokazuje vrijednost ako se naša procjena kćeri ostvari; nije primarno sidro"
+        "note": "USPOREDBA: uvrštene tvrtke kćeri ovdje su po NAŠOJ procjeni umjesto po burzi — pokazuje vrijednost matice ako se naša procjena tih kćeri ostvari. Nije glavna procjena. Naša procjena uvrštenih kćeri je 32.7% ispod njihove današnje burzovne cijene."
       },
       "sotp_market": {
         "nav_eur": 1688226575.0,
         "base_per_share": 103.6647747322488,
-        "note": "PRIMARNI SOTP (sidro): uvrštene tvrtke kćeri po burzovnoj cijeni, ostalo po našoj procjeni"
+        "note": "GLAVNA procjena (sidro fer-zone): uvrštene tvrtke kćeri uzete po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstveno"
       },
-      "market_vs_fair_pct": 48.6,
-      "market_vs_fair_note": "razlika primarnog SOTP-a (uvrštene kćeri po burzi) i usporednog (uvrštene kćeri po našoj procjeni) — negativno znači da tržište vrednuje uvrštene kćeri ISPOD naše procjene; činjenica, ne preporuka",
+      "market_vs_fair_pct": null,
+      "market_vs_fair_note": null,
       "missing": null,
       "identity": [
         {
@@ -8501,14 +8506,20 @@
           "eur": 985480179.0,
           "per_share": 62.06457043116378,
           "basis": "market",
-          "pct": 0.6747
+          "pct": 0.6747,
+          "listed": true,
+          "our_eur": 618682952.0,
+          "our_per_share": 38.964042572554185
         },
         {
           "item": "Maistra",
           "eur": 655189421.0,
           "per_share": 41.26318401113973,
           "basis": "market",
-          "pct": 0.9354
+          "pct": 0.9354,
+          "listed": true,
+          "our_eur": 469985541.0,
+          "our_per_share": 29.59922617684948
         },
         {
           "item": "HUP-Zagreb",
@@ -8579,7 +8590,7 @@
       }
     ],
     "limitations": [
-      "naša procjena je daleko od tržišne cijene — to je pitanje za provjeru pretpostavki, ne zaključak da je tržište u krivu",
+      "naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev",
       "β = 0.97 (regresija (R²-blend sa sektorskom)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "komponente traženog prinosa r = 8.02%: nerizična stopa 2.70% + β 0.97 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju (postupak u Metodologiji)",
       "SOTP dijelovi na pretpostavljenim multiplama: HUP-Zagreb, Cromaris, Energetika — default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
