@@ -631,23 +631,28 @@ def _separate_standalone(c: "Ctx", h: dict, p: "Params"):
     ebitda_rep = sep.get("ebitda")
     div_inc = sep.get("dividend_income") or 0.0
     ebitda_op = (ebitda_rep - div_inc) if ebitda_rep is not None else None
-    mult = getattr(p, "peer_ev_ebitda", None)
-    if ebitda_op is not None and ebitda_op > 0 and mult:
+    if ebitda_op is not None and ebitda_op > 0:
+        # M50: DCF vlastitog operativnog poslovanja matice (ne multiplikator).
+        # Slobodni novčani tok ~ operativna EBITDA nakon poreza (~HR 18%) i
+        # lakog capexa (matica je HQ/usluge/R&D) → kapitalizacija po trošku
+        # kapitala. Prihod od dividendi kćeri isključen (kćeri su već u NAV-u).
+        r = p.cost_of_equity
+        g = min(0.025, p.terminal_growth)
+        fcf = ebitda_op * 0.75
         nd = sep.get("net_debt") or 0.0
-        equity = ebitda_op * mult - nd
+        equity = fcf / (r - g) - nd
         if equity > 0:
             stake = equity * pct
             rev = sep.get("revenue")
             basis = (
-                f"standalone_separate EV/EBITDA (M41): vlastito OPERATIVNO poslovanje "
-                f"matice iz NEKONSOLIDIRANOG izvještaja FY{sep.get('fy')} — operativna "
-                f"EBITDA {ebitda_op / 1e6:,.1f} M€ (prijavljena {ebitda_rep / 1e6:,.1f} M€ "
-                f"− prihod od dividendi kćeri {div_inc / 1e6:,.1f} M€, koji je u HR "
-                f"klasifikaciji unutar poslovnih prihoda; kćeri su već u NAV-u kroz "
-                f"udjele pa se uklanja — bez dvostrukog brojanja)"
-                + (f" na {rev / 1e6:,.0f} M€ prihoda" if rev else "")
-                + f" × EV/EBITDA {mult:.1f} − neto dug {nd / 1e6:,.1f} M€ = "
-                f"{equity / 1e6:,.0f} M€ × {pct:.2f}")
+                f"DCF vlastitog poslovanja matice iz NEKONSOLIDIRANOG izvještaja "
+                f"FY{sep.get('fy')}: operativna EBITDA {ebitda_op / 1e6:,.1f} M€ "
+                f"(prijavljena {ebitda_rep / 1e6:,.1f} M€ − prihod od dividendi kćeri "
+                f"{div_inc / 1e6:,.1f} M€, koje su već u NAV-u kroz udjele — bez "
+                f"dvostrukog brojanja) → slobodni novčani tok ~{fcf / 1e6:,.1f} M€ "
+                f"kapitaliziran po {r:.1%} uz rast {g:.1%} − neto dug "
+                f"{nd / 1e6:,.1f} M€ = {equity / 1e6:,.0f} M€ × {pct:.2f}"
+                + (f"; vlastiti prihod ~{rev / 1e6:,.0f} M€" if rev else ""))
             return stake, basis
 
     # --- FALLBACK: P/E na NI bez dividendi kćeri (uz oznaku) ---
@@ -723,22 +728,27 @@ def compute_sotp(c: Ctx) -> ValueRange:
             if mc is None:
                 missing.append(f"trž.kap({h['held_name']})"); continue
             stake_mkt = mc * pct
+            # M50: PRIMARNI zbroj uvrštenu tvrtku kćer uzima po BURZOVNOJ cijeni
+            # (opažljiva, konzervativna). Naša (rekurzivna) procjena kćeri vodi se
+            # ZASEBNO i ulazi samo u USPOREDNI SOTP — jasno naznačeno da NIJE u
+            # primarnom zbroju.
+            basis = (f"tržišna vrijednost: burzovna kapitalizacija {mc:,.0f} € × "
+                     f"{pct:.4f} udjela = {stake_mkt:,.0f} € — uvrštena tvrtka kći "
+                     f"po BURZI (naša procjena kćeri NIJE u primarnom zbroju)")
             fv = c.fair_equity_of(h["held_company_id"]) if c.fair_equity_of else None
             if fv is not None:
                 stake_fair = fv[0] * pct
-                basis = f"fer-procjena: {fv[1]} × {pct:.4f}"
-                fair_basis = "our_estimate"
+                our_note = (f"naša procjena: {fv[1]} × {pct:.4f} = {stake_fair:,.0f} € "
+                            "(ulazi u usporedni SOTP, ne u primarni)")
             else:
                 stake_fair = stake_mkt
-                basis = (f"market: trž.kap {mc:,.0f} × {pct:.4f} — kći po "
-                         f"tržištu (naša procjena low-confidence/placeholder "
-                         f"ili nije analizirana; v2 §5 gate)")
-                fair_basis = "market_fallback"
+                our_note = "naša zasebna procjena nedostupna — u oba SOTP-a po burzi"
             gross_mkt += stake_mkt
             gross_fair += stake_fair
-            parts.append({"name": h["held_name"], "value_eur": round(stake_fair, 0),
+            parts.append({"name": h["held_name"], "value_eur": round(stake_mkt, 0),
                           "value_market_eur": round(stake_mkt, 0),
-                          "fair_basis": fair_basis,
+                          "our_estimate_eur": round(stake_fair, 0),
+                          "fair_basis": "market", "our_note": our_note,
                           "basis": basis, "pct": pct, "placeholder": False})
             continue
         elif h["valuation_basis"] == "ebitda_multiple":
@@ -750,36 +760,55 @@ def compute_sotp(c: Ctx) -> ValueRange:
                      f"× {h['default_multiple']} × {pct:.2f}")
             is_placeholder = True  # default_multiple je pretpostavka
         elif h["valuation_basis"] == "associate_pe":
-            # v3 FAZA SOTP (točka 3): neuvršteni udjeli/JV — PRIMARNO udio u
-            # KNJIGOVODSTVENOJ vrijednosti iz bilješki izvješća (metoda
-            # udjela); tek ako knjigovodstvene vrijednosti nema, konzervativni
-            # multiplikator (sektorski P/E s diskontom 20%) na objavljenu
-            # dobit. Uvijek OZNAČENA pretpostavka s izvorom.
+            # M50: pridruženo društvo / JV vrednujemo po DCF-u udjela u dobiti —
+            # naš udio u NORMALIZIRANOJ godišnjoj dobiti kapitaliziran po trošku
+            # kapitala. NE po knjigovodstvenoj vrijednosti: kod JV-a koji gotovo
+            # cijelu dobit isplaćuje kao dividendu, knjiga po metodi udjela
+            # (trošak + udio u dobiti − dividende) ostaje umjetno niska i
+            # podcjenjuje tvrtku koja stvarno zarađuje. Knjiga = DONJI POD.
+            ani = h.get("associate_ni")     # normalizirana 100% god. dobit (izvor)
             jv_book = h.get("jv_book_value_eur")
-            ani = h.get("associate_ni")
-            if jv_book:
-                stake = float(jv_book)   # carrying value VEĆ JE naš udio
-                basis = (f"associate_book (v3 SOTP): udio u knjigovodstvenoj "
-                         f"vrijednosti JV-a po metodi udjela = {stake:,.0f} € "
-                         f"— {h.get('jv_book_source') or 'bilješke izvješća'}."
-                         + (f" Napomena: objavljena dobit JV-a (100%) je "
-                            f"{float(ani):,.0f} € (naš udio ~"
-                            f"{float(ani) * pct:,.0f} €/g) — knjigovodstveno "
-                            "pravilo je namjerno konzervativno (JV isplaćuje "
-                            "gotovo svu dobit pa knjiga ostaje niska)"
-                            if ani else ""))
-                is_placeholder = True   # pravilo vrednovanja = pretpostavka
-            elif ani:
+            if ani:
                 ani = float(ani)
-                stake = ani * pct * p.peer_pe * 0.80
-                basis = (f"associate_pe (v3 SOTP fallback): dobit pridruženog "
-                         f"{ani:,.0f} × {pct:.2f} × P/E {p.peer_pe} × 0,80 "
-                         "(konzervativni diskont) — knjigovodstvena vrijednost "
-                         "iz bilješki nije u bazi")
+                share_ni = ani * pct
+                g = min(0.025, p.terminal_growth)   # konzervativno, ispod grupe
+                r = p.cost_of_equity
+                dcf = share_ni / (r - g)
+                floor = float(jv_book) if jv_book else 0.0
+                stake = max(dcf, floor)
+                basis = (f"DCF udjela u dobiti pridruženog društva / JV-a: naš udio "
+                         f"u NORMALIZIRANOJ godišnjoj dobiti {share_ni:,.0f} € "
+                         f"(100% dobiti {ani:,.0f} € × {pct:.0%}) kapitaliziran po "
+                         f"trošku kapitala {r:.1%} uz dugoročni rast {g:.1%} = "
+                         f"{dcf:,.0f} €. Knjigovodstvena vrijednost udjela "
+                         f"({floor:,.0f} €) je samo donji pod — JV gotovo cijelu "
+                         f"dobit isplaćuje kao dividendu pa knjiga po metodi udjela "
+                         f"ostaje niska. {h.get('jv_book_source') or ''}")
+                is_placeholder = True
+            elif jv_book:
+                stake = float(jv_book)
+                basis = (f"knjigovodstvena vrijednost udjela = {stake:,.0f} € "
+                         f"({h.get('jv_book_source') or 'bilješke izvješća'}) — nema "
+                         "podatka o dobiti za DCF, pa konzervativno po knjizi")
                 is_placeholder = True
             else:
                 missing.append(f"associate({h['held_name']}): nema ni "
                                "knjigovodstvene vrijednosti ni dobiti"); continue
+        elif h["valuation_basis"] == "subsidiary_book":
+            # M50: neuvrštena operativna tvrtka kći bez zasebne procjene — ulazi
+            # po KNJIGOVODSTVENOJ vrijednosti udjela iz izvješća matice. To je
+            # konzervativan pod (trošak ulaganja); profitabilna kći u pravilu
+            # vrijedi više, ali radije sourced pod nego pogađanje.
+            bk = h.get("jv_book_value_eur")
+            if not bk:
+                missing.append(f"{h['held_name']}: nema knjigovodstvene vrijednosti")
+                continue
+            stake = float(bk)
+            _src = h.get("jv_book_source") or "bilješka o ovisnim društvima"
+            basis = (f"knjigovodstvena vrijednost udjela {stake:,.0f} € iz izvješća "
+                     f"matice ({_src}) — neuvrštena tvrtka kći bez zasebne procjene; "
+                     "uzimamo trošak ulaganja kao KONZERVATIVAN pod")
+            is_placeholder = True
         elif h["valuation_basis"] == "residual_pe":
             # v3 FAZA SOTP (točka 2): standalone komponenta matice vrednuje
             # se ISKLJUČIVO iz NEKONSOLIDIRANIH (odvojenih) izvještaja, uz
@@ -836,16 +865,19 @@ def compute_sotp(c: Ctx) -> ValueRange:
         "grupni agregat: uključuje i novac/dug konsolidiranih društava koja su "
         "već vrednovana tržišno/multiplom — gruba NAV aproksimacija"
     )
-    nav = gross + net_cash
-    nav_mkt = gross_mkt + net_cash
-    lo = _per_share(nav * (1 - disc_hi), c)
-    base = _per_share(nav * (1 - (disc_lo + disc_hi) / 2), c)
-    hi = _per_share(nav * (1 - disc_lo), c)
+    nav = gross + net_cash           # NAŠA procjena uvrštenih kćeri (usporedni SOTP)
+    nav_mkt = gross_mkt + net_cash   # uvrštene kćeri po BURZI (PRIMARNI SOTP — sidro)
+    # M50: PRIMARNI SOTP (fer-zona/sidro) uzima uvrštene kćeri po BURZOVNOJ
+    # cijeni; naša (viša) procjena tih kćeri prikazana je zasebno kao usporedni
+    # SOTP i NIJE u ovom zbroju.
+    lo = _per_share(nav_mkt * (1 - disc_hi), c)
+    base = _per_share(nav_mkt * (1 - (disc_lo + disc_hi) / 2), c)
+    hi = _per_share(nav_mkt * (1 - disc_lo), c)
     if base is None:
         assum["missing"] = ["shares_ex_treasury"]
         return ValueRange(0, 0, 0, assum, 0.0)
-    assum["nav_gross_eur"] = round(gross, 0)
-    assum["nav_total_eur"] = round(nav, 0)
+    assum["nav_gross_eur"] = round(gross_mkt, 0)
+    assum["nav_total_eur"] = round(nav_mkt, 0)
     # v2 §5 RECONCILIATION IDENTITET: raščlamba po stavkama, per-share,
     # s osnovom — VIDLJIVA tablica; mismatch = red flag (ne ide live)
     identity = [{"item": x["name"], "eur": x["value_eur"],
@@ -854,15 +886,17 @@ def compute_sotp(c: Ctx) -> ValueRange:
     identity.append({"item": "neto novac (−neto dug) centra/grupe",
                      "eur": round(net_cash, 0),
                      "per_share": _per_share(net_cash, c), "basis": "izvještaj"})
-    disc_eur = -nav * (disc_lo + disc_hi) / 2
+    disc_eur = -nav_mkt * (disc_lo + disc_hi) / 2
     identity.append({"item": f"holding diskont ({(disc_lo + disc_hi) / 2:.0%} sredina)",
                      "eur": round(disc_eur, 0),
-                     "per_share": _per_share(disc_eur, c), "basis": "v2 §4 taksonomija"})
+                     "per_share": _per_share(disc_eur, c), "basis": "diskont matice"})
     assum["identity"] = identity
-    assum["identity_note"] = ("Σ stavki = sidro po dionici (v2 §5); svaka stavka "
-                              "s osnovom: our_estimate / market_fallback / multiple")
+    assum["identity_note"] = ("Zbroj svih stavki = procjena po dionici. Uvrštene "
+                              "tvrtke kćeri uzete su po BURZOVNOJ cijeni, neuvrštene "
+                              "po našoj procjeni ili knjigovodstvenoj vrijednosti "
+                              "(kako je navedeno uz svaku stavku).")
     # mismatch: pojedinačna stavka veća od cijele vrijednosti nakon diskonta
-    total_ps = _per_share(nav * (1 - (disc_lo + disc_hi) / 2), c) or 0
+    total_ps = _per_share(nav_mkt * (1 - (disc_lo + disc_hi) / 2), c) or 0
     for x in parts:
         x_ps = _per_share(x["value_eur"], c) or 0
         if total_ps and x_ps > total_ps * 1.02:
@@ -871,19 +905,25 @@ def compute_sotp(c: Ctx) -> ValueRange:
                 f"({total_ps:,.2f} €/d) — negativan ostatak: lokaliziraj "
                 f"(dug centra? missing dijelovi: {', '.join(missing) or 'nema'})")
             break
-    # Dio 0.5: obje SOTP brojke + signal razlike (tržište kćeri vs naša procjena)
+    # M50: DVIJE SOTP brojke — primarna (uvrštene kćeri po BURZI, = sidro) i
+    # usporedna (SVE kćeri po NAŠOJ procjeni). Razlika je upravo naša (viša)
+    # procjena uvrštenih kćeri koja NIJE u primarnom zbroju.
     mid_disc = 1 - (disc_lo + disc_hi) / 2
-    assum["sotp_fair"] = {"nav_eur": round(nav, 0),
-                          "base_per_share": _per_share(nav * mid_disc, c),
-                          "note": "kćeri po NAŠOJ fer-procjeni (sidro kćeri, rekurzivno)"}
     assum["sotp_market"] = {"nav_eur": round(nav_mkt, 0),
                             "base_per_share": _per_share(nav_mkt * mid_disc, c),
-                            "note": "kćeri po tržišnoj kapitalizaciji"}
+                            "note": ("PRIMARNI SOTP (sidro): uvrštene tvrtke kćeri po "
+                                     "burzovnoj cijeni, ostalo po našoj procjeni")}
+    assum["sotp_fair"] = {"nav_eur": round(nav, 0),
+                          "base_per_share": _per_share(nav * mid_disc, c),
+                          "note": ("USPOREDNI SOTP: sve tvrtke kćeri po NAŠOJ procjeni "
+                                   "(uključivo uvrštene) — pokazuje vrijednost ako se "
+                                   "naša procjena kćeri ostvari; nije primarno sidro")}
     if nav:
         assum["market_vs_fair_pct"] = round((nav_mkt / nav - 1) * 100, 1)
         assum["market_vs_fair_note"] = (
-            "pozitivno = tržište vrednuje uvrštene kćeri IZNAD naše procjene "
-            "(fer-zona matice koristi našu procjenu); razlika je signal, ne preporuka")
+            "razlika primarnog SOTP-a (uvrštene kćeri po burzi) i usporednog "
+            "(uvrštene kćeri po našoj procjeni) — negativno znači da tržište "
+            "vrednuje uvrštene kćeri ISPOD naše procjene; činjenica, ne preporuka")
     if p.sources.get("holding_discount"):
         assum["sources"] = {"holding_discount": p.sources["holding_discount"]}
     # TRŽIŠNA USPOREDBA (dokaz uz diskont): vlastita trž.kap vs NAV prije diskonta
@@ -1563,17 +1603,19 @@ def reconcile(results: dict, sector: Optional[str] = None,
             continue
         if k in anchors:
             dev = (bases[k] / mid - 1) if (mid and bases.get(k)) else None
-            note = "sidro-potvrda: ista r/rast pretpostavka, druga leća"
-            # M41: kod holdinga konsolidirani DCF strukturno stoji IZNAD SOTP-a —
-            # objasni ZAŠTO (manjinski udjeli), da razlika ne izgleda kao greška
+            note = "potvrda glavne procjene: ista pretpostavka rasta i troška kapitala, drugi kut"
+            # M50: kod holdinga DCF cijele grupe stoji iznad SOTP-a — objasni ZAŠTO
+            # OBIČNIM jezikom (razlika nije greška, nego razlika u pristupu).
             if k == "dcf_fcf" and arche in ("holding_operating", "holding_passive"):
-                note = ("konsolidirani DCF diskontira novčane tokove CIJELE grupe; "
-                        "nekontrolirajući interes (manjinski udjeli) ODUZET je "
-                        "knjigovodstveno, ali metoda i dalje vrednuje kćeri po punoj "
-                        "vrijednosti rasta iako ih matica drži samo djelomično — zato "
-                        "stoji iznad SOTP-a, koji vrednuje svaku kću po stvarnom "
-                        "vlasničkom udjelu. Sidro je SOTP; konsolidirani DCF je gornji "
-                        "kontekst, ne fer-procjena za dioničara matice")
+                note = ("DCF računa buduće novčane tokove CIJELE grupe (sve tvrtke "
+                        "kćeri zajedno) po procijenjenom rastu. SOTP je zbroj dijelova: "
+                        "uvrštene tvrtke kćeri uzima po današnjoj BURZOVNOJ cijeni, a ne "
+                        "po budućem rastu. Glavni razlog zašto je DCF viši: naša procjena "
+                        "tih uvrštenih kćeri (koju DCF u sebi nosi) osjetno je iznad "
+                        "njihove današnje cijene na burzi — tržište im pripisuje manji "
+                        "rast nego mi. Zato je SOTP (oslonjen na vidljive burzovne cijene) "
+                        "glavna procjena, a DCF pokazuje koliko bi vrijedilo ako se "
+                        "procijenjeni rast ostvari.")
             roles[k] = {"role": "anchor_alt", "note": note, "vs_zone_pct": dev}
             if dev is not None and abs(dev) > 0.25:
                 inconsistent.append(f"{k} {dev:+.0%} vs primarno sidro")
@@ -2188,20 +2230,18 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         rec = sub_out["reconciliation"]
         if rec.get("status") == "no_value" or not rec.get("anchor_methods"):
             return None
-        # v2 §5 CONFIDENCE GATE: kći ulazi po NAŠOJ procjeni SAMO ako je njen
-        # anchor confidence >= 0,7 I ulazi bez placeholdera; inače -> tržišna
-        # vrijednost s oznakom (pozivatelj radi fallback kad vratimo None)
+        # M50: naša procjena uvrštene kćeri koristi se SAMO za USPOREDNI SOTP
+        # (primarni/sidro uzima burzu), pa gate na pouzdanost više nije nužan —
+        # vraćamo našu procjenu uvijek kad postoji zona, uz naznaku pouzdanosti.
         prim = rec["anchor_methods"][0]
         prim_conf = sub_out["ran"][prim]["range"].confidence
-        if prim_conf < 0.7 or sub_ctx.params.placeholder:
-            return None
         sh = shares_of(held_company_id)
         if not sh:
             return None
         mid = (rec["zone_low"] + rec["zone_high"]) / 2
         return (mid * sh,
-                f"fer-procjena {sub_ticker}: sidro {rec['archetype']} "
-                f"({', '.join(rec['anchor_methods'])}, conf {prim_conf:.1f}) "
+                f"naša procjena {sub_ticker}: {rec['archetype']} "
+                f"({', '.join(rec['anchor_methods'])}, pouzdanost {prim_conf:.1f}) "
                 f"sredina zone {rec['zone_low']:,.0f}–{rec['zone_high']:,.0f} "
                 f"€/dionici × {sh:,.0f} dionica")
 

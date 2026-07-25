@@ -104,12 +104,15 @@ def test_iskljucenje_dividendnog_prihoda_mijenja_zbroj(conn):
         f"(bez: {base_bez}, s isključenjem: {base_s_div})")
 
 
-def test_jv_pravilo_knjigovodstvena_s_izvorom(conn):
-    """Acceptance 5c-4: KPT po knjigovodstvenoj vrijednosti iz bilješki,
-    s izvorom i pretpostavka badgeom."""
+def test_jv_pravilo_dcf_udjela_s_izvorom(conn):
+    """M50: KPT (JV) vrednuje se po DCF-u udjela u NORMALIZIRANOJ dobiti (ne po
+    knjigovodstvenoj vrijednosti, koja umjetno podcjenjuje JV koji sve isplaćuje);
+    knjiga ostaje kao donji pod, uz izvor i pretpostavka badge."""
     vr = _koei_sotp(conn)
     kpt = next(x for x in vr.assumptions["parts"] if "KPT" in x["name"])
     assert kpt["placeholder"] is True, "JV pravilo mora nositi pretpostavka badge"
-    assert "associate_book" in kpt["basis"]
-    assert "bilješka 16" in kpt["basis"]
-    assert abs(kpt["value_eur"] - 44_232_000) < 1
+    assert "DCF udjela u dobiti" in kpt["basis"]
+    assert "bilj. 16" in kpt["basis"] or "bilješka 16" in kpt["basis"]
+    # DCF (normalizirana dobit / (r−g)) mora biti iznad knjigovodstvenog poda 44,2 M€
+    assert kpt["value_eur"] > 44_232_000, "DCF JV-a mora biti iznad knjig. poda"
+    assert kpt["value_eur"] > 200_000_000, "JV koji zarađuje ~34 M€/g vrijedi >200 M€"
