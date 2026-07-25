@@ -880,9 +880,19 @@ def compute_sotp(c: Ctx) -> ValueRange:
     assum["nav_total_eur"] = round(nav_mkt, 0)
     # v2 §5 RECONCILIATION IDENTITET: raščlamba po stavkama, per-share,
     # s osnovom — VIDLJIVA tablica; mismatch = red flag (ne ide live)
-    identity = [{"item": x["name"], "eur": x["value_eur"],
-                 "per_share": _per_share(x["value_eur"], c),
-                 "basis": x["fair_basis"], "pct": x["pct"]} for x in parts]
+    # M50: svaka stavka nosi svoju vrijednost; za UVRŠTENE kćeri i tržišnu
+    # (u primarnom zbroju) I našu procjenu (zasebno), da čitatelj vidi oboje.
+    identity = []
+    for x in parts:
+        row = {"item": x["name"], "eur": x["value_eur"],
+               "per_share": _per_share(x["value_eur"], c),
+               "basis": x["fair_basis"], "pct": x["pct"]}
+        oe = x.get("our_estimate_eur")
+        if x["fair_basis"] == "market" and oe is not None:
+            row["listed"] = True                 # uvrštena kći — burza vs naša
+            row["our_eur"] = oe
+            row["our_per_share"] = _per_share(oe, c)
+        identity.append(row)
     identity.append({"item": "neto novac (−neto dug) centra/grupe",
                      "eur": round(net_cash, 0),
                      "per_share": _per_share(net_cash, c), "basis": "izvještaj"})
@@ -909,21 +919,31 @@ def compute_sotp(c: Ctx) -> ValueRange:
     # usporedna (SVE kćeri po NAŠOJ procjeni). Razlika je upravo naša (viša)
     # procjena uvrštenih kćeri koja NIJE u primarnom zbroju.
     mid_disc = 1 - (disc_lo + disc_hi) / 2
+    # postoji li uopće uvrštena kći kojoj se naša procjena razlikuje od burze?
+    has_listed = any(x.get("fair_basis") == "market"
+                     and x.get("our_estimate_eur") is not None
+                     and abs((x.get("our_estimate_eur") or 0) - x["value_eur"]) > 1
+                     for x in parts)
+    ovm = round((nav / nav_mkt - 1) * 100, 1) if nav_mkt else None  # naša vs burza
     assum["sotp_market"] = {"nav_eur": round(nav_mkt, 0),
                             "base_per_share": _per_share(nav_mkt * mid_disc, c),
-                            "note": ("PRIMARNI SOTP (sidro): uvrštene tvrtke kćeri po "
-                                     "burzovnoj cijeni, ostalo po našoj procjeni")}
+                            "note": ("GLAVNA procjena (sidro fer-zone): uvrštene tvrtke "
+                                     "kćeri uzete po njihovoj današnjoj burzovnoj cijeni, "
+                                     "neuvrštene po našoj procjeni ili knjigovodstveno")}
+    fair_note = ("USPOREDBA: uvrštene tvrtke kćeri ovdje su po NAŠOJ procjeni umjesto po "
+                 "burzi — pokazuje vrijednost matice ako se naša procjena tih kćeri "
+                 "ostvari. Nije glavna procjena.")
+    if has_listed and ovm is not None:
+        smjer = "iznad" if ovm >= 0 else "ispod"
+        fair_note += (f" Naša procjena uvrštenih kćeri je {abs(ovm):.1f}% {smjer} "
+                      f"njihove današnje burzovne cijene.")
     assum["sotp_fair"] = {"nav_eur": round(nav, 0),
                           "base_per_share": _per_share(nav * mid_disc, c),
-                          "note": ("USPOREDNI SOTP: sve tvrtke kćeri po NAŠOJ procjeni "
-                                   "(uključivo uvrštene) — pokazuje vrijednost ako se "
-                                   "naša procjena kćeri ostvari; nije primarno sidro")}
-    if nav:
-        assum["market_vs_fair_pct"] = round((nav_mkt / nav - 1) * 100, 1)
-        assum["market_vs_fair_note"] = (
-            "razlika primarnog SOTP-a (uvrštene kćeri po burzi) i usporednog "
-            "(uvrštene kćeri po našoj procjeni) — negativno znači da tržište "
-            "vrednuje uvrštene kćeri ISPOD naše procjene; činjenica, ne preporuka")
+                          "note": fair_note}
+    if nav_mkt and has_listed:
+        # POZITIVNO = naša procjena uvrštenih kćeri IZNAD njihove burzovne cijene.
+        # Pripada USPOREDNOM SOTP-u (glavni po definiciji uzima burzu).
+        assum["our_vs_market_pct"] = ovm
     if p.sources.get("holding_discount"):
         assum["sources"] = {"holding_discount": p.sources["holding_discount"]}
     # TRŽIŠNA USPOREDBA (dokaz uz diskont): vlastita trž.kap vs NAV prije diskonta
@@ -1304,15 +1324,16 @@ def _plain_risk(flag: str) -> str:
     """QA flag -> jedna rečenica OBIČNIM jezikom (tehnički tekst ostaje u
     qa_flags; ovo je prezentacijski sloj za naraciju, ne mijenja izračun)."""
     if flag.startswith("ULAZI NEKONZISTENTNI"):
-        return ("neke metode se ne slažu s glavnom procjenom — najčešće zato što "
-                "dijelu ulaza još fali kalibracija (npr. multiplikatori "
-                "usporedivih firmi); razliku bilježimo, ne skrivamo je")
+        return ("pojedine metode daju osjetno drukčiju vrijednost od glavne "
+                "procjene — uobičajeno kad se firma može gledati iz više kutova; "
+                "glavnu procjenu nosi metoda najprimjerenija ovom tipu firme")
     if flag.startswith("metode se međusobno razilaze"):
-        return ("različite metode daju vrlo različite brojke — to je signal za "
-                "provjeru ulaznih podataka, ne za izbor najljepše brojke")
+        return ("raspon procjena je širok jer se metode oslanjaju na različite "
+                "pretpostavke o budućnosti — zato prikazujemo cijeli raspon i "
+                "objašnjavamo svaku metodu")
     if flag.startswith("fer-zona odstupa"):
-        return ("naša procjena je daleko od tržišne cijene — to je pitanje za "
-                "provjeru pretpostavki, ne zaključak da je tržište u krivu")
+        return ("naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo "
+                "obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev")
     return flag
 
 
@@ -1346,7 +1367,7 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
                      f"operativne zarade (EBITDA marža {ebd / rev:.1%})")
     if prim == "sotp_nav" and prim in results:
         a = results[prim]["range"].assumptions
-        sf = a.get("sotp_fair")
+        sf = a.get("sotp_market")   # M50: glavni SOTP = uvrštene po burzi
         if sf:
             dr = a.get("holding_discount_range", [0, 0])
             if getattr(c, "holding_type", "passive") == "operating":
@@ -1356,12 +1377,14 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
                             "premiju pa se popust klampa na 0 (v2 §4)")
             else:
                 disc_txt = f"uz popust ({dr[0]:.0%}–{dr[1]:.0%})"
-            parts.append(f"Vrijednost smo složili po dijelovima: uvrštene "
-                         f"tvrtke-kćeri po našoj procjeni (ili tržištu gdje je "
-                         f"naša procjena low-confidence), neuvrštene usporedbom "
-                         f"sa sličnima, minus dug grupe — ukupno "
-                         f"{sf['nav_eur'] / 1e6:,.0f} M€, {disc_txt}; sidro je "
-                         f"{results[prim]['range'].base:,.2f} € po dionici")
+            parts.append(f"Vrijednost smo složili po dijelovima (SOTP): uvrštene "
+                         f"tvrtke-kćeri po njihovoj današnjoj burzovnoj cijeni, "
+                         f"neuvrštene po našoj procjeni ili knjigovodstvenoj "
+                         f"vrijednosti, minus dug grupe — ukupno "
+                         f"{sf['nav_eur'] / 1e6:,.0f} M€, {disc_txt}; glavna "
+                         f"procjena je {results[prim]['range'].base:,.2f} € po "
+                         f"dionici. Zasebno prikazujemo i koliko bi izašlo ako se "
+                         f"uvrštene kćeri uzmu po NAŠOJ procjeni.")
             # M41: eksplicitno istakni koliko vrijedi VLASTITO poslovanje matice
             # (standalone iz nekonsolidiranog izvještaja) — inače "nestane" u NAV-u
             std = next((x for x in (a.get("parts") or [])
