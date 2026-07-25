@@ -153,21 +153,16 @@ export function AnchorPanel({ data }) {
           </div>
           <div>
             <div className="prof-klabel">{t('ab.sotpFair')}</div>
-            <div className="anch-sotp2-v">{num(sotp.sotp_fair.base_per_share, 2)} €</div>
+            <div className="anch-sotp2-v">
+              {num(sotp.sotp_fair.base_per_share, 2)} €
+              {sotp.our_vs_market_pct !== null && sotp.our_vs_market_pct !== undefined && (
+                <span className="anch-sotp2-d" style={{ color: sotp.our_vs_market_pct >= 0 ? PINE : OX }}>
+                  {' '}({sotp.our_vs_market_pct >= 0 ? '+' : ''}{num(sotp.our_vs_market_pct, 1)}%)
+                </span>
+              )}
+            </div>
             <div className="anch-sotp2-n">{tx(sotp.sotp_fair.note, lang)}</div>
           </div>
-          {sotp.market_vs_fair_pct !== null && sotp.market_vs_fair_pct !== undefined && (
-            <div>
-              <div className="prof-klabel">{t('ab.diffSignal')}</div>
-              <div className="anch-sotp2-v" style={{
-                color: sotp.market_vs_fair_pct > 0 ? OX : PINE }}>
-                {sotp.market_vs_fair_pct > 0 ? '+' : ''}{num(sotp.market_vs_fair_pct, 1)}%
-              </div>
-              <div className="anch-sotp2-n">
-                {t('ab.mvf1')} {sotp.market_vs_fair_pct > 0 ? t('ab.above') : t('ab.below')} {t('ab.mvf2')}
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>

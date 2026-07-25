@@ -372,6 +372,22 @@ export const DATA_TX = {
   'Zašto je naša procjena iznad knjigovodstvene vrijednosti': 'Why our estimate is above book value',
   'KONČAR D&ST (KODT)': 'KONCAR D&ST (KODT)',
   'KONČAR standalone (ex-uvrštene kćeri)': 'KONCAR standalone (excl. listed subsidiaries)',
+  // M50: neuvrštene KONČAR-ove kćeri (vlastita imena — EN transliteracija bez dijakritika)
+  'KONČAR – Aparati i postrojenja d.o.o.': 'KONCAR – Aparati i postrojenja d.o.o.',
+  'KONČAR – Digital d.o.o.': 'KONCAR – Digital d.o.o.',
+  'KONČAR – Električna vozila d.d.': 'KONCAR – Elektricna vozila d.d.',
+  'KONČAR – Elektronika i informatika d.d.': 'KONCAR – Elektronika i informatika d.d.',
+  'KONČAR – Generatori i motori d.o.o.': 'KONCAR – Generatori i motori d.o.o.',
+  'KONČAR – Hydro Turbine d.o.o.': 'KONCAR – Hydro Turbine d.o.o.',
+  'KONČAR – Institut za elektrotehniku d.o.o.': 'KONCAR – Institut za elektrotehniku d.o.o.',
+  'KONČAR – Metalne konstrukcije d.o.o.': 'KONCAR – Metalne konstrukcije d.o.o.',
+  'KONČAR – Mjerni transformatori d.d.': 'KONCAR – Mjerni transformatori d.d.',
+  'KONČAR – Motori i električni sustavi d.o.o.': 'KONCAR – Motori i elektricni sustavi d.o.o.',
+  'KONČAR – Obnovljivi izvori d.o.o.': 'KONCAR – Obnovljivi izvori d.o.o.',
+  'KONČAR – Transformatorski kotlovi d.o.o.': 'KONCAR – Transformatorski kotlovi d.o.o.',
+  'TELENERG-INŽENJERING d.o.o.': 'TELENERG-INZENJERING d.o.o.',
+  'Zbroj svih stavki = procjena po dionici. Uvrštene tvrtke kćeri uzete su po BURZOVNOJ cijeni, neuvrštene po našoj procjeni ili knjigovodstvenoj vrijednosti (kako je navedeno uz svaku stavku).':
+    'The sum of all items = the estimate per share. Listed subsidiaries are taken at their MARKET price, unlisted ones at our estimate or book value (as noted next to each item).',
   'neto novac (−neto dug) centra/grupe': 'net cash (−net debt) of the centre/group',
   'tekuća cijena vs OVAJ (konzervativni) NAV; povijesna serija cijena↔NAV je kalibrirana — vidi izvor holding diskonta u pretpostavkama':
     'current price vs THIS (conservative) NAV; the historical price↔NAV series is calibrated — see the source of the holding discount in the assumptions',

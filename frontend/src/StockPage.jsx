@@ -899,8 +899,15 @@ function SotpTable({ sotp }) {
           <tbody>
             {sotp.identity.map((row, i) => (
               <tr key={i}>
-                <td>{tx(row.item, lang)}</td>
-                <td className="num">{meur(row.eur)}</td>
+                <td>{tx(row.item, lang)}
+                  {row.listed && row.our_per_share != null && (
+                    <span className="basis" style={{ display: 'block', marginTop: 2 }}>
+                      {t('sp.ourEst')}: {meur(row.our_eur)} ({num(row.our_per_share, 0)} €/{t('sp.perShareShort')})
+                    </span>
+                  )}
+                </td>
+                <td className="num">{meur(row.eur)}{row.listed
+                  ? <span className="basis" style={{ display: 'block' }}>{t('sp.marketShort')}</span> : null}</td>
                 <td className="num">{row.per_share === null || row.per_share === undefined
                   ? dash : num(row.per_share, 2)}</td>
                 <td><span className="basis">{IDENTITY_BASIS_KEYS[row.basis]
