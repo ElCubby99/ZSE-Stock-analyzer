@@ -337,12 +337,8 @@ def _risks(sector, is_group, sotp, liquidity, ownership, assumption_flags,
     """DIO 1: 'Rizici i kontekst' — ČINJENIČNE kartice izvedene isključivo iz
     podataka u ovom exportu (brojke + činjenice, bez ocjena i preporuka)."""
     cards = []
-    if sotp and sotp.get("market_vs_fair_pct") is not None:
-        mv = sotp["market_vs_fair_pct"]
-        cards.append({"l": "SOTP RASKORAK",
-                      "txt": (f"Tržište vrednuje uvrštene kćeri {mv:+.1f}% u odnosu "
-                              f"na našu fer-procjenu; fer-zona matice koristi našu "
-                              f"procjenu, pa razlika ostaje otvoreno pitanje tržišta.")})
+    # M50.1: raskorak naše procjene uvrštenih kćeri vs burza prikazan je već
+    # jasno uz USPOREDNI SOTP (sotp_fair.note) — ne dupliciramo kao rizik-karticu.
     if is_group and sotp and sotp.get("parts"):
         deps = ", ".join(f"{p['name']} ({p['pct']:.0%})" for p in sotp["parts"][:4])
         cards.append({"l": "OVISNOST O KĆERIMA",
@@ -1479,7 +1475,7 @@ def build_stock_json(conn, ticker: str) -> dict:
             "market_check": a.get("market_check"),
             "sotp_fair": a.get("sotp_fair"),
             "sotp_market": a.get("sotp_market"),
-            "market_vs_fair_pct": a.get("market_vs_fair_pct"),
+            "our_vs_market_pct": a.get("our_vs_market_pct"),
             "market_vs_fair_note": a.get("market_vs_fair_note"),
             "missing": a.get("missing"),
             # v2 §5: reconciliation identitet — raščlamba po stavkama
