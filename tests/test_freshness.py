@@ -43,7 +43,10 @@ def test_nepotpuni_zadnji_filinzi_su_poznati(reports):
     nekog izvještaja) smije postojati samo za poznate, dokumentirane slučajeve
     gdje ta stavka NE ulazi u fer vrijednost (npr. ZITO — comps-sidren, NT
     ne utječe na zonu). Nova pojava izvan popisa = signal za pregled."""
-    known = {"ZITO"}   # comps-sidren; NT ne ulazi u fer vrijednost
+    known = {"ZITO",          # comps-sidren; NT ne ulazi u fer vrijednost
+             "BRIN", "INSP"}  # M51: ZAIF-ovi — AIF obrazac nosi NAV/dobit
+                              # (5-6 stavki); fer vrijednost = NAV, potpun TFI
+                              # set ne postoji za fondove
     incomplete = {r["ticker"] for r in reports
                   for f in r["findings"] if f["type"] == "incomplete_annual"}
     surprise = incomplete - known

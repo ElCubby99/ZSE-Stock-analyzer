@@ -38,7 +38,7 @@ function classCss(i) { return i === 0 ? 'ord' : 'prf' }
 const ARCH_KEYS = { holding: 'sp.arch.holding', capital: 'sp.arch.capital',
   operating: 'sp.arch.operating' }
 const METHOD_KEYS = {
-  sotp_nav: 'sp.method.sotp_nav', residual_income: 'sp.method.residual_income',
+  sotp_nav: 'sp.method.sotp_nav', nav_fund: 'ab.m.nav_fund', residual_income: 'sp.method.residual_income',
   justified_pb_roe: 'sp.method.justified_pb_roe', dcf_fcf: 'sp.method.dcf_fcf',
   multiples_relative: 'sp.method.multiples_relative', ev_ebitda: 'sp.method.ev_ebitda',
   ddm_gordon: 'sp.method.ddm_gordon',

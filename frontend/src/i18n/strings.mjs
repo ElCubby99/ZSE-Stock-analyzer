@@ -1297,6 +1297,25 @@ export const STR = {
     en: 'The fair-value zone is a range around our main estimate, not a single figure; its width shows how well the different methods and assumptions agree.',
   },
   'ab.m.sotp_nav': { hr: 'SOTP / NAV', en: 'SOTP / NAV' },
+  'ab.m.nav_fund': { hr: 'NAV FONDA', en: 'FUND NAV' },
+  'ab.noValueTag': { hr: 'BEZ PROCJENE — EVO ZAŠTO', en: 'NO ESTIMATE — HERE IS WHY' },
+  'ab.noValueIntro': {
+    hr: 'Za ovu firmu ne objavljujemo fer-zonu jer nijedna metoda ne daje pozitivnu vrijednost iz objavljenih brojki.',
+    en: 'We do not publish a fair-value zone for this company because no method yields a positive value from the published figures.',
+  },
+  'ab.noValueNegEq': {
+    hr: 'Vlastiti kapital firme je negativan:',
+    en: 'The company’s equity is negative:',
+  },
+  'ab.noValueLoss': {
+    hr: 'Zadnja godišnja neto dobit je gubitak od',
+    en: 'The latest annual net result is a loss of',
+  },
+  'ab.noValueOutro': {
+    hr: 'Radije ostavljamo polje prazno s razlogom nego da objavimo izmišljenu brojku. Procjena će se pojaviti kad izvješća pokažu održivo pozitivne vrijednosti.',
+    en: 'We would rather leave the field empty with a reason than publish an invented figure. An estimate will appear once the reports show sustainably positive values.',
+  },
+  'ab.mEur': { hr: 'M€', en: 'EUR m' },
   'ab.m.residual_income': { hr: 'REZIDUALNI DOHODAK', en: 'RESIDUAL INCOME' },
   'ab.m.justified_pb_roe': { hr: 'OPRAVDANI P/B', en: 'JUSTIFIED P/B' },
   'ab.m.dcf_fcf': { hr: 'DCF', en: 'DCF' },

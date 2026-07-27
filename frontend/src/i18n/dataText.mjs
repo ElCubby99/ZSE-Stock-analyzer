@@ -371,6 +371,7 @@ export const DATA_TX = {
   'Zašto je naša procjena ispod knjigovodstvene vrijednosti': 'Why our estimate is below book value',
   'Zašto je naša procjena iznad knjigovodstvene vrijednosti': 'Why our estimate is above book value',
   'KONČAR D&ST (KODT)': 'KONCAR D&ST (KODT)',
+  'NAV fonda (neto imovina)': 'Fund NAV (net assets)',
   'KONČAR standalone (ex-uvrštene kćeri)': 'KONCAR standalone (excl. listed subsidiaries)',
   // M50: neuvrštene KONČAR-ove kćeri (vlastita imena — EN transliteracija bez dijakritika)
   'KONČAR – Aparati i postrojenja d.o.o.': 'KONCAR – Aparati i postrojenja d.o.o.',
