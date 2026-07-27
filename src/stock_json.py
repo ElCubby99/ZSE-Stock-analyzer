@@ -1408,7 +1408,10 @@ def build_stock_json(conn, ticker: str) -> dict:
     # preporuke, zaključak je čitateljev). Banke/osiguranja se preskaču —
     # njihovo sidro je ionako kapitalna metoda vezana uz knjigu.
     value_vs_book = None
-    _zl, _zh = _f(rec.get("zone_low")), _f(rec.get("zone_high"))
+    # M51.3: analiza zadržana (red rules) -> ni ovaj blok ne citira zonu
+    _held = bool(rec.get("red_rules"))
+    _zl, _zh = ((None, None) if _held
+                else (_f(rec.get("zone_low")), _f(rec.get("zone_high"))))
     _roe_used = _f((getattr(ctx, "roe_hint", None) or {}).get("used")) or _f(roe)
     _r_used = _f(params.cost_of_equity)
     _px = _f(ctx.price)

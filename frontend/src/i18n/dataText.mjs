@@ -372,6 +372,7 @@ export const DATA_TX = {
   'Zašto je naša procjena iznad knjigovodstvene vrijednosti': 'Why our estimate is above book value',
   'KONČAR D&ST (KODT)': 'KONCAR D&ST (KODT)',
   'NAV fonda (neto imovina)': 'Fund NAV (net assets)',
+  'procjena zadržana: grupa u izgradnji — prijavljene brojke hvataju akvizicije tek od datuma preuzimanja (prihod 2025.: prijavljeno 628 M€ vs pro-forma 737 M€), velik dio vertikala drže manjinski partneri (manjinski udjeli 153 M€ uz kapital matice 58 M€), uz jednokratne troškove integracije. Metode na takvim brojkama daju vrijednost koja ne opisuje grupu kakva danas posluje, pa je ne objavljujemo dok izvješća ne obuhvate puni opseg grupe': "estimate withheld: a group under construction — reported figures capture acquisitions only from the takeover date (2025 revenue: EUR 628m reported vs EUR 737m pro-forma), a large part of the verticals is held by minority partners (minority interests EUR 153m against parent equity of EUR 58m), with one-off integration costs. Methods run on such figures produce a value that does not describe the group as it operates today, so we do not publish one until the reports cover the group's full scope",
   'KONČAR standalone (ex-uvrštene kćeri)': 'KONCAR standalone (excl. listed subsidiaries)',
   // M50: neuvrštene KONČAR-ove kćeri (vlastita imena — EN transliteracija bez dijakritika)
   'KONČAR – Aparati i postrojenja d.o.o.': 'KONCAR – Aparati i postrojenja d.o.o.',

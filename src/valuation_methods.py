@@ -1059,6 +1059,18 @@ def compute_nav_fund(c: Ctx) -> ValueRange:
     return ValueRange(base * 0.975, base, base * 1.025, assum, 0.85)
 
 
+# M51.3 (v2 §8.4): kurirani hold — javni razlog zašto se procjena ZADRŽAVA.
+# Skida se kad TTM obuhvati puni opseg grupe ili uz normalizaciju s izvorima.
+VALUATION_HOLD = {
+    "BSQR": ("procjena zadržana: grupa u izgradnji — prijavljene brojke hvataju "
+             "akvizicije tek od datuma preuzimanja (prihod 2025.: prijavljeno "
+             "628 M€ vs pro-forma 737 M€), velik dio vertikala drže manjinski "
+             "partneri (manjinski udjeli 153 M€ uz kapital matice 58 M€), uz "
+             "jednokratne troškove integracije. Metode na takvim brojkama daju "
+             "vrijednost koja ne opisuje grupu kakva danas posluje, pa je ne "
+             "objavljujemo dok izvješća ne obuhvate puni opseg grupe"),
+}
+
 REGISTRY = [
     # v2 §1: tržišni pristup = JEDNA metoda (interna triangulacija leća)
     Method("comps",              "Peer usporedba (comps)",   elig_comps,          compute_comps),
@@ -1273,6 +1285,12 @@ def value_company(c: Ctx) -> dict:
             rec["market_implied"] = _market_implied(c, results, rec)
         # v2 §8 RED RULES — analiza ne ide live dok se ne razriješe
         red = []
+        # M51.3 (§8.4): KURIRANI HOLD — firma kod koje metode na PRIJAVLJENIM
+        # brojkama strukturno ne opisuju grupu; procjena se ZADRŽAVA s javnim
+        # razlogom (radije prazno s razlogom nego brojka koju ne branimo).
+        hold = VALUATION_HOLD.get(getattr(c, "ticker", None))
+        if hold:
+            red.append(hold)
         prim = (rec.get("anchor_methods") or [None])[0]
         if prim and results[prim]["range"].confidence < 0.5:
             red.append("sidro sadrži placeholder ulaz (v2 §8.1)")
