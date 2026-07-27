@@ -255,7 +255,12 @@ def main(argv=None) -> int:
         if (a.recompute and touched) or extra:
             stage_recompute(conn, run_id, log, sorted(set(touched + extra)))
         if a.regen:
-            stage_regen(conn, run_id, log, changed=bool(touched or n_div))
+            # M51 fix: revalorizacija (extra/'svi') MIJENJA valuacije pa su
+            # exporti zastarjeli i bez novih filinga — bez ovoga je recompute
+            # 'svi' bez svježeg filinga završavao s '[regen] skipped' i nove
+            # zone nikad nisu stizale u exporte (incident 27.07.2026.).
+            stage_regen(conn, run_id, log,
+                        changed=bool(touched or n_div or extra))
         conn.commit()
     return 0
 
