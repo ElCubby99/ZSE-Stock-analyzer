@@ -38,8 +38,10 @@ FILING_ATTRS = ("audited", "cumulative", "period_start", "period_end",
                 "status")
 FIN_COLS = ("statement", "item", "value_raw", "value_eur", "confidence",
             "source_page", "is_reported")
-COMPANY_COLS = ("sector", "tier", "holding_type", "nace", "is_live",
-                "data_limited", "onboarding_status")
+COMPANY_COLS = ("name", "is_group", "sector", "tier", "holding_type", "nace",
+                "is_live", "data_limited", "onboarding_status")
+# M51.2: name/is_group u syncu — preimenovanja (BOSQAR, JANAF) moraju stići
+# na produkciju; prije su exporti zadržavali stara imena firmi.
 HOLDING_COLS = ("ownership_pct", "listed", "valuation_basis", "segment_key",
                 "default_multiple", "is_insurance", "as_of", "source_page",
                 "confidence", "associate_ni", "jv_book_value_eur",
