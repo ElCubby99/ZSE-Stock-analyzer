@@ -332,14 +332,14 @@
       {
         "class_ticker": "ULPL",
         "last_trade": {
-          "date": "2026-07-24",
-          "close_eur": 9.0,
-          "volume": 4245.0,
-          "turnover_eur": 38205.0
+          "date": "2026-07-27",
+          "close_eur": 8.4,
+          "volume": 774.0,
+          "turnover_eur": 6501.6
         },
-        "days_since_trade": 3,
+        "days_since_trade": 0,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-24: 4245 kom / 38,205 € prometa (3 d)"
+        "note": "zadnja trgovina 2026-07-27: 774 kom / 6,502 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -499,9 +499,9 @@
       "is_primary": true,
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRULPLRA0002); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
-        "close_eur": 9.0,
-        "trade_date": "2026-07-24",
-        "volume": 4245.0,
+        "close_eur": 8.4,
+        "trade_date": "2026-07-27",
+        "volume": 774.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -513,12 +513,12 @@
     "dps": null,
     "dps_label": null,
     "shares_ex_treasury": 580000.0,
-    "market_cap_eur": 5220000.0,
+    "market_cap_eur": 4872000.0,
     "ebitda_eur": 710800.4800000023,
     "per_class": [
       {
         "class_ticker": "ULPL",
-        "price": 9.0,
+        "price": 8.4,
         "pe": null,
         "pb": null,
         "div_yield": null,
@@ -703,13 +703,13 @@
       {
         "class_ticker": "ULPL",
         "last": {
-          "date": "2026-07-24",
-          "close_eur": 9.0
+          "date": "2026-07-27",
+          "close_eur": 8.4
         },
-        "prev_close_eur": 9.9,
-        "change_pct": -0.09090909090909094,
+        "prev_close_eur": 9.0,
+        "change_pct": -0.06666666666666665,
         "high_52w_eur": 10.5,
-        "low_52w_eur": 9.0,
+        "low_52w_eur": 8.4,
         "avg_turnover_20d_eur": null,
         "data_from": "2026-07-14",
         "note": "povijest dostupna od 2026-07-14 — 52-tjedni raspon pokriva kraće razdoblje"
@@ -797,6 +797,14 @@
       "volume": 4245.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "ULPL",
+      "trade_date": "2026-07-27",
+      "close_eur": 8.4,
+      "volume": 774.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -809,7 +817,7 @@
       "beta_calibrated": false,
       "beta_origin": "clamp",
       "illiq_premium": 0.025,
-      "illiq_src": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/246 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+      "illiq_src": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/247 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -822,7 +830,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.1401 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=9.47: SEKTORSKA unlevered 0.9 (Shipbuilding & Marine) relevered s D/E=11.62 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 0/246 trgovanih dana (0%), prosj. promet 0 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). CLAMP: izračunata beta 9.47 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8. premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/246 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+        "r": "r=0.1401 = rf 2.70% + β 1.80×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=10.09: SEKTORSKA unlevered 0.9 (Shipbuilding & Marine) relevered s D/E=12.45 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 0/247 trgovanih dana (0%), prosj. promet 0 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). CLAMP: izračunata beta 10.09 izvan granica [0.7, 1.8] -> zamijenjena rubom 1.8. premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/247 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -861,7 +869,7 @@
         "key": "illiq",
         "label": "premija nelikvidnosti +2.5 p.b.",
         "status": "izvor",
-        "why": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/246 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
+        "why": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/247 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
       },
       {
         "key": "ttm",
@@ -1029,9 +1037,9 @@
           },
           {
             "k": "52-tj min",
-            "v": 9.0,
+            "v": 8.4,
             "unit": "eur",
-            "basis": "2026-07-24",
+            "basis": "2026-07-27",
             "formula": "min close 365 d"
           }
         ]
@@ -1042,7 +1050,7 @@
         "items": [
           {
             "k": "Tržišna kap.",
-            "v": 5220000.0,
+            "v": 4872000.0,
             "unit": "meur",
             "basis": "zadnji EOD × dionice ex-trezor",
             "formula": "Σ close klase × dionice klase",
@@ -1050,17 +1058,17 @@
           },
           {
             "k": "EV",
-            "v": 65274236.57000001,
+            "v": 64926236.57000001,
             "unit": "meur",
             "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski − pridružena društva (zadnja bilanca)",
             "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli − pridružena društva",
-            "note": "Raspis (M€): trž. kap. 5.2 + dug 60.4 − novac 0.0 − kratkotrajna fin. imovina 0.3 + manjinski udjeli 0.0 − pridružena društva 0.0 = EV 65.3",
+            "note": "Raspis (M€): trž. kap. 4.9 + dug 60.4 − novac 0.0 − kratkotrajna fin. imovina 0.3 + manjinski udjeli 0.0 − pridružena društva 0.0 = EV 64.9",
             "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri, a knjigovodstvena vrijednost pridruženih društava (<50%, metoda udjela) se IZUZIMA jer njihova dobit nije u konsolidiranim rezultatima. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču.",
             "badge": "uklj. kratk. fin. imovinu"
           },
           {
             "k": "EV/Prihod",
-            "v": 3.5880199131755983,
+            "v": 3.5688909122803354,
             "unit": "x",
             "basis": "TTM (do 30.06.2026.)",
             "formula": "EV / Prihod",
@@ -1068,7 +1076,7 @@
           },
           {
             "k": "EV/EBITDA",
-            "v": 27.188071417474088,
+            "v": 27.043122210092175,
             "unit": "x",
             "basis": "TTM (do 30.06.2026.)",
             "formula": "EV / EBITDA",
@@ -1093,7 +1101,7 @@
           },
           {
             "k": "P/S",
-            "v": 0.2869350134289379,
+            "v": 0.26780601253367536,
             "unit": "x",
             "basis": "TTM (do 30.06.2026.)",
             "formula": "trž.kap / prihod",
@@ -1101,7 +1109,7 @@
           },
           {
             "k": "P/CF",
-            "v": 4.023007905904155,
+            "v": 3.7548073788438785,
             "unit": "x",
             "basis": "TTM (do 30.06.2026.)",
             "formula": "trž.kap / operativni CF",
@@ -1109,7 +1117,7 @@
           },
           {
             "k": "P/FCF",
-            "v": 4.038040757477034,
+            "v": 3.768838040311898,
             "unit": "x",
             "basis": "TTM (do 30.06.2026.)",
             "formula": "trž.kap / slobodni novčani tok",
