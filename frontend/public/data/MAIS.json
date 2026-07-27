@@ -6,7 +6,7 @@
   "isin": "HRMAISRA0007",
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-07-25",
+  "generated_at": "2026-07-27",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -266,7 +266,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -282,9 +282,9 @@
           "volume": 102.0,
           "turnover_eur": 6528.0
         },
-        "days_since_trade": 3,
+        "days_since_trade": 5,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-22: 102 kom / 6,528 € prometa (3 d)"
+        "note": "zadnja trgovina 2026-07-22: 102 kom / 6,528 € prometa (5 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -650,7 +650,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "classes": [
       {
         "class_ticker": "MAIS",
@@ -670,7 +670,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "events": [],
     "upcoming_count": 0,
     "history": null,
@@ -3181,6 +3181,11 @@
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
         "reason": "nema materijalnih udjela ni odvojivih segmenata (npr. CROS: jedan biznis)"
+      },
+      {
+        "key": "nav_fund",
+        "label": "NAV fonda (neto imovina)",
+        "reason": "nije investicijski fond — NAV metoda je samo za fondove"
       }
     ],
     "reconciliation": {
@@ -3237,6 +3242,7 @@
       "dividend_sanity": null,
       "low_float_note": "free float ~6% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
     },
+    "no_value_data": null,
     "sotp": null,
     "value_vs_book": null
   },

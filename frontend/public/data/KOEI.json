@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": false,
-  "generated_at": "2026-07-25",
+  "generated_at": "2026-07-27",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -373,7 +373,7 @@
     "cards": [
       {
         "l": "OVISNOST O KĆERIMA",
-        "txt": "Vrijednost i dividende matice ovise o društvima: KONČAR – Generatori i motori d.o.o. (100%), KONČAR – Obnovljivi izvori d.o.o. (100%), KONČAR – Motori i električni sustavi d.o.o. (100%), KONČAR – Električna vozila d.d. (86%)."
+        "txt": "Vrijednost i dividende matice ovise o društvima: KONČAR D&ST (KODT) (53%), Dalekovod (DLKV) (75%), KONČAR standalone (ex-uvrštene kćeri) (100%), KPT (Siemens JV, 49%) (49%)."
       },
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
@@ -381,7 +381,7 @@
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
-        "txt": "Procjena počiva na označenim pretpostavkama: β = 1.36 (regresija (R²-blend sa sektorskom)); TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); ROE pravilo (TTM + 3g medijan); komponente traženog prinosa r = 9.64%: nerizična stopa 2.70% + β 1.36 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.; holding diskont 0–5%; SOTP dijelovi na pretpostavljenim multiplama: KONČAR – Generatori i motori d.o.o., KONČAR – Obnovljivi izvori d.o.o., KONČAR – Motori i električni sustavi d.o.o.."
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 1.36 (regresija (R²-blend sa sektorskom)); TTM podaci (FY2025 + q1 FY2026 − q1 FY2025); ROE pravilo (TTM + 3g medijan); komponente traženog prinosa r = 9.64%: nerizična stopa 2.70% + β 1.36 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b.; holding diskont 0–5%; SOTP dijelovi na pretpostavljenim multiplama: KPT (Siemens JV, 49%), KONČAR – Digital d.o.o., KONČAR – Transformatorski kotlovi d.o.o.."
       },
       {
         "l": "RASKORAK METODA",
@@ -407,7 +407,7 @@
     "leverage_note": "holding konsolidira osiguratelja — grupni net_debt/EBITDA uzeti s oprezom (miješa financijski i operativni dio)"
   },
   "liquidity": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -423,9 +423,9 @@
           "volume": 1263.0,
           "turnover_eur": 1293312.0
         },
-        "days_since_trade": 1,
+        "days_since_trade": 3,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-07-24: 1263 kom / 1,293,312 € prometa (1 d)"
+        "note": "zadnja trgovina 2026-07-24: 1263 kom / 1,293,312 € prometa (3 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -784,7 +784,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "classes": [
       {
         "class_ticker": "KOEI",
@@ -804,7 +804,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "events": [
       {
         "class_ticker": "KOEI",
@@ -5098,7 +5098,7 @@
       },
       {
         "key": "sotp_multiples",
-        "label": "SOTP dijelovi na pretpostavljenim multiplama: KONČAR – Generatori i motori d.o.o., KONČAR – Obnovljivi izvori d.o.o., KONČAR – Motori i električni sustavi d.o.o.",
+        "label": "SOTP dijelovi na pretpostavljenim multiplama: KPT (Siemens JV, 49%), KONČAR – Digital d.o.o., KONČAR – Transformatorski kotlovi d.o.o.",
         "status": "pretpostavka",
         "why": "default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
       }
@@ -5194,6 +5194,91 @@
           "placeholder": false,
           "parts": [
             {
+              "name": "KONČAR D&ST (KODT)",
+              "value_eur": 1213599089.0,
+              "value_market_eur": 1213599089.0,
+              "our_estimate_eur": 2014915536.0,
+              "fair_basis": "market",
+              "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,207–8,742 €/dionici × 511,232 dionica × 0.5273 = 2,014,915,536 € (ulazi u usporedni SOTP, ne u primarni)",
+              "basis": "tržišna vrijednost: burzovna kapitalizacija 2,301,534,400 € × 0.5273 udjela = 1,213,599,089 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
+              "pct": 0.5273,
+              "placeholder": false
+            },
+            {
+              "name": "Dalekovod (DLKV)",
+              "value_eur": 511980783.0,
+              "value_market_eur": 511980783.0,
+              "our_estimate_eur": 275349630.0,
+              "fair_basis": "market",
+              "our_note": "naša procjena: naša procjena DLKV: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 7–11 €/dionici × 41,247,193 dionica × 0.7500 = 275,349,630 € (ulazi u usporedni SOTP, ne u primarni)",
+              "basis": "tržišna vrijednost: burzovna kapitalizacija 682,641,044 € × 0.7500 udjela = 511,980,783 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
+              "pct": 0.75,
+              "placeholder": false
+            },
+            {
+              "name": "KONČAR standalone (ex-uvrštene kćeri)",
+              "value_eur": 98396393.0,
+              "value_market_eur": 98396393.0,
+              "fair_basis": "multiple",
+              "basis": "DCF vlastitog poslovanja matice iz NEKONSOLIDIRANOG izvještaja FY2025: operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koje su već u NAV-u kroz udjele — bez dvostrukog brojanja) → slobodni novčani tok ~7.3 M€ kapitaliziran po 9.6% uz rast 2.5% − neto dug 3.3 M€ = 98 M€ × 1.00; vlastiti prihod ~293 M€",
+              "pct": 1.0,
+              "placeholder": false
+            },
+            {
+              "name": "KPT (Siemens JV, 49%)",
+              "value_eur": 478042758.0,
+              "value_market_eur": 478042758.0,
+              "fair_basis": "multiple",
+              "basis": "DCF udjela u dobiti pridruženog društva / JV-a: naš udio u NORMALIZIRANOJ godišnjoj dobiti 34,153,000 € (100% dobiti 69,700,000 € × 49%) kapitaliziran po trošku kapitala 9.6% uz dugoročni rast 2.5% = 478,042,758 €. Knjigovodstvena vrijednost udjela (44,232,000 €) je samo donji pod — JV gotovo cijelu dobit isplaćuje kao dividendu pa knjiga po metodi udjela ostaje niska. KOEI GI 2025, bilj. 16, str. 130-131: KONČAR – Energetski transformatori (Siemens JV, 49%). Dobit nakon poreza 2025.: 87,7 M€ (2024.: 51,7 M€) — NORMALIZIRANO (⌀) 69,7 M€ za DCF. Knjigovodstvena vrijednost udjela 44,2 M€; JV gotovo cijelu dobit isplaćuje kao dividendu (2025.: 43,0 M€) pa knjiga ostaje niska.",
+              "pct": 0.49,
+              "placeholder": true
+            },
+            {
+              "name": "KONČAR – Digital d.o.o.",
+              "value_eur": 24703000.0,
+              "value_market_eur": 24703000.0,
+              "fair_basis": "multiple",
+              "basis": "knjigovodstvena vrijednost udjela 24,703,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+              "pct": 1.0,
+              "placeholder": true
+            },
+            {
+              "name": "KONČAR – Transformatorski kotlovi d.o.o.",
+              "value_eur": 23978000.0,
+              "value_market_eur": 23978000.0,
+              "fair_basis": "multiple",
+              "basis": "knjigovodstvena vrijednost udjela 23,978,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+              "pct": 0.6,
+              "placeholder": true
+            },
+            {
+              "name": "KONČAR – Aparati i postrojenja d.o.o.",
+              "value_eur": 11198000.0,
+              "value_market_eur": 11198000.0,
+              "fair_basis": "multiple",
+              "basis": "knjigovodstvena vrijednost udjela 11,198,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+              "pct": 1.0,
+              "placeholder": true
+            },
+            {
+              "name": "KONČAR – Elektronika i informatika d.d.",
+              "value_eur": 8353000.0,
+              "value_market_eur": 8353000.0,
+              "fair_basis": "multiple",
+              "basis": "knjigovodstvena vrijednost udjela 8,353,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+              "pct": 1.0,
+              "placeholder": true
+            },
+            {
+              "name": "KONČAR – Institut za elektrotehniku d.o.o.",
+              "value_eur": 8108000.0,
+              "value_market_eur": 8108000.0,
+              "fair_basis": "multiple",
+              "basis": "knjigovodstvena vrijednost udjela 8,108,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+              "pct": 1.0,
+              "placeholder": true
+            },
+            {
               "name": "KONČAR – Generatori i motori d.o.o.",
               "value_eur": 7946000.0,
               "value_market_eur": 7946000.0,
@@ -5282,91 +5367,6 @@
               "basis": "knjigovodstvena vrijednost udjela 2,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
               "pct": 1.0,
               "placeholder": true
-            },
-            {
-              "name": "KONČAR D&ST (KODT)",
-              "value_eur": 1213599089.0,
-              "value_market_eur": 1213599089.0,
-              "our_estimate_eur": 2014915536.0,
-              "fair_basis": "market",
-              "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,207–8,742 €/dionici × 511,232 dionica × 0.5273 = 2,014,915,536 € (ulazi u usporedni SOTP, ne u primarni)",
-              "basis": "tržišna vrijednost: burzovna kapitalizacija 2,301,534,400 € × 0.5273 udjela = 1,213,599,089 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
-              "pct": 0.5273,
-              "placeholder": false
-            },
-            {
-              "name": "Dalekovod (DLKV)",
-              "value_eur": 511980783.0,
-              "value_market_eur": 511980783.0,
-              "our_estimate_eur": 275349630.0,
-              "fair_basis": "market",
-              "our_note": "naša procjena: naša procjena DLKV: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 7–11 €/dionici × 41,247,193 dionica × 0.7500 = 275,349,630 € (ulazi u usporedni SOTP, ne u primarni)",
-              "basis": "tržišna vrijednost: burzovna kapitalizacija 682,641,044 € × 0.7500 udjela = 511,980,783 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
-              "pct": 0.75,
-              "placeholder": false
-            },
-            {
-              "name": "KONČAR standalone (ex-uvrštene kćeri)",
-              "value_eur": 98396393.0,
-              "value_market_eur": 98396393.0,
-              "fair_basis": "multiple",
-              "basis": "DCF vlastitog poslovanja matice iz NEKONSOLIDIRANOG izvještaja FY2025: operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koje su već u NAV-u kroz udjele — bez dvostrukog brojanja) → slobodni novčani tok ~7.3 M€ kapitaliziran po 9.6% uz rast 2.5% − neto dug 3.3 M€ = 98 M€ × 1.00; vlastiti prihod ~293 M€",
-              "pct": 1.0,
-              "placeholder": false
-            },
-            {
-              "name": "KPT (Siemens JV, 49%)",
-              "value_eur": 478042758.0,
-              "value_market_eur": 478042758.0,
-              "fair_basis": "multiple",
-              "basis": "DCF udjela u dobiti pridruženog društva / JV-a: naš udio u NORMALIZIRANOJ godišnjoj dobiti 34,153,000 € (100% dobiti 69,700,000 € × 49%) kapitaliziran po trošku kapitala 9.6% uz dugoročni rast 2.5% = 478,042,758 €. Knjigovodstvena vrijednost udjela (44,232,000 €) je samo donji pod — JV gotovo cijelu dobit isplaćuje kao dividendu pa knjiga po metodi udjela ostaje niska. KOEI GI 2025, bilj. 16, str. 130-131: KONČAR – Energetski transformatori (Siemens JV, 49%). Dobit nakon poreza 2025.: 87,7 M€ (2024.: 51,7 M€) — NORMALIZIRANO (⌀) 69,7 M€ za DCF. Knjigovodstvena vrijednost udjela 44,2 M€; JV gotovo cijelu dobit isplaćuje kao dividendu (2025.: 43,0 M€) pa knjiga ostaje niska.",
-              "pct": 0.49,
-              "placeholder": true
-            },
-            {
-              "name": "KONČAR – Digital d.o.o.",
-              "value_eur": 24703000.0,
-              "value_market_eur": 24703000.0,
-              "fair_basis": "multiple",
-              "basis": "knjigovodstvena vrijednost udjela 24,703,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-              "pct": 1.0,
-              "placeholder": true
-            },
-            {
-              "name": "KONČAR – Transformatorski kotlovi d.o.o.",
-              "value_eur": 23978000.0,
-              "value_market_eur": 23978000.0,
-              "fair_basis": "multiple",
-              "basis": "knjigovodstvena vrijednost udjela 23,978,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-              "pct": 0.6,
-              "placeholder": true
-            },
-            {
-              "name": "KONČAR – Aparati i postrojenja d.o.o.",
-              "value_eur": 11198000.0,
-              "value_market_eur": 11198000.0,
-              "fair_basis": "multiple",
-              "basis": "knjigovodstvena vrijednost udjela 11,198,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-              "pct": 1.0,
-              "placeholder": true
-            },
-            {
-              "name": "KONČAR – Elektronika i informatika d.d.",
-              "value_eur": 8353000.0,
-              "value_market_eur": 8353000.0,
-              "fair_basis": "multiple",
-              "basis": "knjigovodstvena vrijednost udjela 8,353,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-              "pct": 1.0,
-              "placeholder": true
-            },
-            {
-              "name": "KONČAR – Institut za elektrotehniku d.o.o.",
-              "value_eur": 8108000.0,
-              "value_market_eur": 8108000.0,
-              "fair_basis": "multiple",
-              "basis": "knjigovodstvena vrijednost udjela 8,108,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-              "pct": 1.0,
-              "placeholder": true
             }
           ],
           "missing": [
@@ -5381,6 +5381,75 @@
           "nav_gross_eur": 2421958024.0,
           "nav_total_eur": 2620380261.0,
           "identity": [
+            {
+              "item": "KONČAR D&ST (KODT)",
+              "eur": 1213599089.0,
+              "per_share": 471.828515321414,
+              "basis": "market",
+              "pct": 0.5273,
+              "listed": true,
+              "our_eur": 2014915536.0,
+              "our_per_share": 783.3679297108727
+            },
+            {
+              "item": "Dalekovod (DLKV)",
+              "eur": 511980783.0,
+              "per_share": 199.05019285655135,
+              "basis": "market",
+              "pct": 0.75,
+              "listed": true,
+              "our_eur": 275349630.0,
+              "our_per_share": 107.0516682937298
+            },
+            {
+              "item": "KONČAR standalone (ex-uvrštene kćeri)",
+              "eur": 98396393.0,
+              "per_share": 38.25499247896384,
+              "basis": "multiple",
+              "pct": 1.0
+            },
+            {
+              "item": "KPT (Siemens JV, 49%)",
+              "eur": 478042758.0,
+              "per_share": 185.85561476743496,
+              "basis": "multiple",
+              "pct": 0.49
+            },
+            {
+              "item": "KONČAR – Digital d.o.o.",
+              "eur": 24703000.0,
+              "per_share": 9.604143509689871,
+              "basis": "multiple",
+              "pct": 1.0
+            },
+            {
+              "item": "KONČAR – Transformatorski kotlovi d.o.o.",
+              "eur": 23978000.0,
+              "per_share": 9.322274747008207,
+              "basis": "multiple",
+              "pct": 0.6
+            },
+            {
+              "item": "KONČAR – Aparati i postrojenja d.o.o.",
+              "eur": 11198000.0,
+              "per_share": 4.353608833805901,
+              "basis": "multiple",
+              "pct": 1.0
+            },
+            {
+              "item": "KONČAR – Elektronika i informatika d.d.",
+              "eur": 8353000.0,
+              "per_share": 3.2475169305930245,
+              "basis": "multiple",
+              "pct": 1.0
+            },
+            {
+              "item": "KONČAR – Institut za elektrotehniku d.o.o.",
+              "eur": 8108000.0,
+              "per_share": 3.1522647280316347,
+              "basis": "multiple",
+              "pct": 1.0
+            },
             {
               "item": "KONČAR – Generatori i motori d.o.o.",
               "eur": 7946000.0,
@@ -5452,75 +5521,6 @@
               "pct": 1.0
             },
             {
-              "item": "KONČAR D&ST (KODT)",
-              "eur": 1213599089.0,
-              "per_share": 471.828515321414,
-              "basis": "market",
-              "pct": 0.5273,
-              "listed": true,
-              "our_eur": 2014915536.0,
-              "our_per_share": 783.3679297108727
-            },
-            {
-              "item": "Dalekovod (DLKV)",
-              "eur": 511980783.0,
-              "per_share": 199.05019285655135,
-              "basis": "market",
-              "pct": 0.75,
-              "listed": true,
-              "our_eur": 275349630.0,
-              "our_per_share": 107.0516682937298
-            },
-            {
-              "item": "KONČAR standalone (ex-uvrštene kćeri)",
-              "eur": 98396393.0,
-              "per_share": 38.25499247896384,
-              "basis": "multiple",
-              "pct": 1.0
-            },
-            {
-              "item": "KPT (Siemens JV, 49%)",
-              "eur": 478042758.0,
-              "per_share": 185.85561476743496,
-              "basis": "multiple",
-              "pct": 0.49
-            },
-            {
-              "item": "KONČAR – Digital d.o.o.",
-              "eur": 24703000.0,
-              "per_share": 9.604143509689871,
-              "basis": "multiple",
-              "pct": 1.0
-            },
-            {
-              "item": "KONČAR – Transformatorski kotlovi d.o.o.",
-              "eur": 23978000.0,
-              "per_share": 9.322274747008207,
-              "basis": "multiple",
-              "pct": 0.6
-            },
-            {
-              "item": "KONČAR – Aparati i postrojenja d.o.o.",
-              "eur": 11198000.0,
-              "per_share": 4.353608833805901,
-              "basis": "multiple",
-              "pct": 1.0
-            },
-            {
-              "item": "KONČAR – Elektronika i informatika d.d.",
-              "eur": 8353000.0,
-              "per_share": 3.2475169305930245,
-              "basis": "multiple",
-              "pct": 1.0
-            },
-            {
-              "item": "KONČAR – Institut za elektrotehniku d.o.o.",
-              "eur": 8108000.0,
-              "per_share": 3.1522647280316347,
-              "basis": "multiple",
-              "pct": 1.0
-            },
-            {
               "item": "neto novac (−neto dug) centra/grupe",
               "eur": 198422237.0,
               "per_share": 77.14349025064548,
@@ -5573,6 +5573,11 @@
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
         "reason": "RI predložak je za financijske firme (banka/osiguranje), ne holding"
+      },
+      {
+        "key": "nav_fund",
+        "label": "NAV fonda (neto imovina)",
+        "reason": "nije investicijski fond — NAV metoda je samo za fondove"
       }
     ],
     "reconciliation": {
@@ -5646,8 +5651,94 @@
       },
       "low_float_note": null
     },
+    "no_value_data": null,
     "sotp": {
       "parts": [
+        {
+          "name": "KONČAR D&ST (KODT)",
+          "value_eur": 1213599089.0,
+          "value_market_eur": 1213599089.0,
+          "our_estimate_eur": 2014915536.0,
+          "fair_basis": "market",
+          "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,207–8,742 €/dionici × 511,232 dionica × 0.5273 = 2,014,915,536 € (ulazi u usporedni SOTP, ne u primarni)",
+          "basis": "tržišna vrijednost: burzovna kapitalizacija 2,301,534,400 € × 0.5273 udjela = 1,213,599,089 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
+          "pct": 0.5273,
+          "placeholder": false
+        },
+        {
+          "name": "Dalekovod (DLKV)",
+          "value_eur": 511980783.0,
+          "value_market_eur": 511980783.0,
+          "our_estimate_eur": 275349630.0,
+          "fair_basis": "market",
+          "our_note": "naša procjena: naša procjena DLKV: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 7–11 €/dionici × 41,247,193 dionica × 0.7500 = 275,349,630 € (ulazi u usporedni SOTP, ne u primarni)",
+          "basis": "tržišna vrijednost: burzovna kapitalizacija 682,641,044 € × 0.7500 udjela = 511,980,783 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
+          "pct": 0.75,
+          "placeholder": false
+        },
+        {
+          "name": "KONČAR standalone (ex-uvrštene kćeri)",
+          "value_eur": 98396393.0,
+          "value_market_eur": 98396393.0,
+          "fair_basis": "multiple",
+          "basis": "DCF vlastitog poslovanja matice iz NEKONSOLIDIRANOG izvještaja FY2025: operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koje su već u NAV-u kroz udjele — bez dvostrukog brojanja) → slobodni novčani tok ~7.3 M€ kapitaliziran po 9.6% uz rast 2.5% − neto dug 3.3 M€ = 98 M€ × 1.00; vlastiti prihod ~293 M€",
+          "pct": 1.0,
+          "placeholder": false
+        },
+        {
+          "name": "KPT (Siemens JV, 49%)",
+          "value_eur": 478042758.0,
+          "value_market_eur": 478042758.0,
+          "fair_basis": "multiple",
+          "basis": "DCF udjela u dobiti pridruženog društva / JV-a: naš udio u NORMALIZIRANOJ godišnjoj dobiti 34,153,000 € (100% dobiti 69,700,000 € × 49%) kapitaliziran po trošku kapitala 9.6% uz dugoročni rast 2.5% = 478,042,758 €. Knjigovodstvena vrijednost udjela (44,232,000 €) je samo donji pod — JV gotovo cijelu dobit isplaćuje kao dividendu pa knjiga po metodi udjela ostaje niska. KOEI GI 2025, bilj. 16, str. 130-131: KONČAR – Energetski transformatori (Siemens JV, 49%). Dobit nakon poreza 2025.: 87,7 M€ (2024.: 51,7 M€) — NORMALIZIRANO (⌀) 69,7 M€ za DCF. Knjigovodstvena vrijednost udjela 44,2 M€; JV gotovo cijelu dobit isplaćuje kao dividendu (2025.: 43,0 M€) pa knjiga ostaje niska.",
+          "pct": 0.49,
+          "placeholder": true
+        },
+        {
+          "name": "KONČAR – Digital d.o.o.",
+          "value_eur": 24703000.0,
+          "value_market_eur": 24703000.0,
+          "fair_basis": "multiple",
+          "basis": "knjigovodstvena vrijednost udjela 24,703,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+          "pct": 1.0,
+          "placeholder": true
+        },
+        {
+          "name": "KONČAR – Transformatorski kotlovi d.o.o.",
+          "value_eur": 23978000.0,
+          "value_market_eur": 23978000.0,
+          "fair_basis": "multiple",
+          "basis": "knjigovodstvena vrijednost udjela 23,978,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+          "pct": 0.6,
+          "placeholder": true
+        },
+        {
+          "name": "KONČAR – Aparati i postrojenja d.o.o.",
+          "value_eur": 11198000.0,
+          "value_market_eur": 11198000.0,
+          "fair_basis": "multiple",
+          "basis": "knjigovodstvena vrijednost udjela 11,198,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+          "pct": 1.0,
+          "placeholder": true
+        },
+        {
+          "name": "KONČAR – Elektronika i informatika d.d.",
+          "value_eur": 8353000.0,
+          "value_market_eur": 8353000.0,
+          "fair_basis": "multiple",
+          "basis": "knjigovodstvena vrijednost udjela 8,353,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+          "pct": 1.0,
+          "placeholder": true
+        },
+        {
+          "name": "KONČAR – Institut za elektrotehniku d.o.o.",
+          "value_eur": 8108000.0,
+          "value_market_eur": 8108000.0,
+          "fair_basis": "multiple",
+          "basis": "knjigovodstvena vrijednost udjela 8,108,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
+          "pct": 1.0,
+          "placeholder": true
+        },
         {
           "name": "KONČAR – Generatori i motori d.o.o.",
           "value_eur": 7946000.0,
@@ -5737,91 +5828,6 @@
           "basis": "knjigovodstvena vrijednost udjela 2,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
           "pct": 1.0,
           "placeholder": true
-        },
-        {
-          "name": "KONČAR D&ST (KODT)",
-          "value_eur": 1213599089.0,
-          "value_market_eur": 1213599089.0,
-          "our_estimate_eur": 2014915536.0,
-          "fair_basis": "market",
-          "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,207–8,742 €/dionici × 511,232 dionica × 0.5273 = 2,014,915,536 € (ulazi u usporedni SOTP, ne u primarni)",
-          "basis": "tržišna vrijednost: burzovna kapitalizacija 2,301,534,400 € × 0.5273 udjela = 1,213,599,089 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
-          "pct": 0.5273,
-          "placeholder": false
-        },
-        {
-          "name": "Dalekovod (DLKV)",
-          "value_eur": 511980783.0,
-          "value_market_eur": 511980783.0,
-          "our_estimate_eur": 275349630.0,
-          "fair_basis": "market",
-          "our_note": "naša procjena: naša procjena DLKV: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 7–11 €/dionici × 41,247,193 dionica × 0.7500 = 275,349,630 € (ulazi u usporedni SOTP, ne u primarni)",
-          "basis": "tržišna vrijednost: burzovna kapitalizacija 682,641,044 € × 0.7500 udjela = 511,980,783 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
-          "pct": 0.75,
-          "placeholder": false
-        },
-        {
-          "name": "KONČAR standalone (ex-uvrštene kćeri)",
-          "value_eur": 98396393.0,
-          "value_market_eur": 98396393.0,
-          "fair_basis": "multiple",
-          "basis": "DCF vlastitog poslovanja matice iz NEKONSOLIDIRANOG izvještaja FY2025: operativna EBITDA 9.7 M€ (prijavljena 81.3 M€ − prihod od dividendi kćeri 71.6 M€, koje su već u NAV-u kroz udjele — bez dvostrukog brojanja) → slobodni novčani tok ~7.3 M€ kapitaliziran po 9.6% uz rast 2.5% − neto dug 3.3 M€ = 98 M€ × 1.00; vlastiti prihod ~293 M€",
-          "pct": 1.0,
-          "placeholder": false
-        },
-        {
-          "name": "KPT (Siemens JV, 49%)",
-          "value_eur": 478042758.0,
-          "value_market_eur": 478042758.0,
-          "fair_basis": "multiple",
-          "basis": "DCF udjela u dobiti pridruženog društva / JV-a: naš udio u NORMALIZIRANOJ godišnjoj dobiti 34,153,000 € (100% dobiti 69,700,000 € × 49%) kapitaliziran po trošku kapitala 9.6% uz dugoročni rast 2.5% = 478,042,758 €. Knjigovodstvena vrijednost udjela (44,232,000 €) je samo donji pod — JV gotovo cijelu dobit isplaćuje kao dividendu pa knjiga po metodi udjela ostaje niska. KOEI GI 2025, bilj. 16, str. 130-131: KONČAR – Energetski transformatori (Siemens JV, 49%). Dobit nakon poreza 2025.: 87,7 M€ (2024.: 51,7 M€) — NORMALIZIRANO (⌀) 69,7 M€ za DCF. Knjigovodstvena vrijednost udjela 44,2 M€; JV gotovo cijelu dobit isplaćuje kao dividendu (2025.: 43,0 M€) pa knjiga ostaje niska.",
-          "pct": 0.49,
-          "placeholder": true
-        },
-        {
-          "name": "KONČAR – Digital d.o.o.",
-          "value_eur": 24703000.0,
-          "value_market_eur": 24703000.0,
-          "fair_basis": "multiple",
-          "basis": "knjigovodstvena vrijednost udjela 24,703,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-          "pct": 1.0,
-          "placeholder": true
-        },
-        {
-          "name": "KONČAR – Transformatorski kotlovi d.o.o.",
-          "value_eur": 23978000.0,
-          "value_market_eur": 23978000.0,
-          "fair_basis": "multiple",
-          "basis": "knjigovodstvena vrijednost udjela 23,978,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-          "pct": 0.6,
-          "placeholder": true
-        },
-        {
-          "name": "KONČAR – Aparati i postrojenja d.o.o.",
-          "value_eur": 11198000.0,
-          "value_market_eur": 11198000.0,
-          "fair_basis": "multiple",
-          "basis": "knjigovodstvena vrijednost udjela 11,198,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-          "pct": 1.0,
-          "placeholder": true
-        },
-        {
-          "name": "KONČAR – Elektronika i informatika d.d.",
-          "value_eur": 8353000.0,
-          "value_market_eur": 8353000.0,
-          "fair_basis": "multiple",
-          "basis": "knjigovodstvena vrijednost udjela 8,353,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-          "pct": 1.0,
-          "placeholder": true
-        },
-        {
-          "name": "KONČAR – Institut za elektrotehniku d.o.o.",
-          "value_eur": 8108000.0,
-          "value_market_eur": 8108000.0,
-          "fair_basis": "multiple",
-          "basis": "knjigovodstvena vrijednost udjela 8,108,000 € iz izvješća matice (KOEI GI 2025 (nekonsolidirani), bilj. 17 (Ulaganja u ovisna društva), str. 34 — knjigovodstvena vrijednost udjela (trošak).) — neuvrštena tvrtka kći bez zasebne procjene; uzimamo trošak ulaganja kao KONZERVATIVAN pod",
-          "pct": 1.0,
-          "placeholder": true
         }
       ],
       "net_cash": {
@@ -5852,12 +5858,81 @@
         "base_per_share": 993.2941493221402,
         "note": "GLAVNA procjena (sidro fer-zone): uvrštene tvrtke kćeri uzete po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstveno"
       },
-      "market_vs_fair_pct": null,
+      "our_vs_market_pct": 21.5,
       "market_vs_fair_note": null,
       "missing": [
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
       ],
       "identity": [
+        {
+          "item": "KONČAR D&ST (KODT)",
+          "eur": 1213599089.0,
+          "per_share": 471.828515321414,
+          "basis": "market",
+          "pct": 0.5273,
+          "listed": true,
+          "our_eur": 2014915536.0,
+          "our_per_share": 783.3679297108727
+        },
+        {
+          "item": "Dalekovod (DLKV)",
+          "eur": 511980783.0,
+          "per_share": 199.05019285655135,
+          "basis": "market",
+          "pct": 0.75,
+          "listed": true,
+          "our_eur": 275349630.0,
+          "our_per_share": 107.0516682937298
+        },
+        {
+          "item": "KONČAR standalone (ex-uvrštene kćeri)",
+          "eur": 98396393.0,
+          "per_share": 38.25499247896384,
+          "basis": "multiple",
+          "pct": 1.0
+        },
+        {
+          "item": "KPT (Siemens JV, 49%)",
+          "eur": 478042758.0,
+          "per_share": 185.85561476743496,
+          "basis": "multiple",
+          "pct": 0.49
+        },
+        {
+          "item": "KONČAR – Digital d.o.o.",
+          "eur": 24703000.0,
+          "per_share": 9.604143509689871,
+          "basis": "multiple",
+          "pct": 1.0
+        },
+        {
+          "item": "KONČAR – Transformatorski kotlovi d.o.o.",
+          "eur": 23978000.0,
+          "per_share": 9.322274747008207,
+          "basis": "multiple",
+          "pct": 0.6
+        },
+        {
+          "item": "KONČAR – Aparati i postrojenja d.o.o.",
+          "eur": 11198000.0,
+          "per_share": 4.353608833805901,
+          "basis": "multiple",
+          "pct": 1.0
+        },
+        {
+          "item": "KONČAR – Elektronika i informatika d.d.",
+          "eur": 8353000.0,
+          "per_share": 3.2475169305930245,
+          "basis": "multiple",
+          "pct": 1.0
+        },
+        {
+          "item": "KONČAR – Institut za elektrotehniku d.o.o.",
+          "eur": 8108000.0,
+          "per_share": 3.1522647280316347,
+          "basis": "multiple",
+          "pct": 1.0
+        },
         {
           "item": "KONČAR – Generatori i motori d.o.o.",
           "eur": 7946000.0,
@@ -5929,75 +6004,6 @@
           "pct": 1.0
         },
         {
-          "item": "KONČAR D&ST (KODT)",
-          "eur": 1213599089.0,
-          "per_share": 471.828515321414,
-          "basis": "market",
-          "pct": 0.5273,
-          "listed": true,
-          "our_eur": 2014915536.0,
-          "our_per_share": 783.3679297108727
-        },
-        {
-          "item": "Dalekovod (DLKV)",
-          "eur": 511980783.0,
-          "per_share": 199.05019285655135,
-          "basis": "market",
-          "pct": 0.75,
-          "listed": true,
-          "our_eur": 275349630.0,
-          "our_per_share": 107.0516682937298
-        },
-        {
-          "item": "KONČAR standalone (ex-uvrštene kćeri)",
-          "eur": 98396393.0,
-          "per_share": 38.25499247896384,
-          "basis": "multiple",
-          "pct": 1.0
-        },
-        {
-          "item": "KPT (Siemens JV, 49%)",
-          "eur": 478042758.0,
-          "per_share": 185.85561476743496,
-          "basis": "multiple",
-          "pct": 0.49
-        },
-        {
-          "item": "KONČAR – Digital d.o.o.",
-          "eur": 24703000.0,
-          "per_share": 9.604143509689871,
-          "basis": "multiple",
-          "pct": 1.0
-        },
-        {
-          "item": "KONČAR – Transformatorski kotlovi d.o.o.",
-          "eur": 23978000.0,
-          "per_share": 9.322274747008207,
-          "basis": "multiple",
-          "pct": 0.6
-        },
-        {
-          "item": "KONČAR – Aparati i postrojenja d.o.o.",
-          "eur": 11198000.0,
-          "per_share": 4.353608833805901,
-          "basis": "multiple",
-          "pct": 1.0
-        },
-        {
-          "item": "KONČAR – Elektronika i informatika d.d.",
-          "eur": 8353000.0,
-          "per_share": 3.2475169305930245,
-          "basis": "multiple",
-          "pct": 1.0
-        },
-        {
-          "item": "KONČAR – Institut za elektrotehniku d.o.o.",
-          "eur": 8108000.0,
-          "per_share": 3.1522647280316347,
-          "basis": "multiple",
-          "pct": 1.0
-        },
-        {
           "item": "neto novac (−neto dug) centra/grupe",
           "eur": 198422237.0,
           "per_share": 77.14349025064548,
@@ -6060,7 +6066,7 @@
       "raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu",
       "β = 1.36 (regresija (R²-blend sa sektorskom)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "komponente traženog prinosa r = 9.64%: nerizična stopa 2.70% + β 1.36 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju (postupak u Metodologiji)",
-      "SOTP dijelovi na pretpostavljenim multiplama: KONČAR – Generatori i motori d.o.o., KONČAR – Obnovljivi izvori d.o.o., KONČAR – Motori i električni sustavi d.o.o. — default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
+      "SOTP dijelovi na pretpostavljenim multiplama: KPT (Siemens JV, 49%), KONČAR – Digital d.o.o., KONČAR – Transformatorski kotlovi d.o.o. — default multiple / nekalibrirani peer P/E — nisu tržišno kalibrirane"
     ],
     "changelog": [
       {

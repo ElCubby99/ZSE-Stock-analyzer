@@ -4,29 +4,341 @@
   "sector": "fund",
   "is_group": false,
   "isin": null,
-  "fiscal_year": null,
-  "audited": null,
-  "generated_at": "2026-07-16",
-  "data_status": "market_only",
-  "data_note": "financijska izvješća su u obradi (needs_review) — prikazani su samo javni tržišni podaci; financije i vrednovanje se objavljuju tek nakon validacije",
-  "financials_3y": null,
-  "balance": null,
-  "segments": null,
-  "ownership": null,
-  "bank_kpi": null,
+  "fiscal_year": 2025,
+  "audited": false,
+  "generated_at": "2026-07-27",
+  "data_status": "full",
+  "financials_3y": {
+    "years": [
+      2023,
+      2024,
+      2025
+    ],
+    "preliminary_years": [],
+    "rows": [
+      {
+        "item": "revenue",
+        "label": "Poslovni prihodi",
+        "values": {
+          "2023": 480611.9848695998,
+          "2024": 12603853.9,
+          "2025": 9579886.73
+        },
+        "yoy_pct": -0.2399240100680634,
+        "cagr_pct": 3.4646034326264132,
+        "unit": "eur"
+      },
+      {
+        "item": "ebitda",
+        "label": "EBITDA",
+        "values": {
+          "2023": null,
+          "2024": null,
+          "2025": null
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      },
+      {
+        "item": "ebit",
+        "label": "EBIT",
+        "values": {
+          "2023": null,
+          "2024": null,
+          "2025": null
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      },
+      {
+        "item": "net_income_parent",
+        "label": "Neto dobit matici",
+        "values": {
+          "2023": 93340.23,
+          "2024": 3303828.83,
+          "2025": 1853815.41
+        },
+        "yoy_pct": -0.43888878468319437,
+        "cagr_pct": 3.4565502790885283,
+        "unit": "eur"
+      },
+      {
+        "item": "eps",
+        "label": "EPS (dobit matici / dionica)",
+        "values": {
+          "2023": 0.030639337740257573,
+          "2024": 1.0844962280291148,
+          "2025": 0.6085229965159081
+        },
+        "yoy_pct": -0.43888878468319437,
+        "cagr_pct": 3.4565502790885283,
+        "unit": "eur_per_share"
+      },
+      {
+        "item": "operating_cf",
+        "label": "Operativni novčani tok",
+        "values": {
+          "2023": null,
+          "2024": null,
+          "2025": null
+        },
+        "yoy_pct": null,
+        "cagr_pct": null,
+        "unit": "eur"
+      }
+    ],
+    "note": "konsolidirano, godišnje (v_financials_current); EPS uz kanonski današnji broj dionica bez trezorskih; prazno = nema u bazi, ne procjenjuje se"
+  },
+  "trend": {
+    "series": [
+      {
+        "year": 2023,
+        "revenue": 480611.9848695998,
+        "ebitda": null,
+        "ebitda_margin": null,
+        "preliminary": false
+      },
+      {
+        "year": 2024,
+        "revenue": 12603853.9,
+        "ebitda": null,
+        "ebitda_margin": null,
+        "preliminary": false
+      },
+      {
+        "year": 2025,
+        "revenue": 9579886.73,
+        "ebitda": null,
+        "ebitda_margin": null,
+        "preliminary": false
+      }
+    ],
+    "revenue_label": "Prihodi",
+    "narration": "Prihodi: 2023. 0,5 M€ → 2024. 12,6 M€ (+2522,5%) → 2025. 9,6 M€ (-24,0%). Smjer: rast; ukupno kroz razdoblje +1893,3%. Nedostaje: FY2023: EBITDA nema u bazi; FY2024: EBITDA nema u bazi; FY2025: EBITDA nema u bazi.",
+    "preliminary_years": [],
+    "note": "naracija je izvedena isključivo iz brojki u bazi (bez ocjena); smjer = usporedba ruba razdoblja uz prag ±1%"
+  },
+  "news": {
+    "items": [],
+    "note": "službene objave izdavatelja s EHO-a (zse.hr) — bez medijskih napisa i bez komentara platforme; prazno = nema objava u bazi"
+  },
   "business_profile": {
-    "fiscal_year": null,
-    "activity": "Zatvoreni investicijski fond / investicijsko društvo uvršteno na Zagrebačkoj burzi.",
-    "activity_source_page": null,
+    "fiscal_year": 2025,
+    "activity": "INSPIRIO — zatvoreni alternativni investicijski fond s javnom ponudom (bivši Slavonski ZAIF); upravlja Inspire Investments d.o.o.",
+    "activity_source_page": "Godišnji izvještaj AIF-a 2025, Opći podaci (puni naziv fonda; www.inspire.investments)",
     "segments": [],
     "markets": [],
     "export_share": null,
-    "issuer_claims": [],
-    "generic": true,
-    "source": "generički opis iz sektorskog registra (NACE)",
-    "note": "GENERIČKI OPIS — profil iz godišnjeg izvješća još nije ekstrahiran; opis navodi samo sektorsku činjenicu iz registra i ne tvrdi ništa specifično o firmi"
+    "issuer_claims": [
+      {
+        "claim": "NAV fonda 31.12.2025.: 18.913.189 € (3.046.418 dionica → 6,21 €/dionici)",
+        "source_page": "Godišnji izvještaj AIF-a 2025 (XLSX), IFP AOP 044",
+        "claim_en": "Fund NAV at 31 Dec 2025: EUR 18,913,189 (3,046,418 shares -> EUR 6.21/share)"
+      }
+    ],
+    "source": "ručna ekstrakcija u Claude Code sesiji (EHO dokumenti; ista shema kao API pipeline)",
+    "note": "samo činjenice iz izvješća s citatima; kvalitativne tvrdnje ('vodeći' i sl.) su TVRDNJE IZDAVATELJA, označene i citirane — platforma ih ne generira niti potvrđuje",
+    "activity_en": "INSPIRIO — closed-end alternative investment fund with a public offering (formerly Slavonski ZAIF); managed by Inspire Investments d.o.o."
   },
   "global_peers": null,
+  "risks": {
+    "cards": [
+      {
+        "l": "KONCENTRACIJA I LIKVIDNOST",
+        "txt": "free float približno 25%; INSP: zadnja trgovina 2026-06-09: 240 kom / 715 € prometa (48 d)."
+      },
+      {
+        "l": "PRETPOSTAVKE PROCJENE",
+        "txt": "Procjena počiva na označenim pretpostavkama: β = 0.90 (sektorska (nema serije)); premija nelikvidnosti +2.5 p.b.; godišnji podatak; komponente traženog prinosa r = 10.21%: nerizična stopa 2.70% + β 0.90 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 2.5 p.b.; peer multipli (P/E 12, P/B 1,5)."
+      }
+    ],
+    "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
+  },
+  "balance": {
+    "fiscal_year": 2025,
+    "is_financial": false,
+    "total_assets": 19060157.810000002,
+    "total_equity": 18913188.950000003,
+    "equity_parent": null,
+    "bvps": 6.208336790945958,
+    "leverage": {
+      "net_debt": null,
+      "net_debt_to_ebitda": null,
+      "current_ratio": null,
+      "current_ratio_note": "tekući omjer: kratkoročne stavke nisu u bazi",
+      "components_note": "net_debt = debt_short + debt_long − novac (izračun iz ekstrakcije)"
+    }
+  },
+  "liquidity": {
+    "as_of": "2026-07-27",
+    "thresholds": {
+      "min_turnover_eur": 5000.0,
+      "stale_days": 5,
+      "very_low_shares": 3,
+      "very_stale_days": 20
+    },
+    "classes": [
+      {
+        "class_ticker": "INSP",
+        "last_trade": {
+          "date": "2026-06-09",
+          "close_eur": 2.98,
+          "volume": 240.0,
+          "turnover_eur": 715.2
+        },
+        "days_since_trade": 48,
+        "flag": "very_low",
+        "note": "zadnja trgovina 2026-06-09: 240 kom / 715 € prometa (48 d)"
+      }
+    ],
+    "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
+  },
+  "segments": null,
+  "ownership": {
+    "top10": {
+      "snapshot_date": "2026-07-14",
+      "source": "zse_skdd",
+      "source_label": "ZSE stranica papira (izvor SKDD)",
+      "rows": [
+        {
+          "rank": 1,
+          "name": "HPB D.D./FOND ZA FINANCIRANJE RAZGRADNJE NEK",
+          "shares": null,
+          "pct": 19.83,
+          "is_custody": true,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 2,
+          "name": "ERSTE & STEIERMARKISCHE BANK D.D.",
+          "shares": null,
+          "pct": 13.69,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 3,
+          "name": "ERSTE & STEIERMARKISCHE BANK D.D.",
+          "shares": null,
+          "pct": 10.56,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 4,
+          "name": "PRIVREDNA BANKA ZAGREB D.D.",
+          "shares": null,
+          "pct": 9.86,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 5,
+          "name": "DIGITALNI TAHOGRAF D.O.O.",
+          "shares": null,
+          "pct": 6.26,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 6,
+          "name": "ERSTE & STEIERMARKISCHE BANK D.D.",
+          "shares": null,
+          "pct": 3.99,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 7,
+          "name": "KATIČIN MARIN",
+          "shares": null,
+          "pct": 3.28,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 8,
+          "name": "AGRAM BANKA D.D.",
+          "shares": null,
+          "pct": 2.79,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 9,
+          "name": "MOJSOVIĆ SEBASTIJAN",
+          "shares": null,
+          "pct": 2.73,
+          "is_custody": false,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        },
+        {
+          "rank": 10,
+          "name": "AGRAM BROKERI D.D./UDOVIČIĆ DAMIR",
+          "shares": null,
+          "pct": 2.36,
+          "is_custody": true,
+          "source_detail": "https://zse.hr/hr/papir/310?isin=HRSLPFRA0004 (izvor SKDD; lista bez objavljenog as-of datuma — datum = dan dohvata)",
+          "prev_pct": null,
+          "change_pp": null,
+          "prev_name": null,
+          "entered": false
+        }
+      ],
+      "prev_snapshot_date": null,
+      "prev_source": null,
+      "prev_source_label": null,
+      "entered": null,
+      "left": null,
+      "free_float_from_top10_pct": 24.65,
+      "note": "samo jedan snapshot u bazi — prikazuje se stanje s datumom, bez promjena (povijest se gradi mjesečnim snapshotima)",
+      "custody_note": "skrbnički/zbirni računi (oznaka) nisu stvarni krajnji vlasnici — dionice drže za klijente"
+    },
+    "holders": [],
+    "known_pct": 0.7535,
+    "free_float_pct_approx": 0.2465,
+    "note": "free float ≈ 100% − Σ top 10 dioničara (snapshot 2026-07-14, ZSE stranica papira (izvor SKDD)); aproksimacija — imatelji izvan top 10 nisu obuhvaćeni",
+    "liquidity_link": "manjinski free float (~24.6%) znači plitku knjigu naloga — vidi oznaku likvidnosti uz cijenu"
+  },
+  "bank_kpi": null,
   "share_classes": [
     {
       "ticker": "INSP",
@@ -46,29 +358,198 @@
     }
   ],
   "metrics": {
-    "eps": null,
-    "bvps": null,
-    "roe": null,
+    "eps": 0.6085229965159081,
+    "bvps": 6.208336790945958,
+    "roe": 0.09801707236684692,
     "dps": 0.17,
     "dps_label": "zadnja isplata FY2024",
-    "shares_ex_treasury": null,
+    "shares_ex_treasury": 3046418.0,
     "market_cap_eur": 9078325.64,
     "ebitda_eur": null,
     "per_class": [
       {
         "class_ticker": "INSP",
         "price": 2.98,
-        "pe": null,
-        "pb": null,
+        "pe": 4.8971033421283305,
+        "pb": 0.47999973267332047,
         "div_yield": 0.05704697986577182,
-        "basis": "samo tržišni podaci — P/E i P/B čekaju validirana izvješća"
+        "basis": "izvedeno: zadnji close / per-share iz FY financija"
       }
     ],
-    "basis_note": "trž.kap = Σ zadnji close klase × uvrštene dionice"
+    "basis_note": "per-share: FY konsolidirane financije / dionice bez trezorskih; trž.kap = Σ zadnji close klase × dionice klase"
   },
-  "fundamentals": [],
+  "fundamentals": [
+    {
+      "item": "revenue",
+      "label": "Poslovni prihodi",
+      "unit": "eur",
+      "value_eur": 9579886.73,
+      "confidence": 0.9,
+      "source_page": "Godisnji izvjestaj AIF-a 2025 (XLSX), ISD (AIF obrazac): Ukupno prihodi, AOP 069, tekuca god. — strojno parsirano, nerevidirano",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/SLPF/FI-SLPF-257b4570dd7de83fc586fd9c0ae2f9d1.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "ebitda",
+      "label": "EBITDA",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "ebit",
+      "label": "EBIT",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "net_income",
+      "label": "Neto dobit (ukupno)",
+      "unit": "eur",
+      "value_eur": 1853815.41,
+      "confidence": 0.9,
+      "source_page": "Godisnji izvjestaj AIF-a 2025 (XLSX), ISD (AIF obrazac): Dobit ili gubitak razdoblja, AOP 086, tekuca god. — strojno parsirano, nerevidirano",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/SLPF/FI-SLPF-257b4570dd7de83fc586fd9c0ae2f9d1.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "net_income_parent",
+      "label": "Neto dobit matici",
+      "unit": "eur",
+      "value_eur": 1853815.41,
+      "confidence": 0.9,
+      "source_page": "Godisnji izvjestaj AIF-a 2025 (XLSX), ISD (AIF obrazac): Dobit ili gubitak razdoblja, AOP 086, tekuca god. — strojno parsirano, nerevidirano",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/SLPF/FI-SLPF-257b4570dd7de83fc586fd9c0ae2f9d1.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "net_income_minority",
+      "label": "Manjinski interesi (dobit)",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "total_assets",
+      "label": "Ukupna imovina",
+      "unit": "eur",
+      "value_eur": 19060157.810000002,
+      "confidence": 0.9,
+      "source_page": "Godisnji izvjestaj AIF-a 2025 (XLSX), IFP (AIF obrazac): Ukupna imovina, AOP 025, tekuca god. — strojno parsirano, nerevidirano",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/SLPF/FI-SLPF-257b4570dd7de83fc586fd9c0ae2f9d1.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "total_equity",
+      "label": "Ukupni kapital",
+      "unit": "eur",
+      "value_eur": 18913188.950000003,
+      "confidence": 0.9,
+      "source_page": "Godisnji izvjestaj AIF-a 2025 (XLSX), IFP (AIF obrazac): Neto imovina AIF-a, AOP 044 = NAV, tekuca god. — strojno parsirano, nerevidirano",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr//fileadmin/issuers/SLPF/FI-SLPF-257b4570dd7de83fc586fd9c0ae2f9d1.xlsx",
+      "audited": false,
+      "missing": false
+    },
+    {
+      "item": "equity_parent",
+      "label": "Kapital matici",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "net_debt",
+      "label": "Neto dug",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "cash_and_equivalents",
+      "label": "Novac i ekvivalenti",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "operating_cf",
+      "label": "Operativni novčani tok",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "capex",
+      "label": "Capex",
+      "unit": "eur",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    },
+    {
+      "item": "dps",
+      "label": "Dividenda po dionici",
+      "unit": "eur_per_share",
+      "value_eur": null,
+      "confidence": null,
+      "source_page": null,
+      "fiscal_year": null,
+      "source_url": null,
+      "audited": null,
+      "missing": true
+    }
+  ],
   "price_summary": {
-    "as_of": "2026-07-16",
+    "as_of": "2026-07-27",
     "classes": [
       {
         "class_ticker": "INSP",
@@ -88,7 +569,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-16",
+    "as_of": "2026-07-27",
     "events": [
       {
         "class_ticker": "INSP",
@@ -96,6 +577,9 @@
         "amount_eur": 0.17,
         "div_type": "cash",
         "ex_date": "2025-09-03",
+        "payout_type": "redovna",
+        "payout_ratio": 0.1567548098428574,
+        "classified_reason": "prva zabilježena isplata klase",
         "record_date": "2025-09-04",
         "payment_date": "2025-09-11",
         "status": "paid",
@@ -121,7 +605,17 @@
       "growth_cagr": null,
       "growth_note": "rast n/p (manje od 3 godine podataka)"
     },
-    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate"
+    "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
+    "d_sust": {
+      "d_sust_ps": 0.0954,
+      "payout_used": 0.1568,
+      "payout_basis": "medijan payout ratija redovnih isplata (1 g.)",
+      "coverage_announced": null,
+      "flags": [],
+      "excluded_years": [],
+      "subsidiary_inflows": null,
+      "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
+    }
   },
   "prices": [
     {
@@ -869,34 +1363,797 @@
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
-  "liquidity": {
-    "as_of": "2026-07-16",
-    "thresholds": {
-      "min_turnover_eur": 5000.0,
-      "stale_days": 5,
-      "very_low_shares": 3,
-      "very_stale_days": 20
-    },
-    "classes": [
-      {
-        "class_ticker": "INSP",
-        "last_trade": {
-          "date": "2026-06-09",
-          "close_eur": 2.98,
-          "volume": 240.0,
-          "turnover_eur": 715.2
+  "share_class_explainer": null,
+  "valuation": {
+    "params": {
+      "r": 0.10207,
+      "g": 0.025,
+      "g_terminal": 0.04,
+      "beta": 0.9,
+      "beta_calibrated": false,
+      "beta_origin": "sektorska (nema serije)",
+      "illiq_premium": 0.025,
+      "illiq_src": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 40/246 trgovanih dana (16%), prosj. promet 509 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+      "holding_discount_low": 0.15,
+      "holding_discount_high": 0.25,
+      "holding_discount_reason": null,
+      "peer_pe": 12.0,
+      "peer_pb": 1.5,
+      "rates_calibrated": true,
+      "peers_calibrated": false,
+      "peers_narrow": false,
+      "rf": 0.027,
+      "erp": 0.0423,
+      "crp": 0.012,
+      "sources": {
+        "r": "r=0.1021 = rf 2.70% + β 0.90×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.90: SEKTORSKA levered (Investments & Asset Management) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 40/246 trgovanih dana (16%), prosj. promet 509 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 40/246 trgovanih dana (16%), prosj. promet 509 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+        "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
+        "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
+        "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
+        "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
+        "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
+        "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
+        "peers": "INSP: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+      },
+      "growth": {
+        "g1": -0.2399,
+        "signals": {
+          "g_obs": -0.2399,
+          "g_sust": 0.0826,
+          "g_terminal": 0.04
         },
-        "days_since_trade": 37,
-        "flag": "very_low",
-        "note": "zadnja trgovina 2026-06-09: 240 kom / 715 € prometa (37 d)"
+        "origin": "održiv (serija)",
+        "winner": null,
+        "badges": [
+          "negativan rast — višegodišnje skupljanje dokazano"
+        ],
+        "ttm_context": null,
+        "short_series": false,
+        "verdict": "odrziv_serija",
+        "assessment": "Rast -24.0% (medijan godišnjih stopa) iz dosljedne serije. Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu.",
+        "source": "g1=-24.0% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -24.0%, CAGR +104.4%; samofinanciranje (ROE×zadržano) +8.3%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast -24.0% (medijan godišnjih stopa) iz dosljedne serije. Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
+      }
+    },
+    "assumption_flags": [
+      {
+        "key": "beta",
+        "label": "β = 0.90 (sektorska (nema serije))",
+        "status": "pretpostavka",
+        "why": "vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji"
+      },
+      {
+        "key": "illiq",
+        "label": "premija nelikvidnosti +2.5 p.b.",
+        "status": "izvor",
+        "why": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 40/246 trgovanih dana (16%), prosj. promet 509 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
+      },
+      {
+        "key": "annual_data",
+        "label": "godišnji podatak",
+        "status": "pretpostavka",
+        "why": "TTM se ne gradi: nema novijih interima od godišnjeg — vrednuje se iz zadnjeg godišnjeg izvješća"
+      },
+      {
+        "key": "r_components",
+        "label": "komponente traženog prinosa r = 10.21%: nerizična stopa 2.70% + β 0.90 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 2.5 p.b.",
+        "status": "pretpostavka",
+        "why": "nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju. Dodatno se dodaje premija nelikvidnosti 2.5 p.b. jer se ova dionica rijetko trguje — izlazak iz pozicije nosi stvaran trošak, a niska beta taj rizik ne obuhvaća; zato je traženi prinos viši (i fer-vrijednost niža) nego kod likvidnih dionica (postupak u Metodologiji)"
+      },
+      {
+        "key": "peer_multiples",
+        "label": "peer multipli (P/E 12, P/B 1,5)",
+        "status": "pretpostavka",
+        "why": "nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
       }
     ],
-    "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
+    "ran": [
+      {
+        "key": "comps",
+        "label": "Peer usporedba (comps)",
+        "low": 7.06128198645918,
+        "base": 8.307390572304918,
+        "high": 9.553499158150656,
+        "confidence": 0.3,
+        "no_value": false,
+        "assumptions": {
+          "placeholder": true,
+          "lenses": {
+            "pe": {
+              "mult": 12.0,
+              "per_share": 7.3
+            },
+            "pb": {
+              "mult": 1.5,
+              "per_share": 9.31
+            }
+          },
+          "carrier": "pe",
+          "carrier_reason": "nositelj po arhetipu 'fund' (v2 §2)",
+          "intra_spread": {
+            "spread_pct": 28.0,
+            "rule": "leće konzistentne (<40%) -> prosjek"
+          },
+          "sources": {
+            "peers": "INSP: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
+          },
+          "low_confidence": "peer multipli su placeholder (nema peer skupa na ZSE) -> niska pouzdanost"
+        }
+      },
+      {
+        "key": "nav_fund",
+        "label": "NAV fonda (neto imovina)",
+        "low": 6.053128371172309,
+        "base": 6.208336790945958,
+        "high": 6.363545210719606,
+        "confidence": 0.85,
+        "no_value": false,
+        "assumptions": {
+          "nav_eur": 18913189.0,
+          "nav_note": "NAV (neto imovina fonda) iz zadnjeg godišnjeg izvještaja AIF-a (AOP 044) podijeljen brojem dionica — objavljena brojka, ne naša projekcija",
+          "discount_note": "zatvoreni fondovi na burzi često trguju uz diskont na NAV (nelikvidnost, troškovi upravljanja); pozicija cijene naspram NAV-a je činjenica, ne preporuka"
+        }
+      }
+    ],
+    "skipped": [
+      {
+        "key": "dcf_fcf",
+        "label": "DCF (FCF)",
+        "reason": "nema operativni CF i capex (ni brojčani guidance za proxy)"
+      },
+      {
+        "key": "ddm_gordon",
+        "label": "Dividendni diskont",
+        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
+      },
+      {
+        "key": "justified_pb_roe",
+        "label": "Opravdani P/B (ROE)",
+        "reason": "arhetip 'fund': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
+      },
+      {
+        "key": "residual_income",
+        "label": "Rezidualni dohodak (RI)",
+        "reason": "RI predložak je za financijske firme (banka/osiguranje), ne fund"
+      },
+      {
+        "key": "sotp_nav",
+        "label": "Sum-of-the-parts / NAV",
+        "reason": "nije grupa"
+      }
+    ],
+    "reconciliation": {
+      "zone_low": 6.053128371172309,
+      "zone_high": 6.363545210719606,
+      "dispersion": 0.04878048780487799,
+      "divergent": false,
+      "archetype": "fund",
+      "anchor_methods": [
+        "nav_fund"
+      ],
+      "method_roles": {
+        "comps": {
+          "role": "secondary",
+          "note": "zatvoreni fond: NAV je jedino smisleno sidro — operativne metode ne vrede portfelj vrijednosnica",
+          "vs_zone_pct": 0.3054657894644699
+        },
+        "nav_fund": {
+          "role": "anchor",
+          "note": null,
+          "vs_zone_pct": null
+        }
+      },
+      "zone_note": "zona = MEDIJAN kvalificiranih metoda (nav_fund) ± osjetljivost primarnog sidra 'nav_fund' (r/wacc ±1 p.b.) — v3 triangulacija; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
+      "all_methods_low": 6.208336790945958,
+      "all_methods_high": 8.307390572304918,
+      "dispersion_all": 0.25267305817506175,
+      "method_bases": {
+        "comps": 8.307390572304918,
+        "nav_fund": 6.208336790945958
+      },
+      "qa_flags": [
+        "fer-zona odstupa -52% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+      ],
+      "vs_market_pct": -52.0,
+      "anchor_inconsistency": [],
+      "reasoning": "Rast -24.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (serija)' (višegodišnja serija: -24.0%) — nijedna procjena 'iz glave'. Sidro NAV fonda (neto imovina): 6.21 € po dionici. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira multipl P/E 4.9×; naš kompozitni rast (serija/održivi/terminal) je -24.0% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "red_rules": [],
+      "market_implied": {
+        "implied_r_pct": 17.71,
+        "implied_r_note": "uz naš trajni rast 2.5% i ROE 9.8% cijena implicira trošak kapitala ~17.7% (naš: 10.2%)",
+        "implied_pe": 4.9,
+        "peer_pe": 12.0,
+        "implied_pe_note": "cijena implicira P/E 4.9× vs peer medijan 12.0× (placeholder)",
+        "narrative": "Tržišna cijena implicira multipl P/E 4.9×; naš kompozitni rast (serija/održivi/terminal) je -24.0% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+      },
+      "qualified_methods": [
+        "nav_fund"
+      ],
+      "class_zones": null,
+      "recalibrating": null,
+      "dividend_sanity": {
+        "d_sust_ps": 0.0954,
+        "fallback_raw": false,
+        "zone_low": 6.05,
+        "zone_high": 6.36,
+        "implied_yield_low": 0.0158,
+        "threshold": 0.0771,
+        "r": 0.1021,
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je nav_fund — ista pretpostavka rasta kojom je zona izračunata)",
+        "dividend_floor": null,
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.10 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (6.05 €), samo od te dividende dobivao bi 1.6% godišnje. Fer cijena to ne dopušta iznad 7.7% (traženi prinos 10.2% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
+      "low_float_note": null
+    },
+    "no_value_data": null,
+    "sotp": null,
+    "value_vs_book": null
   },
-  "news": {
-    "items": [],
-    "note": "službene objave izdavatelja s EHO-a (zse.hr) — bez medijskih napisa i bez komentara platforme; prazno = nema objava u bazi"
+  "methodology": {
+    "story": "Sidro je nav_fund.",
+    "parameters": [
+      {
+        "k": "Trošak kapitala r",
+        "v": "10,21%",
+        "why": "CAPM: nerizična stopa 2.70% (HR 10g obveznica) + beta 0.9 × premija rizika 4.23% (Damodaran, HR). Beta je pretpostavka 1,0 (serija prekratka/nelikvidna). Ponderirani country-risk za izvoznike je planiran, još nije aktivan."
+      },
+      {
+        "k": "Dugoročni rast g",
+        "v": "2,5% / 4,0%",
+        "why": "kapitalne metode 2,5% (konzervativno), DCF terminal 4,0% (nominalni BDP proxy: realni rast + inflacija)"
+      },
+      {
+        "k": "Rast eksplicitne faze g1 (kompozit)",
+        "v": "-24,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (serija)'"
+      },
+      {
+        "k": "Peer multipli",
+        "v": "placeholder",
+        "why": "na ZSE nema dovoljno usporedivih firmi ovog sektora — metoda peer usporedbe nosi NISKU pouzdanost i ne sidri zonu"
+      }
+    ],
+    "limitations": [
+      "naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev",
+      "β = 0.90 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
+      "godišnji podatak — TTM se ne gradi: nema novijih interima od godišnjeg — vrednuje se iz zadnjeg godišnjeg izvješća",
+      "komponente traženog prinosa r = 10.21%: nerizična stopa 2.70% + β 0.90 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 2.5 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju. Dodatno se dodaje premija nelikvidnosti 2.5 p.b. jer se ova dionica rijetko trguje — izlazak iz pozicije nosi stvaran trošak, a niska beta taj rizik ne obuhvaća; zato je traženi prinos viši (i fer-vrijednost niža) nego kod likvidnih dionica (postupak u Metodologiji)",
+      "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
+    ],
+    "changelog": [],
+    "notes": [
+      "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
+      "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",
+      "Svaka brojka nosi izvor (dokument + stranica) — vidljivo uz metode i pretpostavke.",
+      "Analize generira automatizirani sustav uz ljudski nadzor."
+    ],
+    "link": "/metodologija",
+    "mar": "Informativna analiza, ne investicijski savjet ni preporuka — zaključak je čitateljev."
   },
-  "valuation": null,
-  "mar_note": "Informativni prikaz javnih tržišnih podataka; nije investicijski savjet ni preporuka."
+  "indicators": {
+    "groups": [
+      {
+        "key": "izvedba",
+        "title": "Izvedba dionice",
+        "items": [
+          {
+            "k": "Povrat 1M",
+            "v": 0.0,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 3M",
+            "v": -0.00666666666666671,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 6M",
+            "v": -0.019736842105263164,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat YTD",
+            "v": 0.013605442176870763,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 1G",
+            "v": -0.013245033112582738,
+            "unit": "%",
+            "basis": "EOD do 2026-07-14 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
+          },
+          {
+            "k": "Povrat 3G",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "serija cijena prekratka"
+          },
+          {
+            "k": "52-tj maks",
+            "v": 3.28,
+            "unit": "eur",
+            "basis": "2025-08-11",
+            "formula": "max close 365 d"
+          },
+          {
+            "k": "52-tj min",
+            "v": 2.88,
+            "unit": "eur",
+            "basis": "2025-09-25",
+            "formula": "min close 365 d"
+          }
+        ]
+      },
+      {
+        "key": "valuacija",
+        "title": "Valuacija",
+        "items": [
+          {
+            "k": "Tržišna kap.",
+            "v": 9078325.64,
+            "unit": "meur",
+            "basis": "zadnji EOD × dionice ex-trezor",
+            "formula": "Σ close klase × dionice klase",
+            "why": "Zbrajamo SVE klase dionica (svaku po svojoj cijeni), a trezorske isključujemo — firma ne može biti vlasnik same sebe, pa te dionice ne nose ekonomsku vrijednost."
+          },
+          {
+            "k": "EV",
+            "v": null,
+            "unit": "meur",
+            "basis": "trž.kap + dug − novac − kratk. fin. imovina + manjinski − pridružena društva (zadnja bilanca)",
+            "formula": "EV = trž. kap. + dug − novac − kratkoročna fin. imovina + manjinski udjeli − pridružena društva",
+            "why": "Vrijednost CIJELOG poslovanja, ne samo dioničara: dug se dodaje (i vjerovnici imaju pravo na taj novac), novac i kratkoročna financijska imovina se odbijaju (kupac ih 'dobije natrag'), manjinski udjeli se DODAJU jer konsolidirani rezultati uključuju 100% kćeri — pa i dio koji pripada drugima mora biti u istoj mjeri, a knjigovodstvena vrijednost pridruženih društava (<50%, metoda udjela) se IZUZIMA jer njihova dobit nije u konsolidiranim rezultatima. Zato se naš EV zna razlikovati od portala koji manjinske udjele preskaču.",
+            "badge": "uklj. kratk. fin. imovinu"
+          },
+          {
+            "k": "EV/Prihod",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "EV/EBITDA",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "EV/EBIT",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "P/E",
+            "v": 4.8971033421283305,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "trž.kap / neto dobit matici",
+            "why": "Koliko godina TRENUTNE zarade plaćate po današnjoj cijeni. Nazivnik je dobit koja pripada matici (bez manjinskih) — ista dobit iz koje se isplaćuje dividenda dioničarima."
+          },
+          {
+            "k": "P/S",
+            "v": 0.9476443611353639,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "trž.kap / prihod",
+            "why": "Gruba mjera kad je dobit mala ili volatilna — prihod se teže 'friziran' od dobiti, ali ništa ne govori o marži."
+          },
+          {
+            "k": "P/CF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "P/FCF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "EPS",
+            "v": 0.6085229965159081,
+            "unit": "eur",
+            "basis": "FY2025",
+            "formula": "neto dobit matici / dionice ex-trezor",
+            "why": "Zarada po dionici: dobit koja pripada matici podijeljena brojem dionica bez trezorskih. TTM (zadnjih 12 mj.) gdje kvartali postoje — svježije od zadnjeg godišnjeg izvješća."
+          },
+          {
+            "k": "Earnings yield",
+            "v": 0.20420234782413024,
+            "unit": "%",
+            "basis": "FY2025",
+            "formula": "neto dobit / trž.kap",
+            "why": "Obrnuti P/E — 'prinos zarade' usporediv s prinosom obveznice: koliko firma zaradi na svakih 100 € tržišne vrijednosti."
+          },
+          {
+            "k": "P/B",
+            "v": 0.4799997326733205,
+            "unit": "x",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "trž.kap / knjiga (matici)",
+            "why": "Koliko se plaća po euru vlastitog kapitala. Sam po sebi ne kaže je li dionica 'jeftina': kapital koji zarađuje više od zahtijevanog prinosa OPRAVDANO vrijedi iznad knjige, a kapital s niskim povratom ispod nje — ključ je ROE naspram troška kapitala."
+          },
+          {
+            "k": "BVPS",
+            "v": 6.208336790945958,
+            "unit": "eur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "knjiga (matici) / dionice ex-trezor",
+            "why": "Knjigovodstvena vrijednost po dionici — računovodstvena imovina minus obveze. To NIJE gotovina: većinom je dugotrajna imovina po (amortiziranom) trošku, pa je usporedba s cijenom smislena tek uz pitanje koliko ta imovina zarađuje (ROE)."
+          }
+        ]
+      },
+      {
+        "key": "rast",
+        "title": "Rast",
+        "items": [
+          {
+            "k": "Prihod YoY (kvartal)",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "kvartali još nisu u bazi za usporedbu"
+          },
+          {
+            "k": "EPS YoY (kvartal)",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "kvartali nedostupni"
+          },
+          {
+            "k": "Prihod (TTM/FY)",
+            "v": 9579886.73,
+            "unit": "meur",
+            "basis": "FY2025",
+            "formula": "kumulativna derivacija"
+          },
+          {
+            "k": "EBITDA",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema u bazi"
+          }
+        ]
+      },
+      {
+        "key": "profit",
+        "title": "Profitabilnost",
+        "items": [
+          {
+            "k": "EBITDA marža",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "EBIT marža",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "Neto marža",
+            "v": 0.19351120344613926,
+            "unit": "%",
+            "basis": "FY2025",
+            "formula": "Neto / prihod"
+          },
+          {
+            "k": "ROE",
+            "v": 0.09801707236684692,
+            "unit": "%",
+            "basis": "FY2025 / FY2025 (31.12.2025.)",
+            "formula": "neto dobit matici / knjiga matici"
+          },
+          {
+            "k": "ROA",
+            "v": 0.09726128337863954,
+            "unit": "%",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "neto dobit / ukupna imovina"
+          },
+          {
+            "k": "ROCE",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza (EBIT / uloženi kapital)"
+          }
+        ]
+      },
+      {
+        "key": "bilanca",
+        "title": "Bilanca",
+        "items": [
+          {
+            "k": "Ukupna imovina",
+            "v": 19060157.810000002,
+            "unit": "meur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "bilanca"
+          },
+          {
+            "k": "Novac",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "novac i ekvivalenti"
+          },
+          {
+            "k": "BVPS",
+            "v": 6.208336790945958,
+            "unit": "eur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "knjiga matici / dionice ex-trezor"
+          },
+          {
+            "k": "Ukupne obveze",
+            "v": 146968.8599999994,
+            "unit": "meur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "imovina − kapital (izvedeno)"
+          },
+          {
+            "k": "Kratkoročni dug",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "kamatonosni"
+          },
+          {
+            "k": "Dugoročni dug",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "kamatonosni"
+          },
+          {
+            "k": "Kapital (ukupni)",
+            "v": 18913188.950000003,
+            "unit": "meur",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "bilanca"
+          }
+        ]
+      },
+      {
+        "key": "cf",
+        "title": "Novčani tok",
+        "items": [
+          {
+            "k": "Operativni CF",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "NT izvještaj"
+          },
+          {
+            "k": "Capex",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "izdaci za dugotrajnu imovinu"
+          },
+          {
+            "k": "FCF",
+            "v": null,
+            "unit": "meur",
+            "basis": null,
+            "formula": "OCF − capex"
+          },
+          {
+            "k": "Investicijski CF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema u bazi"
+          },
+          {
+            "k": "Financijski CF",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema u bazi"
+          }
+        ]
+      },
+      {
+        "key": "solvent",
+        "title": "Likvidnost i solventnost",
+        "items": [
+          {
+            "k": "Tekući omjer",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "stavke još nisu u bazi"
+          },
+          {
+            "k": "Dug/kapital",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "Obveze/kapital",
+            "v": 0.007770707541099217,
+            "unit": "x",
+            "basis": "FY2025 (31.12.2025.)",
+            "formula": "ukupne obveze / ukupni kapital",
+            "why": "Klasični računovodstveni omjer koji većina portala zove 'dug/kapital': UKUPNE obveze (dobavljači, primljeni predujmovi, rezerviranja, sve ostalo) naspram ukupnog kapitala. Kod firmi s velikim predujmovima kupaca na dugim ugovorima (npr. proizvođači opreme) zna biti ~100% iako je financijski dug tek nekoliko posto — bilancu drže operativne, a ne dužničke obveze. Zato ga prikazujemo uz, a ne umjesto, financijske poluge iznad."
+          },
+          {
+            "k": "Neto dug/EBITDA",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema ulaza"
+          },
+          {
+            "k": "Pokriće kamata",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "trošak kamata nije u bazi"
+          },
+          {
+            "k": "Altman Z'",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nedostaju ulazi (WC/RE/EBIT/knjiga)"
+          }
+        ]
+      },
+      {
+        "key": "efik",
+        "title": "Učinkovitost",
+        "items": [
+          {
+            "k": "Obrtaj imovine",
+            "v": 0.5026131905882683,
+            "unit": "x",
+            "basis": "FY2025",
+            "formula": "prihod / imovina"
+          },
+          {
+            "k": "DSO",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "stavke još nisu u bazi"
+          },
+          {
+            "k": "DIO",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "stavke još nisu u bazi"
+          },
+          {
+            "k": "DPO",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "stavke još nisu u bazi"
+          },
+          {
+            "k": "Novčani jaz",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nedostaju DSO/DIO/DPO"
+          }
+        ]
+      },
+      {
+        "key": "div",
+        "title": "Dividende",
+        "items": [
+          {
+            "k": "DPS (zadnja)",
+            "v": 0.17,
+            "unit": "eur_per_share",
+            "basis": "2025-09-03",
+            "formula": "dividends tablica"
+          },
+          {
+            "k": "Dividendni prinos",
+            "v": 0.05704697986577182,
+            "unit": "%",
+            "basis": "zadnja isplata / zadnja cijena",
+            "formula": "DPS / cijena"
+          },
+          {
+            "k": "Payout",
+            "v": 0.2793649557589987,
+            "unit": "%",
+            "basis": "FY2025",
+            "formula": "DPS × dionice / neto dobit"
+          },
+          {
+            "k": "Zadnja isplata",
+            "v": null,
+            "unit": "date",
+            "basis": "2025-09-11",
+            "formula": "dividends tablica",
+            "note": "2025-09-11"
+          },
+          {
+            "k": "Sljedeći ex-datum",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "nema najave"
+          }
+        ]
+      },
+      {
+        "key": "emp",
+        "title": "Po zaposlenom",
+        "items": [
+          {
+            "k": "Po zaposlenom",
+            "v": null,
+            "unit": null,
+            "basis": null,
+            "formula": null,
+            "np_reason": "broj zaposlenih još nije u bazi za ovu firmu"
+          }
+        ]
+      }
+    ],
+    "review_flags": [],
+    "ticker": "INSP",
+    "note": "TTM = zadnji FY + tekući YTD − lanjski isti YTD (samo tokovne stavke); bilanca = zadnje objavljeno stanje; FY se nikad ne prikazuje kao TTM. Formule su opisane u Metodologiji."
+  },
+  "mar_note": "Informativni prikaz metoda, raspona i pretpostavki iz javno objavljenih izvješća; nije investicijski savjet ni preporuka."
 }

@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": false,
-  "generated_at": "2026-07-25",
+  "generated_at": "2026-07-27",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -155,7 +155,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "free float približno 10%; TRFM: zadnja trgovina 2026-07-17: 1 kom / 95 € prometa (8 d)."
+        "txt": "free float približno 10%; TRFM: zadnja trgovina 2026-07-17: 1 kom / 95 € prometa (10 d)."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -163,7 +163,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 271–817 € (raspon 67%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 172–817 € (raspon 79%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -184,7 +184,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -200,9 +200,9 @@
           "volume": 1.0,
           "turnover_eur": 95.0
         },
-        "days_since_trade": 8,
+        "days_since_trade": 10,
         "flag": "very_low",
-        "note": "zadnja trgovina 2026-07-17: 1 kom / 95 € prometa (8 d)"
+        "note": "zadnja trgovina 2026-07-17: 1 kom / 95 € prometa (10 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -561,7 +561,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "classes": [
       {
         "class_ticker": "TRFM",
@@ -581,7 +581,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-07-25",
+    "as_of": "2026-07-27",
     "events": [
       {
         "class_ticker": "TRFM",
@@ -919,7 +919,7 @@
             "note": "EV leće: vrijednost dioničarima = multipl × EBITDA − neto dug − manjinski interes + kratkotrajna fin. imovina + knjigovodstvena vrijednost pridruženih društava (konzistentnost opsega: konsolidirana EBITDA = 100% kćeri)"
           },
           "carrier": "pe",
-          "carrier_reason": "nositelj po arhetipu 'industrial_forward' (v2 §2)",
+          "carrier_reason": "nositelj po arhetipu 'fund' (v2 §2)",
           "intra_spread": {
             "spread_pct": 54.0,
             "rule": "leće razmaknute 54% > 40% -> NE prosječi; bazu nosi 'pe', ostale su kontekst (v2 §3)",
@@ -952,6 +952,20 @@
             "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
           }
         }
+      },
+      {
+        "key": "nav_fund",
+        "label": "NAV fonda (neto imovina)",
+        "low": 167.95222708333333,
+        "base": 172.25869444444444,
+        "high": 176.56516180555553,
+        "confidence": 0.85,
+        "no_value": false,
+        "assumptions": {
+          "nav_eur": 6201313.0,
+          "nav_note": "NAV (neto imovina fonda) iz zadnjeg godišnjeg izvještaja AIF-a (AOP 044) podijeljen brojem dionica — objavljena brojka, ne naša projekcija",
+          "discount_note": "zatvoreni fondovi na burzi često trguju uz diskont na NAV (nelikvidnost, troškovi upravljanja); pozicija cijene naspram NAV-a je činjenica, ne preporuka"
+        }
       }
     ],
     "skipped": [
@@ -963,7 +977,7 @@
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "reason": "arhetip 'industrial_forward': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
+        "reason": "arhetip 'fund': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
       },
       {
         "key": "residual_income",
@@ -977,41 +991,46 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 698.6900393061123,
-      "zone_high": 980.9489904030614,
-      "dispersion": 0.28774070197164064,
+      "zone_low": 167.9522270833333,
+      "zone_high": 176.5651618055555,
+      "dispersion": 0.048780487804877974,
       "divergent": false,
-      "archetype": "industrial_forward",
+      "archetype": "fund",
       "anchor_methods": [
-        "dcf_fcf"
+        "nav_fund"
       ],
       "method_roles": {
         "comps": {
-          "role": "anchor_excluded",
-          "note": "sidrena metoda ISKLJUČENA iz zone — placeholder ulazi (conf < 0,5) — red rule v2 §8: ne smije sidriti",
-          "vs_zone_pct": null
+          "role": "secondary",
+          "note": "zatvoreni fond: NAV je jedino smisleno sidro — operativne metode ne vrede portfelj vrijednosnica",
+          "vs_zone_pct": 0.534289081887706
         },
         "dcf_fcf": {
+          "role": "secondary",
+          "note": "zatvoreni fond: NAV je jedino smisleno sidro — operativne metode ne vrede portfelj vrijednosnica",
+          "vs_zone_pct": 3.627513969294667
+        },
+        "nav_fund": {
           "role": "anchor",
           "note": null,
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = MEDIJAN kvalificiranih metoda (dcf_fcf) ± osjetljivost primarnog sidra 'dcf_fcf' (r/wacc ±1 p.b.) — v3 triangulacija; isključeno (nepozitivna baza/conf): comps",
-      "all_methods_low": 270.902,
+      "zone_note": "dvije kvalificirane metode razmaknute 374% > 40% — NE prosječi (v2 §3): sredinu nosi sidro 'nav_fund', druga metoda je kontekst — v3 triangulacija; minimalna širina zone ±2,5% (osjetljivost degenerirana)",
+      "all_methods_low": 172.25869444444444,
       "all_methods_high": 817.0577527459814,
-      "dispersion_all": 0.6684420420838697,
+      "dispersion_all": 0.7891719479247158,
       "method_bases": {
         "comps": 270.902,
-        "dcf_fcf": 817.0577527459814
+        "dcf_fcf": 817.0577527459814,
+        "nav_fund": 172.25869444444444
       },
       "qa_flags": [
-        "metode se međusobno razilaze 67% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa -89% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 79% (sve metode) — provjeri ulaze/pretpostavke"
       ],
-      "vs_market_pct": -88.7,
+      "vs_market_pct": -44.9,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +15.9% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +18.3%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 72 € operativne zarade (EBITDA marža 72.3%). Firma je lani stvorila 1.5 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 10.2%, uz izračunati rast 15.9% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 817.06 € po dionici. Glavni rizik za procjenu: raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu. Tržišna cijena implicira ~-17.7% trajnog rasta godišnje / multipl P/E 4.2×; naš kompozitni rast (serija/održivi/terminal) je +15.9% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +15.9% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +18.3%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 72 € operativne zarade (EBITDA marža 72.3%). Sidro NAV fonda (neto imovina): 172.26 € po dionici. Glavni rizik za procjenu: raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu. Tržišna cijena implicira ~-17.7% trajnog rasta godišnje / multipl P/E 4.2×; naš kompozitni rast (serija/održivi/terminal) je +15.9% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": -17.7,
@@ -1024,43 +1043,34 @@
         "narrative": "Tržišna cijena implicira ~-17.7% trajnog rasta godišnje / multipl P/E 4.2×; naš kompozitni rast (serija/održivi/terminal) je +15.9% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
-        "dcf_fcf"
+        "dcf_fcf",
+        "nav_fund"
       ],
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
         "d_sust_ps": 0.8606,
         "fallback_raw": false,
-        "zone_low": 698.69,
-        "zone_high": 980.95,
-        "implied_yield_low": 0.0012,
-        "threshold": 0.0621,
+        "zone_low": 167.95,
+        "zone_high": 176.57,
+        "implied_yield_low": 0.0051,
+        "threshold": 0.0771,
         "r": 0.1021,
-        "g_used": 0.04,
-        "g_source": "terminalni g 4.0% (sidro zone je dcf_fcf)",
+        "g_used": 0.025,
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je nav_fund — ista pretpostavka rasta kojom je zona izračunata)",
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.86 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (698.69 €), samo od te dividende dobivao bi 0.1% godišnje. Fer cijena to ne dopušta iznad 6.2% (traženi prinos 10.2% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.86 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (167.95 €), samo od te dividende dobivao bi 0.5% godišnje. Fer cijena to ne dopušta iznad 7.7% (traženi prinos 10.2% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": null
     },
+    "no_value_data": null,
     "sotp": null,
-    "value_vs_book": {
-      "kind": "iznad_knjige",
-      "zone_low": 698.6900393061123,
-      "zone_high": 980.9489904030614,
-      "bvps": 155.85,
-      "roe": 0.132336,
-      "r": 0.10207,
-      "price": 95.0,
-      "pb_market": 0.61,
-      "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
-      "plain": "Fer-zona (698,69–980,95 €) viša je od knjigovodstvene vrijednosti (155,85 € po dionici). Firma na vlastitom kapitalu zarađuje oko 13,2 % godišnje, više od zahtijevanog prinosa od 10,2 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
-    }
+    "value_vs_book": null
   },
   "methodology": {
-    "story": "TERRA FIRMA d. d. ima kvantificirani signal budućeg posla (backlog/guidance), pa je sidro DCF s rastom izvedenim iz tog signala. Peer usporedba je kontrola.",
+    "story": "Sidro je nav_fund.",
     "parameters": [
       {
         "k": "Trošak kapitala r",
@@ -1085,12 +1095,20 @@
     ],
     "limitations": [
       "raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu",
-      "naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev",
       "β = 0.90 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
       "komponente traženog prinosa r = 10.21%: nerizična stopa 2.70% + β 0.90 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 2.5 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju. Dodatno se dodaje premija nelikvidnosti 2.5 p.b. jer se ova dionica rijetko trguje — izlazak iz pozicije nosi stvaran trošak, a niska beta taj rizik ne obuhvaća; zato je traženi prinos viši (i fer-vrijednost niža) nego kod likvidnih dionica (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-27",
+        "old_low": 698.6900393061123,
+        "old_high": 980.9489904030614,
+        "new_low": 167.9522270833333,
+        "new_high": 176.5651618055555,
+        "reason": "sidro promijenjeno (dcf_fcf -> nav_fund); novi ulazi iz zadnjeg izvješća/kalibracije",
+        "kind": "recompute"
+      },
       {
         "date": "2026-07-24",
         "old_low": 638.2880004778333,
