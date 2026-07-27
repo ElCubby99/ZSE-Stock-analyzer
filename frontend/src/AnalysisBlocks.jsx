@@ -26,7 +26,7 @@ const STEEL = '#2F5D86'
 
 /* metoda -> i18n ključ kratkog naziva (t()) */
 const METHOD_SHORT_KEY = {
-  sotp_nav: 'ab.m.sotp_nav', residual_income: 'ab.m.residual_income',
+  sotp_nav: 'ab.m.sotp_nav', nav_fund: 'ab.m.nav_fund', residual_income: 'ab.m.residual_income',
   justified_pb_roe: 'ab.m.justified_pb_roe', dcf_fcf: 'ab.m.dcf_fcf',
   comps: 'ab.m.comps',
   multiples_relative: 'ab.m.multiples_relative', ev_ebitda: 'ab.m.ev_ebitda',
@@ -44,6 +44,27 @@ const METHOD_TERM = {
 export function AnchorPanel({ data }) {
   const { lang, t } = useLang()
   const rec = data.valuation?.reconciliation
+  // M51: nema fer-zone -> objasni ZAŠTO (činjenice iz izvješća), ne prazno
+  const nvd = data.valuation?.no_value_data
+  if ((!rec || rec.zone_low === null) && nvd) {
+    return (
+      <div className="anch anch-held">
+        <div className="anch-head">
+          <span className="anch-tag" style={{ color: OX }}>{t('ab.noValueTag')}</span>
+        </div>
+        <p className="anch-plain">
+          {t('ab.noValueIntro')}
+          {nvd.negative_equity_eur !== undefined && (
+            <> {t('ab.noValueNegEq')} <b>{num(nvd.negative_equity_eur / 1e6, 1)} {t('ab.mEur')}</b>.</>
+          )}
+          {nvd.net_loss_eur !== undefined && (
+            <> {t('ab.noValueLoss')} <b>{num(nvd.net_loss_eur / 1e6, 1)} {t('ab.mEur')}</b>.</>
+          )}
+          {' '}{t('ab.noValueOutro')}
+        </p>
+      </div>
+    )
+  }
   if (!rec || rec.zone_low === null) return null
   // v2 §8 RED RULES: analiza ne ide live dok se pravila ne razriješe
   if ((rec.red_rules || []).length > 0) {

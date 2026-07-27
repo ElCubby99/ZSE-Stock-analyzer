@@ -1717,6 +1717,11 @@ def build_stock_json(conn, ticker: str) -> dict:
             },
             "assumption_flags": assumption_flags,
             "ran": ran, "skipped": skipped, "reconciliation": reconciliation,
+            # M51: kad procjene nema, izvezi ČINJENIČNI razlog (negativan
+            # kapital / gubitak) — stranica objašnjava zašto je polje prazno
+            "no_value_data": (json.loads(json.dumps(rec.get("no_value_data"),
+                                                    default=_f))
+                              if rec.get("no_value_data") else None),
             "sotp": sotp_breakdown,
             # raskorak prinosne i knjigovodstvene vrijednosti (generirano)
             "value_vs_book": value_vs_book,

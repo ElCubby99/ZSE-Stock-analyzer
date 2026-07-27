@@ -1022,6 +1022,43 @@ def compute_residual_income(c: Ctx) -> ValueRange:
                       0.7 if p.rates_calibrated else 0.5)
 
 
+def elig_nav_fund(c: Ctx):
+    # M51: zatvoreni investicijski fond (ZAIF/AIF) — vrijednost fonda JE
+    # njegova neto imovina (NAV) iz godišnjeg AIF obrasca; operativne metode
+    # (DCF/comps) nemaju smisla za portfelj vrijednosnica.
+    if c.sector != "fund":
+        return False, "nije investicijski fond — NAV metoda je samo za fondove"
+    if c.have("total_equity"):
+        return True, "fond s objavljenom neto imovinom (NAV) u godišnjem izvještaju"
+    return False, "fond bez objavljene neto imovine (NAV) u bazi"
+
+
+def compute_nav_fund(c: Ctx) -> ValueRange:
+    """M51 (ZAIF/AIF): fer vrijednost fonda = NAV po dionici.
+
+    NAV (neto imovina) je REVIDIRANA/objavljena stavka iz godišnjeg AIF
+    obrasca (AOP 044) — ne procjenjujemo je, prenosimo je. Raspon ±2,5%
+    (minimalna širina; NAV je točka, ne model). ČINJENICA za čitatelja:
+    zatvoreni fondovi na burzi često trguju uz diskont na NAV — pozicija
+    cijene naspram NAV-a je podatak, zaključak je čitateljev."""
+    nav = c.val("total_equity")
+    if nav is None or nav <= 0:
+        return _missing(c, "total_equity")
+    base = _per_share(nav, c)
+    if base is None:
+        return _missing(c, "shares_ex_treasury")
+    assum = {
+        "nav_eur": round(float(nav), 0),
+        "nav_note": ("NAV (neto imovina fonda) iz zadnjeg godišnjeg izvještaja "
+                     "AIF-a (AOP 044) podijeljen brojem dionica — objavljena "
+                     "brojka, ne naša projekcija"),
+        "discount_note": ("zatvoreni fondovi na burzi često trguju uz diskont "
+                          "na NAV (nelikvidnost, troškovi upravljanja); pozicija "
+                          "cijene naspram NAV-a je činjenica, ne preporuka"),
+    }
+    return ValueRange(base * 0.975, base, base * 1.025, assum, 0.85)
+
+
 REGISTRY = [
     # v2 §1: tržišni pristup = JEDNA metoda (interna triangulacija leća)
     Method("comps",              "Peer usporedba (comps)",   elig_comps,          compute_comps),
@@ -1030,6 +1067,7 @@ REGISTRY = [
     Method("justified_pb_roe",   "Opravdani P/B (ROE)",      elig_justified_pb_roe, compute_justified_pb_roe),
     Method("residual_income",    "Rezidualni dohodak (RI)",  elig_residual_income, compute_residual_income),
     Method("sotp_nav",           "Sum-of-the-parts / NAV",   elig_sotp,           compute_sotp),
+    Method("nav_fund",           "NAV fonda (neto imovina)", elig_nav_fund,       compute_nav_fund),
 ]
 
 
@@ -1059,6 +1097,8 @@ def archetype_v2(c: Ctx) -> str:
         return "bank"
     if c.sector == "insurance":
         return "insurance"
+    if c.sector == "fund":
+        return "fund"      # M51: ZAIF/AIF — vrijednost = NAV
     if c.sector == "tourism":
         return "tourism"
     ni = c.val("net_income_parent")
@@ -1112,6 +1152,11 @@ HIERARCHY_V2 = {
         "anchor": ("sotp_nav",),
         "secondary_note": ("operativna leća strukturno podcjenjuje pasivni "
                            "holding čiji udjeli imaju tržišnu cijenu"),
+    },
+    "fund": {
+        "anchor": ("nav_fund",),
+        "secondary_note": ("zatvoreni fond: NAV je jedino smisleno sidro — "
+                           "operativne metode ne vrede portfelj vrijednosnica"),
     },
     "holding_operating": {
         "anchor": ("sotp_nav", "dcf_fcf"),
@@ -1188,6 +1233,19 @@ def value_company(c: Ctx) -> dict:
         else:
             skipped[m.key] = reason          # zašto NE — ide na sajt ("SOTP n/p: ...")
     rec = reconcile(results, c.sector, ctx=c)
+    # M51: kad NIJEDNA metoda ne daje pozitivnu vrijednost, izvezi STRUKTURIRANI
+    # razlog (činjenice iz izvješća) umjesto praznog n/p — čitatelj mora vidjeti
+    # ZAŠTO procjene nema (radije prazno s razlogom nego izmišljeno).
+    if rec.get("status") == "no_value":
+        eq = c.val("equity_parent") or c.val("total_equity")
+        ni = c.val("net_income_parent")
+        nvd = {}
+        if eq is not None and eq < 0:
+            nvd["negative_equity_eur"] = round(float(eq), 0)
+        if ni is not None and ni < 0:
+            nvd["net_loss_eur"] = round(float(ni), 0)
+        if nvd:
+            rec["no_value_data"] = nvd
     # M11 QA: drastičan raskorak metoda ili zone vs tržišta -> red flag o
     # PRETPOSTAVKAMA (ne o tržištu); činjenica za reviziju, ne ocjena
     if rec.get("status") != "no_value":
