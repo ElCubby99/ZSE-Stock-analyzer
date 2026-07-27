@@ -74,8 +74,10 @@ def build_stocks() -> list[dict]:
 
         market_only = d.get("data_status") == "market_only"
         rec = (d.get("valuation") or {}).get("reconciliation") or {}
-        zone_low = None if market_only else rec.get("zone_low")
-        zone_high = None if market_only else rec.get("zone_high")
+        # M51.3: red rules (v2 §8) = analiza zadržana -> zona se NE objavljuje
+        held = bool(rec.get("red_rules"))
+        zone_low = None if (market_only or held) else rec.get("zone_low")
+        zone_high = None if (market_only or held) else rec.get("zone_high")
         # v3.1: suspenzija zone ukinuta (dividendni pod) — zone se uvijek
         # objavljuju; low_float (INA-tip): raskorak nije informativan
         low_float = bool(rec.get("low_float_note"))

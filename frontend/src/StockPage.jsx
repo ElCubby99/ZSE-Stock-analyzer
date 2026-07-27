@@ -1073,7 +1073,10 @@ export default function StockPage() {
       {data && (() => {
         const marketOnly = data.data_status === 'market_only'
         const rec = data.valuation?.reconciliation
-        const zone = rec && rec.zone_low !== null && rec.zone_high !== null
+        /* M51.3: red rules (v2 §8) = analiza zadržana — zona se NE prikazuje
+           nigdje (header, graf); razlog objašnjava AnchorPanel */
+        const held = (rec?.red_rules || []).length > 0
+        const zone = !held && rec && rec.zone_low !== null && rec.zone_high !== null
           ? [rec.zone_low, rec.zone_high] : null
         /* v3 S: po-klasne zone iz iste vrijednosti firme (tržišni omjer) */
         const classZones = rec?.class_zones || null
