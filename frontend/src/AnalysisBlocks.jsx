@@ -186,7 +186,65 @@ export function AnchorPanel({ data }) {
           </div>
         </div>
       )}
+      <FairSotpBreakdown sotp={sotp} />
     </div>
+  )
+}
+
+/* M51.4: mali raspis USPOREDNOG SOTP-a po dionici — čitatelj vidi kako od
+   procjena kćeri (× vlasnički udio) nastaje broj, bez računanja napamet.
+   Sve iz postojećeg exporta (identity: our_per_share za uvrštene, per_share
+   za ostalo); završni red je autoritativna brojka iz sotp_fair. */
+function FairSotpBreakdown({ sotp }) {
+  const { lang, t } = useLang()
+  if (!sotp || !sotp.sotp_fair || !sotp.identity) return null
+  const listed = sotp.identity.filter((r) => r.listed && r.our_per_share != null)
+  if (!listed.length) return null   // bez uvrštenih kćeri nema razlike vs glavni
+  const isCash = (r) => (r.item || '').startsWith('neto novac')
+  const isDisc = (r) => (r.item || '').startsWith('holding diskont')
+  const othersPs = sotp.identity
+    .filter((r) => !r.listed && !isCash(r) && !isDisc(r) && r.per_share != null)
+    .reduce((a, r) => a + r.per_share, 0)
+  const cashRow = sotp.identity.find(isCash)
+  const dr = sotp.holding_discount_range || [0, 0]
+  const disc = (dr[0] + dr[1]) / 2
+  const subtotal = listed.reduce((a, r) => a + r.our_per_share, 0)
+    + othersPs + (cashRow?.per_share || 0)
+  return (
+    <details className="anch-fairbrk">
+      <summary>{t('ab.fairBreakH')}</summary>
+      <table>
+        <tbody>
+          {listed.map((r) => (
+            <tr key={r.item}>
+              <td>{tx(r.item, lang)} <span className="basis">({t('ab.fairBreakOur')} × {num(r.pct * 100, 1)}% {t('ab.fairBreakStake')})</span></td>
+              <td className="num">{num(r.our_per_share, 0)} €</td>
+            </tr>
+          ))}
+          <tr>
+            <td>{t('ab.fairBreakOthers')}</td>
+            <td className="num">{num(othersPs, 0)} €</td>
+          </tr>
+          {cashRow && (
+            <tr>
+              <td>{t('ab.fairBreakCash')}</td>
+              <td className="num">{num(cashRow.per_share, 0)} €</td>
+            </tr>
+          )}
+          {disc > 0 && (
+            <tr>
+              <td>{t('ab.fairBreakDisc')} ({num(disc * 100, 1)}%)</td>
+              <td className="num">−{num(subtotal * disc, 0)} €</td>
+            </tr>
+          )}
+          <tr className="sotp-total">
+            <td>{t('ab.fairBreakTotal')}</td>
+            <td className="num">{num(sotp.sotp_fair.base_per_share, 2)} €</td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="anch-sotp2-n">{t('ab.fairBreakNote')}</div>
+    </details>
   )
 }
 
