@@ -1316,6 +1316,23 @@ export const STR = {
     en: 'We would rather leave the field empty with a reason than publish an invented figure. An estimate will appear once the reports show sustainably positive values.',
   },
   'ab.mEur': { hr: 'M€', en: 'EUR m' },
+  'ab.fairBreakH': {
+    hr: 'Raspis: kako nastaje SOTP po našoj procjeni (€ po dionici)',
+    en: 'Breakdown: how the SOTP at our estimate is built (€ per share)',
+  },
+  'ab.fairBreakOur': { hr: 'naša procjena kćeri', en: 'our estimate of the subsidiary' },
+  'ab.fairBreakStake': { hr: 'udjela', en: 'stake' },
+  'ab.fairBreakOthers': {
+    hr: 'ostali dijelovi (zajednički pothvati, vlastito poslovanje matice, neuvrštene kćeri)',
+    en: 'other parts (joint ventures, the parent’s own business, unlisted subsidiaries)',
+  },
+  'ab.fairBreakCash': { hr: 'neto novac (− neto dug) grupe', en: 'net cash (− net debt) of the group' },
+  'ab.fairBreakDisc': { hr: 'holding diskont, sredina', en: 'holding discount, midpoint' },
+  'ab.fairBreakTotal': { hr: 'UKUPNO po dionici', en: 'TOTAL per share' },
+  'ab.fairBreakNote': {
+    hr: 'Iznosi su po dionici matice (bez trezorskih dionica). Isti zbroj s uvrštenim kćerima po burzovnoj cijeni daje glavnu procjenu.',
+    en: 'Amounts are per parent share (excluding treasury shares). The same sum with listed subsidiaries at market price gives the main estimate.',
+  },
   'ab.m.residual_income': { hr: 'REZIDUALNI DOHODAK', en: 'RESIDUAL INCOME' },
   'ab.m.justified_pb_roe': { hr: 'OPRAVDANI P/B', en: 'JUSTIFIED P/B' },
   'ab.m.dcf_fcf': { hr: 'DCF', en: 'DCF' },
