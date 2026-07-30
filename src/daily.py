@@ -93,11 +93,11 @@ def stage_extract_queue(conn, run_id, log) -> list[int]:
     cur = conn.cursor()
     cur.execute(
         """SELECT f.id, f.company_id, c.ticker, c.sector, f.source_url, f.fiscal_year,
-                  f.period_type, f.cumulative
+                  f.period_type, f.cumulative, f.basis
            FROM filings f JOIN companies c ON c.id=f.company_id
            WHERE f.status='pending' ORDER BY f.id""")
     touched = []
-    for fid, cid, ticker, sector, url, year, period_type, cumulative in cur.fetchall():
+    for fid, cid, ticker, sector, url, year, period_type, cumulative, basis in cur.fetchall():
         try:
             # KORAK 2d: TFI-POD XLSX (kvartal) -> deterministički parser, 0 kredita
             if (url or "").lower().endswith(".xlsx"):
@@ -108,21 +108,49 @@ def stage_extract_queue(conn, run_id, log) -> list[int]:
                         f"{ticker}: bankovni interim XLSX (FINREP) -> zaseban parser")
                     continue
                 from scripts.parse_tfi_universe import ingest_tfi_xlsx
+                if basis == "standalone":
+                    # M52: kad postoji konsolidirani filing istog perioda, SOLO
+                    # obrazac se NE uvozi — ingest bi mu prepisao retke (basis
+                    # u ekstrakciji je 'consolidated') i srušio TTM cijele
+                    # grupe (incident KOEI 30.07.2026.)
+                    with conn.cursor() as c2:
+                        c2.execute(
+                            """SELECT 1 FROM filings WHERE company_id=%s
+                                 AND doc_type='financial_report' AND fiscal_year=%s
+                                 AND period_type=%s AND basis='consolidated' AND id<>%s""",
+                            (cid, year, period_type, fid))
+                        if c2.fetchone():
+                            c2.execute("UPDATE filings SET status='superseded' WHERE id=%s",
+                                       (fid,))
+                            log("extract", cid, "skipped",
+                                f"{ticker}: {period_type} SOLO XLSX preskočen — "
+                                "konsolidirani obrazac istog perioda postoji")
+                            conn.commit()
+                            continue
                 new_fid, parsed = ingest_tfi_xlsx(
                     conn, ticker, url, year, period_type or "annual",
-                    cumulative=bool(cumulative))
+                    cumulative=bool(cumulative),
+                    expect_consolidated=(basis == "consolidated"))
                 if new_fid is None:
+                    conn.rollback()
+                    reason = (parsed or {}).get("skip_reason") if isinstance(parsed, dict) else None
+                    with conn.cursor() as c2:
+                        c2.execute("UPDATE filings SET status='needs_review' WHERE id=%s", (fid,))
                     log("extract", cid, "needs_review",
+                        f"{ticker}: {reason}" if reason else
                         f"{ticker}: XLSX nije TFI-POD (npr. bankovni nadzorni obrazac) "
                         "-> zaseban parser")
-                    conn.rollback()
+                    conn.commit()
                     continue
                 res = validate_filing(conn, new_fid)
                 log("extract", cid, "ok" if res["status"] == "validated" else "needs_review",
                     f"{ticker}: {period_type} XLSX filing {new_fid} -> {res['status']}")
                 if new_fid != fid:
+                    # 'superseded' umjesto DELETE: red ostaje pa dedup u
+                    # report_syncu drži i filing se ne vraća u queue svaki run
                     with conn.cursor() as c2:
-                        c2.execute("DELETE FROM filings WHERE id=%s AND status='pending'", (fid,))
+                        c2.execute("UPDATE filings SET status='superseded' "
+                                   "WHERE id=%s AND status='pending'", (fid,))
                 touched.append(cid)
                 conn.commit()
                 continue

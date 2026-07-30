@@ -72,7 +72,10 @@ def _route(conn, run_id: str, cur, ann_id: int, cid, ticker, category: str,
         if not cands:
             cur.execute("UPDATE announcements SET needs_review=TRUE WHERE id=%s", (ann_id,))
             return "FI objava bez uparivog dokumenta (XLSX kvartal / PDF godišnji) -> needs_review"
-        cands.sort(key=lambda c: (c[0], c[1]))  # najbliži objavi, konsolidiran prvi
+        # M52: konsolidirani PRVI (kao u report_sync), pa najbliži objavi —
+        # solo obrazac tipično izlazi par minuta ranije pa bi datum-prvi sort
+        # odabrao SOLO i dupli filing srušio konsolidirani TTM (KOEI 30.07.)
+        cands.sort(key=lambda c: (c[1], c[0]))
         _pd, _co, x, pt, is_interim = cands[0]
         basis = "consolidated" if x.get("consolidated") else "standalone"
         cumulative = True if is_interim else None
