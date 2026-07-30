@@ -41,10 +41,15 @@ def _verify():
 
 def ingest_tfi_xlsx(conn, ticker, url, year, period_type, *, consolidated=True,
                     cumulative=True, published_at=None, path=None,
-                    currency="EUR"):
+                    currency="EUR", expect_consolidated=None):
     """Preuzmi + parsiraj TFI-POD XLSX i upiši kao filing (deterministički,
     0 kredita). Vraća (fid, parsed) ili (None, None) ako nije TFI-POD obrazac
-    (npr. bankovni nadzorni — traži zaseban parser). Ne commita."""
+    (npr. bankovni nadzorni — traži zaseban parser). Ne commita.
+
+    expect_consolidated=True: strogi gate — ako obrazac sam deklarira KN
+    (nekonsolidirano), NE uvozi se ni redak; SOLO brojke matice u konsolidiranoj
+    seriji ruše TTM/EV cijele grupe (incident KOEI 30.07.2026.: 12 tickera).
+    Vraća (None, {"skip_reason": ...})."""
     import requests
     if path is None:
         os.makedirs(SCRATCH, exist_ok=True)
@@ -56,6 +61,10 @@ def ingest_tfi_xlsx(conn, ticker, url, year, period_type, *, consolidated=True,
     parsed = parse_tfi(path)
     if not parsed or not parsed["items"]:
         return None, None
+    if expect_consolidated is True and parsed.get("konsolidirano") is False:
+        return None, {"skip_reason": (
+            "obrazac u datoteci deklarira KN (nekonsolidirano), a očekivan je "
+            "konsolidirani (KD) — SOLO brojke ne idu u konsolidiranu seriju")}
     solo = "" if consolidated else " | SOLO obrazac (izdavatelj bez konsolidiranog TFI-ja)"
     label = PT_TO_LABEL.get(period_type, period_type)
     kind = "kumulativ" if cumulative else "iznos"
@@ -320,6 +329,9 @@ def parse_tfi(path: str) -> dict | None:
             if fin_d is not None:
                 put("financing_cf", fin_d, "NT_D: C) neto tokovi od financijskih")
     # M18: broj zaposlenih iz 'Opći podaci' (count, bez skale)
+    # M52: KD/KN zastavica obrasca — obrazac sam deklarira je li konsolidiran
+    # ("Konsolidirani izvještaj: KD" ili "KN"); None kad polje ne postoji
+    konsolidirano = None
     if "Opći podaci" in wb.sheetnames:
         for row in wb["Opći podaci"].iter_rows(max_col=10):
             vals = [c.value for c in row]
@@ -327,8 +339,17 @@ def parse_tfi(path: str) -> dict | None:
                 n = next((v for v in vals if isinstance(v, (int, float)) and v > 0), None)
                 if n:
                     put("employees", float(n), "Opći podaci: broj zaposlenih (kraj razdoblja)")
-                break
-    return {"items": items, "src": src}
+            if konsolidirano is None and any(
+                    isinstance(v, str) and re.search(r"Konsolidirani izvještaj", v)
+                    for v in vals):
+                # prva samostalna KD/KN ćelija nakon oznake (legenda dolazi
+                # kasnije u redu i sadrži oba slova pa se preskače regexom)
+                flag = next((str(v).strip().upper() for v in vals
+                             if isinstance(v, str) and str(v).strip().upper() in ("KD", "KN")),
+                            None)
+                if flag:
+                    konsolidirano = (flag == "KD")
+    return {"items": items, "src": src, "konsolidirano": konsolidirano}
 
 
 def pick_report(items: list[dict]) -> dict | None:

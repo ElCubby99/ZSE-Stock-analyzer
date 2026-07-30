@@ -18,6 +18,11 @@ on:
         required: false
         default: ''
         type: string
+      repair:
+        description: "M52: neprazan = prije synca ponovno uvezi KONSOLIDIRANE interim XLSX iz feeda (popravak SOLO→KONS); promijenjeni tickeri idu automatski u revalorizaciju"
+        required: false
+        default: ''
+        type: string
 
 concurrency:
   group: daily-eod    # ista baza kao daily run — bez preklapanja
@@ -40,6 +45,21 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
 
+      # M52 (na zahtjev): ponovni uvoz konsolidiranih interim XLSX iz feeda —
+      # liječi filinge kojima je SOLO obrazac prepisao retke; promijenjeni
+      # tickeri se dodaju u revalorizaciju sljedećeg koraka
+      - name: Popravak interim serija (SOLO→KONS)
+        if: inputs.repair != ''
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python scripts/repair_h1_interim.py \
+            --lookback-days "${{ inputs.lookback }}" | tee /tmp/repair.log
+          t=$(grep '^PROMIJENJENI TICKERI:' /tmp/repair.log | cut -d' ' -f3)
+          [ "$t" = "-" ] && t=""
+          echo "REPAIR_TICKERS=$t" >> "$GITHUB_ENV"
+
       # sync + extract (XLSX deterministički; PDF samo uz API ključ/kredit)
       # + recompute dirnutih + regen exporta. Deploy hook NIJE u env-u —
       # okida se tek nakon commita (isti princip kao daily-eod).
@@ -51,7 +71,7 @@ jobs:
         run: |
           python -m src.report_sync --lookback-days "${{ inputs.lookback }}" \
             --extract --recompute --regen \
-            --recompute-tickers "${{ inputs.recompute }}"
+            --recompute-tickers "${{ inputs.recompute }},${REPAIR_TICKERS}"
 
       # vijesti PRIJE deploya — nova izvješća/dividende iz ovog synca odmah
       # postaju objavljene vijesti (news-ingest auto-publisha činjenične
