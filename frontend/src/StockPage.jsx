@@ -849,6 +849,9 @@ function Narrative({ data }) {
       <p>
         {t('sp.nrZone1')}: <b>{eur(rec.zone_low, zoneDec(rec.zone_high))}–{eur(rec.zone_high, zoneDec(rec.zone_high))} {t('sp.nrPerShare')}</b>.
         {' '}{t('sp.nrZoneExpl')}
+        {(rec.zone_high > hi.base || rec.zone_low < lo.base) && (
+          <> {t('sp.nrZoneBeyond')}</>
+        )}
       </p>
       {(() => {
         const secOut = ran.filter((m) => {

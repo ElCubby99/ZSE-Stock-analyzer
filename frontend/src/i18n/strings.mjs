@@ -1164,6 +1164,7 @@ export const STR = {
     hr: 'Premalo metoda s vrijednošću za usporedbu — vidi tablicu fundamenata i preskočene metode.',
     en: 'Too few methods with a value to compare — see the fundamentals table and the skipped methods.',
   },
+  'sp.nrZoneBeyond': { hr: 'Zona pritom može izaći i izvan raspona središnjih vrijednosti metoda: njezinu širinu ne određuju sredine pojedinih metoda, nego osjetljivost glavne metode na trošak kapitala (±1 postotni bod) — uz niži trošak kapitala ista metoda daje višu vrijednost, uz viši nižu.', en: 'The zone can extend beyond the range of the methods\' central values: its width is set not by the methods\' midpoints but by the sensitivity of the main method to the cost of capital (±1 percentage point) — with a lower cost of capital the same method yields a higher value, with a higher one a lower value.' },
   'sp.nrLow': { hr: 'Najnižu središnju vrijednost daje', en: 'The lowest central value comes from' },
   'sp.nrHigh': { hr: 'Najvišu daje', en: 'The highest from' },
   'sp.nrSotp': {
@@ -1341,6 +1342,7 @@ export const STR = {
   'ab.m.ev_ebitda': { hr: 'EV/EBITDA', en: 'EV/EBITDA' },
   'ab.m.ddm_gordon': { hr: 'DIVIDENDNI DISKONT', en: 'DIVIDEND DISCOUNT' },
   'ab.m.pro_forma_ev_ebitda': { hr: 'PRO-FORMA EV/EBITDA', en: 'PRO-FORMA EV/EBITDA' },
+  'ab.ooWhyH': { hr: 'JEDNOKRATNA DOBIT I REVIZIJA PROCJENE', en: 'ONE-OFF GAIN AND ESTIMATE REVISION' },
   'ab.pfWhyH': { hr: 'ZAŠTO PRO-FORMA METODA (I ŠTO TO ZNAČI)', en: 'WHY A PRO-FORMA METHOD (AND WHAT IT MEANS)' },
   'ab.held': { hr: 'ANALIZA ZADRŽANA — CRVENO PRAVILO', en: 'ANALYSIS WITHHELD — RED RULE' },
   'ab.heldNote': {

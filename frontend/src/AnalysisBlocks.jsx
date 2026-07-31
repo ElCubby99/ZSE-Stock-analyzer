@@ -144,6 +144,12 @@ export function AnchorPanel({ data }) {
           </span>
         ))}
       </div>
+      {rec.one_off_note && (
+        <div className="anch-proforma">
+          <div className="prof-klabel">{t('ab.ooWhyH')}</div>
+          <p>{tx(rec.one_off_note, lang)}</p>
+        </div>
+      )}
       {rec.pro_forma_note && (
         <div className="anch-proforma">
           <div className="prof-klabel">{t('ab.pfWhyH')}</div>

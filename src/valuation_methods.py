@@ -1065,7 +1065,7 @@ def compute_nav_fund(c: Ctx) -> ValueRange:
 # ponovljivo poslovanje (npr. dobit od povoljne kupnje kod pripajanja) IZUZIMA
 # se iz ulaza VALUACIJE (ROE pravilo, P/E leće, market-implied). Prikazi
 # činjenica (financije, pokazatelji) ostaju na PRIJAVLJENIM brojkama.
-# {ticker: (fiscal_year, one_off_eur, javni razlog s izvorom)}
+# {ticker: (fiscal_year, one_off_eur, javni razlog s izvorom, napomena za stranicu)}
 NI_ONE_OFF = {
     "SNBA": (2025, 23.7e6,
              ("iz dobiti FY2025 (24,1 M€) izuzeta jednokratna stavka 23,7 M€ — "
@@ -1073,7 +1073,23 @@ NI_ONE_OFF = {
               "(prijašnjih godina ≈ 0): dobit od povoljne kupnje pri pripajanju "
               "banke (bilanca u Q1 2025 skočila s 293 na 543 M€, kapital s 26 "
               "na 50 M€). Ponovljiva dobit FY2025 je ~0,4 M€ — jednokratni "
-              "dobitak se ne smije pretvoriti u trajnu stopu povrata")),
+              "dobitak se ne smije pretvoriti u trajnu stopu povrata"),
+             ("Jednokratna dobit i revizija naše procjene: Slatinska banka je "
+              "početkom 2025. pripojila drugu banku i u računu dobiti i "
+              "gubitka za 2025. priznala jednokratnu dobit od povoljne kupnje "
+              "— stavka 'Ostali prihodi iz redovnog poslovanja' iznosi "
+              "23,7 M€, dok je prijašnjih godina bila približno nula (bilanca "
+              "je u istom kvartalu narasla s 293 na 543 M€, a kapital s 26 na "
+              "50 M€). Od prikazane godišnje dobiti od 24,1 M€ ponovljivo je "
+              "stoga samo oko 0,4 M€. OTVORENO PRIZNAJEMO: naš automatski "
+              "sustav tu jednokratnu stavku isprva nije uhvatio — povrat na "
+              "kapital od 47% ušao je u izračun kao da je trajan, pa je "
+              "fer-zona neko vrijeme stajala na 80–105 € po dionici. Nakon "
+              "ručne kontrole (1.8.2026.) jednokratna stavka je izuzeta i "
+              "zona je revidirana na niže — sada počiva na ponovljivoj "
+              "profitabilnosti banke. Ovakve stavke ubuduće sustavno "
+              "izuzimamo iz procjene vrijednosti, a tablice financija i "
+              "pokazatelja i dalje prikazuju službene (prijavljene) brojke.")),
 }
 
 
@@ -1439,6 +1455,11 @@ def value_company(c: Ctx) -> dict:
             red.append(hold)
         if pf_anchored:
             rec["pro_forma_note"] = PRO_FORMA[c.ticker]["why"]
+        # M56: kurirana jednokratna stavka -> istaknuta napomena na stranici
+        # (s priznanjem da automatika stavku isprva nije uhvatila)
+        _oo_note = NI_ONE_OFF.get(getattr(c, "ticker", None))
+        if _oo_note and len(_oo_note) > 3:
+            rec["one_off_note"] = _oo_note[3]
         prim = (rec.get("anchor_methods") or [None])[0]
         if prim and results[prim]["range"].confidence < 0.5:
             red.append("glavna metoda počiva na generičkom (nekalibriranom) ulazu — procjenu zadržavamo dok se ulaz ne kalibrira na ovu firmu")
