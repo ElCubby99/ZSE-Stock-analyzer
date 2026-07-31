@@ -1255,10 +1255,13 @@ def _methodology_note(cur, company_id, name, rec, params, sotp, flags, ctxgh):
     lims = [_plain_risk(f) for f in (rec.get("qa_flags") or [])]
     lims += [f"{f['label']} — {f['why']}" for f in flags
              if f.get("status") == "pretpostavka"]
-    # povijest promjena
+    # povijest promjena PROCJENE (staro→novo uz razlog). M57: zapisi o
+    # promjenama METODOLOGIJE (kind='methodology') se NE prikazuju — čitatelja
+    # zanima koja je metodologija (stranica /metodologija), ne kako je nastajala
     cur.execute("""SELECT changed_on, old_low, old_high, new_low, new_high,
                           reason, kind FROM valuation_changelog
-                   WHERE company_id=%s ORDER BY changed_on DESC, id DESC LIMIT 12""",
+                   WHERE company_id=%s AND kind <> 'methodology'
+                   ORDER BY changed_on DESC, id DESC LIMIT 12""",
                 (company_id,))
     changelog = [{"date": str(r[0]), "old_low": _f(r[1]), "old_high": _f(r[2]),
                   "new_low": _f(r[3]), "new_high": _f(r[4]),
