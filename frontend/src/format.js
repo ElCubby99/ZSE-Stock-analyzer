@@ -17,6 +17,10 @@ const nf = (min, max) => new Intl.NumberFormat(INTL[LOCALE], {
 
 export const dash = '—'
 
+/* M55: decimale za prikaz fer-zone — male cijene (VLEN ~1,5 €) ne smiju
+   se zaokruziti na '2-2'; prag po gornjem rubu zone */
+export const zoneDec = (hi) => (hi < 10 ? 2 : hi < 100 ? 1 : 0)
+
 export function num(v, dec = 2) {
   if (v === null || v === undefined) return dash
   return nf(dec, dec).format(v)

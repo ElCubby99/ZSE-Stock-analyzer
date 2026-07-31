@@ -407,8 +407,8 @@ def _global_peers(sector: str | None) -> dict | None:
         "peers": sec["peers"],
         "has_metrics": has_metrics,
         "levels_hr": {"hr_region": "HR/regija", "eu": "EU", "global": "globalno"},
-        "note": ("globalni peerovi su KONTEKST — ne ulaze u sidro fer-zone "
-                 "(v2 §8); cross-market razlike (rast, likvidnost, veličina, "
+        "note": ("globalni peerovi su KONTEKST — ne ulaze u izračun fer-zone; "
+                 "cross-market razlike (rast, likvidnost, veličina, "
                  "trošak kapitala tržišta) objašnjavaju dio raskoraka u "
                  "multiplima"),
         "no_metrics_reason": (None if has_metrics else
@@ -1332,7 +1332,7 @@ def build_stock_json(conn, ticker: str) -> dict:
                      "dionice ex-trezor). Tržišne cijene klasa se ipak razlikuju: "
                      "glasačka premija redovne, razlika u likvidnosti i članstvo u "
                      "indeksu. Ta premija je tržišna struktura — prikazuje se i "
-                     "objašnjava, ali se NE ugrađuje u fer (v2 §7)."),
+                     "objašnjava, ali se NE ugrađuje u fer vrijednost."),
         }
 
     # valuacija: postojeći motor, kalibrirani Params (read-only za frontend)
@@ -1521,7 +1521,7 @@ def build_stock_json(conn, ticker: str) -> dict:
              "status": "izvor",
              "why": ("zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci "
                      "(zadnje godišnje + ovogodišnji kvartali − lanjski "
-                     "kvartali) — v3 FAZA G; kvartalni izvještaji su "
+                     "kvartali); kvartalni izvještaji su "
                      "nerevidirani")})
     elif _ni_m.get("basis") == "annual" and _ni_m.get("reason"):
         assumption_flags.append(
@@ -1577,7 +1577,7 @@ def build_stock_json(conn, ticker: str) -> dict:
             if "integrirani operativni parent" in dreason:
                 assumption_flags.append(
                     {"key": "holding_discount", "label": lbl, "status": "izvor",
-                     "why": ("taksonomija v2 §4: kontrola + konsolidacija iste "
+                     "why": ("kontrola + konsolidacija iste "
                              "djelatnosti — ne tretira se kao pasivni holding")})
             elif "IZMJERENI" in dreason:
                 assumption_flags.append(
@@ -1588,7 +1588,7 @@ def build_stock_json(conn, ticker: str) -> dict:
                 assumption_flags.append(
                     {"key": "holding_discount", "label": lbl,
                      "status": "pretpostavka",
-                     "why": "vlastiti P/NAV nemjerljiv — default raspon (v2 §4)"})
+                     "why": "vlastiti P/NAV nemjerljiv — default raspon"})
         # flag samo ako SOTP stvarno sadrži placeholder dijelove (default
         # multiple / nekalibrirani peer P/E) — ne prepisuje se tuđi flag
         ph_parts = [x["name"] for x in (sotp_breakdown.get("parts") or [])

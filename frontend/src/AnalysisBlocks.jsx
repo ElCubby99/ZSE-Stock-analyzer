@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLang } from './i18n/LangContext.jsx'
 import { tx } from './i18n/dataText.mjs'
-import { dash, num } from './format.js'
+import { dash, num, zoneDec } from './format.js'
 import { Term } from './Legend.jsx'
 
 /* QA flag (tehnički) -> jedna rečenica običnim jezikom; tehnički original
@@ -125,8 +125,8 @@ export function AnchorPanel({ data }) {
       <div className="anch-band">
         <div className="anch-axis" />
         <div className="anch-fill" style={{ left: `${P(lo)}%`, width: `${P(hi) - P(lo)}%` }} />
-        <div className="anch-lbl" style={{ left: `${P(lo)}%` }}>{num(lo, 0)}</div>
-        <div className="anch-lbl" style={{ left: `${P(hi)}%` }}>{num(hi, 0)}</div>
+        <div className="anch-lbl" style={{ left: `${P(lo)}%` }}>{num(lo, zoneDec(hi))}</div>
+        <div className="anch-lbl" style={{ left: `${P(hi)}%` }}>{num(hi, zoneDec(hi))}</div>
         {classes.map((c) => (
           <React.Fragment key={c.t}>
             <div className="anch-tick-lbl" style={{ left: `${P(c.p)}%` }}>

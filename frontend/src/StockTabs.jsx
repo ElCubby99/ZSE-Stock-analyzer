@@ -4,7 +4,7 @@ import { GapCell, useOverview } from './Shell.jsx'
 import { useLang } from './i18n/LangContext.jsx'
 import { tx } from './i18n/dataText.mjs'
 import { sectorLabel } from './sectorLabels.mjs'
-import { dash, eur, fmtDate, meur, num, pct } from './format.js'
+import { dash, eur, fmtDate, meur, num, pct, zoneDec } from './format.js'
 
 /* Tab-struktura stranice dionice (dizajn 4). Sve iz postojećih podataka;
    BEZ 'tehničke analize' i BEZ ratinga/ocjena (MAR). */
@@ -57,7 +57,9 @@ function fmtIndVal(it, lang) {
     case '%': return pct(v, 1)
     case 'x': return `${num(v, 2)}×`
     case 'meur': return meur(v, 1)
-    case 'eur': return eur(v, 0)
+    /* M55: male eur vrijednosti (EPS −0,35, BVPS 1,2) ne smiju se zaokružiti
+       na '−0'/'1' — decimale po veličini broja */
+    case 'eur': return eur(v, Math.abs(v) < 100 ? 2 : 0)
     case 'eur_per_share': return eur(v, 2)
     case 'days': return `${num(v, 0)} d`
     case 'count': return num(v, 0)
@@ -211,7 +213,7 @@ export function KeyIndicators({ data }) {
       </table>
       <div className="subnote">
         {t('ki.note1')}{rec && rec.zone_low !== null
-          ? `${num(rec.zone_low, 0)}–${num(rec.zone_high, 0)} €` : dash}{t('ki.note2')}
+          ? `${num(rec.zone_low, zoneDec(rec.zone_high))}–${num(rec.zone_high, zoneDec(rec.zone_high))} €` : dash}{t('ki.note2')}
       </div>
     </section>
   )

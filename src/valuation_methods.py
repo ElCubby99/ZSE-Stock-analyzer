@@ -161,7 +161,7 @@ def elig_dcf(c: Ctx):
     if c.sector in FINANCIAL_SECTORS:
         return False, "financije — FCF loše definiran"
     if c.is_holding and getattr(c, "holding_type", "passive") != "operating":
-        return False, "pasivni holding — FCF ne hvata vrijednost udjela (v2 §2)"
+        return False, "pasivni holding — novčani tok matice ne hvata vrijednost udjela u drugim firmama"
     if c.have("operating_cf") and c.have("capex"):
         return True, "operativna firma s mjerljivim FCF"
     # v2 §9.2 (ADPL tip): guidance-DCF — brojčani guidance uprave (rast, marža,
@@ -183,8 +183,9 @@ def elig_dcf(c: Ctx):
 
 def elig_ddm(c: Ctx):
     if c.sector not in FINANCIAL_SECTORS:
-        return False, ("DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); "
-                       "dividendni prinos je pokazatelj")
+        return False, ("dividendni model je metoda vrijednosti samo kod banaka i "
+                       "osiguranja; kod ostalih firmi dividendni prinos je "
+                       "pokazatelj, ne metoda")
     if not c.have("dps"):
         return False, "ne isplaćuje (ili nepoznata) dividenda"
     return True, "financijski isplatitelj dividende"
@@ -194,9 +195,10 @@ def elig_justified_pb_roe(c: Ctx):
         return False, "nema kapital i/ili dobit za ROE"
     arche = archetype_v2(c)
     if arche in ("bank", "insurance", "cyclical", "industrial_noforward"):
-        return True, f"nositelj/potvrda arhetipa '{arche}' (v2 §2)"
-    return False, (f"arhetip '{arche}': opravdani P/B je ovdje leća/pokazatelj, "
-                   "ne metoda (v2 §1/§9.1)")
+        return True, f"nositelj/potvrda za ovaj tip firme ('{arche}')"
+    return False, (f"za ovaj tip firme ('{arche}') knjigovodstveni omjer "
+                   "(P/B) je pokazatelj, ne samostalna metoda — vrijednost "
+                   "nose novčani tok i usporedbe")
 
 def elig_sotp(c: Ctx):
     if not c.is_group:
@@ -345,7 +347,7 @@ def compute_comps(c: Ctx) -> ValueRange:
             f"EV/EBITDA ne smije biti nositelj: neto dug/EBITDA="
             f"{lev if lev is None else round(lev, 2)}, D&A/EBITDA="
             f"{da_share if da_share is None else round(da_share, 2)} — "
-            "multipl laska firmama s visokim D&A/dugom (v2 §2)")
+            "multipl laska firmama s visokim D&A/dugom")
     arche = archetype_v2(c)
     pref = {
         "bank": ["pb", "pe"], "insurance": ["pb", "pe"],
@@ -357,7 +359,7 @@ def compute_comps(c: Ctx) -> ValueRange:
         pref = [x for x in pref if x != "ev_ebitda"] + ["pe", "ev_ebit", "pb"]
     carrier = next((k for k in pref if k in lenses), next(iter(lenses)))
     assum["carrier"] = carrier
-    assum["carrier_reason"] = (f"nositelj po arhetipu '{arche}' (v2 §2)"
+    assum["carrier_reason"] = (f"nositelj usporedbe za ovaj tip firme ('{arche}')"
                                + ("; EV/EBITDA isključen (poluga/D&A)" if ev_ebitda_banned else "")
                                + ("; uz napomenu o najmovima (MSFI 16 diže EBITDA)"
                                   if arche == "tourism" and carrier == "ev_ebitda" else ""))
@@ -377,7 +379,7 @@ def compute_comps(c: Ctx) -> ValueRange:
         assum["intra_spread"] = {
             "spread_pct": round(spread * 100, 0),
             "rule": (f"leće razmaknute {spread:.0%} > 40% -> NE prosječi; bazu "
-                     f"nosi '{carrier}', ostale su kontekst (v2 §3)"),
+                     f"nosi '{carrier}', ostale su kontekst"),
             "anomaly": ("; ".join(expl) or "razlika nazivnika (marža/knjiga/zarada)"),
         }
     else:
@@ -661,7 +663,7 @@ def _separate_standalone(c: "Ctx", h: dict, p: "Params"):
     if ni <= 0:
         return None
     stake = ni * p.peer_pe * pct
-    basis = (f"standalone_separate P/E (v3 SOTP, fallback — standalone EBITDA "
+    basis = (f"standalone_separate P/E (fallback — standalone EBITDA "
              f"nije u bazi): NI iz NEKONSOLIDIRANOG izvještaja FY{sep.get('fy')} "
              f"{sep['net_income']:,.0f} € − prihod od dividendi kćeri "
              f"{div_inc:,.0f} € (isključen: kćeri su već u NAV-u kroz udjele) = "
@@ -693,14 +695,14 @@ def compute_sotp(c: Ctx) -> ValueRange:
     # inače default 15–25% s OZNAKOM. DLOC/DLOM na uvrštene se NE stacka.
     if getattr(c, "holding_type", "passive") == "operating":
         disc_lo, disc_hi = 0.0, 0.05
-        disc_reason = ("integrirani operativni parent (v2 §4): kontrola + "
+        disc_reason = ("integrirani operativni parent: kontrola + "
                        "konsolidacija iste djelatnosti -> diskont 0–5%, "
                        "NE tretira se kao pasivni holding")
     elif getattr(p, "pnav_measured", None):
         pm = p.pnav_measured  # {'median':..., 'p25':..., 'p75':..., 'note':...}
         disc_lo = max(0.0, 1 - pm["p75"])
         disc_hi = max(0.0, 1 - pm["p25"])
-        disc_reason = (f"IZMJERENI vlastiti P/NAV (v2 §4): medijan "
+        disc_reason = (f"IZMJERENI vlastiti P/NAV: medijan "
                        f"{pm['median']:.2f} (p25 {pm['p25']:.2f}, p75 "
                        f"{pm['p75']:.2f}) -> diskont {disc_lo:.0%}–{disc_hi:.0%}. "
                        + pm.get("note", ""))
@@ -708,7 +710,7 @@ def compute_sotp(c: Ctx) -> ValueRange:
         disc_lo, disc_hi = p.holding_discount_low, p.holding_discount_high
         disc_reason = ("default 15–25% — vlastiti P/NAV NIJE mjerljiv "
                        "(nedovoljno uvrštenih kćeri/serije); OZNAČENA "
-                       "pretpostavka (v2 §4)")
+                       "pretpostavka")
     if disc_hi - disc_lo < 0.05:
         disc_hi = disc_lo + 0.05   # pod osjetljivosti: zona ne smije biti točka
     assum = {
@@ -822,7 +824,7 @@ def compute_sotp(c: Ctx) -> ValueRange:
                     f"{h['held_name']}: U OBRADI — standalone se vrednuje iz "
                     "nekonsolidiranog izvještaja matice (uz isključenje "
                     "prihoda od dividendi kćeri), koji još nije u bazi; ne "
-                    "aproksimira se iz konsolidiranih brojki (v3 SOTP)")
+                    "aproksimira se iz konsolidiranih brojki")
                 assum["standalone_status"] = {
                     "component": h["held_name"], "status": "u obradi",
                     "reason": ("nekonsolidirani izvještaj matice izdan je "
@@ -1266,13 +1268,13 @@ HIERARCHY_V2 = {
     "industrial_noforward": {
         "anchor": ("comps", "justified_pb_roe"),
         "secondary_note": ("bez forward signala sidro je peer usporedba; "
-                           "opravdani P/B je potvrda (v2 §2)"),
+                           "opravdani P/B je potvrda"),
     },
     "cyclical": {
         "anchor": ("dcf_fcf", "justified_pb_roe", "comps"),
         "secondary_note": ("ciklikal (niska ROE/poluga): guidance-DCF ako "
                            "postoji, inače opravdani P/B; comps potvrda; "
-                           "EV/EBITDA nije nositelj (v2 §2)"),
+                           "EV/EBITDA nije nositelj"),
     },
     "bank": {
         "anchor": ("justified_pb_roe", "residual_income"),
@@ -1281,11 +1283,11 @@ HIERARCHY_V2 = {
     },
     "insurance": {
         "anchor": ("justified_pb_roe", "residual_income"),
-        "secondary_note": ("kapitalno sidro — DDM potvrda (v2 §2)"),
+        "secondary_note": ("kapitalno sidro — DDM potvrda"),
     },
     "tourism": {
         "anchor": ("comps", "dcf_fcf"),
-        "secondary_note": ("EV/EBITDA comps + DCF (v2 §2) — uz napomenu o "
+        "secondary_note": ("EV/EBITDA comps + DCF — uz napomenu o "
                            "najmovima (MSFI 16)"),
     },
     "holding_passive": {
@@ -1301,7 +1303,7 @@ HIERARCHY_V2 = {
     "holding_operating": {
         "anchor": ("sotp_nav", "dcf_fcf"),
         "secondary_note": ("integrirani operativni parent: SOTP BEZ holding "
-                           "diskonta; konsolidirani DCF je potvrda (v2 §2/§4)"),
+                           "diskonta; konsolidirani DCF je potvrda"),
     },
 }
 
@@ -1439,13 +1441,15 @@ def value_company(c: Ctx) -> dict:
             rec["pro_forma_note"] = PRO_FORMA[c.ticker]["why"]
         prim = (rec.get("anchor_methods") or [None])[0]
         if prim and results[prim]["range"].confidence < 0.5:
-            red.append("sidro sadrži placeholder ulaz (v2 §8.1)")
+            red.append("glavna metoda počiva na generičkom (nekalibriranom) ulazu — procjenu zadržavamo dok se ulaz ne kalibrira na ovu firmu")
         if gap is not None and abs(gap) > 0.40 and not rec.get("market_implied"):
-            red.append("odstupanje >40% bez market-implied narativa (v2 §8.3)")
+            red.append("procjena odstupa više od 40% od tržišne cijene, a usporedba s onim što cijena implicira nije izračunata — procjenu zadržavamo dok se to ne razriješi")
         sotp_a = results.get("sotp_nav", {}).get("range")
         if sotp_a is not None and sotp_a.assumptions.get("parent_child_mismatch"):
-            red.append("parent-child identitet ne prolazi: "
-                       + sotp_a.assumptions["parent_child_mismatch"] + " (v2 §8.2)")
+            red.append("zbroj dijelova se ne slaže s konsolidiranom "
+                       "bilancom grupe: "
+                       + sotp_a.assumptions["parent_child_mismatch"]
+                       + " — procjenu zadržavamo dok se raskorak ne razriješi")
         rec["red_rules"] = red
         rec["qa_flags"] = flags
         rec["reasoning"] = _reasoning(c, results, rec)
@@ -1596,7 +1600,7 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
                 disc_txt = "bez holding popusta (integrirani parent s kontrolom)"
             elif dr[0] <= 0.001 and dr[1] <= 0.06:
                 disc_txt = ("bez popusta — izmjereni vlastiti P/NAV pokazuje "
-                            "premiju pa se popust klampa na 0 (v2 §4)")
+                            "premiju pa popust ne primjenjujemo")
             else:
                 disc_txt = f"uz popust ({dr[0]:.0%}–{dr[1]:.0%})"
             parts.append(f"Vrijednost smo složili po dijelovima (SOTP): uvrštene "
@@ -1828,14 +1832,15 @@ def reconcile(results: dict, sector: Optional[str] = None,
         rel_lo = (vr.low or bases[prim]) / bases[prim]
         rel_hi = (vr.high or bases[prim]) / bases[prim]
         zone_low, zone_high = med * rel_lo, med * rel_hi
-        zone_note = ((f"zona = MEDIJAN kvalificiranih metoda "
-                      f"({', '.join(qualified)}) ± osjetljivost primarnog "
-                      f"sidra '{prim}' (r/wacc ±1 p.b.) — v3 triangulacija")
+        zone_note = ((f"zona = sredina (medijan) metoda koje su prošle "
+                      f"provjere ({', '.join(qualified)}), a širina dolazi iz "
+                      f"osjetljivosti glavne metode '{prim}' na trošak "
+                      f"kapitala ±1 postotni bod")
                      if not two_spread else
-                     (f"dvije kvalificirane metode razmaknute "
-                      f"{q_bases[1] / q_bases[0] - 1:.0%} > 40% — NE prosječi "
-                      f"(v2 §3): sredinu nosi sidro '{prim}', druga metoda "
-                      "je kontekst — v3 triangulacija"))
+                     (f"dvije prihvaćene metode razmaknute su "
+                      f"{q_bases[1] / q_bases[0] - 1:.0%} pa ih ne "
+                      f"prosječujemo — sredinu nosi glavna metoda '{prim}', "
+                      "druga ostaje kontekst"))
         # v3 A.2 demote pravilo: >=2 kvalificirane NE-sidrene metode
         # konvergiraju (±20%) a sidro divergira >30% od njihove sredine ->
         # sidro gubi primat (medijan ionako preuzima; ovo je vidljiv zapis)
@@ -1848,19 +1853,21 @@ def reconcile(results: dict, sector: Optional[str] = None,
                     pair_mid = (va + vb) / 2
                     if pair_mid and abs(bases[prim] / pair_mid - 1) > 0.30:
                         zone_note += (
-                            f"; DEMOTE (v3 A.2): {a} i {b} konvergiraju "
-                            f"(±20%) a sidro '{prim}' divergira "
-                            f"{bases[prim] / pair_mid - 1:+.0%} — sidro gubi "
-                            "primat, medijan preuzima")
+                            f"; metode {a} i {b} se slažu (±20%) a glavna "
+                            f"metoda '{prim}' odstupa "
+                            f"{bases[prim] / pair_mid - 1:+.0%} — sredinu "
+                            "zato preuzima medijan ostalih metoda")
                         hit = True
                         break
             if hit:
                 break
         if dropped:
-            zone_note += (f"; isključeno (nepozitivna baza/conf): {', '.join(dropped)}")
+            zone_note += ("; iz zone isključeno (negativna vrijednost ili "
+                          f"nekalibrirani ulazi): {', '.join(dropped)}")
         if degenerate:
-            zone_note += ("; isključeno sidro s degeneriranom osjetljivošću "
-                          f"(raspon > 100% baze): {', '.join(degenerate)}")
+            zone_note += ("; isključena metoda preosjetljiva na pretpostavke "
+                          "(vlastiti raspon širi od 100% procjene): "
+                          f"{', '.join(degenerate)}")
         anchors = [prim] + [k for k in anchors if k != prim]
     else:
         # sidro nije dostupno (npr. holding bez SOTP ulaza) -> pošten fallback;
@@ -1870,10 +1877,11 @@ def reconcile(results: dict, sector: Optional[str] = None,
         if not pos:
             return {"status": "no_value"}
         zone_low, zone_high = min(pos), max(pos)
-        zone_note = ("sidrena metoda nije dostupna — zona je min–max pozitivnih "
-                     "baza (fallback); vidi 'skipped' za razlog")
+        zone_note = ("glavna metoda za ovaj tip firme nije dostupna — zona "
+                     "je raspon pozitivnih procjena preostalih metoda; razlog "
+                     "za svaku izostavljenu metodu piše uz nju")
         if degenerate:
-            zone_note += ("; sidra isključena zbog degenerirane osjetljivosti: "
+            zone_note += ("; isključene metode preosjetljive na pretpostavke: "
                           + ", ".join(degenerate))
     # M20: donji rub zone ne može biti < 0 (ograničena odgovornost dioničara);
     # negativna osjetljivost (npr. DCF pri r−1 p.b. blizu g) se REŽE, ne skriva
@@ -1885,7 +1893,7 @@ def reconcile(results: dict, sector: Optional[str] = None,
     if zone_high > 0 and (zone_high - zone_low) / zone_high < 0.05:
         mid_z = (zone_low + zone_high) / 2
         zone_low, zone_high = mid_z * 0.975, mid_z * 1.025
-        zone_note += "; minimalna širina zone ±2,5% (osjetljivost degenerirana)"
+        zone_note += "; primijenjena minimalna širina zone ±2,5%"
 
     lo_all, hi_all = min(bases.values()), max(bases.values())
     spread_all = (hi_all - lo_all) / hi_all if hi_all else 0
@@ -1922,11 +1930,14 @@ def reconcile(results: dict, sector: Optional[str] = None,
                 inconsistent.append(f"{k} {dev:+.0%} vs primarno sidro")
             continue
         if k in dropped:
-            why = ("placeholder ulazi (conf < 0,5) — red rule v2 §8: ne smije "
-                   "sidriti" if results[k]["range"].confidence < 0.5
-                   else "nepozitivna baza (jednogodišnji ulaz)")
+            why = ("ulazi su joj generički (peer multipli za ovu firmu "
+                   "nisu kalibrirani), pa brojka ne smije određivati zonu"
+                   if results[k]["range"].confidence < 0.5
+                   else "na zadnjim ulazima daje negativnu ili nultu "
+                   "vrijednost, što za cijenu dionice nema smisla")
             roles[k] = {"role": "anchor_excluded",
-                        "note": f"sidrena metoda ISKLJUČENA iz zone — {why}",
+                        "note": ("isključena iz izračuna zone — " + why
+                                 + "; prikazana je samo kao kontekst"),
                         "vs_zone_pct": None}
             continue
         b = bases.get(k)
@@ -2004,7 +2015,7 @@ def reconcile(results: dict, sector: Optional[str] = None,
                 "zone_after": [round(zone_low, 2), round(zone_high, 2)],
             }
             zone_note += (
-                f"; DIVIDENDNI POD (v3.1): V_div {v_div:,.2f} € uključen u "
+                f"; DIVIDENDNI POD: V_div {v_div:,.2f} € uključen u "
                 "medijan kvalificiranih metoda"
                 + (f", donji rub podignut na pod ({old_lo:,.2f} → "
                    f"{zone_low:,.2f})" if preniska and zone_low > old_lo else "")
@@ -2049,7 +2060,7 @@ def reconcile(results: dict, sector: Optional[str] = None,
                    else "prinos je unutar dopuštenog — zona prolazi test."
                    if not (preniska or previsoka) else
                    "V_div je uključen u medijan — zona objavljena bez "
-                   "suspenzije (v3.1).")),
+                   "suspenzije.")),
         }
     # v3 A.4 (INA-tip): zanemariv free float -> raskorak nije informativan
     low_float_note = None
@@ -2489,11 +2500,11 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
         if cur_roe is not None:
             if cur_basis == "ttm" and med3 is not None:
                 used = max(med3, cur_roe * 0.9)
-                rule = (f"ROE pravilo (v3 G): max(3g medijan {med3:.1%}, "
+                rule = (f"ROE pravilo: max(3g medijan {med3:.1%}, "
                         f"TTM {cur_roe:.1%}×0,9) = {used:.1%}")
             elif cur_basis == "ttm":
                 used = cur_roe * 0.9
-                rule = (f"ROE pravilo (v3 G): TTM {cur_roe:.1%}×0,9 = {used:.1%} "
+                rule = (f"ROE pravilo: TTM {cur_roe:.1%}×0,9 = {used:.1%} "
                         "(nema 3g serije za medijan)")
             else:
                 used = cur_roe
@@ -2641,7 +2652,7 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
             "archetype": "growth" if g1_comp > 0.08 else "mature",
             "verdict": g_meta["verdict"],
             "assessment": g_meta["narrative"],
-            "source": (f"g1={g1_comp:.1%} = PROCJENA ODRŽIVOG RASTA (M47): "
+            "source": (f"g1={g1_comp:.1%} = PROCJENA ODRŽIVOG RASTA: "
                        + "; ".join(parts_txt)
                        + f". Verdikt: {_VERDICT_HR.get(g_meta['verdict'], 'procjena')}. "
                        + g_meta["narrative"]

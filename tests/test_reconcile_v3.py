@@ -39,7 +39,7 @@ def test_zona_je_medijan_kvalificiranih():
     # medijan = 20; oblik sidra jPB: 0,9x–1,1x
     assert abs(rec["zone_low"] - 20 * 0.9) < 1e-9
     assert abs(rec["zone_high"] - 20 * 1.1) < 1e-9
-    assert "MEDIJAN" in rec["zone_note"]
+    assert "medijan" in rec["zone_note"]  # M55: javni tekst bez internog žargona
 
 
 def test_demote_pravilo_zapisano():
@@ -51,7 +51,7 @@ def test_demote_pravilo_zapisano():
         "ddm_gordon": (21.0, 22.0, 23.0, 0.7),        # 20 vs 22 = ±10%
     })
     rec = reconcile(res, "bank", ctx=_ctx())
-    assert "DEMOTE" in rec["zone_note"]
+    assert "preuzima medijan ostalih metoda" in rec["zone_note"]  # M55: bez žargona
     assert abs(rec["zone_low"] - 20 * 0.9) < 1e-9   # medijan preuzeo
 
 

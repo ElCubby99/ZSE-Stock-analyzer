@@ -73,14 +73,14 @@ def _calibration(key: str):
 
 G = 0.025
 G_TERMINAL = 0.04
-G_SRC = ("dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni "
+G_SRC = ("dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni "
          "BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta "
          "g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade "
          "iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs "
          "zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE "
          "koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji "
          "— kapital ne smije perpetuirati ciklus); g<r zadovoljeno "
-         "(min r ~6,9% uz β=0,7 po v3 K-stacku)")
+         "(min r ~6,9% uz β=0,7)")
 
 DISCOUNT_SRC = ("holding diskont 15–25%: empirijski raspon za europske holdinge "
                 "(nelikvidnost, dvostruko oporezivanje, trošak centra); "
@@ -155,10 +155,10 @@ def build_params(ticker: str) -> Params:
                      f"KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na "
                      f"placeholder multiplama, grupni neto dug konstantan); "
                      f"opažena PREMIJA se klampa na diskont 0 — premija se ne "
-                     f"ugrađuje u fer (v2 §4)"),
+                     f"ugrađuje u fer vrijednost"),
         }
         disc_src = (
-            f"IZMJERENI vlastiti P/NAV (v2 §4): medijan {pnav_measured['median']:.2f} "
+            f"IZMJERENI vlastiti P/NAV: medijan {pnav_measured['median']:.2f} "
             f"(p25 {pnav_measured['p25']:.2f}, p75 {pnav_measured['p75']:.2f}), "
             f"zadnje {1 - dc['latest']:.2f} ({dc['latest_date']}). "
             f"{pnav_measured['note']}")

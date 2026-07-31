@@ -15,7 +15,7 @@ import { Comparison, IndicatorGroups, KeyIndicators, NewsTab, TabBar } from './S
 import { useLang } from './i18n/LangContext.jsx'
 import { tx } from './i18n/dataText.mjs'
 import { sectorLabel } from './sectorLabels.mjs'
-import { dash, eur, fmtDate, meur, num, pct } from './format.js'
+import { dash, eur, fmtDate, meur, num, pct, zoneDec } from './format.js'
 
 // live firme (orchestrator) + CROS/ZABA (M1–M5) + HPB/HT (samo tržišni profil)
 const TICKERS = ['ADRS', 'CROS', 'ZABA', 'ADPL', 'ARNT', 'ATGR', 'DLKV', 'HPB',
@@ -847,7 +847,7 @@ function Narrative({ data }) {
         </p>
       )}
       <p>
-        {t('sp.nrZone1')}: <b>{eur(rec.zone_low, 0)}–{eur(rec.zone_high, 0)} {t('sp.nrPerShare')}</b>.
+        {t('sp.nrZone1')}: <b>{eur(rec.zone_low, zoneDec(rec.zone_high))}–{eur(rec.zone_high, zoneDec(rec.zone_high))} {t('sp.nrPerShare')}</b>.
         {' '}{t('sp.nrZoneExpl')}
       </p>
       {(() => {
