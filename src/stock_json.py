@@ -1387,6 +1387,8 @@ def build_stock_json(conn, ticker: str) -> dict:
         "low_float_note": rec.get("low_float_note"),
         # M53: kurirana pro-forma — objašnjenje metode za stranicu
         "pro_forma_note": rec.get("pro_forma_note"),
+        # M56: kurirana jednokratna stavka — napomena + priznanje revizije
+        "one_off_note": rec.get("one_off_note"),
     })
 
     shares = _f(ctx.shares_ex_treasury)
