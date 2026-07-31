@@ -242,15 +242,17 @@ def main(argv=None) -> int:
         if a.extract:
             touched = sorted(set(touched + stage_extract_queue(conn, run_id, log)))
         extra: list[int] = []
-        if a.recompute_tickers.strip():
-            arg = a.recompute_tickers.strip()
+        toks = [t.strip() for t in a.recompute_tickers.split(",") if t.strip()]
+        if toks:
             with conn.cursor() as cur:
-                if arg.lower() in ("svi", "all", "*"):
+                # 'svi' vrijedi i unutar liste ("svi,KOEI" iz workflowa gdje se
+                # input lijepi s repair tickerima) — inače "svi," završi kao
+                # nepostojeći ticker SVI i revalorizacija se tiho preskoči
+                if any(t.lower() in ("svi", "all", "*") for t in toks):
                     cur.execute("SELECT DISTINCT company_id FROM financials")
                 else:
-                    tks = [t.strip().upper() for t in arg.split(",") if t.strip()]
                     cur.execute("SELECT id FROM companies WHERE ticker = ANY(%s)",
-                                (tks,))
+                                ([t.upper() for t in toks],))
                 extra = [r[0] for r in cur.fetchall()]
         if (a.recompute and touched) or extra:
             stage_recompute(conn, run_id, log, sorted(set(touched + extra)))
