@@ -23,12 +23,6 @@ const G_ICON = (
   </svg>
 )
 
-const FB_ICON = (
-  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-    <path fill="#fff" d="M24 12a12 12 0 1 0-13.88 11.85v-8.38H7.08V12h3.04V9.36c0-3 1.79-4.67 4.53-4.67 1.31 0 2.68.24 2.68.24v2.95H15.8c-1.49 0-1.95.93-1.95 1.87V12h3.32l-.53 3.47h-2.79v8.38A12 12 0 0 0 24 12z"/>
-  </svg>
-)
-
 const APPLE_ICON = (
   <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
     <path fill="#fff" d="M16.37 12.9c.03 3.2 2.81 4.27 2.84 4.28-.02.08-.44 1.52-1.46 3.01-.88 1.29-1.8 2.57-3.24 2.6-1.42.03-1.87-.84-3.5-.84-1.62 0-2.13.81-3.47.87-1.39.05-2.45-1.4-3.34-2.68C2.38 17.5 1 12.73 2.86 9.5a5.2 5.2 0 0 1 4.4-2.67c1.37-.03 2.66.92 3.5.92.83 0 2.4-1.14 4.05-.97.69.03 2.63.28 3.87 2.1-.1.06-2.31 1.35-2.31 4.02zM13.7 4.94c.74-.9 1.24-2.14 1.1-3.38-1.06.04-2.36.71-3.12 1.6-.69.79-1.29 2.06-1.13 3.28 1.19.09 2.4-.6 3.15-1.5z"/>
@@ -56,9 +50,9 @@ function OAuthButtons({ setMsg }) {
       <button type="button" className="oauth-btn oauth-google" onClick={() => start('google')}>
         {G_ICON}<span>Nastavi s Googleom</span>
       </button>
-      <button type="button" className="oauth-btn oauth-facebook" onClick={() => start('facebook')}>
-        {FB_ICON}<span>Nastavi s Facebookom</span>
-      </button>
+      {/* Facebook prijava maknuta dok se OAuth ne implementira na Meta strani
+          (gumb je stajao a nije radio); PROVIDER_HR mapiranje ostaje za
+          eventualne postojeće facebook identitete */}
       {APPLE_ENABLED && (
         <button type="button" className="oauth-btn oauth-apple" onClick={() => start('apple')}>
           {APPLE_ICON}<span>Nastavi s Apple računom</span>
@@ -301,7 +295,7 @@ function AccountSettings({ session, profile, onClose }) {
   }
 
   const linked = new Set((identities || []).map((i) => i.provider))
-  const linkable = ['google', 'facebook', ...(APPLE_ENABLED ? ['apple'] : [])]
+  const linkable = ['google', ...(APPLE_ENABLED ? ['apple'] : [])]
     .filter((p) => !linked.has(p))
 
   return (

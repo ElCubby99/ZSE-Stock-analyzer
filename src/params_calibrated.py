@@ -107,6 +107,9 @@ PEER_SETS = {
     "ADPL": ["KODT", "DLKV", "IG"],
     "DLKV": ["KODT", "ADPL", "IG"],
     "IG": ["KODT", "ADPL", "DLKV"],
+    # M53: BSQR pro-forma — raznolike grupe (hrana/usluge/holding); multipl
+    # nosi kuriranu pro-forma metodu, ne comps
+    "BSQR": ["ATGR", "PODR", "ADRS"],
     # turizam (MAIS uključen otkad ima validirane financije, M14)
     "RIVP": ["PLAG", "ARNT", "MAIS"],
     "PLAG": ["RIVP", "ARNT", "MAIS"],
