@@ -325,7 +325,10 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
                         why=w,
                         badge=("uklj. kratk. fin. imovinu"
                                if lab in ("EV/EBITDA", "EV/EBIT") else None))
-                     if ev and num_v and num_v > 0 else _np(lab, "nema ulaza"))
+                     if ev and num_v and num_v > 0
+                     else _np(lab, "nema ulaza" if (not ev or num_v is None) else
+                              f"{lab.split('/')[1]} je negativan u razdoblju — "
+                              "omjer se ne računa (gubitak na operativnoj razini)"))
     for lab, num_v, num_b, f, w in (
             ("P/E", ni, ni_b, "trž.kap / neto dobit matici",
              "Koliko godina TRENUTNE zarade plaćate po današnjoj cijeni. "
@@ -345,7 +348,10 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
             continue
         g.append(_i(lab, (mcap / num_v) if (mcap and num_v and num_v > 0) else None,
                     "x", num_b, f, why=w)
-                 if mcap and num_v and num_v > 0 else _np(lab, "nema ulaza"))
+                 if mcap and num_v and num_v > 0
+                 else _np(lab, "nema ulaza" if (not mcap or num_v is None) else
+                          "gubitak/negativan nazivnik u razdoblju — omjer se "
+                          "ne računa (cijena podijeljena gubitkom nema smisla)"))
     g.append(_i("EPS", (ni / shares) if (ni is not None and shares) else None,
                 "eur", ni_b, "neto dobit matici / dionice ex-trezor",
                 why="Zarada po dionici: dobit koja pripada matici podijeljena "
@@ -357,7 +363,9 @@ def build_indicators(cur, company_id: int, ticker: str, sector: Optional[str],
                 why="Obrnuti P/E — 'prinos zarade' usporediv s prinosom "
                     "obveznice: koliko firma zaradi na svakih 100 € tržišne "
                     "vrijednosti.") if mcap and ni and ni > 0
-             else _np("Earnings yield", "nema ulaza"))
+             else _np("Earnings yield",
+                      "nema ulaza" if (not mcap or ni is None) else
+                      "gubitak u razdoblju — prinos zarade se ne računa"))
     g.append(_i("P/B", (mcap / eq) if (mcap and eq and eq > 0) else None, "x", eq_b,
                 "trž.kap / knjiga (matici)",
                 why="Koliko se plaća po euru vlastitog kapitala. Sam po sebi "

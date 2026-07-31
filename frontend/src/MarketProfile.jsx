@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useLang } from './i18n/LangContext.jsx'
 import { tx } from './i18n/dataText.mjs'
-import { dash, eur, fmtDate, num, pct } from './format.js'
+import { dash, eur, fmtDate, num, pct, zoneDec } from './format.js'
 
 /* Tržišni profil (GORE) — dizajnerski jezik "Burzovni list": IBM Plex,
    papir #F2F3EF / paneli #F7F8F4, oksblood #9E2B25 (tržišna cijena),
@@ -47,7 +47,7 @@ function GapBand({ zone, price, pref }) {
         <div className="prof-band-zone" style={{ left: `${p(lo)}%`, width: `${p(hi) - p(lo)}%` }} />
         <div className="prof-band-tick" style={{ left: `${p(price)}%`, background: pref ? STEEL : OX }} />
       </div>
-      <div className="prof-band-sub">{t('stock.fairZone')} {num(lo, 0)}–{num(hi, 0)} € · {gapLabel}</div>
+      <div className="prof-band-sub">{t('stock.fairZone')} {num(lo, zoneDec(hi))}–{num(hi, zoneDec(hi))} € · {gapLabel}</div>
     </div>
   )
 }

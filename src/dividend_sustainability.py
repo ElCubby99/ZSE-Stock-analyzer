@@ -278,7 +278,7 @@ def d_sust(conn, company_id: int, ni_ttm: float | None) -> dict | None:
             {"total_eur": round(inflows, 0), "per_holding": inflow_notes,
              "note": ("pokrivenost najave matice uključuje očekivane priljeve "
                       "dividendi kćeri — činjenično iz zadnje izglasane "
-                      "isplate kćeri × naš udio (v3 FAZA SOTP)")}
+                      "isplate kćeri × naš udio")}
             if inflows else None),
         "note": ("D_sust = održivi payout × normalizirana dobit (TTM) / broj "
                  "dionica; jednokratne isplate NE ulaze u bazu"),

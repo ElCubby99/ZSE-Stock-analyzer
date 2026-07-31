@@ -374,6 +374,19 @@ export const DATA_TX = {
   'NAV fonda (neto imovina)': 'Fund NAV (net assets)',
   'procjena zadržana: grupa u izgradnji — prijavljene brojke hvataju akvizicije tek od datuma preuzimanja (prihod 2025.: prijavljeno 628 M€ vs pro-forma 737 M€), velik dio vertikala drže manjinski partneri (manjinski udjeli 153 M€ uz kapital matice 58 M€), uz jednokratne troškove integracije. Metode na takvim brojkama daju vrijednost koja ne opisuje grupu kakva danas posluje, pa je ne objavljujemo dok izvješća ne obuhvate puni opseg grupe': "estimate withheld: a group under construction — reported figures capture acquisitions only from the takeover date (2025 revenue: EUR 628m reported vs EUR 737m pro-forma), a large part of the verticals is held by minority partners (minority interests EUR 153m against parent equity of EUR 58m), with one-off integration costs. Methods run on such figures produce a value that does not describe the group as it operates today, so we do not publish one until the reports cover the group's full scope",
   'KONČAR standalone (ex-uvrštene kćeri)': 'KONCAR standalone (excl. listed subsidiaries)',
+  // ---- M55: javni tekstovi bez internog žargona (skip razlozi, red rules) ----
+  'pasivni holding — novčani tok matice ne hvata vrijednost udjela u drugim firmama':
+    "passive holding — the parent's cash flow does not capture the value of stakes in other companies",
+  'dividendni model je metoda vrijednosti samo kod banaka i osiguranja; kod ostalih firmi dividendni prinos je pokazatelj, ne metoda':
+    'the dividend model is a valuation method only for banks and insurers; for other companies the dividend yield is an indicator, not a method',
+  'glavna metoda počiva na generičkom (nekalibriranom) ulazu — procjenu zadržavamo dok se ulaz ne kalibrira na ovu firmu':
+    'the main method rests on a generic (uncalibrated) input — we withhold the estimate until the input is calibrated to this company',
+  'procjena odstupa više od 40% od tržišne cijene, a usporedba s onim što cijena implicira nije izračunata — procjenu zadržavamo dok se to ne razriješi':
+    'the estimate deviates more than 40% from the market price, and the comparison with what the price implies has not been computed — we withhold the estimate until that is resolved',
+  'globalni peerovi su KONTEKST — ne ulaze u izračun fer-zone; cross-market razlike (rast, likvidnost, veličina, trošak kapitala tržišta) objašnjavaju dio raskoraka u multiplima':
+    'global peers are CONTEXT — they do not enter the fair-zone calculation; cross-market differences (growth, liquidity, size, market cost of capital) explain part of the gap in multiples',
+  'zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali); kvartalni izvještaji su nerevidirani':
+    'earnings/revenue/ROE are computed over the last 12 months (latest annual + this year\'s quarters − last year\'s quarters); quarterly reports are unaudited',
   // ---- M53: BSQR kurirana pro-forma procjena ----
   'EV/EBITDA na pro-forma brojkama (grupa u današnjem sastavu)':
     'EV/EBITDA on pro-forma figures (the group as composed today)',
@@ -517,6 +530,45 @@ const PATTERNS = [
     "the anchor method is unavailable — the zone is the min–max of positive bases (fallback); see 'skipped' for the reason"],
   [/Sve metode zajedno raspinju ([-\d.,]+)–([\d.,]+) € \(raspon ([\d.,]+)%\) — svaka leća mjeri drugo svojstvo; sidrena zona je uža\./g,
     'All methods together span $1–$2 € (a $3% range) — each lens measures a different property; the anchored zone is narrower.'],
+  // ---- M55: zone_note i uloge metoda BEZ internog žargona ----
+  [/zona = sredina \(medijan\) metoda koje su prošle provjere \(/g,
+    'zone = the middle (median) of the methods that passed the checks ('],
+  [/\), a širina dolazi iz osjetljivosti glavne metode '([a-z_]+)' na trošak kapitala ±1 postotni bod/g,
+    "), and the width comes from the sensitivity of the main method '$1' to the cost of capital of ±1 percentage point"],
+  [/dvije prihvaćene metode razmaknute su ([\d.,]+)% pa ih ne prosječujemo — sredinu nosi glavna metoda '([a-z_]+)', druga ostaje kontekst/g,
+    "the two accepted methods sit $1% apart, so we do not average them — the midpoint is carried by the main method '$2', the other remains context"],
+  [/metode ([a-z_]+) i ([a-z_]+) se slažu \(±20%\) a glavna metoda '([a-z_]+)' odstupa ([+\-][\d.,]+)% — sredinu zato preuzima medijan ostalih metoda/g,
+    "methods $1 and $2 agree (±20%) while the main method '$3' deviates by $4% — the midpoint is therefore taken over by the median of the other methods"],
+  [/iz zone isključeno \(negativna vrijednost ili nekalibrirani ulazi\): /g,
+    'excluded from the zone (negative value or uncalibrated inputs): '],
+  [/isključena metoda preosjetljiva na pretpostavke \(vlastiti raspon širi od 100% procjene\): /g,
+    'a method oversensitive to assumptions was excluded (its own range wider than 100% of its estimate): '],
+  [/isključene metode preosjetljive na pretpostavke: /g,
+    'methods oversensitive to assumptions were excluded: '],
+  [/glavna metoda za ovaj tip firme nije dostupna — zona je raspon pozitivnih procjena preostalih metoda; razlog za svaku izostavljenu metodu piše uz nju/g,
+    'the main method for this type of company is unavailable — the zone is the range of positive estimates of the remaining methods; the reason for each omitted method is stated next to it'],
+  [/primijenjena minimalna širina zone ±([\d.,]+)%/g,
+    'a minimum zone width of ±$1% was applied'],
+  [/DIVIDENDNI POD: V_div ([\d.,]+) € uključen u medijan kvalificiranih metoda/g,
+    'DIVIDEND FLOOR: V_div of $1 € included in the median of the qualified methods'],
+  [/isključena iz izračuna zone — /g, 'excluded from the zone calculation — '],
+  [/ulazi su joj generički \(peer multipli za ovu firmu nisu kalibrirani\), pa brojka ne smije određivati zonu/g,
+    'its inputs are generic (peer multiples are not calibrated for this company), so the figure must not set the zone'],
+  [/na zadnjim ulazima daje negativnu ili nultu vrijednost, što za cijenu dionice nema smisla/g,
+    'on the latest inputs it produces a negative or zero value, which makes no sense for a share price'],
+  [/; prikazana je samo kao kontekst/g, '; shown for context only'],
+  [/nositelj\/potvrda za ovaj tip firme \('([a-z_]+)'\)/g,
+    "carrier/confirmation for this type of company ('$1')"],
+  [/nositelj usporedbe za ovaj tip firme \('([a-z_]+)'\)/g,
+    "the comparison carrier for this type of company ('$1')"],
+  [/za ovaj tip firme \('([a-z_]+)'\) knjigovodstveni omjer \(P\/B\) je pokazatelj, ne samostalna metoda — vrijednost nose novčani tok i usporedbe/g,
+    "for this type of company ('$1') the book ratio (P/B) is an indicator, not a standalone method — value is carried by cash flow and comparisons"],
+  [/([A-Za-z]+) je negativan u razdoblju — omjer se ne računa \(gubitak na operativnoj razini\)/g,
+    '$1 is negative in the period — the ratio is not computed (an operating-level loss)'],
+  [/gubitak\/negativan nazivnik u razdoblju — omjer se ne računa \(cijena podijeljena gubitkom nema smisla\)/g,
+    'a loss/negative denominator in the period — the ratio is not computed (price divided by a loss is meaningless)'],
+  [/gubitak u razdoblju — prinos zarade se ne računa/g,
+    'a loss in the period — the earnings yield is not computed'],
 
   // ---- market implied (implicirani g / r) ----
   [/uz naš r=([\d.,]+)% cijena implicira trajni rast ([A-Za-z]+)-a ~([+\-][\d.,]+)% godišnje/g,
