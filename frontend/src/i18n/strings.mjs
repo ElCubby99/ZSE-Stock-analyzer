@@ -1340,6 +1340,8 @@ export const STR = {
   'ab.m.multiples_relative': { hr: 'RELATIVNI MULTIPLI', en: 'RELATIVE MULTIPLES' },
   'ab.m.ev_ebitda': { hr: 'EV/EBITDA', en: 'EV/EBITDA' },
   'ab.m.ddm_gordon': { hr: 'DIVIDENDNI DISKONT', en: 'DIVIDEND DISCOUNT' },
+  'ab.m.pro_forma_ev_ebitda': { hr: 'PRO-FORMA EV/EBITDA', en: 'PRO-FORMA EV/EBITDA' },
+  'ab.pfWhyH': { hr: 'ZAŠTO PRO-FORMA METODA (I ŠTO TO ZNAČI)', en: 'WHY A PRO-FORMA METHOD (AND WHAT IT MEANS)' },
   'ab.held': { hr: 'ANALIZA ZADRŽANA — CRVENO PRAVILO', en: 'ANALYSIS WITHHELD — RED RULE' },
   'ab.heldNote': {
     hr: 'Fer-zona se ne objavljuje dok se ne razriješe pravila kvalitete (doktrina v2 §8):',

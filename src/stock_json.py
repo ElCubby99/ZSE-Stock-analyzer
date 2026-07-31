@@ -1385,6 +1385,8 @@ def build_stock_json(conn, ticker: str) -> dict:
                                                  default=_f))
         if rec.get("dividend_sanity") else None,
         "low_float_note": rec.get("low_float_note"),
+        # M53: kurirana pro-forma — objašnjenje metode za stranicu
+        "pro_forma_note": rec.get("pro_forma_note"),
     })
 
     shares = _f(ctx.shares_ex_treasury)

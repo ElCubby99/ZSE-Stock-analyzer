@@ -41,7 +41,7 @@ const METHOD_KEYS = {
   sotp_nav: 'sp.method.sotp_nav', nav_fund: 'ab.m.nav_fund', residual_income: 'sp.method.residual_income',
   justified_pb_roe: 'sp.method.justified_pb_roe', dcf_fcf: 'sp.method.dcf_fcf',
   multiples_relative: 'sp.method.multiples_relative', ev_ebitda: 'sp.method.ev_ebitda',
-  ddm_gordon: 'sp.method.ddm_gordon',
+  ddm_gordon: 'sp.method.ddm_gordon', pro_forma_ev_ebitda: 'ab.m.pro_forma_ev_ebitda',
 }
 
 /* ---------- v2 sekcije ---------- */

@@ -30,7 +30,7 @@ const METHOD_SHORT_KEY = {
   justified_pb_roe: 'ab.m.justified_pb_roe', dcf_fcf: 'ab.m.dcf_fcf',
   comps: 'ab.m.comps',
   multiples_relative: 'ab.m.multiples_relative', ev_ebitda: 'ab.m.ev_ebitda',
-  ddm_gordon: 'ab.m.ddm_gordon',
+  ddm_gordon: 'ab.m.ddm_gordon', pro_forma_ev_ebitda: 'ab.m.pro_forma_ev_ebitda',
 }
 const methodShort = (key, t, fallback) =>
   (METHOD_SHORT_KEY[key] ? t(METHOD_SHORT_KEY[key]) : (fallback || key))
@@ -144,6 +144,12 @@ export function AnchorPanel({ data }) {
           </span>
         ))}
       </div>
+      {rec.pro_forma_note && (
+        <div className="anch-proforma">
+          <div className="prof-klabel">{t('ab.pfWhyH')}</div>
+          <p>{tx(rec.pro_forma_note, lang)}</p>
+        </div>
+      )}
       {rec.reasoning && (
         <div className="anch-chain">
           <div className="prof-klabel">{t('ab.howAnchor')}</div>

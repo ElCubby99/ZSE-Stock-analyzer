@@ -1061,6 +1061,8 @@ def compute_nav_fund(c: Ctx) -> ValueRange:
 
 # M51.3 (v2 §8.4): kurirani hold — javni razlog zašto se procjena ZADRŽAVA.
 # Skida se kad TTM obuhvati puni opseg grupe ili uz normalizaciju s izvorima.
+# M53: za BSQR hold vrijedi SAMO kao fallback — kad kurirana pro-forma metoda
+# (dolje) nije izračunljiva (npr. peer skup nekalibriran).
 VALUATION_HOLD = {
     "BSQR": ("procjena zadržana: grupa u izgradnji — prijavljene brojke hvataju "
              "akvizicije tek od datuma preuzimanja (prihod 2025.: prijavljeno "
@@ -1071,6 +1073,112 @@ VALUATION_HOLD = {
              "objavljujemo dok izvješća ne obuhvate puni opseg grupe"),
 }
 
+
+# ============================================================
+#  M53: KURIRANA PRO-FORMA PROCJENA (Borisova opcija b)
+#  Za grupe u izgradnji čija prijavljena izvješća još ne obuhvaćaju
+#  akvizicije za punu godinu: fer-zona se računa na pro-forma/anualiziranim
+#  brojkama S IZVOROM za svaku brojku, jasno označeno kao NEREVIDIRANO.
+#  Privremeni most — briše se kad službena izvješća obuhvate puni opseg
+#  (tada firma prelazi na standardne metode).
+# ============================================================
+PRO_FORMA = {
+    "BSQR": {
+        # donji rub EBITDA raspona: 2× službena konsolidirana EBITDA H1 2026
+        "ebitda_low_eur": 70.7e6,
+        "ebitda_low_src": ("anualizirana službena EBITDA: 2 × H1 2026 (EBIT "
+                           "12,0 M€ + amortizacija 23,3 M€ = 35,4 M€) = 70,7 M€ "
+                           "— polugodišnje izvješće 31.7.2026. (nerevidirano, "
+                           "EHO objava #68191), bez sezonskih i jednokratnih "
+                           "prilagodbi"),
+        # gornji rub: uprávina pro-forma prilagođena EBITDA 2025
+        "ebitda_high_eur": 95.0e6,
+        "ebitda_high_src": ("pro-forma prilagođena EBITDA 2025. = 95,0 M€ — "
+                            "Prezentacija za investitore, str. 44 (EHO objava "
+                            "20.5.2026., #67068): kao da su sve akvizicije u "
+                            "grupi od 1.1., bez jednokratnih troškova; "
+                            "UPRAVINA NEREVIDIRANA BROJKA (uključuje i PIK "
+                            "Vrbovec čije zaključenje još čeka odobrenja)"),
+        "net_debt_eur": 92.7e6,
+        "net_debt_src": ("neto dug 30.6.2026.: krediti 300,2 + 79,4 − novac "
+                         "258,6 − kratkoročna fin. imovina 28,3 = 92,7 M€ "
+                         "(polugodišnje izvješće, nerevidirano)"),
+        # udio dioničara BSQR-a u vrijednosti grupe (manjinski partneri
+        # drže velik dio vertikala) — knjigovodstveni omjer kao aproksimacija
+        "parent_share": 0.5194,
+        "parent_share_src": ("kapital matice 200,9 M€ / ukupni kapital 386,8 M€ "
+                             "na 30.6.2026. = 51,9% — knjigovodstveni omjer kao "
+                             "aproksimacija udjela dioničara BSQR-a (manjinski "
+                             "partneri, među njima MidEuropa i EBRD, drže dio "
+                             "vertikala; tržišne cijene tih udjela ne postoje)"),
+        "why": ("Zašto pro-forma metoda: BOSQAR raste kupovinom firmi, a "
+                "računovodstvena pravila dopuštaju da se kupljena firma u "
+                "konsolidirano izvješće uključi tek od datuma preuzimanja. "
+                "Zato prijavljeni prihod za 2025. iznosi 628 M€, iako bi grupa "
+                "u današnjem sastavu cijelu godinu prihodovala oko 737 M€ "
+                "(uprávine pro-forma brojke). Standardne metode na prijavljenim "
+                "brojkama vrednuju grupu kakva više ne postoji — pola godine s "
+                "akvizicijama, pola bez, s jednokratnim troškovima integracije. "
+                "Zato fer-zonu računamo na rasponu EBITDA-e od anualizirane "
+                "službene polugodišnje brojke (donji rub) do uprávine pro-forma "
+                "prilagođene EBITDA-e (gornji rub), množimo je medijanom "
+                "EV/EBITDA usporedivih ZSE grupa, odbijamo neto dug te uzimamo "
+                "samo dio koji pripada dioničarima BSQR-a — manjinski partneri "
+                "drže velik dio vertikala. VAŽNO: pro-forma brojke sastavlja "
+                "uprava i nisu revidirane; kad službena izvješća obuhvate puni "
+                "opseg grupe, prelazimo na standardne metode."),
+    },
+}
+
+
+def elig_pro_forma(c: Ctx):
+    if getattr(c, "ticker", None) not in PRO_FORMA:
+        return False, ("kurirana pro-forma procjena postoji samo za grupe u "
+                       "izgradnji čija izvješća još ne obuhvaćaju akvizicije "
+                       "za punu godinu")
+    if not getattr(c.params, "peers_calibrated", False) or not c.params.peer_ev_ebitda:
+        return False, ("peer EV/EBITDA multiplikator nije kalibriran — "
+                       "pro-forma procjena bi počivala na placeholderu")
+    if not c.shares_ex_treasury:
+        return False, "broj dionica nije u bazi"
+    return True, ""
+
+
+def compute_pro_forma(c: Ctx) -> ValueRange:
+    """M53: EV/EBITDA na pro-forma/anualiziranim brojkama uz korekciju za
+    manjinske udjele. Sve brojke kurirane S IZVOROM (PRO_FORMA dict);
+    multiplikator = medijan EV/EBITDA peer skupa iz baze (ista kalibracija
+    kao comps). NEREVIDIRANI ulazi -> snižena pouzdanost (0,6)."""
+    d = PRO_FORMA[c.ticker]
+    m = float(c.params.peer_ev_ebitda)
+    nd = d["net_debt_eur"]
+    share = d["parent_share"]
+
+    def ps(ebitda):
+        return _per_share(max(0.0, (m * ebitda - nd)) * share, c)
+
+    lo, hi = ps(d["ebitda_low_eur"]), ps(d["ebitda_high_eur"])
+    if lo is None or hi is None or hi <= 0:
+        return _missing(c, "shares_ex_treasury")
+    base = (lo + hi) / 2
+    assum = {
+        "peer_ev_ebitda": m,
+        "peer_ev_ebitda_src": ("medijan EV/EBITDA peer skupa iz baze (ista "
+                               "kalibracija kao za peer usporedbu; skup u "
+                               "'izvorima pretpostavki')"),
+        "ebitda_range_eur": [d["ebitda_low_eur"], d["ebitda_high_eur"]],
+        "ebitda_low_src": d["ebitda_low_src"],
+        "ebitda_high_src": d["ebitda_high_src"],
+        "net_debt_eur": nd,
+        "net_debt_src": d["net_debt_src"],
+        "parent_share": share,
+        "parent_share_src": d["parent_share_src"],
+        "unaudited_note": ("PRO-FORMA (NEREVIDIRANO): raspon zone dolazi iz "
+                           "raspona EBITDA-e (službena anualizirana → uprávina "
+                           "pro-forma prilagođena), ne iz osjetljivosti na r"),
+    }
+    return ValueRange(min(lo, hi), base, max(lo, hi), assum, 0.6)
+
 REGISTRY = [
     # v2 §1: tržišni pristup = JEDNA metoda (interna triangulacija leća)
     Method("comps",              "Peer usporedba (comps)",   elig_comps,          compute_comps),
@@ -1080,6 +1188,10 @@ REGISTRY = [
     Method("residual_income",    "Rezidualni dohodak (RI)",  elig_residual_income, compute_residual_income),
     Method("sotp_nav",           "Sum-of-the-parts / NAV",   elig_sotp,           compute_sotp),
     Method("nav_fund",           "NAV fonda (neto imovina)", elig_nav_fund,       compute_nav_fund),
+    # M53: kurirana pro-forma (grupe u izgradnji) — sidri SAMO preko
+    # hierarchy_for_ctx override-a, ne dira ostale arhetipove
+    Method("pro_forma_ev_ebitda", "EV/EBITDA na pro-forma brojkama (grupa u današnjem sastavu)",
+           elig_pro_forma, compute_pro_forma),
 ]
 
 
@@ -1179,6 +1291,17 @@ HIERARCHY_V2 = {
 
 
 def hierarchy_for_ctx(c: Ctx) -> tuple[str, dict]:
+    # M53: kurirana pro-forma NADJAČAVA arhetip — metode na prijavljenim
+    # brojkama za ove firme strukturno ne opisuju grupu (v. PRO_FORMA["why"])
+    if getattr(c, "ticker", None) in PRO_FORMA:
+        return "pro_forma", {
+            "anchor": ("pro_forma_ev_ebitda",),
+            "secondary_note": ("metoda računa na PRIJAVLJENIM brojkama koje "
+                               "akvizicije hvataju tek od datuma preuzimanja — "
+                               "strukturno podcjenjuje grupu u današnjem "
+                               "sastavu; prikazana radi transparentnosti, ne "
+                               "ulazi u fer-zonu"),
+        }
     arche = archetype_v2(c)
     return arche, HIERARCHY_V2[arche]
 
@@ -1265,7 +1388,9 @@ def value_company(c: Ctx) -> dict:
         for s in rec.get("anchor_inconsistency") or []:
             flags.append(f"ULAZI NEKONZISTENTNI: {s} — uskladi pretpostavke, "
                          "ne širi zonu")
-        if rec.get("dispersion_all", 0) > 0.60:
+        # M53: kod pro-forma arhetipa razilaženje metoda je OČEKIVANO i
+        # objašnjeno (prijavljene brojke vs pro-forma) — flag bi samo zbunjivao
+        if rec.get("dispersion_all", 0) > 0.60 and rec.get("archetype") != "pro_forma":
             flags.append(f"metode se međusobno razilaze {rec['dispersion_all']:.0%} "
                          "(sve metode) — provjeri ulaze/pretpostavke")
         gap = None
@@ -1288,9 +1413,14 @@ def value_company(c: Ctx) -> dict:
         # M51.3 (§8.4): KURIRANI HOLD — firma kod koje metode na PRIJAVLJENIM
         # brojkama strukturno ne opisuju grupu; procjena se ZADRŽAVA s javnim
         # razlogom (radije prazno s razlogom nego brojka koju ne branimo).
+        # M53: hold je samo FALLBACK — kad kurirana pro-forma metoda sidri,
+        # zona se objavljuje (s pro_forma_note objašnjenjem na stranici)
         hold = VALUATION_HOLD.get(getattr(c, "ticker", None))
-        if hold:
+        pf_anchored = "pro_forma_ev_ebitda" in (rec.get("anchor_methods") or [])
+        if hold and not pf_anchored:
             red.append(hold)
+        if pf_anchored:
+            rec["pro_forma_note"] = PRO_FORMA[c.ticker]["why"]
         prim = (rec.get("anchor_methods") or [None])[0]
         if prim and results[prim]["range"].confidence < 0.5:
             red.append("sidro sadrži placeholder ulaz (v2 §8.1)")
@@ -1528,6 +1658,20 @@ def _reasoning(c: Ctx, results: dict, rec: dict) -> str:
             parts.append(f"Leće se razilaze ({a['intra_spread']['spread_pct']:.0f}%) "
                          f"pa se ne prosječe; razlog: {a['intra_spread']['anomaly']}")
         risk = "koliko su odabrane usporedive firme zaista usporedive"
+    elif prim == "pro_forma_ev_ebitda" and prim in results:
+        a = results[prim]["range"].assumptions
+        eb = a.get("ebitda_range_eur") or [0, 0]
+        parts.append(
+            f"Grupa je rasla kupovinom firmi, a prijavljena izvješća hvataju "
+            f"akvizicije tek od datuma preuzimanja — zato zonu računamo na "
+            f"pro-forma brojkama (grupa u današnjem sastavu): raspon EBITDA-e "
+            f"{eb[0] / 1e6:,.0f}–{eb[1] / 1e6:,.0f} M€ × peer EV/EBITDA "
+            f"{a.get('peer_ev_ebitda'):,.1f}× − neto dug, pa dioničarima "
+            f"BSQR-a pripada {a.get('parent_share', 0) * 100:,.0f}% te "
+            f"vrijednosti (ostatak drže manjinski partneri u vertikalama) — "
+            f"sredina je {results[prim]['range'].base:,.2f} € po dionici")
+        risk = ("pro-forma brojke sastavlja uprava i nisu revidirane; udio "
+                "manjinskih partnera aproksimiran je knjigovodstvenim omjerom")
     elif prim and prim in results:
         parts.append(f"Sidro {results[prim]['label']}: "
                      f"{results[prim]['range'].base:,.2f} € po dionici")
@@ -1566,6 +1710,48 @@ def reconcile(results: dict, sector: Optional[str] = None,
         return {"status": "no_value"}
     arche, h = (hierarchy_for_ctx(ctx) if ctx is not None
                 else ("industrial_noforward", HIERARCHY_V2["industrial_noforward"]))
+    # M53: kurirana pro-forma — zona dolazi ISKLJUČIVO iz pro-forma metode
+    # (triangulacija medijanom bi je razvodnila metodama na prijavljenim
+    # brojkama, što je upravo greška koju pro-forma ispravlja). Ostale metode
+    # ostaju prikazane kao sekundarne s razlogom odstupanja.
+    if arche == "pro_forma":
+        pf = "pro_forma_ev_ebitda"
+        if pf in bases and bases[pf] > 0:
+            vr_pf = results[pf]["range"]
+            z_lo, z_hi = vr_pf.low or bases[pf], vr_pf.high or bases[pf]
+            mid_pf = (z_lo + z_hi) / 2
+            roles_pf = {pf: {"role": "anchor", "note": None, "vs_zone_pct": None}}
+            for k, b in bases.items():
+                if k == pf:
+                    continue
+                roles_pf[k] = {"role": "secondary", "note": h["secondary_note"],
+                               "vs_zone_pct": (b / mid_pf - 1) if mid_pf else None}
+            lo_all_pf, hi_all_pf = min(bases.values()), max(bases.values())
+            spread_pf = (z_hi - z_lo) / z_hi if z_hi else 0
+            return {
+                "qualified_methods": [pf],
+                "recalibrating": None,
+                "dividend_sanity": None,
+                "low_float_note": None,
+                "method_bases": {k: r["range"].base for k, r in results.items()},
+                "archetype": arche,
+                "anchor_methods": [pf],
+                "method_roles": roles_pf,
+                "zone_low": z_lo, "zone_high": z_hi,
+                "zone_note": ("PRO-FORMA zona (nerevidirani ulazi s izvorima): "
+                              "raspon dolazi iz raspona EBITDA-e — od "
+                              "anualizirane službene polugodišnje brojke do "
+                              "uprávine pro-forma prilagođene EBITDA-e; metode "
+                              "na prijavljenim brojkama ne ulaze u zonu (v. "
+                              "objašnjenje metode)"),
+                "all_methods_low": lo_all_pf, "all_methods_high": hi_all_pf,
+                "anchor_inconsistency": None,
+                "dispersion": spread_pf,
+                "dispersion_all": ((hi_all_pf - lo_all_pf) / hi_all_pf
+                                   if hi_all_pf else 0),
+                "divergent": spread_pf > 0.30,
+            }
+        # pro-forma nije izračunata -> pošten fallback: hold (value_company)
     anchors_all = [k for k in h["anchor"] if k in bases]
     # sidro s nepozitivnom bazom (npr. DCF u godini negativnog FCF-a) ne smije
     # definirati fer-zonu — ostaje prikazano, ali izvan zone, s napomenom;
