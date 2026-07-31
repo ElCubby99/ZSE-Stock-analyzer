@@ -41,10 +41,22 @@ def feed(variant: str, *, ticker: str | None = None,
         params["dateTo"] = date_to
     if news_type_id is not None:
         params["newsTypeId"] = news_type_id
-    r = requests.get(f"{BASE}/feed/json", params=params, timeout=timeout,
-                     verify=_verify())
-    r.raise_for_status()
-    return r.json()
+    # M54.1: EHO povremeno vrati prazan/ne-JSON odgovor (noćni prekidi) —
+    # jednokratni workflow runovi (reports-sync) su na tome umirali. Retry s
+    # backoffom; zadnja greška se propagira (radije pad s razlogom nego tiho).
+    import time as _time
+    last_exc: Exception | None = None
+    for attempt in range(4):
+        try:
+            r = requests.get(f"{BASE}/feed/json", params=params, timeout=timeout,
+                             verify=_verify())
+            r.raise_for_status()
+            return r.json()
+        except (requests.RequestException, ValueError) as e:
+            last_exc = e
+            if attempt < 3:
+                _time.sleep(5 * 2 ** attempt)   # 5s, 10s, 20s
+    raise last_exc
 
 
 def page_text(url: str, *, timeout: int = 60) -> str:
