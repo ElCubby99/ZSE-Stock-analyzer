@@ -1059,6 +1059,22 @@ def compute_nav_fund(c: Ctx) -> ValueRange:
     return ValueRange(base * 0.975, base, base * 1.025, assum, 0.85)
 
 
+# M54: kurirana JEDNOKRATNA stavka u godišnjoj dobiti — dobit koja ne opisuje
+# ponovljivo poslovanje (npr. dobit od povoljne kupnje kod pripajanja) IZUZIMA
+# se iz ulaza VALUACIJE (ROE pravilo, P/E leće, market-implied). Prikazi
+# činjenica (financije, pokazatelji) ostaju na PRIJAVLJENIM brojkama.
+# {ticker: (fiscal_year, one_off_eur, javni razlog s izvorom)}
+NI_ONE_OFF = {
+    "SNBA": (2025, 23.7e6,
+             ("iz dobiti FY2025 (24,1 M€) izuzeta jednokratna stavka 23,7 M€ — "
+              "'Ostali prihodi iz redovnog poslovanja' u RDG-u FY2025 "
+              "(prijašnjih godina ≈ 0): dobit od povoljne kupnje pri pripajanju "
+              "banke (bilanca u Q1 2025 skočila s 293 na 543 M€, kapital s 26 "
+              "na 50 M€). Ponovljiva dobit FY2025 je ~0,4 M€ — jednokratni "
+              "dobitak se ne smije pretvoriti u trajnu stopu povrata")),
+}
+
+
 # M51.3 (v2 §8.4): kurirani hold — javni razlog zašto se procjena ZADRŽAVA.
 # Skida se kad TTM obuhvati puni opseg grupe ili uz normalizaciju s izvorima.
 # M53: za BSQR hold vrijedi SAMO kao fallback — kad kurirana pro-forma metoda
@@ -2220,6 +2236,15 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
             val_a = float(r[0])
             conf_a = float(r[1]) if r[1] is not None else 0.0
             fy_a = r[2]
+            # M54: kurirana jednokratna stavka — VALUACIJSKI ulaz dobiti se
+            # normalizira (prikazi činjenica ostaju na prijavljenim brojkama)
+            if item in ("net_income_parent", "net_income"):
+                oo = NI_ONE_OFF.get(ticker)
+                if oo and oo[0] == fy_a:
+                    val_a -= oo[1]
+                    ttm_meta[item] = {"basis": "annual", "fy": fy_a,
+                                      "one_off_excluded_eur": oo[1],
+                                      "reason": oo[2]}
             if item in _FLOW_ITEMS or item in _BALANCE_ITEMS:
                 rows = _interim_rows(item)
                 newer = [x for x in rows if x[1] > fy_a]
@@ -2474,6 +2499,11 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                 used = cur_roe
                 rule = (f"ROE {cur_roe:.1%} iz zadnjeg GODIŠNJEG (kvartali "
                         "nedostupni/nekonzistentni — TTM se ne gradi)")
+            # M54: vidljivi zapis kurirane normalizacije (SNBA-tip: dobit od
+            # povoljne kupnje ne smije postati trajna stopa povrata)
+            _oo = NI_ONE_OFF.get(ticker)
+            if _oo:
+                rule += f" | NORMALIZACIJA: {_oo[2]}"
             roe_hint = {"used": round(used, 6), "ttm_or_annual": round(cur_roe, 6),
                         "basis": cur_basis, "median_3y": (round(med3, 6)
                                                           if med3 is not None else None),

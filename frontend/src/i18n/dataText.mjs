@@ -564,12 +564,20 @@ const PATTERNS = [
   [/arhetip '([a-z_]+)': opravdani P\/B je ovdje leća\/pokazatelj, ne metoda \(v([\d.]+) §([\d.]+)\/§([\d.]+)\)/g,
     "archetype '$1': justified P/B is a lens/indicator here, not a method (v$2 §$3/§$4)"],
   [/ROE pravilo/g, 'ROE rule'],
+  // M54: kurirana normalizacija jednokratne dobiti (SNBA pripajanje)
+  [/ \| NORMALIZACIJA: /g, ' | NORMALISATION: '],
+  [/iz dobiti FY2025 \(24,1 M€\) izuzeta jednokratna stavka 23,7 M€ — 'Ostali prihodi iz redovnog poslovanja' u RDG-u FY2025 \(prijašnjih godina ≈ 0\): dobit od povoljne kupnje pri pripajanju banke \(bilanca u Q1 2025 skočila s 293 na 543 M€, kapital s 26 na 50 M€\)\. Ponovljiva dobit FY2025 je ~0,4 M€ — jednokratni dobitak se ne smije pretvoriti u trajnu stopu povrata/g,
+    "a one-off item of EUR 23.7m was excluded from FY2025 profit (EUR 24.1m) — 'Other income from ordinary operations' in the FY2025 P&L (≈ 0 in prior years): a bargain-purchase gain from the bank merger (the balance sheet jumped from EUR 293m to EUR 543m in Q1 2025, equity from 26 to 50). Repeatable FY2025 profit is ~EUR 0.4m — a one-off gain must not be turned into a perpetual rate of return"],
   [/nema (\d)g serije za medijan/g, 'no $1y series for the median'],
   [/(\d)g medijan/g, '$1y median'],
   [/TTM se ne gradi: TTM izvan sanity raspona \(([-\d.,]+)× godišnjeg\) — koristi se godišnje — vrednuje se iz zadnjeg godišnjeg izvješća/g,
     'TTM is not built: TTM outside the sanity range ($1× annual) — the annual figure is used — valued from the latest annual report'],
   [/TTM se ne gradi: nema prošlogodišnjeg q(\d) interima za usporedbu — TTM se ne gradi — vrednuje se iz zadnjeg godišnjeg izvješća/g,
     'TTM is not built: no prior-year q$1 interim for comparison — TTM is not built — valued from the latest annual report'],
+  [/TTM se ne gradi: interim serija nekonzistentna s godišnjim izvješćem \(q4 kumulativ odstupa ([\d.,]+)%\) — vrednuje se iz zadnjeg godišnjeg izvješća/g,
+    'TTM is not built: the interim series is inconsistent with the annual report (q4 cumulative deviates $1%) — valued from the latest annual report'],
+  [/interim serija nekonzistentna s godišnjim izvješćem \(q4 kumulativ odstupa ([\d.,]+)%\)/g,
+    'the interim series is inconsistent with the annual report (q4 cumulative deviates $1%)'],
 
   // ---- valuacija: rast (g_source, badges, origin) ----
   [/kapitalni trajni g ([\d.,]+)% \(sidro zone je ([a-z_]+) — ista pretpostavka rasta kojom je zona izračunata\)/g,
