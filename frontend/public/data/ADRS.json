@@ -1043,7 +1043,7 @@
         "per_holding": [
           "Croatia osiguranje: 33,091,077 €"
         ],
-        "note": "pokrivenost najave matice uključuje očekivane priljeve dividendi kćeri — činjenično iz zadnje izglasane isplate kćeri × naš udio (v3 FAZA SOTP)"
+        "note": "pokrivenost najave matice uključuje očekivane priljeve dividendi kćeri — činjenično iz zadnje izglasane isplate kćeri × naš udio"
       },
       "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
     }
@@ -8111,7 +8111,7 @@
         "rights": "bez prava glasa (u pravilu); prioritetna dividenda — uvjeti u statutu/odluci o izdanju"
       }
     ],
-    "note": "Fer vrijednost po dionici je KLASNO-AGNOSTIČNA (firma / sve dionice ex-trezor). Tržišne cijene klasa se ipak razlikuju: glasačka premija redovne, razlika u likvidnosti i članstvo u indeksu. Ta premija je tržišna struktura — prikazuje se i objašnjava, ali se NE ugrađuje u fer (v2 §7)."
+    "note": "Fer vrijednost po dionici je KLASNO-AGNOSTIČNA (firma / sve dionice ex-trezor). Tržišne cijene klasa se ipak razlikuju: glasačka premija redovne, razlika u likvidnosti i članstvo u indeksu. Ta premija je tržišna struktura — prikazuje se i objašnjava, ali se NE ugrađuje u fer vrijednost."
   },
   "valuation": {
     "params": {
@@ -8125,7 +8125,7 @@
       "illiq_src": null,
       "holding_discount_low": 0.0,
       "holding_discount_high": 0.05,
-      "holding_discount_reason": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
+      "holding_discount_reason": "IZMJERENI vlastiti P/NAV: medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer vrijednost",
       "peer_pe": 15.41,
       "peer_pb": 1.53,
       "rates_calibrated": true,
@@ -8139,9 +8139,9 @@
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
-        "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
+        "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-        "holding_discount": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.22 (2026-07-14). serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
+        "holding_discount": "IZMJERENI vlastiti P/NAV: medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.22 (2026-07-14). serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer vrijednost",
         "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=15.41 (n=5), P/B=1.53 (n=5), EV/EBITDA=9.23 (n=5). Skup ['ATGR', 'PODR', 'RIVP', 'PLAG', 'ARNT'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.47 P/B=1.4; PODR P/E=8.23 P/B=1.53; RIVP P/E=24.03 P/B=3.31; PLAG P/E=15.41 P/B=2.46; ARNT P/E=13.36 P/B=0.94"
       },
       "growth": {
@@ -8158,7 +8158,7 @@
         "short_series": false,
         "verdict": "odrziv_samofinanciran",
         "assessment": "Opaženi rast +6.6% POKLAPA SE s kapacitetom samofinanciranja +2.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete).",
-        "source": "g1=4.3% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +6.6%, CAGR -15.4%; samofinanciranje (ROE×zadržano) +2.0%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +6.6% POKLAPA SE s kapacitetom samofinanciranja +2.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
+        "source": "g1=4.3% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +6.6%, CAGR -15.4%; samofinanciranje (ROE×zadržano) +2.0%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +6.6% POKLAPA SE s kapacitetom samofinanciranja +2.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -8172,13 +8172,13 @@
         "key": "ttm",
         "label": "TTM podaci (FY2025 + h1 FY2026 − h1 FY2025)",
         "status": "izvor",
-        "why": "zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali) — v3 FAZA G; kvartalni izvještaji su nerevidirani"
+        "why": "zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali); kvartalni izvještaji su nerevidirani"
       },
       {
         "key": "roe_rule",
         "label": "ROE pravilo (TTM + 3g medijan)",
         "status": "izvor",
-        "why": "ROE pravilo (v3 G): max(3g medijan 4.1%, TTM 5.6%×0,9) = 5.0%"
+        "why": "ROE pravilo: max(3g medijan 4.1%, TTM 5.6%×0,9) = 5.0%"
       },
       {
         "key": "r_components",
@@ -8222,7 +8222,7 @@
           },
           "pb_roe_scale": "P/B leća ROE-skalirana: vlastiti 5.6% / peer medijan 13.8% -> faktor 0.41 (samo naniže; naviše se ne ekstrapolira — zaradu nosi P/E leća)",
           "carrier": "pe",
-          "carrier_reason": "nositelj po arhetipu 'holding_passive' (v2 §2)",
+          "carrier_reason": "nositelj usporedbe za ovaj tip firme ('holding_passive')",
           "intra_spread": {
             "spread_pct": 39.0,
             "rule": "leće konzistentne (<40%) -> prosjek"
@@ -8245,7 +8245,7 @@
             0.0,
             0.05
           ],
-          "holding_discount_reason": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
+          "holding_discount_reason": "IZMJERENI vlastiti P/NAV: medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer vrijednost",
           "net_cash_excludes_insurance_portfolio": true,
           "placeholder": false,
           "parts": [
@@ -8374,7 +8374,7 @@
           },
           "our_vs_market_pct": -32.6,
           "sources": {
-            "holding_discount": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.22 (2026-07-14). serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)"
+            "holding_discount": "IZMJERENI vlastiti P/NAV: medijan 1.12 (p25 1.05, p75 1.16), zadnje 1.22 (2026-07-14). serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer vrijednost"
           },
           "market_check": {
             "own_market_cap_eur": 2211384479.0,
@@ -8390,17 +8390,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "reason": "pasivni holding — FCF ne hvata vrijednost udjela (v2 §2)"
+        "reason": "pasivni holding — novčani tok matice ne hvata vrijednost udjela u drugim firmama"
       },
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
+        "reason": "dividendni model je metoda vrijednosti samo kod banaka i osiguranja; kod ostalih firmi dividendni prinos je pokazatelj, ne metoda"
       },
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "reason": "arhetip 'holding_passive': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
+        "reason": "za ovaj tip firme ('holding_passive') knjigovodstveni omjer (P/B) je pokazatelj, ne samostalna metoda — vrijednost nose novčani tok i usporedbe"
       },
       {
         "key": "residual_income",
@@ -8411,6 +8411,11 @@
         "key": "nav_fund",
         "label": "NAV fonda (neto imovina)",
         "reason": "nije investicijski fond — NAV metoda je samo za fondove"
+      },
+      {
+        "key": "pro_forma_ev_ebitda",
+        "label": "EV/EBITDA na pro-forma brojkama (grupa u današnjem sastavu)",
+        "reason": "kurirana pro-forma procjena postoji samo za grupe u izgradnji čija izvješća još ne obuhvaćaju akvizicije za punu godinu"
       }
     ],
     "reconciliation": {
@@ -8434,7 +8439,7 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "dvije kvalificirane metode razmaknute 48% > 40% — NE prosječi (v2 §3): sredinu nosi sidro 'sotp_nav', druga metoda je kontekst — v3 triangulacija",
+      "zone_note": "dvije prihvaćene metode razmaknute su 48% pa ih ne prosječujemo — sredinu nosi glavna metoda 'sotp_nav', druga ostaje kontekst",
       "all_methods_low": 68.81674770690779,
       "all_methods_high": 101.72162001082765,
       "dispersion_all": 0.32347963294742393,
@@ -8447,7 +8452,7 @@
       ],
       "vs_market_pct": 56.3,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +4.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +6.6%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 44 € operativne zarade (EBITDA marža 43.8%). Vrijednost smo složili po dijelovima (SOTP): uvrštene tvrtke-kćeri po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstvenoj vrijednosti, minus dug grupe — ukupno 1,657 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa se popust klampa na 0 (v2 §4); glavna procjena je 101.72 € po dionici. Zasebno prikazujemo i koliko bi izašlo ako se uvrštene kćeri uzmu po NAŠOJ procjeni.. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira ~+5.3% trajnog rasta godišnje / multipl P/E 30.6×; naš kompozitni rast (serija/održivi/terminal) je +4.3% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +4.3% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +6.6%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 44 € operativne zarade (EBITDA marža 43.8%). Vrijednost smo složili po dijelovima (SOTP): uvrštene tvrtke-kćeri po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstvenoj vrijednosti, minus dug grupe — ukupno 1,657 M€, bez popusta — izmjereni vlastiti P/NAV pokazuje premiju pa popust ne primjenjujemo; glavna procjena je 101.72 € po dionici. Zasebno prikazujemo i koliko bi izašlo ako se uvrštene kćeri uzmu po NAŠOJ procjeni.. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira ~+5.3% trajnog rasta godišnje / multipl P/E 30.6×; naš kompozitni rast (serija/održivi/terminal) je +4.3% — razlika je plauzibilna jer implicirani rast je unutar 2 p.b. od našeg kompozitnog rasta. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 5.3,
@@ -8500,7 +8505,8 @@
         "verdict": "prolazi",
         "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 3.36 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (99.11 €), samo od te dividende dobivao bi 3.4% godišnje. Fer cijena to ne dopušta iznad 5.5% (traženi prinos 8.0% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
-      "low_float_note": null
+      "low_float_note": null,
+      "pro_forma_note": null
     },
     "no_value_data": null,
     "sotp": {
@@ -8566,7 +8572,7 @@
         0.0,
         0.05
       ],
-      "holding_discount_reason": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer (v2 §4)",
+      "holding_discount_reason": "IZMJERENI vlastiti P/NAV: medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama, grupni neto dug konstantan); opažena PREMIJA se klampa na diskont 0 — premija se ne ugrađuje u fer vrijednost",
       "market_check": {
         "own_market_cap_eur": 2211384479.0,
         "nav_pre_discount_eur": 1117166760.0,
@@ -8672,7 +8678,7 @@
       {
         "k": "Holding diskont",
         "v": "0–5%",
-        "why": "IZMJERENI vlastiti P/NAV (v2 §4): medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder mul"
+        "why": "IZMJERENI vlastiti P/NAV: medijan 1.12 (p25 1.05, p75 1.16) -> diskont 0%–0%. serija M10 (2024-07-17..2026-07-14, n=490 d) na KONZERVATIVNOM NAV proxyju (neuvršteni dijelovi na placeholder multiplama,"
       }
     ],
     "limitations": [

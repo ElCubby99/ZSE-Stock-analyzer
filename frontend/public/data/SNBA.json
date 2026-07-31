@@ -264,7 +264,7 @@
       "eu": "EU",
       "global": "globalno"
     },
-    "note": "globalni peerovi su KONTEKST — ne ulaze u sidro fer-zone (v2 §8); cross-market razlike (rast, likvidnost, veličina, trošak kapitala tržišta) objašnjavaju dio raskoraka u multiplima",
+    "note": "globalni peerovi su KONTEKST — ne ulaze u izračun fer-zone; cross-market razlike (rast, likvidnost, veličina, trošak kapitala tržišta) objašnjavaju dio raskoraka u multiplima",
     "no_metrics_reason": "multipli globalnih peera zahtijevaju ručni snapshot s izvorom i datumom — vanjski tržišni podaci nisu dostupni automatskim putem; do unosa snapshotta prikazuje se samo kurirana lista"
   },
   "risks": {
@@ -283,7 +283,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 19–339 € (raspon 94%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 0–84 € (raspon 100%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -859,7 +859,7 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 0.72,
+      "d_sust_ps": 0.0132,
       "payout_used": 0.0274,
       "payout_basis": "medijan payout ratija redovnih isplata (1 g.)",
       "coverage_announced": null,
@@ -2138,28 +2138,28 @@
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
-        "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
+        "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "SNBA: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": 0.2165,
+        "g1": 0.1124,
         "signals": {
           "g_obs": 0.2165,
-          "g_sust": 0.4584,
+          "g_sust": 0.0084,
           "g_terminal": 0.04
         },
-        "origin": "održiv (serija)",
+        "origin": "iznad kapaciteta samofinanciranja",
         "winner": null,
         "badges": [
           "jednokratni skok FY2025 (+291%) izuzet iz stope"
         ],
         "ttm_context": null,
         "short_series": false,
-        "verdict": "odrziv_serija",
-        "assessment": "Rast +21.6% (medijan godišnjih stopa) iz dosljedne serije. FY2025 je iznimna godina (+291% vs medijan +21.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +70.3%).",
-        "source": "g1=21.6% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +21.6%, CAGR +70.2%; samofinanciranje (ROE×zadržano) +45.8%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast +21.6% (medijan godišnjih stopa) iz dosljedne serije. FY2025 je iznimna godina (+291% vs medijan +21.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +70.3%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
+        "verdict": "iznad_samofinanciranja",
+        "assessment": "Opaženi rast (prihoda) +21.6% PREMAŠUJE kapacitet samofinanciranja +0.8% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (+11.2%). FY2025 je iznimna godina (+291% vs medijan +21.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +70.3%).",
+        "source": "g1=11.2% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +21.6%, CAGR +70.2%; samofinanciranje (ROE×zadržano) +0.8%; sidro terminala 4.0%. Verdikt: iznad kapaciteta samofinanciranja. Opaženi rast (prihoda) +21.6% PREMAŠUJE kapacitet samofinanciranja +0.8% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (+11.2%). FY2025 je iznimna godina (+291% vs medijan +21.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +70.3%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -2179,7 +2179,7 @@
         "key": "annual_data",
         "label": "godišnji podatak",
         "status": "pretpostavka",
-        "why": "TTM se ne gradi: TTM izvan sanity raspona (0.0× godišnjeg) — koristi se godišnje — vrednuje se iz zadnjeg godišnjeg izvješća"
+        "why": "TTM se ne gradi: interim serija nekonzistentna s godišnjim izvješćem (q4 kumulativ odstupa 5402%) — vrednuje se iz zadnjeg godišnjeg izvješća"
       },
       {
         "key": "r_components",
@@ -2208,7 +2208,7 @@
           "lenses": {
             "pe": {
               "mult": 12.0,
-              "per_share": 315.25
+              "per_share": 5.77
             },
             "pb": {
               "mult": 1.5,
@@ -2216,10 +2216,10 @@
             }
           },
           "carrier": "pb",
-          "carrier_reason": "nositelj po arhetipu 'bank' (v2 §2)",
+          "carrier_reason": "nositelj usporedbe za ovaj tip firme ('bank')",
           "intra_spread": {
-            "spread_pct": 277.0,
-            "rule": "leće razmaknute 277% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst (v2 §3)",
+            "spread_pct": 1348.0,
+            "rule": "leće razmaknute 1348% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst",
             "anomaly": "razlika nazivnika (marža/knjiga/zarada)"
           },
           "sources": {
@@ -2231,21 +2231,21 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 15.958254546886021,
-        "base": 18.747241290655023,
-        "high": 22.690270485133862,
+        "low": 0.23542078937080935,
+        "base": 0.2760910196067504,
+        "high": 0.3335742144735092,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "dps": 0.72,
+          "dps": 0.0132,
           "r": 0.09841499999999999,
           "g_terminal": 0.04,
-          "g1_explicit": 0.2165,
+          "g1_explicit": 0.1124,
           "model": "dvofazni DDM",
-          "growth_source": "g1=21.6% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) +21.6%, CAGR +70.2%; samofinanciranje (ROE×zadržano) +45.8%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast +21.6% (medijan godišnjih stopa) iz dosljedne serije. FY2025 je iznimna godina (+291% vs medijan +21.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +70.3%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
+          "growth_source": "g1=11.2% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +21.6%, CAGR +70.2%; samofinanciranje (ROE×zadržano) +0.8%; sidro terminala 4.0%. Verdikt: iznad kapaciteta samofinanciranja. Opaženi rast (prihoda) +21.6% PREMAŠUJE kapacitet samofinanciranja +0.8% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (+11.2%). FY2025 je iznimna godina (+291% vs medijan +21.6%) — vjerojatno jednokratni efekt (akvizicija/jednokratni prihod); reprezentativni rast uzima MEDIJAN godišnjih stopa, ne CAGR (koji bi ta godina napuhala na +70.3%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "d_sust": {
-            "d_sust_ps": 0.72,
+            "d_sust_ps": 0.0132,
             "payout_used": 0.0274,
             "payout_basis": "medijan payout ratija redovnih isplata (1 g.)",
             "coverage_announced": null,
@@ -2256,44 +2256,38 @@
           },
           "sources": {
             "r": "r=0.0984 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 1.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 125/247 trgovanih dana (51%), prosj. promet 3,102 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +1.5 p.b. na traženi prinos: 125/247 trgovanih dana (51%), prosj. promet 3,102 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
-            "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
+            "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)"
           }
         }
       },
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "low": 298.2353402928524,
-        "base": 338.8585562967825,
-        "high": 392.29363574120134,
-        "confidence": 0.7,
-        "no_value": false,
+        "low": 0,
+        "base": 0,
+        "high": 0,
+        "confidence": 0.0,
+        "no_value": true,
         "assumptions": {
-          "roe": 0.4713,
-          "r": 0.09841499999999999,
-          "g": 0.025,
-          "bvps": 55.74,
-          "placeholder": true,
-          "roe_rule": "ROE 47.1% iz zadnjeg GODIŠNJEG (kvartali nedostupni/nekonzistentni — TTM se ne gradi)",
-          "sources": {
-            "r": "r=0.0984 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 1.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 125/247 trgovanih dana (51%), prosj. promet 3,102 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +1.5 p.b. na traženi prinos: 125/247 trgovanih dana (51%), prosj. promet 3,102 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
-            "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
-          }
+          "missing": [
+            "roe>g"
+          ],
+          "note": "ROE 0.9% ≤ trajni rast g 2.5% — opravdani P/B nije definiran (multiplikator ≤ 0)"
         }
       },
       {
         "key": "residual_income",
         "label": "Rezidualni dohodak (RI)",
-        "low": 89.59654755418624,
-        "base": 91.14263598451994,
-        "high": 92.74156947851785,
+        "low": 46.434361596214096,
+        "base": 47.21965340814455,
+        "high": 48.033675287314395,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "roe0": 0.4713,
+          "roe0": 0.0086,
           "r": 0.09841499999999999,
           "g": 0.025,
-          "roe_rule": "ROE 47.1% iz zadnjeg GODIŠNJEG (kvartali nedostupni/nekonzistentni — TTM se ne gradi)",
+          "roe_rule": "ROE 0.9% iz zadnjeg GODIŠNJEG (kvartali nedostupni/nekonzistentni — TTM se ne gradi) | NORMALIZACIJA: iz dobiti FY2025 (24,1 M€) izuzeta jednokratna stavka 23,7 M€ — 'Ostali prihodi iz redovnog poslovanja' u RDG-u FY2025 (prijašnjih godina ≈ 0): dobit od povoljne kupnje pri pripajanju banke (bilanca u Q1 2025 skočila s 293 na 543 M€, kapital s 26 na 50 M€). Ponovljiva dobit FY2025 je ~0,4 M€ — jednokratni dobitak se ne smije pretvoriti u trajnu stopu povrata",
           "fade_years": 5,
           "bvps": 55.74,
           "terminal": "0 (ROE se u zadnjoj godini stapa s COE — RI iščezava)",
@@ -2301,7 +2295,7 @@
           "placeholder": true,
           "sources": {
             "r": "r=0.0984 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 1.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 125/247 trgovanih dana (51%), prosj. promet 3,102 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +1.5 p.b. na traženi prinos: 125/247 trgovanih dana (51%), prosj. promet 3,102 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
-            "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
+            "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)"
           }
         }
       }
@@ -2321,89 +2315,93 @@
         "key": "nav_fund",
         "label": "NAV fonda (neto imovina)",
         "reason": "nije investicijski fond — NAV metoda je samo za fondove"
+      },
+      {
+        "key": "pro_forma_ev_ebitda",
+        "label": "EV/EBITDA na pro-forma brojkama (grupa u današnjem sastavu)",
+        "reason": "kurirana pro-forma procjena postoji samo za grupe u izgradnji čija izvješća još ne obuhvaćaju akvizicije za punu godinu"
       }
     ],
     "reconciliation": {
-      "zone_low": 80.21622754664665,
-      "zone_high": 105.51504566433069,
-      "dispersion": 0.23976503027033508,
+      "zone_low": 46.05316798072014,
+      "zone_high": 48.41486890280835,
+      "dispersion": 0.04878048780487802,
       "divergent": false,
       "archetype": "bank",
       "anchor_methods": [
-        "justified_pb_roe",
         "residual_income"
       ],
       "method_roles": {
         "comps": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": 0.0
+          "vs_zone_pct": 0.727055871292533
         },
         "ddm_gordon": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": -0.766291162473911
+          "vs_zone_pct": -0.9940049505449368
         },
         "justified_pb_roe": {
-          "role": "anchor",
-          "note": null,
+          "role": "secondary",
+          "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
           "vs_zone_pct": null
         },
         "residual_income": {
-          "role": "anchor_alt",
-          "note": "potvrda glavne procjene: ista pretpostavka rasta i troška kapitala, drugi kut",
-          "vs_zone_pct": -0.01855369417525643
+          "role": "anchor",
+          "note": null,
+          "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = MEDIJAN kvalificiranih metoda (ddm_gordon, justified_pb_roe, residual_income) ± osjetljivost primarnog sidra 'justified_pb_roe' (r/wacc ±1 p.b.) — v3 triangulacija",
-      "all_methods_low": 18.747241290655023,
-      "all_methods_high": 338.8585562967825,
-      "dispersion_all": 0.9446753197099865,
+      "zone_note": "dvije prihvaćene metode razmaknute su 17003% pa ih ne prosječujemo — sredinu nosi glavna metoda 'residual_income', druga ostaje kontekst; primijenjena minimalna širina zone ±2,5%",
+      "all_methods_low": 0.2760910196067504,
+      "all_methods_high": 83.61518359645343,
+      "dispersion_all": 0.9966980755440396,
       "method_bases": {
         "comps": 83.61518359645343,
-        "ddm_gordon": 18.747241290655023,
-        "justified_pb_roe": 338.8585562967825,
-        "residual_income": 91.14263598451994
+        "ddm_gordon": 0.2760910196067504,
+        "justified_pb_roe": 0,
+        "residual_income": 47.21965340814455
       },
       "qa_flags": [
-        "metode se međusobno razilaze 94% (sve metode) — provjeri ulaze/pretpostavke",
-        "fer-zona odstupa -78% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "metode se međusobno razilaze 100% (sve metode) — provjeri ulaze/pretpostavke",
+        "fer-zona odstupa -58% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": -78.5,
+      "vs_market_pct": -57.7,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +21.6% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (serija)' (višegodišnja serija: +21.6%) — nijedna procjena 'iz glave'. Firma ima 51 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 47.1% godišnje — više od 9.8% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje iznad zahtjeva vrijedi više od knjigovodstvene brojke — sidro je 338.86 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) -2% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu. Tržišna cijena implicira multipl P/E 0.8×; naš kompozitni rast (serija/održivi/terminal) je +21.6% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +11.2% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'iznad kapaciteta samofinanciranja' (višegodišnja serija: +21.6%) — nijedna procjena 'iz glave'. Firma ima 51 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 0.9% godišnje — manje od 9.8% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 47.22 € po dionici. Glavni rizik za procjenu: raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu. Tržišna cijena implicira multipl P/E 41.6×; naš kompozitni rast (serija/održivi/terminal) je +11.2% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
-        "implied_r_pct": 126.89,
-        "implied_r_note": "uz naš trajni rast 2.5% i ROE 47.1% cijena implicira trošak kapitala ~126.9% (naš: 9.8%)",
-        "implied_pe": 0.8,
+        "implied_r_pct": -2.06,
+        "implied_r_note": "uz naš trajni rast 2.5% i ROE 0.9% cijena implicira trošak kapitala ~-2.1% (naš: 9.8%)",
+        "implied_pe": 41.6,
         "peer_pe": 12.0,
-        "implied_pe_note": "cijena implicira P/E 0.8× vs peer medijan 12.0× (placeholder)",
-        "narrative": "Tržišna cijena implicira multipl P/E 0.8×; naš kompozitni rast (serija/održivi/terminal) je +21.6% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "implied_pe_note": "cijena implicira P/E 41.6× vs peer medijan 12.0× (placeholder)",
+        "narrative": "Tržišna cijena implicira multipl P/E 41.6×; naš kompozitni rast (serija/održivi/terminal) je +11.2% — razlika je neprovjerljiva bez kompozitne stope rasta jer kompozitna stopa rasta nije izračunata. Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
         "ddm_gordon",
-        "justified_pb_roe",
         "residual_income"
       ],
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 0.72,
+        "d_sust_ps": 0.0132,
         "fallback_raw": false,
-        "zone_low": 80.22,
-        "zone_high": 105.52,
-        "implied_yield_low": 0.009,
+        "zone_low": 46.05,
+        "zone_high": 48.41,
+        "implied_yield_low": 0.0003,
         "threshold": 0.0734,
         "r": 0.0984,
         "g_used": 0.025,
-        "g_source": "kapitalni trajni g 2.5% (sidro zone je justified_pb_roe — ista pretpostavka rasta kojom je zona izračunata)",
+        "g_source": "kapitalni trajni g 2.5% (sidro zone je residual_income — ista pretpostavka rasta kojom je zona izračunata)",
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.72 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (80.22 €), samo od te dividende dobivao bi 0.9% godišnje. Fer cijena to ne dopušta iznad 7.3% (traženi prinos 9.8% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 0.01 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (46.05 €), samo od te dividende dobivao bi 0.0% godišnje. Fer cijena to ne dopušta iznad 7.3% (traženi prinos 9.8% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
-      "low_float_note": null
+      "low_float_note": null,
+      "pro_forma_note": null
     },
     "no_value_data": null,
     "sotp": null,
@@ -2424,8 +2422,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "21,6%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (serija)'"
+        "v": "11,2%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'iznad kapaciteta samofinanciranja'"
       },
       {
         "k": "Peer multipli",
@@ -2437,11 +2435,20 @@
       "raspon procjena je širok jer se metode oslanjaju na različite pretpostavke o budućnosti — zato prikazujemo cijeli raspon i objašnjavamo svaku metodu",
       "naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev",
       "β = 1.05 (sektorska (nema serije)) — vlastita burzovna serija ove dionice ne daje pouzdanu betu (nelikvidnost/kratka serija) — korištena je sektorska beta (Damodaran, Europa); postupak je opisan u Metodologiji",
-      "godišnji podatak — TTM se ne gradi: TTM izvan sanity raspona (0.0× godišnjeg) — koristi se godišnje — vrednuje se iz zadnjeg godišnjeg izvješća",
+      "godišnji podatak — TTM se ne gradi: interim serija nekonzistentna s godišnjim izvješćem (q4 kumulativ odstupa 5402%) — vrednuje se iz zadnjeg godišnjeg izvješća",
       "komponente traženog prinosa r = 9.84%: nerizična stopa 2.70% + β 1.05 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 1.5 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju. Dodatno se dodaje premija nelikvidnosti 1.5 p.b. jer se ova dionica rijetko trguje — izlazak iz pozicije nosi stvaran trošak, a niska beta taj rizik ne obuhvaća; zato je traženi prinos viši (i fer-vrijednost niža) nego kod likvidnih dionica (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
     "changelog": [
+      {
+        "date": "2026-07-31",
+        "old_low": 80.21622754664665,
+        "old_high": 105.51504566433069,
+        "new_low": 46.05316798072014,
+        "new_high": 48.41486890280835,
+        "reason": "sidro promijenjeno (justified_pb_roe -> residual_income); novi ulazi iz zadnjeg izvješća/kalibracije",
+        "kind": "recompute"
+      },
       {
         "date": "2026-07-16",
         "old_low": 317.2518129251838,
@@ -2610,7 +2617,7 @@
             "unit": null,
             "basis": null,
             "formula": null,
-            "np_reason": "nema ulaza"
+            "np_reason": "gubitak/negativan nazivnik u razdoblju — omjer se ne računa (cijena podijeljena gubitkom nema smisla)"
           },
           {
             "k": "P/FCF",
@@ -2618,7 +2625,7 @@
             "unit": null,
             "basis": null,
             "formula": null,
-            "np_reason": "nema ulaza"
+            "np_reason": "gubitak/negativan nazivnik u razdoblju — omjer se ne računa (cijena podijeljena gubitkom nema smisla)"
           },
           {
             "k": "EPS",

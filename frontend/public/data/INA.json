@@ -245,7 +245,7 @@
       "eu": "EU",
       "global": "globalno"
     },
-    "note": "globalni peerovi su KONTEKST — ne ulaze u sidro fer-zone (v2 §8); cross-market razlike (rast, likvidnost, veličina, trošak kapitala tržišta) objašnjavaju dio raskoraka u multiplima",
+    "note": "globalni peerovi su KONTEKST — ne ulaze u izračun fer-zone; cross-market razlike (rast, likvidnost, veličina, trošak kapitala tržišta) objašnjavaju dio raskoraka u multiplima",
     "no_metrics_reason": "multipli globalnih peera zahtijevaju ručni snapshot s izvorom i datumom — vanjski tržišni podaci nisu dostupni automatskim putem; do unosa snapshotta prikazuje se samo kurirana lista"
   },
   "risks": {
@@ -2948,7 +2948,7 @@
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
-        "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)",
+        "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
         "peers": "INA: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
@@ -2969,7 +2969,7 @@
         "short_series": false,
         "verdict": "odrziv_samofinanciran",
         "assessment": "Opaženi rast -1.2% POKLAPA SE s kapacitetom samofinanciranja +1.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu.",
-        "source": "g1=-0.1% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -1.1%, CAGR -6.0%; samofinanciranje (ROE×zadržano) +1.0%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -1.2% POKLAPA SE s kapacitetom samofinanciranja +1.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
+        "source": "g1=-0.1% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) -1.1%, CAGR -6.0%; samofinanciranje (ROE×zadržano) +1.0%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -1.2% POKLAPA SE s kapacitetom samofinanciranja +1.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -2989,13 +2989,13 @@
         "key": "ttm",
         "label": "TTM podaci (FY2025 + h1 FY2026 − h1 FY2025)",
         "status": "izvor",
-        "why": "zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali) — v3 FAZA G; kvartalni izvještaji su nerevidirani"
+        "why": "zarada/prihodi/ROE računaju se na zadnjih 12 mjeseci (zadnje godišnje + ovogodišnji kvartali − lanjski kvartali); kvartalni izvještaji su nerevidirani"
       },
       {
         "key": "roe_rule",
         "label": "ROE pravilo (TTM + 3g medijan)",
         "status": "izvor",
-        "why": "ROE pravilo (v3 G): max(3g medijan 11.5%, TTM 16.7%×0,9) = 15.0%"
+        "why": "ROE pravilo: max(3g medijan 11.5%, TTM 16.7%×0,9) = 15.0%"
       },
       {
         "key": "r_components",
@@ -3043,7 +3043,7 @@
             "note": "EV leće: vrijednost dioničarima = multipl × EBITDA − neto dug − manjinski interes + kratkotrajna fin. imovina + knjigovodstvena vrijednost pridruženih društava (konzistentnost opsega: konsolidirana EBITDA = 100% kćeri)"
           },
           "carrier": "pe",
-          "carrier_reason": "nositelj po arhetipu 'industrial_forward' (v2 §2)",
+          "carrier_reason": "nositelj usporedbe za ovaj tip firme ('industrial_forward')",
           "intra_spread": {
             "spread_pct": 39.0,
             "rule": "leće konzistentne (<40%) -> prosjek"
@@ -3067,12 +3067,12 @@
           "g_terminal": 0.04,
           "g1_explicit": -0.0006,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=-0.1% = PROCJENA ODRŽIVOG RASTA (M47): opaženi rast prihoda (medijan god. stopa) -1.1%, CAGR -6.0%; samofinanciranje (ROE×zadržano) +1.0%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -1.2% POKLAPA SE s kapacitetom samofinanciranja +1.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
+          "growth_source": "g1=-0.1% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) -1.1%, CAGR -6.0%; samofinanciranje (ROE×zadržano) +1.0%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast -1.2% POKLAPA SE s kapacitetom samofinanciranja +1.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Serija pokazuje višegodišnje skupljanje — negativan rast se ne 'popravlja' na nulu. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "nci_bridge": "Manjinski interes uklonjen PROPORCIONALNO: manjina drži 0.2% kapitala (NCI 4 M€ / ukupni kapital 1,625 M€), pa vrijednost dioničaru matice = (EV − neto dug) × (1 − 0.2%). Konsolidirani DCF broji 100% kćeri — proporcionalni odbitak poštuje udjel manjine u RASTUĆEM toku (statični knjigovodstveni NCI bi drastično podcijenio manjinu i precijenio maticu).",
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
-            "g": "dvorazinski g (v3 FAZA G): TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7 po v3 K-stacku)"
+            "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)"
           }
         }
       }
@@ -3081,12 +3081,12 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "reason": "DDM u Vrednovanju samo za banke/osiguranje (v2 §1/§2); dividendni prinos je pokazatelj"
+        "reason": "dividendni model je metoda vrijednosti samo kod banaka i osiguranja; kod ostalih firmi dividendni prinos je pokazatelj, ne metoda"
       },
       {
         "key": "justified_pb_roe",
         "label": "Opravdani P/B (ROE)",
-        "reason": "arhetip 'industrial_forward': opravdani P/B je ovdje leća/pokazatelj, ne metoda (v2 §1/§9.1)"
+        "reason": "za ovaj tip firme ('industrial_forward') knjigovodstveni omjer (P/B) je pokazatelj, ne samostalna metoda — vrijednost nose novčani tok i usporedbe"
       },
       {
         "key": "residual_income",
@@ -3102,6 +3102,11 @@
         "key": "nav_fund",
         "label": "NAV fonda (neto imovina)",
         "reason": "nije investicijski fond — NAV metoda je samo za fondove"
+      },
+      {
+        "key": "pro_forma_ev_ebitda",
+        "label": "EV/EBITDA na pro-forma brojkama (grupa u današnjem sastavu)",
+        "reason": "kurirana pro-forma procjena postoji samo za grupe u izgradnji čija izvješća još ne obuhvaćaju akvizicije za punu godinu"
       }
     ],
     "reconciliation": {
@@ -3114,7 +3119,7 @@
       "method_roles": {
         "comps": {
           "role": "anchor_excluded",
-          "note": "sidrena metoda ISKLJUČENA iz zone — placeholder ulazi (conf < 0,5) — red rule v2 §8: ne smije sidriti",
+          "note": "isključena iz izračuna zone — ulazi su joj generički (peer multipli za ovu firmu nisu kalibrirani), pa brojka ne smije određivati zonu; prikazana je samo kao kontekst",
           "vs_zone_pct": null
         },
         "dcf_fcf": {
@@ -3123,7 +3128,7 @@
           "vs_zone_pct": 0.0
         }
       },
-      "zone_note": "sidrena metoda nije dostupna — zona je min–max pozitivnih baza (fallback); vidi 'skipped' za razlog; sidra isključena zbog degenerirane osjetljivosti: dcf_fcf; DIVIDENDNI POD (v3.1): V_div 332.53 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (23.39 → 332.53) — održiva dividenda podržava vrijednost, ne gasi zonu; ŠIROK RASPON — metode se razilaze (raspis po metodi iza klika); zona se objavljuje šira, ne suspendira",
+      "zone_note": "glavna metoda za ovaj tip firme nije dostupna — zona je raspon pozitivnih procjena preostalih metoda; razlog za svaku izostavljenu metodu piše uz nju; isključene metode preosjetljive na pretpostavke: dcf_fcf; DIVIDENDNI POD: V_div 332.53 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (23.39 → 332.53) — održiva dividenda podržava vrijednost, ne gasi zonu; ŠIROK RASPON — metode se razilaze (raspis po metodi iza klika); zona se objavljuje šira, ne suspendira",
       "all_methods_low": 23.38979075623619,
       "all_methods_high": 301.92833333333334,
       "dispersion_all": 0.9225319780425724,
@@ -3172,7 +3177,8 @@
         "verdict": "prolazi (uz dividendni pod)",
         "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 25.37 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (332.53 €), samo od te dividende dobivao bi 7.6% godišnje. Fer cijena to ne dopušta iznad 7.6% (traženi prinos 10.1% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: Dividendni pod primijenjen: održiva dividenda od 25.37 € podržava vrijednost od najmanje 332.53 € (Gordonov izračun) — uključeno u zonu."
       },
-      "low_float_note": "free float ~1% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan"
+      "low_float_note": "free float ~1% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan",
+      "pro_forma_note": null
     },
     "no_value_data": null,
     "sotp": null,
