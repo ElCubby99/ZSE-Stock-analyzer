@@ -228,8 +228,23 @@ def main(argv=None) -> int:
         except Exception as e:  # noqa: BLE001
             conn.rollback()
             log("schema", None, "failed", f"{type(e).__name__}: {e}")
-        touched = sync_reports(conn, log, a.lookback_days)
-        n_div = sync_dividend_news(conn, log, a.lookback_days)
+        # M55.1: EHO zna biti nedostupan (noćni prekidi) — feed-sync je tada
+        # best-effort, a revalorizacija/regen (koji feed NE trebaju) svejedno
+        # prolaze; propušteni filingi stižu prvim sljedećim uspješnim syncom
+        try:
+            touched = sync_reports(conn, log, a.lookback_days)
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("watcher", None, "failed",
+                f"sync izvješća preskočen (EHO nedostupan?): {type(e).__name__}: {e}")
+            touched = []
+        try:
+            n_div = sync_dividend_news(conn, log, a.lookback_days)
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("watcher", None, "failed",
+                f"sync dividendi preskočen (EHO nedostupan?): {type(e).__name__}: {e}")
+            n_div = 0
         try:
             n_bl = import_backlogs(conn, log)
         except Exception as e:  # noqa: BLE001 — seed opcionalan, ne ruši sync
