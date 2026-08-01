@@ -373,9 +373,9 @@ function Top10({ t10 }) {
         <thead>
           <tr>
             <th>#</th><th>{t('sp.holderCol')}</th>
+            <th className="num">{t('sp.sharesCol')}</th>
             <th className="num">{t('fund.share')}</th>
             <th className="num">{t('sp.colChange')}{hasPrev ? ` (${t('sp.pp')})` : ''}</th>
-            <th>{t('common.source')}</th>
           </tr>
         </thead>
         <tbody>
@@ -389,16 +389,17 @@ function Top10({ t10 }) {
                   <div className="fund-src">{t('sp.comparedWith')} {r.prev_name}</div>
                 )}
               </td>
+              <td className="num">{r.shares !== null && r.shares !== undefined ? num(r.shares, 0) : dash}</td>
               <td className="num">{num(r.pct, 2)} %</td>
               <td className="num"><ChangeCell r={r} hasPrev={hasPrev} /></td>
-              <td className="fund-src">{tx(r.source_detail, lang)}</td>
             </tr>
           ))}
           {t10.free_float_from_top10_pct !== null && t10.free_float_from_top10_pct !== undefined && (
             <tr className="sotp-total">
               <td /><td>{t('sp.ffApprox')}</td>
+              <td />
               <td className="num">{num(t10.free_float_from_top10_pct, 2)} %</td>
-              <td /><td />
+              <td />
             </tr>
           )}
         </tbody>
@@ -409,7 +410,7 @@ function Top10({ t10 }) {
         </div>
       )}
       <div className="subnote">
-        {tx(t10.custody_note, lang)}. {t('sp.namesAsPublished')}
+        {tx(t10.custody_note, lang)}.{t10.shares_note ? <> {tx(t10.shares_note, lang)}.</> : null} {t('sp.namesAsPublished')}
       </div>
     </section>
   )

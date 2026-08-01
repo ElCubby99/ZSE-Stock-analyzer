@@ -225,6 +225,17 @@ export function PriceChart({ data, zone, classZones }) {
         </span>
         <span>{fmtDate(last.trade_date)}</span>
       </div>
+      {(() => {
+        const psc = (data.price_summary?.classes || []).find((c) => c.traded_days_1y !== undefined)
+        if (!psc || !psc.traded_days_1y) return null
+        const wd = psc.workdays_1y || 250
+        const pct = Math.min(100, Math.round((psc.traded_days_1y / wd) * 100))
+        return (
+          <div className="subnote" style={{ marginTop: 6 }}>
+            {t('mkt.liqDays1')} {psc.traded_days_1y} {t('mkt.liqDays2')} ~{wd} {t('mkt.liqDays3')} ({pct} %).
+          </div>
+        )
+      })()}
       <div className="prof-panel-note">
         {t('mp.tradedDays1')} ({clipped.length} {t('mp.tradedDays2')})
       </div>

@@ -733,6 +733,13 @@ def _top10_block(cur, company_id: int) -> dict | None:
     if not snaps:
         return None
 
+    # M58: ukupan broj izdanih dionica -> broj dionica po imatelju kad
+    # izvor (SKDD/ZSE) objavljuje samo postotak
+    cur.execute("SELECT SUM(shares_issued) FROM share_classes WHERE company_id=%s",
+                (company_id,))
+    _tot = cur.fetchone()[0]
+    total_shares = float(_tot) if _tot else None
+
     def _rows(snap_date, source):
         cur.execute(
             """SELECT rank, holder_name, shares, pct, is_custody, source_detail
@@ -740,9 +747,16 @@ def _top10_block(cur, company_id: int) -> dict | None:
                WHERE company_id = %s AND snapshot_date = %s AND source = %s
                ORDER BY rank""",
             (company_id, snap_date, source))
-        return [{"rank": rk, "name": nm, "shares": _f(sh), "pct": _f(p),
-                 "is_custody": cu, "source_detail": det}
-                for rk, nm, sh, p, cu, det in cur.fetchall()]
+        out_rows = []
+        for rk, nm, sh, p, cu, det in cur.fetchall():
+            derived = False
+            if sh is None and p is not None and total_shares:
+                sh = round(float(p) / 100.0 * total_shares)
+                derived = True
+            out_rows.append({"rank": rk, "name": nm, "shares": _f(sh),
+                             "shares_derived": derived, "pct": _f(p),
+                             "is_custody": cu, "source_detail": det})
+        return out_rows
 
     cur_date, cur_src = snaps[0]
     rows = _rows(cur_date, cur_src)
@@ -789,6 +803,9 @@ def _top10_block(cur, company_id: int) -> dict | None:
                  "bez promjena (povijest se gradi mjesečnim snapshotima)"),
         "custody_note": ("skrbnički/zbirni računi (oznaka) nisu stvarni "
                          "krajnji vlasnici — dionice drže za klijente"),
+        "shares_note": ("broj dionica izračunat iz objavljenog postotka i "
+                        "ukupnog broja izdanih dionica"
+                        if any(r.get("shares_derived") for r in rows) else None),
     }
 
 
@@ -949,6 +966,13 @@ def _price_summary(cur, classes: list[dict], as_of) -> dict:
         cur.execute("SELECT MIN(trade_date) FROM prices_eod WHERE share_class_id=%s",
                     (sc_id,))
         data_from = cur.fetchone()[0]
+        # M58: likvidnost = broj TRGOVANIH dana u zadnjih godinu dana
+        # (redak u prices_eod postoji samo za dan s trgovanjem)
+        cur.execute(
+            """SELECT COUNT(DISTINCT trade_date) FROM prices_eod
+               WHERE share_class_id=%s AND close_eur IS NOT NULL
+                 AND trade_date >= %s""", (sc_id, cutoff_52w))
+        traded_days_1y = cur.fetchone()[0] or 0
         note = None
         if data_from and data_from > cutoff_52w:
             note = (f"povijest dostupna od {data_from} — 52-tjedni raspon pokriva "
@@ -960,6 +984,8 @@ def _price_summary(cur, classes: list[dict], as_of) -> dict:
             "change_pct": _f(change_pct),
             "high_52w_eur": _f(hi52), "low_52w_eur": _f(lo52),
             "avg_turnover_20d_eur": _f(avg_tov),
+            "traded_days_1y": int(traded_days_1y),
+            "workdays_1y": 250,
             "data_from": str(data_from) if data_from else None,
             "note": note,
         })
