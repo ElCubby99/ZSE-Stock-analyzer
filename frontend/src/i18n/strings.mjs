@@ -1439,12 +1439,22 @@ export const STR = {
   'mp.perShare': { hr: '/dionici', en: '/share' },
   'mp.divGrowth': { hr: 'rast dividende:', en: 'dividend growth:' },
   'mp.pctPerYear': { hr: '%/g.', en: '%/yr' },
-  'mp.dsustLabel': { hr: 'Održiva dividenda (procjena):', en: 'Sustainable dividend (estimate):' },
+  'mp.dsustLabel': {
+    hr: 'Očekivana dividenda uz dosadašnju politiku isplate:',
+    en: 'Expected dividend under the payout practice to date:',
+  },
+  // M60: broj NE govori koliko bi firma MOGLA isplatiti, nego koliko po
+  // dosadašnjoj praksi isplaćuje — udio dobiti mora biti vidljiv uz iznos
+  'mp.dsustShare1': { hr: '≈', en: '≈' },
+  'mp.dsustShare2': {
+    hr: '% dobiti — toliki udio firma dosad isplaćuje u godinama s redovnom dividendom',
+    en: '% of profit — the share the company has paid out to date in years with a regular dividend',
+  },
   'mp.fullBreakdown': { hr: 'puni raspis', en: 'full breakdown' },
-  'mp.ds1': { hr: 'Održivi payout', en: 'Sustainable payout' },
+  'mp.ds1': { hr: 'Udio dobiti koji firma isplaćuje', en: 'Share of profit the company pays out' },
   'mp.ds2': {
-    hr: '× normalizirana dobit (12 mj.) / broj dionica.',
-    en: '× normalised profit (12 mo.) / number of shares.',
+    hr: '× dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena onoga što bi firma po dosadašnjoj praksi isplatila iz današnje dobiti — ne najveći iznos koji bi si mogla priuštiti (koliki udio dobiti isplaćuje odluka je firme).',
+    en: "× profit of the last 12 months / number of shares. This estimates what the company would pay out of today's profit under its practice to date — not the largest amount it could afford (how much of the profit gets paid out is the company's decision).",
   },
   'mp.dsExcluded': {
     hr: 'Isključene jednokratne/iz zadržane dobiti:',

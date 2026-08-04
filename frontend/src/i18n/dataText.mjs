@@ -453,11 +453,48 @@ export const DATA_TX = {
   'činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev':
     "factual context derived from the data in this export — no ratings or recommendations; the conclusion is the reader's",
 
+  // ---- M60: očekivana dividenda (D_sust) — objašnjenja bez žargona ----
+  'očekivana dividenda = udio dobiti koji firma dosad isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena isplate po dosadašnjoj praksi firme, NE najveći iznos koji bi si firma mogla priuštiti — koliki udio dobiti isplaćuje odluka je firme; jednokratne isplate ne ulaze u bazu':
+    "expected dividend = the share of profit the company has paid out to date × profit of the last 12 months / number of shares. This estimates the payout under the company's practice to date, NOT the largest amount it could afford — how much of the profit gets paid out is the company's decision; one-off payouts are excluded from the base",
+  // legacy (postojeći exporti do sljedećeg regena)
+  'D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu':
+    'D_sust = sustainable payout × normalised profit (TTM) / number of shares; one-off payouts are NOT part of the base',
+  'D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korišten zbroj REDOVNIH isplata zadnje fiskalne godine':
+    'D_sust is not computable (no payout history with profit in the database) — the sum of REGULAR payouts of the latest fiscal year was used',
+  'D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata':
+    'D_sust is not computable (no payout history with profit in the database) — the latest REGULAR payout was used',
+  'zadnja isplata je jednokratna/iz zadržane dobiti, a održiva baza nije izračunljiva — DDM se ne računa (radije prazno nego krivo)':
+    'the latest payout is one-off / from retained earnings, and a sustainable base is not computable — the DDM is not run (better empty than wrong)',
+  'isplata ovisi o regulatornom odobrenju (isplaćuje > 80% dobiti)':
+    'the payout depends on regulatory approval (pays out > 80% of profit)',
+  'isplata ovisi o regulatornom odobrenju (payout > 80%)':
+    'the payout depends on regulatory approval (payout > 80%)',
+  'pokrivenost najave matice uključuje očekivane priljeve dividendi kćeri — činjenično iz zadnje izglasane isplate kćeri × naš udio':
+    "the coverage of the parent's announcement includes expected dividend inflows from subsidiaries — factually from the subsidiary's latest approved payout × our stake",
+
 }
 
 /* Pattern pravila za stringove s dinamičkim dijelovima (datumi, n=,
    popisi peera). Primjenjuju se redom NAKON promašaja exact mape. */
 const PATTERNS = [
+  // ---- M60: očekivana dividenda — dinamički dijelovi (brojke, popisi) ----
+  [/udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom \((\d+) g\.\)/g,
+    'share of profit the company pays out: the median of years with a regular dividend ($1 yr)'],
+  [/medijan payout ratija redovnih isplata \((\d+) g\.\)/g,   // legacy
+    'median payout ratio of regular payouts ($1 yr)'],
+  [/; isključene godine s jednokratnim\/iz zadržane dobiti: (FY[\dFY, ]+)/g,
+    '; excluded years with one-off / retained-earnings payouts: $1'],
+  [/; banka: za bazu se uzima manji od stvarnog udjela \((\d+)%\) i (\d+)%/g,
+    '; bank: the base takes the lower of the actual share ($1%) and $2%'],
+  [/; banka: za održivu bazu min\(stvarni (\d+)%, (\d+)%\)/g,   // legacy
+    '; bank: sustainable base = min(actual $1%, $2%)'],
+  [/najava nije pokrivena tekućom dobiti po našim ulazima \(pokrivenost ([\d.,]+)\) — koristi se medijan/g,
+    'the announcement is not covered by current profit on our inputs (coverage $1) — the median is used'],
+  [/napeto pokrivena \(pokrivenost ([\d.,]+) < 1,2\)/g,
+    'tightly covered (coverage $1 < 1.2)'],
+  [/medijan \(politika '(.+?)' nije pokrivena: ([\d.,]+) < 1,0\)/g,
+    "median (the policy '$1' is not covered: $2 < 1.0)"],
+  [/objavljena politika \((.+?)\)/g, 'published policy ($1)'],
   // ---- M47: badgevi procjene rasta (s brojkama) ----
   [/jednokratni skok FY(\d{4}) \(\+(\d+)%\) izuzet iz stope/g,
     'one-off jump FY$1 (+$2%) excluded from the rate'],

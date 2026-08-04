@@ -251,6 +251,11 @@ def test_data_tekstovi_pokriveni():
         # M59: napomene uz dividendne događaje (rate) idu kroz tx() na frontendu
         dc = d.get("dividend_calendar") or {}
         _add(*[e.get("note") for e in dc.get("events") or []])
+        # M60: očekivana dividenda — svi tekstovi raspisa idu kroz tx()
+        ds2 = dc.get("d_sust") or {}
+        _add(ds2.get("payout_basis"), ds2.get("note"),
+             (ds2.get("subsidiary_inflows") or {}).get("note"),
+             *(ds2.get("flags") or []))
         _add(d.get("data_note"), d.get("mar_note"))
     assert len(strings) > 100, f"sumnjivo malo podatkovnih tekstova ({len(strings)})"
     script = (

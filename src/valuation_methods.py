@@ -2349,7 +2349,10 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                 dsust_holder["hint"] = ds
                 return (float(ds["d_sust_ps"]), 0.9)
             cur.execute(
-                """SELECT d.amount_eur, d.payout_type FROM dividends d
+                """SELECT d.class_ticker,
+                          COALESCE(d.fiscal_year, EXTRACT(YEAR FROM
+                            COALESCE(d.ex_date, d.payment_date))::int - 1)
+                   FROM dividends d
                    JOIN share_classes sc ON sc.id = d.share_class_id
                    WHERE d.company_id = %s
                      AND d.div_type NOT ILIKE '%%rijedlog%%'
@@ -2359,13 +2362,29 @@ def build_ctx(conn, ticker: str, params: Optional[Params] = None,
                             d.fiscal_year DESC NULLS LAST
                    LIMIT 1""",
                 (company_id,))
-            d = cur.fetchone()
-            if d and d[0] is not None and (d[1] or "redovna") == "redovna":
+            tgt = cur.fetchone()
+            d = None
+            if tgt and tgt[1] is not None:
+                # M59: dividenda zna biti isplaćena u više rata iste fiskalne
+                # godine (HPB 2x8,77) — baza je ZBROJ isplata te godine, ne
+                # zadnji pojedinačni redak
+                cur.execute(
+                    """SELECT SUM(d.amount_eur),
+                              BOOL_AND(COALESCE(d.payout_type,'redovna')='redovna')
+                       FROM dividends d
+                       WHERE d.company_id = %s AND d.class_ticker = %s
+                         AND d.div_type NOT ILIKE '%%rijedlog%%'
+                         AND d.amount_eur IS NOT NULL
+                         AND COALESCE(d.fiscal_year, EXTRACT(YEAR FROM
+                               COALESCE(d.ex_date, d.payment_date))::int - 1) = %s""",
+                    (company_id, tgt[0], tgt[1]))
+                d = cur.fetchone()
+            if d and d[0] is not None and d[1]:
                 dsust_holder["hint"] = {
                     "d_sust_ps": float(d[0]), "fallback_raw": True,
                     "note": ("D_sust nije izračunljiv (nema payout povijesti "
-                             "s dobiti u bazi) — korištena zadnja REDOVNA "
-                             "isplata")}
+                             "s dobiti u bazi) — korišten zbroj REDOVNIH "
+                             "isplata zadnje fiskalne godine")}
                 return (float(d[0]), 0.9)
             if d and d[0] is not None:
                 dsust_holder["hint"] = {

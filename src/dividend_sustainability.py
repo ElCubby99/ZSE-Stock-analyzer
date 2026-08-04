@@ -193,7 +193,9 @@ def d_sust(conn, company_id: int, ni_ttm: float | None) -> dict | None:
     if not reg_ratios:
         return None
     payout = median(reg_ratios)
-    basis = (f"medijan payout ratija redovnih isplata ({len(reg_ratios)} g.)"
+    # M60: bez žargona — "payout ratio" je udio dobiti koji firma isplaćuje
+    basis = (f"udio dobiti koji firma isplaćuje: medijan godina s redovnom "
+             f"isplatom ({len(reg_ratios)} g.)"
              + (f"; isključene godine s jednokratnim/iz zadržane dobiti: "
                 f"{', '.join(sorted(excluded))}" if excluded else ""))
 
@@ -210,10 +212,11 @@ def d_sust(conn, company_id: int, ni_ttm: float | None) -> dict | None:
 
     flags = []
     if sector == "bank" and payout > BANK_PAYOUT_FLAG:
-        flags.append("isplata ovisi o regulatornom odobrenju (payout > 80%)")
+        flags.append("isplata ovisi o regulatornom odobrenju "
+                     "(isplaćuje > 80% dobiti)")
         payout_used = min(payout, BANK_PAYOUT_BASE)
-        basis += (f"; banka: za održivu bazu min(stvarni {payout:.0%}, "
-                  f"{BANK_PAYOUT_BASE:.0%})")
+        basis += (f"; banka: za bazu se uzima manji od stvarnog udjela "
+                  f"({payout:.0%}) i {BANK_PAYOUT_BASE:.0%}")
     else:
         payout_used = payout
 
@@ -280,8 +283,12 @@ def d_sust(conn, company_id: int, ni_ttm: float | None) -> dict | None:
                       "dividendi kćeri — činjenično iz zadnje izglasane "
                       "isplate kćeri × naš udio")}
             if inflows else None),
-        "note": ("D_sust = održivi payout × normalizirana dobit (TTM) / broj "
-                 "dionica; jednokratne isplate NE ulaze u bazu"),
+        "note": ("očekivana dividenda = udio dobiti koji firma dosad "
+                 "isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo "
+                 "je procjena isplate po dosadašnjoj praksi firme, NE "
+                 "najveći iznos koji bi si firma mogla priuštiti — koliki "
+                 "udio dobiti isplaćuje odluka je firme; jednokratne "
+                 "isplate ne ulaze u bazu"),
     }
 
 

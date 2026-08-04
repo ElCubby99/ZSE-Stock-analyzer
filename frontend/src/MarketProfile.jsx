@@ -319,6 +319,9 @@ export function Dividends({ data }) {
       {cal.d_sust && cal.d_sust.d_sust_ps !== null && cal.d_sust.d_sust_ps !== undefined && (
         <div className="div-hist-strip">
           <span>{t('mp.dsustLabel')} <b>{num(cal.d_sust.d_sust_ps, 2)} €</b>{t('mp.perShare')}
+            {cal.d_sust.payout_used !== null && cal.d_sust.payout_used !== undefined && (
+              <> <i className="fund-src">({t('mp.dsustShare1')} {num(cal.d_sust.payout_used * 100, 0)} {t('mp.dsustShare2')})</i></>
+            )}
             {cal.d_sust.flags && cal.d_sust.flags.length > 0 && (
               <> {cal.d_sust.flags.map((f) => <span key={f} className="flag"> {tx(f, lang)}</span>)}</>
             )}
