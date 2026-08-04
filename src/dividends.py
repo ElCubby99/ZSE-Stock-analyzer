@@ -4,7 +4,8 @@ Tok (KORAK 2B iz runbooka, dio "dividende"):
   1. issuerNews feed za ticker (tipovi vezani uz skupštine/dividende),
   2. na svakoj objavi parsiraj strukturirane "Informacije o dividendi" blokove
      (po KLASI: ADRS i ADRS2 zasebno),
-  3. upsert u dividends (idempotentno po (class_ticker, ex_date, amount)),
+  3. upsert u dividends (idempotentno po (class_ticker, ex_date, amount,
+     payment_date) — M59: rate iste dividende dijele ex-datum i iznos),
   4. izvedi godišnji dps po firmi i upiši u filings(doc_type='dividend') +
      financials(item='dps') da ga build_ctx/data('dps') vidi (DDM gate).
 
@@ -36,6 +37,28 @@ from .db import get_conn
 # 14 = Obavijest o dividendi. Uz to hvatamo i sve s 'dividend' u naslovu.
 DIVIDEND_NEWS_TYPES = {9, 13, 14}
 DPS_CONFIDENCE = 0.9  # ispod MIN_CONFIDENCE=0.85 ne bi prošlo data-gate
+
+# M59: kurirane PODJELE U RATE. EHO strukturirani blok "Informacije o
+# dividendi" nosi samo UKUPNI iznos sa zadnjim datumom isplate — kad odluka
+# GS izrijekom dijeli isplatu u više rata, blok se ovdje zamjenjuje ratama
+# (svaka s vlastitim datumom isplate i napomenom čitatelju), pa je re-scrape
+# idempotentan i ne vraća zbirni redak. Ključ: (klasa, ex-datum, ukupni iznos
+# iz bloka); zbroj rata MORA biti jednak ukupnom iznosu (test čuva).
+CURATED_SPLITS: dict[tuple[str, str, float], list[dict]] = {
+    # HPB: Odluke GS 24.7.2026. (EHO #67878) — ukupno 17,54 € po dionici u
+    # dvije jednake rate po 8,77 €; 1. rata dospijeva 4.8.2026., 2. rata
+    # 28.1.2027. uz uvjet smanjenja temeljnog kapitala iz čl. 324. ZKI.
+    ("HPB", "2026-07-29", 17.54): [
+        {"amount_eur": 8.77, "payment_date": "2026-08-04",
+         "note": ("1. od 2 rate — Glavna skupština 24.7.2026. odobrila je "
+                  "ukupno 17,54 € po dionici, isplativo u dvije jednake "
+                  "rate po 8,77 €")},
+        {"amount_eur": 8.77, "payment_date": "2027-01-28",
+         "note": ("2. od 2 rate (ukupno 17,54 € po dionici) — dospijeće "
+                  "28.1.2027., uz uvjet smanjenja temeljnog kapitala iz "
+                  "čl. 324. Zakona o kreditnim institucijama")},
+    ],
+}
 
 
 def scrape_dividends(ticker: str, date_from: str, date_to: str | None = None,
@@ -80,19 +103,26 @@ def store_dividends(conn, company_ticker: str, divs: list[eho.DividendInfo]) -> 
             cur.execute("SELECT id FROM share_classes WHERE ticker = %s", (b.class_ticker,))
             sc = cur.fetchone()
             fiscal_year = b.ex_date.year - 1 if b.ex_date else None
-            cur.execute(
-                """
-                INSERT INTO dividends (company_id, share_class_id, class_ticker,
-                    fiscal_year, amount_eur, div_type, ex_date, record_date,
-                    payment_date, source_url)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                ON CONFLICT (class_ticker, ex_date, amount_eur) DO NOTHING
-                """,
-                (company_id, sc[0] if sc else None, b.class_ticker, fiscal_year,
-                 b.amount_eur, b.div_type, b.ex_date, b.record_date,
-                 b.payment_date, b.source_url),
-            )
-            new += cur.rowcount
+            # M59: zbirni blok podijeljen u rate? -> upiši rate umjesto zbroja
+            key = (b.class_ticker, b.ex_date.isoformat() if b.ex_date else "",
+                   round(float(b.amount_eur), 2))
+            rows = CURATED_SPLITS.get(key) or [
+                {"amount_eur": b.amount_eur,
+                 "payment_date": b.payment_date, "note": None}]
+            for r in rows:
+                cur.execute(
+                    """
+                    INSERT INTO dividends (company_id, share_class_id, class_ticker,
+                        fiscal_year, amount_eur, div_type, ex_date, record_date,
+                        payment_date, source_url, note)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON CONFLICT DO NOTHING
+                    """,
+                    (company_id, sc[0] if sc else None, b.class_ticker, fiscal_year,
+                     r["amount_eur"], b.div_type, b.ex_date, b.record_date,
+                     r["payment_date"], b.source_url, r["note"]),
+                )
+                new += cur.rowcount
     return new
 
 

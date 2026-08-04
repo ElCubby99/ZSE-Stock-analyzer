@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import { fmtDate, num } from './format.js'
 import { useLang } from './i18n/LangContext.jsx'
+import { tx } from './i18n/dataText.mjs'
 
 /* M22: agregirani dividendni kalendar (/dividende) — činjenični pregled svih
    isplata i najava iz EHO objava. MAR: bez rankinga "najboljih" prinosa —
@@ -65,7 +66,8 @@ function Row({ r, nav, hist, t, lang }) {
   return (
     <div className="mk-row div-row" onClick={() => nav(target)}>
       <span className="mk-name"><b>{r.class_ticker}</b><em>{r.name}</em></span>
-      <span className="r mono">{num(r.amount_eur, 2)}</span>
+      {/* M59: rata iste dividende nosi napomenu (npr. HPB 2×8,77 €) */}
+      <span className="r mono" title={r.note ? tx(r.note, lang) : undefined}>{num(r.amount_eur, 2)}{r.note ? '*' : ''}</span>
       <span className="r mono">{r.yield_now === null || r.yield_now === undefined
         ? <i className="np">{t('common.na')}</i> : `${num(r.yield_now * 100, 2)} %`}</span>
       <span className="r mono" title={h ? `${t('div.histTitle')}: FY${h.coverage_from} / ${num(h.avg_amount_5y, 2)} €` : undefined}>

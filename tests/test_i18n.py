@@ -248,6 +248,9 @@ def test_data_tekstovi_pokriveni():
         _add(*[c.get("txt") for c in risks.get("cards") or []])
         liq = d.get("liquidity") or {}
         _add(liq.get("note"), *[c.get("note") for c in liq.get("classes") or []])
+        # M59: napomene uz dividendne događaje (rate) idu kroz tx() na frontendu
+        dc = d.get("dividend_calendar") or {}
+        _add(*[e.get("note") for e in dc.get("events") or []])
         _add(d.get("data_note"), d.get("mar_note"))
     assert len(strings) > 100, f"sumnjivo malo podatkovnih tekstova ({len(strings)})"
     script = (

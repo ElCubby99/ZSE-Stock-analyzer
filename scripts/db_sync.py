@@ -18,6 +18,12 @@ valuations (žive na produkciji iz daily runova).
 Pokretanje:
   python -m scripts.db_sync dump
   python -m scripts.db_sync apply          # cilja bazu iz ZSE_DSN/config
+  python -m scripts.db_sync restore        # DEV: prazan/izbrisan lokalni DB —
+                                           # prvo ubaci nedostajuće firme i
+                                           # klase iz dumpa, zatim apply
+                                           # (apply sam preskače nepoznate
+                                           # firme jer se na produkciji
+                                           # onboarding radi kroz pipeline)
 """
 from __future__ import annotations
 
@@ -332,11 +338,50 @@ def apply() -> int:
     return 0
 
 
+def restore() -> int:
+    """DEV pomoć nakon gubitka lokalne baze (restart kontejnera): ubaci
+    nedostajuće companies + share_classes iz dumpa pa pokreni apply().
+    Sektor i broj dionica dolaze iz dumpa (kuriranog), ništa se ne izmišlja."""
+    with gzip.open(DUMP, "rt", encoding="utf-8") as f:
+        d = json.load(f)
+    ins_c = ins_sc = 0
+    with get_conn() as conn, conn.cursor() as cur:
+        for row in d["companies"]:
+            ticker, *vals = row
+            cols = "ticker, " + ", ".join(COMPANY_COLS)
+            ph = ", ".join(["%s"] * (1 + len(COMPANY_COLS)))
+            cur.execute(
+                f"""INSERT INTO companies ({cols}) VALUES ({ph})
+                    ON CONFLICT (ticker) DO NOTHING""", (ticker, *vals))
+            ins_c += cur.rowcount
+        cur.execute("SELECT ticker, id FROM companies")
+        cid_of = dict(cur.fetchall())
+        for row in d.get("share_classes", []):
+            ticker, *vals = row
+            # klasa -> firma: ista oznaka, ili bez završne znamenke (ADRS2->ADRS)
+            cid = cid_of.get(ticker) or cid_of.get(ticker.rstrip("0123456789"))
+            if cid is None:
+                print(f"[restore] preskačem klasu {ticker}: nepoznata firma")
+                continue
+            cols = "company_id, ticker, " + ", ".join(SC_COLS)
+            ph = ", ".join(["%s"] * (2 + len(SC_COLS)))
+            cur.execute(
+                f"""INSERT INTO share_classes ({cols})
+                    SELECT {ph} WHERE NOT EXISTS
+                      (SELECT 1 FROM share_classes WHERE ticker=%s)""",
+                (cid, ticker, *vals, ticker))
+            ins_sc += cur.rowcount
+    print(f"[sync] restore: +{ins_c} firmi, +{ins_sc} klasa; slijedi apply")
+    return apply()
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "dump":
         sys.exit(dump())
     if cmd == "apply":
         sys.exit(apply())
+    if cmd == "restore":
+        sys.exit(restore())
     print(__doc__)
     sys.exit(2)

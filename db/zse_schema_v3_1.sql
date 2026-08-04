@@ -178,3 +178,68 @@ CREATE TABLE IF NOT EXISTS mirex (
 -- M40: EN prijevod poslovnog profila (djelatnost/segmenti/tržišta/tvrdnje).
 -- Mirror strukture bez source_page (ti se ne prevode); overlay po indeksu.
 ALTER TABLE business_profiles ADD COLUMN IF NOT EXISTS bp_en JSONB;
+
+-- M59: dividenda isplativa u VIŠE RATA (HPB FY2025: GS 24.7.2026. dijeli
+-- 17,54 € po dionici u dvije rate po 8,77 € — dospijeće 4.8.2026. i
+-- 28.1.2027.). EHO strukturirani blok "Informacije o dividendi" nosi samo
+-- ukupni iznos sa ZADNJIM datumom isplate, pa je 1. rata nedostajala.
+-- Svaka rata je zaseban redak (vlastiti datum isplate + napomena čitatelju);
+-- dedup ključ zato mora uključiti i datum isplate — dvije rate dijele
+-- (klasa, ex-datum, iznos). Agregati (dps, payout, povijest) zbrajaju po
+-- fiskalnoj godini pa ukupno ostaje 17,54 €.
+ALTER TABLE dividends ADD COLUMN IF NOT EXISTS note TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_dividends_event
+  ON dividends (class_ticker, ex_date, amount_eur,
+                COALESCE(payment_date, '0001-01-01'::date));
+ALTER TABLE dividends
+  DROP CONSTRAINT IF EXISTS dividends_class_ticker_ex_date_amount_eur_key;
+
+-- HPB podatkovni fix (idempotentan): makni zbirni redak 17,54 s jednim
+-- datumom, upiši dvije rate. Izvor: Odluke Glavne skupštine HPB d.d.
+-- 24.7.2026. (EHO objava #67878) — "isplatom u iznosu od ... 8,77 EUR bruto
+-- po dionici ... dospijeva dana 4. kolovoza 2026." + druga jednaka tražbina
+-- "dospijeva dana 28. siječnja 2027." po ispunjenju uvjeta iz čl. 324. ZKI.
+DELETE FROM dividends
+ WHERE class_ticker='HPB' AND ex_date=DATE '2026-07-29'
+   AND amount_eur=17.54 AND payment_date=DATE '2027-01-28';
+INSERT INTO dividends (company_id, share_class_id, class_ticker, fiscal_year,
+                       amount_eur, div_type, ex_date, record_date,
+                       payment_date, source_url, note)
+SELECT c.id, sc.id, 'HPB', 2025, t.amount, 'Izglasana dividenda',
+       DATE '2026-07-29', DATE '2026-07-30', t.pay,
+       'https://eho.zse.hr/obavijesti-izdavatelja/view/67878', t.note
+FROM companies c
+JOIN share_classes sc ON sc.company_id=c.id AND sc.ticker='HPB'
+CROSS JOIN (VALUES
+  (8.77, DATE '2026-08-04',
+   '1. od 2 rate — Glavna skupština 24.7.2026. odobrila je ukupno 17,54 € po dionici, isplativo u dvije jednake rate po 8,77 €'),
+  (8.77, DATE '2027-01-28',
+   '2. od 2 rate (ukupno 17,54 € po dionici) — dospijeće 28.1.2027., uz uvjet smanjenja temeljnog kapitala iz čl. 324. Zakona o kreditnim institucijama')
+) AS t(amount, pay, note)
+WHERE c.ticker='HPB'
+ON CONFLICT DO NOTHING;
+
+-- M59 (nastavak): ISTA praksa rata i kod GS 19.12.2024. (EHO #58617) —
+-- ukupno 23,90 € iz zadržane dobiti 2023., dvije rate po 11,95 €
+-- (7.1.2025. i 26.6.2025., druga uz uvjet iz čl. 312.a ZKI). Stari dedup
+-- ključ (klasa, ex-datum, iznos) je 2. ratu tiho progutao, pa je na
+-- produkciji FY2023 stajao podcijenjen (11,95 umjesto 23,90).
+INSERT INTO dividends (company_id, share_class_id, class_ticker, fiscal_year,
+                       amount_eur, div_type, ex_date, record_date,
+                       payment_date, source_url, note)
+SELECT c.id, sc.id, 'HPB', 2023, 11.95, 'Izglasana dividenda',
+       DATE '2024-12-23', DATE '2024-12-24', DATE '2025-06-26',
+       'https://eho.zse.hr/obavijesti-izdavatelja/view/58617',
+       '2. od 2 rate (ukupno 23,90 € po dionici iz zadržane dobiti 2023.) — dospijeće 26.6.2025., uz uvjet iz čl. 312.a Zakona o kreditnim institucijama'
+FROM companies c
+JOIN share_classes sc ON sc.company_id=c.id AND sc.ticker='HPB'
+WHERE c.ticker='HPB'
+ON CONFLICT DO NOTHING;
+UPDATE dividends
+   SET note='1. od 2 rate — Glavna skupština 19.12.2024. odobrila je ukupno 23,90 € po dionici iz zadržane dobiti 2023., isplativo u dvije jednake rate po 11,95 €'
+ WHERE class_ticker='HPB' AND ex_date=DATE '2024-12-23'
+   AND amount_eur=11.95 AND payment_date=DATE '2025-01-07' AND note IS NULL;
+UPDATE dividends
+   SET note='2. od 2 rate (ukupno 23,90 € po dionici iz zadržane dobiti 2023.) — dospijeće 26.6.2025., uz uvjet iz čl. 312.a Zakona o kreditnim institucijama'
+ WHERE class_ticker='HPB' AND ex_date=DATE '2024-12-23'
+   AND amount_eur=11.95 AND payment_date=DATE '2025-06-26' AND note IS NULL;

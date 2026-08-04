@@ -350,7 +350,7 @@ export function Dividends({ data }) {
                   <tr key={i}>
                     <td>{e.fiscal_year ? `${e.fiscal_year}.` : dash}</td>
                     {multi && <td>{e.class_ticker}</td>}
-                    <td className="num strong">{num(e.amount_eur, 2)} €</td>
+                    <td className="num strong" title={e.note ? tx(e.note, lang) : undefined}>{num(e.amount_eur, 2)} €{e.note ? '*' : ''}</td>
                     <td className="num">{e.payout_ratio === null || e.payout_ratio === undefined
                       ? <i className="np" title={`${t('mp.profitFy1')}${e.fiscal_year ?? '?'}${t('mp.profitFy2')}`}>—</i>
                       : e.payout_ratio > 1
@@ -371,6 +371,12 @@ export function Dividends({ data }) {
               {t('mp.noPaid')}
             </div>
           )}
+          {/* M59: napomene uz rate (HPB: ista dividenda u 2 rate) */}
+          {paid.filter((e) => e.note).map((e, i) => (
+            <div key={`n${i}`} className="prof-panel-note">
+              * {num(e.amount_eur, 2)} € ({e.payment_date ? fmtDate(e.payment_date) : fmtDate(e.ex_date)}): {tx(e.note, lang)}
+            </div>
+          ))}
           <div className="prof-panel-note">{tx(cal.note, lang)}</div>
           <div className="prof-panel-note">
             {t('mp.leg1')} <b>{t('div.type.regular')}</b> {t('mp.leg2')}{' '}
@@ -390,6 +396,7 @@ export function Dividends({ data }) {
                 <span><i>{t('div.col.ex')} </i>{next.ex_date ? fmtDate(next.ex_date) : dash}</span>
                 <span><i>{t('div.col.pay')} </i>{next.payment_date ? fmtDate(next.payment_date) : dash}</span>
               </div>
+              {next.note && <div className="prof-next-src">{tx(next.note, lang)}</div>}
               <div className="prof-next-src">
                 {t('mp.perShareNote')}{' '}
                 {next.source_url ? <a href={next.source_url} target="_blank" rel="noreferrer">{t('mp.companyFiling')}</a> : t('mp.companyFiling')}

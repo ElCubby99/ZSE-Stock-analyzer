@@ -998,16 +998,20 @@ def _price_summary(cur, classes: list[dict], as_of) -> dict:
 
 def _last_dividend(cur, company_id: int):
     """Z2: zadnja STVARNA dividenda (bez prijedloga) + fiskalna godina —
-    DIV. PRINOS se računa iz zadnje izglasane isplate, ne '—'."""
+    DIV. PRINOS se računa iz zadnje izglasane isplate, ne '—'.
+    M59: ZBROJ svih isplata/rata zadnje fiskalne godine (HPB 2x8,77 = 17,54;
+    ista konvencija kao dps u financials), samo primarna linija klase."""
     cur.execute(
-        """SELECT amount_eur,
-                  COALESCE(fiscal_year,
-                           EXTRACT(YEAR FROM COALESCE(ex_date, payment_date))::int - 1)
-           FROM dividends
-           WHERE company_id=%s AND div_type NOT ILIKE '%%rijedlog%%'
-             AND amount_eur IS NOT NULL
-           ORDER BY 2 DESC NULLS LAST,
-                    COALESCE(ex_date, payment_date) DESC NULLS LAST
+        """SELECT SUM(d.amount_eur),
+                  COALESCE(d.fiscal_year,
+                           EXTRACT(YEAR FROM COALESCE(d.ex_date, d.payment_date))::int - 1) AS fy
+           FROM dividends d
+           LEFT JOIN share_classes sc ON sc.id = d.share_class_id
+           WHERE d.company_id=%s AND d.div_type NOT ILIKE '%%rijedlog%%'
+             AND d.amount_eur IS NOT NULL
+             AND (sc.is_primary_line IS TRUE OR d.share_class_id IS NULL)
+           GROUP BY 2
+           ORDER BY 2 DESC NULLS LAST
            LIMIT 1""", (company_id,))
     r = cur.fetchone()
     if not r:
@@ -1020,51 +1024,68 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
     Statusi iz PODATAKA (datumi iz EHO objava) — datumi koji fale ostaju null.
     Z2: + povijest po fiskalnim godinama i metrike (kontinuitet, rast, prosjek)."""
     cur.execute(
-        """SELECT class_ticker, fiscal_year, amount_eur, div_type, ex_date,
-                  record_date, payment_date, source_url,
-                  payout_type, payout_ratio, classified_reason
-           FROM dividends WHERE company_id=%s
-           ORDER BY COALESCE(fiscal_year,
-                    EXTRACT(YEAR FROM COALESCE(ex_date, payment_date))::int - 1)
-                    DESC NULLS LAST, class_ticker""",
+        """SELECT d.class_ticker, d.fiscal_year, d.amount_eur, d.div_type,
+                  d.ex_date, d.record_date, d.payment_date, d.source_url,
+                  d.payout_type, d.payout_ratio, d.classified_reason,
+                  d.note, sc.is_primary_line
+           FROM dividends d
+           LEFT JOIN share_classes sc ON sc.id = d.share_class_id
+           WHERE d.company_id=%s
+           ORDER BY COALESCE(d.fiscal_year,
+                    EXTRACT(YEAR FROM COALESCE(d.ex_date, d.payment_date))::int - 1)
+                    DESC NULLS LAST, d.class_ticker,
+                    d.payment_date NULLS LAST""",
         (company_id,))
     events, n_upcoming = [], 0
-    for ct, fy, amt, dtyp, ex, rec, pay, src, ptype, pratio, preason in cur.fetchall():
+    hist_rows = []   # (fy, klasa, iznos, primarna?) — bez prijedloga
+    for (ct, fy, amt, dtyp, ex, rec, pay, src, ptype, pratio, preason,
+         note, primary) in cur.fetchall():
         derived = bool(dtyp and "izvedeno" in dtyp)
         if derived:
             status, label = "paid", "isplaćena (izvedeno iz NT obrasca)"
+        elif dtyp and "rijedlog" in dtyp:
+            # M59: prijedlog NIKAD nije "isplaćena" — protekli datum isplate
+            # prijedloga ne čini ga isplatom (HPB 12/2025: prijedlog zamijenjen
+            # izglasanom verzijom s drugim datumima, a stara logika ga je
+            # prikazivala kao isplaćen i duplo brojala u povijesti)
+            status, label = "proposed", "prijedlog (nije izglasana)"
         elif pay is not None and pay <= as_of:
             status, label = "paid", "isplaćena"
         elif (pay is None and ex is None and fy is not None
               and fy < as_of.year - 1):
             # M35.1: povijesni zapis bez datuma — nikad "nadolazeća"
             status, label = "paid", "isplaćena (povijesni zapis bez datuma)"
-        elif dtyp and "rijedlog" in dtyp:
-            status, label = "proposed", "prijedlog (nije izglasana)"
         else:
             status, label = "upcoming", "izglasana — nadolazeća"
         if status != "paid":
             n_upcoming += 1
+        fy_val = (fy if fy is not None
+                  else (int(str(ex)[:4]) - 1 if ex else None))
         events.append({
             "class_ticker": ct,
-            "fiscal_year": (fy if fy is not None
-                            else (int(str(ex)[:4]) - 1 if ex else None)),
+            "fiscal_year": fy_val,
             "amount_eur": _f(amt),
             "div_type": dtyp, "ex_date": str(ex) if ex else None,
             # v3 DIV: tip isplate + % dobiti pripadne fiskalne godine
             "payout_type": ptype, "payout_ratio": _f(pratio),
             "classified_reason": preason,
+            # M59: napomena uz rate (npr. HPB: 2 rate po 8,77 € iste dividende)
+            "note": note,
             "record_date": str(rec) if rec else None,
             "payment_date": str(pay) if pay else None,
             "status": status, "status_hr": label, "source_url": src,
         })
-    # Z2: povijest po fiskalnoj godini (bez prijedloga; jedan iznos po FY —
-    # primarna/prva klasa) + metrike
+        if status != "proposed" and fy_val is not None and amt:
+            hist_rows.append((fy_val, ct, float(amt), bool(primary)))
+    # Z2: povijest po fiskalnoj godini — jedna klasa (primarna linija ako je
+    # označena, inače prva), M59: ZBROJ svih isplata/rata te fiskalne godine
+    # (ista konvencija kao dps u financials; HPB FY2025 = 21,83 + 2x8,77)
+    hist_class = next((ct for _fy, ct, _a, prim in hist_rows if prim),
+                      hist_rows[0][1] if hist_rows else None)
     by_fy = {}
-    for e in events:
-        if e["status"] == "proposed" or e["fiscal_year"] is None or not e["amount_eur"]:
-            continue
-        by_fy.setdefault(e["fiscal_year"], e["amount_eur"])
+    for fy_val, ct, a, _prim in hist_rows:
+        if ct == hist_class:
+            by_fy[fy_val] = round(by_fy.get(fy_val, 0.0) + a, 4)
     history = None
     if by_fy:
         years = sorted(by_fy, reverse=True)

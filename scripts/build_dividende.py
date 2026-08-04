@@ -29,6 +29,7 @@ def main() -> int:
                       d.amount_eur, d.div_type, d.ex_date, d.record_date,
                       d.payment_date, d.source_url,
                       d.payout_type, d.payout_ratio, d.classified_reason,
+                      d.note,
                       (SELECT p.close_eur FROM prices_eod p
                        JOIN share_classes sc ON sc.id = p.share_class_id
                        WHERE sc.ticker = d.class_ticker
@@ -38,10 +39,14 @@ def main() -> int:
                ORDER BY COALESCE(d.ex_date, d.payment_date) NULLS LAST,
                         d.class_ticker""")
         for (tick, name, ct, fy, amt, dtyp, ex, rec, pay, src,
-             ptype, pratio, preason, close) in cur.fetchall():
+             ptype, pratio, preason, note, close) in cur.fetchall():
             # status istom logikom kao profil (jedan izvor istine za oznake)
             if dtyp and "izvedeno" in dtyp:
                 status = "paid"  # Z2: povijesni izvedeni zapis (NT) = isplaćen
+            elif dtyp and "rijedlog" in (dtyp or ""):
+                # M59: prijedlog NIKAD nije "isplaćen" — protekli datum isplate
+                # prijedloga ne čini ga isplatom (isti redoslijed kao profil)
+                status = "proposed"
             elif pay is not None and pay <= today:
                 status = "paid"
             elif (pay is None and ex is None and fy is not None
@@ -50,14 +55,18 @@ def main() -> int:
                 # ne smije defaultati na "nadolazeća" — dividenda za FY1999
                 # nije upcoming ni u kojem svemiru
                 status = "paid"
-            elif dtyp and "rijedlog" in (dtyp or ""):
-                status = "proposed"
             else:
                 status = "upcoming"
-            # obuhvat: isplaćene OVE godine + sve nadolazeće/prijedlozi
+            # obuhvat: isplaćene OVE godine + AKTUALNE nadolazeće/prijedlozi
             if status == "paid":
                 ref = pay or ex
                 if ref is None or ref.year != today.year:
+                    continue
+            elif status == "proposed":
+                # M59: prijedlog s proteklim datumima je ili zamijenjen
+                # izglasanom verzijom ili odbačen — ne prikazuje se kao aktualan
+                ref = ex or pay
+                if ref is not None and ref < today:
                     continue
             amt_f = float(amt)
             close_f = float(close) if close is not None else None
@@ -76,15 +85,22 @@ def main() -> int:
                 "payout_type": ptype,
                 "payout_ratio": float(pratio) if pratio is not None else None,
                 "classified_reason": preason,
+                # M59: napomena uz rate (HPB: 2 rate po 8,77 € iste dividende)
+                "note": note,
             })
         # Z2: povijest po firmi -> kontinuitet i prosjek za kalendar
+        # M59: SUM umjesto MAX — rate i višestruke isplate iste fiskalne
+        # godine se ZBRAJAJU (konvencija kao dps u financials); dual-class
+        # dupliciranje rješava filter na primarnu liniju klase
         cur.execute(
             """SELECT c.ticker,
                       COALESCE(d.fiscal_year,
                         EXTRACT(YEAR FROM COALESCE(d.ex_date, d.payment_date))::int - 1) fy,
-                      MAX(d.amount_eur)
+                      SUM(d.amount_eur)
                FROM dividends d JOIN companies c ON c.id=d.company_id
+               LEFT JOIN share_classes sc ON sc.id=d.share_class_id
                WHERE d.div_type NOT ILIKE '%%rijedlog%%' AND d.amount_eur IS NOT NULL
+                 AND (sc.is_primary_line IS TRUE OR d.share_class_id IS NULL)
                GROUP BY 1, 2""")
         per_firm = {}
         for tick, fy, amt in cur.fetchall():

@@ -77,7 +77,7 @@ def main() -> int:
                        fiscal_year, amount_eur, div_type, ex_date, record_date,
                        payment_date, source_url)
                    VALUES (%s,%s,%s,NULL,%s,'cash',%s,%s,%s,%s)
-                   ON CONFLICT (class_ticker, ex_date, amount_eur) DO NOTHING""",
+                   ON CONFLICT DO NOTHING""",
                 (cid, scid, tick, d["amount"], d["ex"], d["record"], d["payment"],
                  d["url"] + " (zse.hr stranica papira, blok 'Dividenda')"))
             if cur.rowcount:

@@ -379,6 +379,15 @@ export const DATA_TX = {
     "One-off gain and the revision of our estimate: in early 2025 Slatinska banka merged in another bank and recognised a one-off bargain-purchase gain in its 2025 income statement — the line 'Other income from ordinary operations' amounts to EUR 23.7m, whereas in prior years it was roughly zero (the balance sheet grew from EUR 293m to 543m in the same quarter, and equity from 26 to 50). Of the reported annual profit of EUR 24.1m, only about EUR 0.4m is therefore repeatable. Our automated system initially failed to catch this one-off item — a 47% return on equity entered the calculation as if it were permanent, so the fair zone stood at 80–105 € per share for a while. After a manual review (1 Aug 2026) the one-off item was excluded and the zone was revised downward — it now rests on the bank's repeatable profitability. We now systematically exclude such items from valuation, while the financials and indicator tables continue to show the official (reported) figures.",
   'broj dionica izračunat iz objavljenog postotka i ukupnog broja izdanih dionica':
     'the number of shares is computed from the published percentage and the total number of issued shares',
+  // ---- M59: HPB dividenda FY2025 u dvije rate (GS 24.7.2026., EHO #67878) ----
+  '1. od 2 rate — Glavna skupština 24.7.2026. odobrila je ukupno 17,54 € po dionici, isplativo u dvije jednake rate po 8,77 €':
+    'instalment 1 of 2 — the General Meeting of 24 Jul 2026 approved a total of 17.54 € per share, payable in two equal instalments of 8.77 €',
+  '2. od 2 rate (ukupno 17,54 € po dionici) — dospijeće 28.1.2027., uz uvjet smanjenja temeljnog kapitala iz čl. 324. Zakona o kreditnim institucijama':
+    'instalment 2 of 2 (17.54 € per share in total) — due 28 Jan 2027, conditional on the share-capital reduction under Art. 324 of the Credit Institutions Act',
+  '1. od 2 rate — Glavna skupština 19.12.2024. odobrila je ukupno 23,90 € po dionici iz zadržane dobiti 2023., isplativo u dvije jednake rate po 11,95 €':
+    'instalment 1 of 2 — the General Meeting of 19 Dec 2024 approved a total of 23.90 € per share from retained 2023 earnings, payable in two equal instalments of 11.95 €',
+  '2. od 2 rate (ukupno 23,90 € po dionici iz zadržane dobiti 2023.) — dospijeće 26.6.2025., uz uvjet iz čl. 312.a Zakona o kreditnim institucijama':
+    'instalment 2 of 2 (23.90 € per share in total, from retained 2023 earnings) — due 26 Jun 2025, conditional on Art. 312.a of the Credit Institutions Act',
   // ---- M55: javni tekstovi bez internog žargona (skip razlozi, red rules) ----
   'pasivni holding — novčani tok matice ne hvata vrijednost udjela u drugim firmama':
     "passive holding — the parent's cash flow does not capture the value of stakes in other companies",
@@ -554,8 +563,12 @@ const PATTERNS = [
     'the main method for this type of company is unavailable — the zone is the range of positive estimates of the remaining methods; the reason for each omitted method is stated next to it'],
   [/primijenjena minimalna širina zone ±([\d.,]+)%/g,
     'a minimum zone width of ±$1% was applied'],
+  [/DIVIDENDNI POD: V_div ([\d.,]+) € uključen u medijan kvalificiranih metoda, donji rub podignut na pod \(([\d.,]+) → ([\d.,]+)\) — održiva dividenda podržava vrijednost, ne gasi zonu/g,
+    'DIVIDEND FLOOR: V_div of $1 € included in the median of the qualified methods, lower edge raised to the floor ($2 → $3) — a sustainable dividend supports the value, it does not void the zone'],
   [/DIVIDENDNI POD: V_div ([\d.,]+) € uključen u medijan kvalificiranih metoda/g,
     'DIVIDEND FLOOR: V_div of $1 € included in the median of the qualified methods'],
+  [/ŠIROK RASPON — metode se razilaze \(raspis po metodi iza klika\); zona se objavljuje šira, ne suspendira/g,
+    'WIDE RANGE — the methods diverge (per-method breakdown behind a click); the zone is published wider, not suspended'],
   [/isključena iz izračuna zone — /g, 'excluded from the zone calculation — '],
   [/ulazi su joj generički \(peer multipli za ovu firmu nisu kalibrirani\), pa brojka ne smije određivati zonu/g,
     'its inputs are generic (peer multiples are not calibrated for this company), so the figure must not set the zone'],
@@ -629,8 +642,8 @@ const PATTERNS = [
   [/(\d)g medijan/g, '$1y median'],
   [/TTM se ne gradi: TTM izvan sanity raspona \(([-\d.,]+)× godišnjeg\) — koristi se godišnje — vrednuje se iz zadnjeg godišnjeg izvješća/g,
     'TTM is not built: TTM outside the sanity range ($1× annual) — the annual figure is used — valued from the latest annual report'],
-  [/TTM se ne gradi: nema prošlogodišnjeg q(\d) interima za usporedbu — TTM se ne gradi — vrednuje se iz zadnjeg godišnjeg izvješća/g,
-    'TTM is not built: no prior-year q$1 interim for comparison — TTM is not built — valued from the latest annual report'],
+  [/TTM se ne gradi: nema prošlogodišnjeg (q\d|h1|9m) interima za usporedbu — TTM se ne gradi — vrednuje se iz zadnjeg godišnjeg izvješća/g,
+    'TTM is not built: no prior-year $1 interim for comparison — TTM is not built — valued from the latest annual report'],
   [/TTM se ne gradi: interim serija nekonzistentna s godišnjim izvješćem \(q4 kumulativ odstupa ([\d.,]+)%\) — vrednuje se iz zadnjeg godišnjeg izvješća/g,
     'TTM is not built: the interim series is inconsistent with the annual report (q4 cumulative deviates $1%) — valued from the latest annual report'],
   [/interim serija nekonzistentna s godišnjim izvješćem \(q4 kumulativ odstupa ([\d.,]+)%\)/g,

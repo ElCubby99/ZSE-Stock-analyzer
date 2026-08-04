@@ -23,6 +23,11 @@ on:
         required: false
         default: ''
         type: string
+      div_backfill:
+        description: "M59: 'true' = ponovni scrape dividendne povijesti (od 2023.) za SVE firme — ubacuje rate koje je stari dedup ključ progutao; promijenjeni tickeri idu u revalorizaciju"
+        required: false
+        default: ''
+        type: string
 
 concurrency:
   group: daily-eod    # ista baza kao daily run — bez preklapanja
@@ -60,6 +65,28 @@ jobs:
           [ "$t" = "-" ] && t=""
           echo "REPAIR_TICKERS=$t" >> "$GITHUB_ENV"
 
+      # M59 (na zahtjev): ponovni scrape dividendne povijesti — ubacuje rate
+      # koje je stari dedup ključ (bez datuma isplate) tiho gutao; migracija
+      # sheme (novi ključ) ide u sklopu report_sync/ensure_schema PRIJE ovog
+      # koraka, pa ga radimo kroz zaseban python koji shemu prvo osigura
+      - name: Backfill dividendnih rata (M59)
+        if: inputs.div_backfill == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python - <<'EOF'
+          from src.db import get_conn
+          from src.daily import ensure_schema
+          with get_conn() as conn:
+              ensure_schema(conn)
+          print("shema ok (novi dividendni dedup ključ)")
+          EOF
+          python scripts/backfill_dividend_rate.py | tee /tmp/divrate.log
+          t=$(grep '^PROMIJENJENI TICKERI:' /tmp/divrate.log | cut -d' ' -f3)
+          [ "$t" = "-" ] && t=""
+          echo "DIVRATE_TICKERS=$t" >> "$GITHUB_ENV"
+
       # sync + extract (XLSX deterministički; PDF samo uz API ključ/kredit)
       # + recompute dirnutih + regen exporta. Deploy hook NIJE u env-u —
       # okida se tek nakon commita (isti princip kao daily-eod).
@@ -71,7 +98,7 @@ jobs:
         run: |
           python -m src.report_sync --lookback-days "${{ inputs.lookback }}" \
             --extract --recompute --regen \
-            --recompute-tickers "${{ inputs.recompute }},${REPAIR_TICKERS}"
+            --recompute-tickers "${{ inputs.recompute }},${REPAIR_TICKERS},${DIVRATE_TICKERS}"
 
       # vijesti PRIJE deploya — nova izvješća/dividende iz ovog synca odmah
       # postaju objavljene vijesti (news-ingest auto-publisha činjenične
