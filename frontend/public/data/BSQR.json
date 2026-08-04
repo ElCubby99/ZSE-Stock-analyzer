@@ -231,14 +231,14 @@
       {
         "class_ticker": "BSQR",
         "last_trade": {
-          "date": "2026-08-03",
+          "date": "2026-08-04",
           "close_eur": 29.2,
-          "volume": 870.0,
-          "turnover_eur": 25404.0
+          "volume": 432.0,
+          "turnover_eur": 12614.4
         },
-        "days_since_trade": 1,
+        "days_since_trade": 0,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-08-03: 870 kom / 25,404 € prometa (1 d)"
+        "note": "zadnja trgovina 2026-08-04: 432 kom / 12,614 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -410,8 +410,8 @@
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRMRULRB0008); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 29.2,
-        "trade_date": "2026-08-03",
-        "volume": 870.0,
+        "trade_date": "2026-08-04",
+        "volume": 432.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -613,15 +613,15 @@
       {
         "class_ticker": "BSQR",
         "last": {
-          "date": "2026-08-03",
+          "date": "2026-08-04",
           "close_eur": 29.2
         },
-        "prev_close_eur": 28.4,
-        "change_pct": 0.028169014084507005,
+        "prev_close_eur": 29.2,
+        "change_pct": 0.0,
         "high_52w_eur": 29.2,
         "low_52w_eur": 28.4,
         "avg_turnover_20d_eur": null,
-        "traded_days_1y": 7,
+        "traded_days_1y": 8,
         "workdays_1y": 250,
         "data_from": "2026-07-14",
         "note": "povijest dostupna od 2026-07-14 — 52-tjedni raspon pokriva kraće razdoblje"
@@ -731,6 +731,14 @@
       "volume": 870.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "BSQR",
+      "trade_date": "2026-08-04",
+      "close_eur": 29.2,
+      "volume": 432.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -743,12 +751,12 @@
       "beta_calibrated": false,
       "beta_origin": "sektorska (nema serije)",
       "illiq_premium": 0.025,
-      "illiq_src": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/246 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+      "illiq_src": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/247 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
-      "peer_pe": 20.55,
-      "peer_pb": 1.4,
+      "peer_pe": 20.72,
+      "peer_pb": 1.41,
       "rates_calibrated": true,
       "peers_calibrated": true,
       "peers_narrow": false,
@@ -756,14 +764,14 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.1213 = rf 2.70% + β 1.35×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.36: SEKTORSKA unlevered 0.85 (Diversified) relevered s D/E=0.72 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 0/246 trgovanih dana (0%), prosj. promet 0 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/246 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+        "r": "r=0.1213 = rf 2.70% + β 1.35×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.36: SEKTORSKA unlevered 0.85 (Diversified) relevered s D/E=0.72 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 0/247 trgovanih dana (0%), prosj. promet 0 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/247 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
         "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)",
         "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
         "holding_discount": "holding diskont 15–25%: empirijski raspon za europske holdinge (nelikvidnost, dvostruko oporezivanje, trošak centra); OSTAJE PRETPOSTAVKA — postupak kalibracije opisan u Metodologiji",
-        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.55 (n=3), P/B=1.4 (n=3), EV/EBITDA=7.63 (n=3). Skup ['ATGR', 'PODR', 'ADRS'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.55 P/B=1.4; PODR P/E=8.15 P/B=1.52; ADRS P/E=21.8 P/B=1.19"
+        "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.72 (n=3), P/B=1.41 (n=3), EV/EBITDA=7.68 (n=3). Skup ['ATGR', 'PODR', 'ADRS'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.72 P/B=1.41; PODR P/E=8.1 P/B=1.51; ADRS P/E=21.7 P/B=1.19"
       },
       "growth": {
         "g1": 0.25,
@@ -795,7 +803,7 @@
         "key": "illiq",
         "label": "premija nelikvidnosti +2.5 p.b.",
         "status": "izvor",
-        "why": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/246 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
+        "why": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/247 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
       },
       {
         "key": "annual_data",
@@ -814,25 +822,25 @@
       {
         "key": "comps",
         "label": "Peer usporedba (comps)",
-        "low": 3.9116269141496645,
-        "base": 4.601914016646664,
-        "high": 5.292201119143663,
+        "low": 3.939567106393591,
+        "base": 4.634784831051284,
+        "high": 5.330002555708976,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
           "placeholder": false,
           "lenses": {
             "pe": {
-              "mult": 20.55,
-              "per_share": 5.76
+              "mult": 20.72,
+              "per_share": 5.81
             },
             "ev_ebitda": {
-              "mult": 7.63,
-              "per_share": 7.82
+              "mult": 7.68,
+              "per_share": 8.02
             },
             "pb": {
-              "mult": 1.4,
-              "per_share": 4.6
+              "mult": 1.41,
+              "per_share": 4.63
             }
           },
           "ev_bridge": {
@@ -847,12 +855,12 @@
           "carrier": "pb",
           "carrier_reason": "nositelj usporedbe za ovaj tip firme ('cyclical'); EV/EBITDA isključen (poluga/D&A)",
           "intra_spread": {
-            "spread_pct": 70.0,
-            "rule": "leće razmaknute 70% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst",
+            "spread_pct": 73.0,
+            "rule": "leće razmaknute 73% > 40% -> NE prosječi; bazu nosi 'pb', ostale su kontekst",
             "anomaly": "poluga (neto dug/EBITDA 3.7); visok D&A (64% EBITDA-e); ROE ispod peer medijana (P/B leća skalirana)"
           },
           "sources": {
-            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.55 (n=3), P/B=1.4 (n=3), EV/EBITDA=7.63 (n=3). Skup ['ATGR', 'PODR', 'ADRS'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.55 P/B=1.4; PODR P/E=8.15 P/B=1.52; ADRS P/E=21.8 P/B=1.19"
+            "peers": "peer multipli = MEDIJAN iz baze (zadnje cijene + zadnje godišnje kons. financije): P/E=20.72 (n=3), P/B=1.41 (n=3), EV/EBITDA=7.68 (n=3). Skup ['ATGR', 'PODR', 'ADRS'] (kriteriji odabira u Metodologiji; sektorski skup unutar praćenog univerzuma, bez cirkularnosti). Po peeru: ATGR P/E=20.72 P/B=1.41; PODR P/E=8.1 P/B=1.51; ADRS P/E=21.7 P/B=1.19"
           }
         }
       },
@@ -894,7 +902,7 @@
           "placeholder": false,
           "roe_rule": "ROE 8.5% iz zadnjeg GODIŠNJEG (kvartali nedostupni/nekonzistentni — TTM se ne gradi)",
           "sources": {
-            "r": "r=0.1213 = rf 2.70% + β 1.35×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.36: SEKTORSKA unlevered 0.85 (Diversified) relevered s D/E=0.72 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 0/246 trgovanih dana (0%), prosj. promet 0 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/246 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+            "r": "r=0.1213 = rf 2.70% + β 1.35×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.36: SEKTORSKA unlevered 0.85 (Diversified) relevered s D/E=0.72 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 0/247 trgovanih dana (0%), prosj. promet 0 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). premija nelikvidnosti +2.5 p.b. na traženi prinos: 0/247 trgovanih dana (0%), prosj. promet 0 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
             "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)"
           }
         }
@@ -902,13 +910,13 @@
       {
         "key": "pro_forma_ev_ebitda",
         "label": "EV/EBITDA na pro-forma brojkama (grupa u današnjem sastavu)",
-        "low": 13.134144262868912,
-        "base": 15.859648026385427,
-        "high": 18.585151789901943,
+        "low": 13.23807293735646,
+        "base": 15.981437144932716,
+        "high": 18.724801352508972,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
-          "peer_ev_ebitda": 7.63,
+          "peer_ev_ebitda": 7.68,
           "peer_ev_ebitda_src": "medijan EV/EBITDA peer skupa iz baze (ista kalibracija kao za peer usporedbu; skup u 'izvorima pretpostavki')",
           "ebitda_range_eur": [
             70700000.0,
@@ -947,9 +955,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 13.134144262868912,
-      "zone_high": 18.585151789901943,
-      "dispersion": 0.29329905876769763,
+      "zone_low": 13.23807293735646,
+      "zone_high": 18.724801352508972,
+      "dispersion": 0.29301931229392375,
       "divergent": false,
       "archetype": "pro_forma",
       "anchor_methods": [
@@ -964,35 +972,35 @@
         "comps": {
           "role": "secondary",
           "note": "metoda računa na PRIJAVLJENIM brojkama koje akvizicije hvataju tek od datuma preuzimanja — strukturno podcjenjuje grupu u današnjem sastavu; prikazana radi transparentnosti, ne ulazi u fer-zonu",
-          "vs_zone_pct": -0.7098350474745381
+          "vs_zone_pct": -0.7099894841108925
         },
         "dcf_fcf": {
           "role": "secondary",
           "note": "metoda računa na PRIJAVLJENIM brojkama koje akvizicije hvataju tek od datuma preuzimanja — strukturno podcjenjuje grupu u današnjem sastavu; prikazana radi transparentnosti, ne ulazi u fer-zonu",
-          "vs_zone_pct": -1.090383293566156
+          "vs_zone_pct": -1.0896945131044866
         },
         "justified_pb_roe": {
           "role": "secondary",
           "note": "metoda računa na PRIJAVLJENIM brojkama koje akvizicije hvataju tek od datuma preuzimanja — strukturno podcjenjuje grupu u današnjem sastavu; prikazana radi transparentnosti, ne ulazi u fer-zonu",
-          "vs_zone_pct": -0.8702723066441664
+          "vs_zone_pct": -0.8712609174481697
         }
       },
       "zone_note": "PRO-FORMA zona (nerevidirani ulazi s izvorima): raspon dolazi iz raspona EBITDA-e — od anualizirane službene polugodišnje brojke do uprávine pro-forma prilagođene EBITDA-e; metode na prijavljenim brojkama ne ulaze u zonu (v. objašnjenje metode)",
       "all_methods_low": -1.4334472234246984,
-      "all_methods_high": 15.859648026385427,
-      "dispersion_all": 1.090383293566156,
+      "all_methods_high": 15.981437144932716,
+      "dispersion_all": 1.0896945131044866,
       "method_bases": {
-        "comps": 4.601914016646664,
+        "comps": 4.634784831051284,
         "dcf_fcf": -1.4334472234246984,
         "justified_pb_roe": 2.05743555589838,
-        "pro_forma_ev_ebitda": 15.859648026385427
+        "pro_forma_ev_ebitda": 15.981437144932716
       },
       "qa_flags": [
-        "fer-zona odstupa +84% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa +83% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": 84.1,
+      "vs_market_pct": 82.7,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +25.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'iznad kapaciteta samofinanciranja' (višegodišnja serija: +66.7%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 11 € operativne zarade (EBITDA marža 10.9%). Grupa je rasla kupovinom firmi, a prijavljena izvješća hvataju akvizicije tek od datuma preuzimanja — zato zonu računamo na pro-forma brojkama (grupa u današnjem sastavu): raspon EBITDA-e 71–95 M€ × peer EV/EBITDA 7.6× − neto dug, pa dioničarima BSQR-a pripada 52% te vrijednosti (ostatak drže manjinski partneri u vertikalama) — sredina je 15.86 € po dionici. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira ~+11.0% trajnog rasta godišnje / multipl P/E 104.2×; naš kompozitni rast (serija/održivi/terminal) je +25.0% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +25.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'iznad kapaciteta samofinanciranja' (višegodišnja serija: +66.7%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 11 € operativne zarade (EBITDA marža 10.9%). Grupa je rasla kupovinom firmi, a prijavljena izvješća hvataju akvizicije tek od datuma preuzimanja — zato zonu računamo na pro-forma brojkama (grupa u današnjem sastavu): raspon EBITDA-e 71–95 M€ × peer EV/EBITDA 7.7× − neto dug, pa dioničarima BSQR-a pripada 52% te vrijednosti (ostatak drže manjinski partneri u vertikalama) — sredina je 15.98 € po dionici. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira ~+11.0% trajnog rasta godišnje / multipl P/E 104.2×; naš kompozitni rast (serija/održivi/terminal) je +25.0% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": 11.0,
@@ -1000,8 +1008,8 @@
         "implied_r_pct": 5.1,
         "implied_r_note": "uz naš trajni rast 4.0% cijena implicira trošak kapitala ~5.1% (naš: 12.1%)",
         "implied_pe": 104.2,
-        "peer_pe": 20.55,
-        "implied_pe_note": "cijena implicira P/E 104.2× vs peer medijan 20.55×",
+        "peer_pe": 20.72,
+        "implied_pe_note": "cijena implicira P/E 104.2× vs peer medijan 20.72×",
         "narrative": "Tržišna cijena implicira ~+11.0% trajnog rasta godišnje / multipl P/E 104.2×; naš kompozitni rast (serija/održivi/terminal) je +25.0% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
@@ -1038,7 +1046,7 @@
       },
       {
         "k": "Peer multipli",
-        "v": "P/E 20.55",
+        "v": "P/E 20.72",
         "why": "medijan iz baze (ZSE peeri istog sektora)"
       }
     ],
