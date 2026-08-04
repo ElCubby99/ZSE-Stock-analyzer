@@ -1041,6 +1041,7 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
     for (ct, fy, amt, dtyp, ex, rec, pay, src, ptype, pratio, preason,
          note, primary) in cur.fetchall():
         derived = bool(dtyp and "izvedeno" in dtyp)
+        stale = False
         if derived:
             status, label = "paid", "isplaćena (izvedeno iz NT obrasca)"
         elif dtyp and "rijedlog" in dtyp:
@@ -1048,7 +1049,16 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
             # prijedloga ne čini ga isplatom (HPB 12/2025: prijedlog zamijenjen
             # izglasanom verzijom s drugim datumima, a stara logika ga je
             # prikazivala kao isplaćen i duplo brojala u povijesti)
-            status, label = "proposed", "prijedlog (nije izglasana)"
+            ref = ex or pay
+            if ref is not None and ref < as_of:
+                # datumi protekli: prijedlog je zamijenjen konačnom odlukom
+                # ili nije izglasan — nije aktualan (ne prikazuje se kao
+                # sljedeća isplata i ne broji se u nadolazeće)
+                status, label, stale = ("proposed",
+                                        "prijedlog s proteklim datumima "
+                                        "(nije izglasana isplata)", True)
+            else:
+                status, label = "proposed", "prijedlog (nije izglasana)"
         elif pay is not None and pay <= as_of:
             status, label = "paid", "isplaćena"
         elif (pay is None and ex is None and fy is not None
@@ -1057,7 +1067,7 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
             status, label = "paid", "isplaćena (povijesni zapis bez datuma)"
         else:
             status, label = "upcoming", "izglasana — nadolazeća"
-        if status != "paid":
+        if status != "paid" and not stale:
             n_upcoming += 1
         fy_val = (fy if fy is not None
                   else (int(str(ex)[:4]) - 1 if ex else None))
@@ -1073,7 +1083,8 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
             "note": note,
             "record_date": str(rec) if rec else None,
             "payment_date": str(pay) if pay else None,
-            "status": status, "status_hr": label, "source_url": src,
+            "status": status, "status_hr": label, "stale": stale,
+            "source_url": src,
         })
         if status != "proposed" and fy_val is not None and amt:
             hist_rows.append((fy_val, ct, float(amt), bool(primary)))

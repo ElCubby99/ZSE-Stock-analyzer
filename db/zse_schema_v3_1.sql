@@ -188,9 +188,14 @@ ALTER TABLE business_profiles ADD COLUMN IF NOT EXISTS bp_en JSONB;
 -- (klasa, ex-datum, iznos). Agregati (dps, payout, povijest) zbrajaju po
 -- fiskalnoj godini pa ukupno ostaje 17,54 €.
 ALTER TABLE dividends ADD COLUMN IF NOT EXISTS note TEXT;
-CREATE UNIQUE INDEX IF NOT EXISTS uq_dividends_event
+-- Ključ uključuje i div_type: prijedlog i izglasana verzija ISTE dividende
+-- znaju dijeliti (klasa, ex, iznos, isplata) — stari ključ je tada gutao
+-- IZGLASANI redak ako je prijedlog scrapean prvi (KOEI FY2025: dps je na
+-- produkciji postojao samo kao 'Prijedlog' pa je ispao iz financials).
+DROP INDEX IF EXISTS uq_dividends_event;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_dividends_event_v2
   ON dividends (class_ticker, ex_date, amount_eur,
-                COALESCE(payment_date, '0001-01-01'::date));
+                COALESCE(payment_date, '0001-01-01'::date), div_type);
 ALTER TABLE dividends
   DROP CONSTRAINT IF EXISTS dividends_class_ticker_ex_date_amount_eur_key;
 

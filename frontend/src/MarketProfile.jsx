@@ -296,7 +296,9 @@ export function Dividends({ data }) {
   if (!cal) return null
   const multi = data.share_classes.length > 1
   const paid = cal.events.filter((e) => e.status === 'paid')
-  const pending = cal.events.filter((e) => e.status !== 'paid')
+  // M59: prijedlog s proteklim datumima (zamijenjen odlukom ili odbačen)
+  // nije "sljedeća isplata" — ne ulazi u karticu nadolazeće
+  const pending = cal.events.filter((e) => e.status !== 'paid' && !e.stale)
   // najbliža nadolazeća: izglasana ima prednost pred prijedlogom
   const next = pending.find((e) => e.status === 'upcoming') || pending[0] || null
 
