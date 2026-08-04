@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-08-03",
+  "generated_at": "2026-08-04",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -409,7 +409,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -425,9 +425,9 @@
           "volume": 1008.0,
           "turnover_eur": 66326.4
         },
-        "days_since_trade": 0,
+        "days_since_trade": 1,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-08-03: 1008 kom / 66,326 € prometa (0 d)"
+        "note": "zadnja trgovina 2026-08-03: 1008 kom / 66,326 € prometa (1 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -797,7 +797,7 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "classes": [
       {
         "class_ticker": "IG",
@@ -819,8 +819,25 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "events": [
+      {
+        "class_ticker": "IG",
+        "fiscal_year": 2025,
+        "amount_eur": 3.0,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2026-07-22",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2026-07-23",
+        "payment_date": "2026-07-29",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/66711"
+      },
       {
         "class_ticker": "IG",
         "fiscal_year": 2025,
@@ -830,11 +847,30 @@
         "payout_type": "redovna",
         "payout_ratio": null,
         "classified_reason": "unutar 150% medijana prethodnih redovnih (2.60 €); payout n/p: dobit FY2025 nije u bazi",
+        "note": null,
         "record_date": "2026-07-23",
         "payment_date": "2026-07-29",
         "status": "paid",
         "status_hr": "isplaćena",
+        "stale": false,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67593"
+      },
+      {
+        "class_ticker": "IG",
+        "fiscal_year": 2024,
+        "amount_eur": 2.6,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2025-07-03",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2025-07-04",
+        "payment_date": "2025-07-10",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61071"
       },
       {
         "class_ticker": "IG",
@@ -845,10 +881,12 @@
         "payout_type": "redovna",
         "payout_ratio": 0.6167311051786925,
         "classified_reason": "prva zabilježena isplata klase",
+        "note": null,
         "record_date": "2025-07-04",
         "payment_date": "2025-07-10",
         "status": "paid",
         "status_hr": "isplaćena",
+        "stale": false,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/62033"
       },
       {
@@ -860,10 +898,12 @@
         "payout_type": null,
         "payout_ratio": null,
         "classified_reason": null,
+        "note": null,
         "record_date": null,
         "payment_date": null,
         "status": "paid",
         "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "stale": false,
         "source_url": "IG_2025_4Q.xlsx: NT redak 'isplaćene dividende' 1,714,076 EUR u 2024. / 3,990,000 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
@@ -897,12 +937,12 @@
     "d_sust": {
       "d_sust_ps": 2.9439,
       "payout_used": 0.6167,
-      "payout_basis": "medijan payout ratija redovnih isplata (1 g.)",
+      "payout_basis": "udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom (1 g.)",
       "coverage_announced": 1.591,
       "flags": [],
       "excluded_years": [],
       "subsidiary_inflows": null,
-      "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
+      "note": "očekivana dividenda = udio dobiti koji firma dosad isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena isplate po dosadašnjoj praksi firme, NE najveći iznos koji bi si firma mogla priuštiti — koliki udio dobiti isplaćuje odluka je firme; jednokratne isplate ne ulaze u bazu"
     }
   },
   "prices": [
@@ -3642,7 +3682,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.0785 = rf 2.70% + β 0.93×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.93: regresijska (OLS tjednih log-prinosa IG vs CROBEX, 2025-03-10..2026-07-14, n=70 tj.) Blume-prilagođena na 0.86 (0,67·0.787+0,33·1), ali R²=0.23 je NIZAK (<0.5) — tržište objašnjava tek 23% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 1.00 u omjeru 46%/54% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 224/247 trgovanih dana (91%), prosj. promet 63,754 €/dan.",
+        "r": "r=0.0785 = rf 2.70% + β 0.93×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.93: regresijska (OLS tjednih log-prinosa IG vs CROBEX, 2025-03-10..2026-07-14, n=70 tj.) Blume-prilagođena na 0.86 (0,67·0.787+0,33·1), ali R²=0.23 je NIZAK (<0.5) — tržište objašnjava tek 23% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 1.00 u omjeru 46%/54% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 223/246 trgovanih dana (91%), prosj. promet 63,079 €/dan.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",

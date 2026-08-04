@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": false,
-  "generated_at": "2026-08-03",
+  "generated_at": "2026-08-04",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -281,7 +281,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -297,9 +297,9 @@
           "volume": 10.0,
           "turnover_eur": 5150.0
         },
-        "days_since_trade": 0,
+        "days_since_trade": 1,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-08-03: 10 kom / 5,150 € prometa (0 d)"
+        "note": "zadnja trgovina 2026-08-03: 10 kom / 5,150 € prometa (1 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -482,7 +482,7 @@
     "bvps": 163.75,
     "roe": 0.10931297709923664,
     "dps": 16.8,
-    "dps_label": "zadnja isplata FY2025",
+    "dps_label": null,
     "shares_ex_treasury": 10000000.0,
     "market_cap_eur": 5150000000.0,
     "ebitda_eur": 421700000.0,
@@ -659,17 +659,17 @@
       "item": "dps",
       "label": "Dividenda po dionici",
       "unit": "eur_per_share",
-      "value_eur": null,
-      "confidence": null,
-      "source_page": null,
-      "fiscal_year": null,
-      "source_url": null,
+      "value_eur": 16.8,
+      "confidence": 0.9,
+      "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
+      "fiscal_year": 2025,
+      "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67339",
       "audited": null,
-      "missing": true
+      "missing": false
     }
   ],
   "price_summary": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "classes": [
       {
         "class_ticker": "INA",
@@ -691,8 +691,25 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "events": [
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2025,
+        "amount_eur": 16.8,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-06-16",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2026-06-17",
+        "payment_date": "2026-07-10",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67339"
+      },
       {
         "class_ticker": "INA",
         "fiscal_year": 2025,
@@ -702,11 +719,64 @@
         "payout_type": "redovna",
         "payout_ratio": 0.9385474860335196,
         "classified_reason": "prva zabilježena isplata klase",
+        "note": null,
         "record_date": "2026-06-17",
         "payment_date": "2026-07-10",
         "status": "paid",
         "status_hr": "isplaćena",
+        "stale": false,
         "source_url": "https://zse.hr/hr/papir/310?isin=HRINA0RA0007 (zse.hr stranica papira, blok 'Dividenda')"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2025,
+        "amount_eur": 16.8,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2026-06-16",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2026-06-17",
+        "payment_date": "2026-07-10",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/66862"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2024,
+        "amount_eur": 12.0,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2025-06-17",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2025-06-18",
+        "payment_date": "2025-07-11",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61393"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2024,
+        "amount_eur": 12.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2025-06-17",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2025-06-18",
+        "payment_date": "2025-07-11",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61775"
       },
       {
         "class_ticker": "INA",
@@ -717,11 +787,47 @@
         "payout_type": null,
         "payout_ratio": null,
         "classified_reason": null,
+        "note": null,
         "record_date": null,
         "payment_date": null,
         "status": "paid",
         "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "stale": false,
         "source_url": "INA_2025_4Q.xlsx: NT redak 'isplaćene dividende' 119,800,000 EUR u 2025. / 10,000,000 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2023,
+        "amount_eur": 24.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-06-18",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2024-06-19",
+        "payment_date": "2024-07-12",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55973"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2023,
+        "amount_eur": 24.0,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2024-06-18",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2024-06-19",
+        "payment_date": "2024-07-12",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55592"
       },
       {
         "class_ticker": "INA",
@@ -732,11 +838,47 @@
         "payout_type": null,
         "payout_ratio": null,
         "classified_reason": null,
+        "note": null,
         "record_date": null,
         "payment_date": null,
         "status": "paid",
         "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "stale": false,
         "source_url": "INA_2024_4Q.xlsx: NT redak 'isplaćene dividende' 240,000,000 EUR u 2024. / 10,000,000 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2022,
+        "amount_eur": 20.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2023-06-20",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2023-06-21",
+        "payment_date": "2023-07-12",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/50193"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2022,
+        "amount_eur": 20.0,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2023-06-20",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2023-06-21",
+        "payment_date": "2023-07-14",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/49808"
       },
       {
         "class_ticker": "INA",
@@ -747,10 +889,12 @@
         "payout_type": null,
         "payout_ratio": null,
         "classified_reason": null,
+        "note": null,
         "record_date": null,
         "payment_date": null,
         "status": "paid",
         "status_hr": "isplaćena (izvedeno iz NT obrasca)",
+        "stale": false,
         "source_url": "INA_2024_4Q.xlsx: NT redak 'isplaćene dividende' 200,000,000 EUR u 2023. / 10,000,000 dionica danas (aproksimacija); fiskalna godina = godina isplate - 1"
       }
     ],
@@ -759,19 +903,19 @@
       "per_year": [
         {
           "fiscal_year": 2025,
-          "amount_eur": 16.8
+          "amount_eur": 33.6
         },
         {
           "fiscal_year": 2024,
-          "amount_eur": 11.98
+          "amount_eur": 23.98
         },
         {
           "fiscal_year": 2023,
-          "amount_eur": 24.0
+          "amount_eur": 48.0
         },
         {
           "fiscal_year": 2022,
-          "amount_eur": 20.0
+          "amount_eur": 40.0
         }
       ],
       "continuity": {
@@ -780,7 +924,7 @@
         "coverage_from": 2022,
         "note": "isplata u 4 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2022"
       },
-      "avg_amount_5y": 18.195,
+      "avg_amount_5y": 36.395,
       "growth_cagr": -0.0565,
       "growth_note": "CAGR FY2022->FY2025"
     },
@@ -788,12 +932,12 @@
     "d_sust": {
       "d_sust_ps": 25.3689,
       "payout_used": 0.9385,
-      "payout_basis": "medijan payout ratija redovnih isplata (1 g.)",
-      "coverage_announced": 2.256,
+      "payout_basis": "udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom (1 g.)",
+      "coverage_announced": 1.609,
       "flags": [],
       "excluded_years": [],
       "subsidiary_inflows": null,
-      "note": "D_sust = održivi payout × normalizirana dobit (TTM) / broj dionica; jednokratne isplate NE ulaze u bazu"
+      "note": "očekivana dividenda = udio dobiti koji firma dosad isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena isplate po dosadašnjoj praksi firme, NE najveći iznos koji bi si firma mogla priuštiti — koliki udio dobiti isplaćuje odluka je firme; jednokratne isplate ne ulaze u bazu"
     }
   },
   "prices": [
@@ -2952,7 +3096,7 @@
       "beta_calibrated": false,
       "beta_origin": "sektorska (nema serije)",
       "illiq_premium": 0.015,
-      "illiq_src": "premija nelikvidnosti +1.5 p.b. na traženi prinos: 119/247 trgovanih dana (48%), prosj. promet 3,289 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+      "illiq_src": "premija nelikvidnosti +1.5 p.b. na traženi prinos: 118/246 trgovanih dana (48%), prosj. promet 3,238 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -2965,7 +3109,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.1013 = rf 2.70% + β 1.12×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 1.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.12: SEKTORSKA unlevered 1.0 (Machinery / Electrical Equipment) relevered s D/E=0.14 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 119/247 trgovanih dana (48%), prosj. promet 3,289 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). premija nelikvidnosti +1.5 p.b. na traženi prinos: 119/247 trgovanih dana (48%), prosj. promet 3,289 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+        "r": "r=0.1013 = rf 2.70% + β 1.12×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 1.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.12: SEKTORSKA unlevered 1.0 (Machinery / Electrical Equipment) relevered s D/E=0.14 firme (porez 18%): β = βU·(1+(1−t)·D/E). nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 118/246 trgovanih dana (48%), prosj. promet 3,238 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). premija nelikvidnosti +1.5 p.b. na traženi prinos: 118/246 trgovanih dana (48%), prosj. promet 3,238 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -3004,7 +3148,7 @@
         "key": "illiq",
         "label": "premija nelikvidnosti +1.5 p.b.",
         "status": "izvor",
-        "why": "premija nelikvidnosti +1.5 p.b. na traženi prinos: 119/247 trgovanih dana (48%), prosj. promet 3,289 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
+        "why": "premija nelikvidnosti +1.5 p.b. na traženi prinos: 118/246 trgovanih dana (48%), prosj. promet 3,238 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
       },
       {
         "key": "ttm",

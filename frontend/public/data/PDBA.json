@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": false,
-  "generated_at": "2026-08-03",
+  "generated_at": "2026-08-04",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -244,7 +244,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "free float približno 20%; PDBA: zadnja trgovina 2026-08-03: 43 kom / 3,225 € prometa (0 d)."
+        "txt": "free float približno 20%; PDBA: zadnja trgovina 2026-08-03: 43 kom / 3,225 € prometa (1 d)."
       },
       {
         "l": "REGULATORNI POKAZATELJI",
@@ -256,7 +256,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 75–163 € (raspon 54%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 82–163 € (raspon 49%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -272,7 +272,7 @@
     "leverage_note": "n/p — kod osiguratelja/banaka depoziti, pričuve i obveze iz ugovora nisu financijski dug pa net_debt i net_debt/EBITDA nemaju smisla (sektorski KPI dolaze zasebno)"
   },
   "liquidity": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -288,9 +288,9 @@
           "volume": 43.0,
           "turnover_eur": 3225.0
         },
-        "days_since_trade": 0,
+        "days_since_trade": 1,
         "flag": "low",
-        "note": "zadnja trgovina 2026-08-03: 43 kom / 3,225 € prometa (0 d)"
+        "note": "zadnja trgovina 2026-08-03: 43 kom / 3,225 € prometa (1 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -574,7 +574,7 @@
     "bvps": 107.52370171768482,
     "roe": -0.03436883364766803,
     "dps": 5.0,
-    "dps_label": "zadnja isplata FY2024",
+    "dps_label": null,
     "shares_ex_treasury": 668749.0,
     "market_cap_eur": 50156175.0,
     "ebitda_eur": null,
@@ -775,17 +775,17 @@
       "item": "dps",
       "label": "Dividenda po dionici",
       "unit": "eur_per_share",
-      "value_eur": null,
-      "confidence": null,
-      "source_page": null,
-      "fiscal_year": null,
-      "source_url": null,
+      "value_eur": 5.0,
+      "confidence": 0.9,
+      "source_page": "EHO 'Informacije o dividendi' (1 izglasana isplata); fiscal_year=ex_date.year-1 konvencija",
+      "fiscal_year": 2024,
+      "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61477",
       "audited": null,
-      "missing": true
+      "missing": false
     }
   ],
   "price_summary": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "classes": [
       {
         "class_ticker": "PDBA",
@@ -807,8 +807,42 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-08-03",
+    "as_of": "2026-08-04",
     "events": [
+      {
+        "class_ticker": "PDBA",
+        "fiscal_year": 2024,
+        "amount_eur": 5.0,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2025-05-16",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2025-05-19",
+        "payment_date": "2025-06-09",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/60074"
+      },
+      {
+        "class_ticker": "PDBA",
+        "fiscal_year": 2024,
+        "amount_eur": 5.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2025-05-16",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2025-05-19",
+        "payment_date": "2025-06-09",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61477"
+      },
       {
         "class_ticker": "PDBA",
         "fiscal_year": 2024,
@@ -818,11 +852,64 @@
         "payout_type": "redovna",
         "payout_ratio": 0.44459130845462025,
         "classified_reason": "prva zabilježena isplata klase",
+        "note": null,
         "record_date": "2025-05-19",
         "payment_date": "2025-06-09",
         "status": "paid",
         "status_hr": "isplaćena",
+        "stale": false,
         "source_url": "https://zse.hr/hr/papir/310?isin=HRPDBARA0008 (zse.hr stranica papira, blok 'Dividenda')"
+      },
+      {
+        "class_ticker": "PDBA",
+        "fiscal_year": 2023,
+        "amount_eur": 4.5,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2024-05-06",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2024-05-07",
+        "payment_date": "2024-06-07",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/54199"
+      },
+      {
+        "class_ticker": "PDBA",
+        "fiscal_year": 2023,
+        "amount_eur": 4.5,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2024-05-09",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2024-05-10",
+        "payment_date": "2024-06-07",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/54209"
+      },
+      {
+        "class_ticker": "PDBA",
+        "fiscal_year": 2023,
+        "amount_eur": 4.5,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-05-09",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2024-05-10",
+        "payment_date": "2024-06-07",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55597"
       }
     ],
     "upcoming_count": 0,
@@ -830,24 +917,28 @@
       "per_year": [
         {
           "fiscal_year": 2024,
-          "amount_eur": 5.0
+          "amount_eur": 10.0
+        },
+        {
+          "fiscal_year": 2023,
+          "amount_eur": 4.5
         }
       ],
       "continuity": {
-        "paid_years": 1,
+        "paid_years": 2,
         "window": 5,
-        "coverage_from": 2024,
-        "note": "isplata u 1 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2024"
+        "coverage_from": 2023,
+        "note": "isplata u 2 od zadnjih 5 fiskalnih godina; podaci dostupni od FY2023"
       },
-      "avg_amount_5y": 5.0,
+      "avg_amount_5y": 7.25,
       "growth_cagr": null,
       "growth_note": "rast n/p (manje od 3 godine podataka)"
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 5.0,
+      "d_sust_ps": 10.0,
       "fallback_raw": true,
-      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
+      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korišten zbroj REDOVNIH isplata zadnje fiskalne godine"
     }
   },
   "prices": [
@@ -1014,7 +1105,7 @@
       "beta_calibrated": false,
       "beta_origin": "sektorska (nema serije)",
       "illiq_premium": 0.025,
-      "illiq_src": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/247 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+      "illiq_src": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/246 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
       "holding_discount_low": 0.15,
       "holding_discount_high": 0.25,
       "holding_discount_reason": null,
@@ -1027,7 +1118,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.1084 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 1/247 trgovanih dana (0%), prosj. promet 12 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/247 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+        "r": "r=0.1084 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 1/246 trgovanih dana (0%), prosj. promet 12 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/246 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -1064,7 +1155,7 @@
         "key": "illiq",
         "label": "premija nelikvidnosti +2.5 p.b.",
         "status": "izvor",
-        "why": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/247 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
+        "why": "premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/246 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice."
       },
       {
         "key": "ttm",
@@ -1123,13 +1214,13 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 65.51470759864408,
-        "base": 75.08310502252453,
-        "high": 87.9272661247509,
+        "low": 131.02941519728816,
+        "base": 150.16621004504907,
+        "high": 175.8545322495018,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "dps": 5.0,
+          "dps": 10.0,
           "r": 0.10841499999999998,
           "g_terminal": 0.04,
           "g1_explicit": 0.0346,
@@ -1137,12 +1228,12 @@
           "growth_source": "g1=3.5% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +10.9%, CAGR +7.0%; samofinanciranje (ROE×zadržano) -4.0%; sidro terminala 4.0%. Verdikt: iznad kapaciteta samofinanciranja. Opaženi rast (prihoda) +10.9% PREMAŠUJE kapacitet samofinanciranja -4.0% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (+3.5%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "d_sust": {
-            "d_sust_ps": 5.0,
+            "d_sust_ps": 10.0,
             "fallback_raw": true,
-            "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korištena zadnja REDOVNA isplata"
+            "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korišten zbroj REDOVNIH isplata zadnje fiskalne godine"
           },
           "sources": {
-            "r": "r=0.1084 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 1/247 trgovanih dana (0%), prosj. promet 12 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/247 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+            "r": "r=0.1084 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 1/246 trgovanih dana (0%), prosj. promet 12 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/246 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
             "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)"
           }
         }
@@ -1181,7 +1272,7 @@
           "equivalence_note": "jednostupanjski RI ≡ opravdani P/B ((ROE−g)/(COE−g)); razlika prema justified_pb_roe dolazi SAMO iz 5g fadea ROE→COE — konzistencijska provjera, prava dodana vrijednost traži eksplicitne ROE forecaste",
           "placeholder": true,
           "sources": {
-            "r": "r=0.1084 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 1/247 trgovanih dana (0%), prosj. promet 12 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/247 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
+            "r": "r=0.1084 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 1/246 trgovanih dana (0%), prosj. promet 12 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 1/246 trgovanih dana (0%), prosj. promet 12 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
             "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)"
           }
         }
@@ -1210,9 +1301,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 76.76928127456657,
-      "zone_high": 80.7061674937751,
-      "dispersion": 0.048780487804877926,
+      "zone_low": 119.88251513516755,
+      "zone_high": 125.87664089192593,
+      "dispersion": 0.04761904761904763,
       "divergent": false,
       "archetype": "bank",
       "anchor_methods": [
@@ -1222,12 +1313,12 @@
         "comps": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": 1.018932042421659
+          "vs_zone_pct": 0.9299034756750317
         },
         "ddm_gordon": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": -0.02196420526605425
+          "vs_zone_pct": 0.7786044850015843
         },
         "justified_pb_roe": {
           "role": "secondary",
@@ -1240,42 +1331,62 @@
           "vs_zone_pct": null
         }
       },
-      "zone_note": "zona = sredina (medijan) metoda koje su prošle provjere (ddm_gordon, residual_income), a širina dolazi iz osjetljivosti glavne metode 'residual_income' na trošak kapitala ±1 postotni bod; primijenjena minimalna širina zone ±2,5%",
-      "all_methods_low": 75.08310502252453,
+      "zone_note": "dvije prihvaćene metode razmaknute su 82% pa ih ne prosječujemo — sredinu nosi glavna metoda 'residual_income', druga ostaje kontekst; primijenjena minimalna širina zone ±2,5%; DIVIDENDNI POD: V_div 119.88 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (80.31 → 119.88) — održiva dividenda podržava vrijednost, ne gasi zonu",
+      "all_methods_low": 82.345457499188,
       "all_methods_high": 162.94026757423188,
-      "dispersion_all": 0.5391985901316974,
+      "dispersion_all": 0.4946279472526748,
       "method_bases": {
         "comps": 162.94026757423188,
-        "ddm_gordon": 75.08310502252453,
+        "ddm_gordon": 150.16621004504907,
         "justified_pb_roe": 0,
         "residual_income": 82.345457499188
       },
       "qa_flags": [],
-      "vs_market_pct": -4.7,
+      "vs_market_pct": -39.0,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +3.5% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'iznad kapaciteta samofinanciranja' (višegodišnja serija: +10.9%) — nijedna procjena 'iz glave'. Firma ima 73 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje -4.0% godišnje — manje od 10.8% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 82.35 € po dionici. Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva.",
+      "reasoning": "Rast +3.5% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'iznad kapaciteta samofinanciranja' (višegodišnja serija: +10.9%) — nijedna procjena 'iz glave'. Firma ima 73 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje -4.0% godišnje — manje od 10.8% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 82.35 € po dionici. Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva. Tržišna cijena implicira ~-52.0% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je +3.5% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
-      "market_implied": null,
+      "market_implied": {
+        "implied_g_pct": -52.0,
+        "implied_g_note": "uz naš r=10.8% cijena implicira trajni rast FCF-a ~-52.0% godišnje",
+        "implied_r_pct": 140.33,
+        "implied_r_note": "uz naš trajni rast 4.0% cijena implicira trošak kapitala ~140.3% (naš: 10.8%)",
+        "narrative": "Tržišna cijena implicira ~-52.0% trajnog rasta godišnje; naš kompozitni rast (serija/održivi/terminal) je +3.5% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+      },
       "qualified_methods": [
         "ddm_gordon",
+        "dividend_floor",
         "residual_income"
       ],
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 5.0,
+        "d_sust_ps": 10.0,
         "fallback_raw": true,
-        "zone_low": 76.77,
-        "zone_high": 80.71,
-        "implied_yield_low": 0.0651,
+        "zone_low": 119.88,
+        "zone_high": 125.88,
+        "implied_yield_low": 0.0834,
         "threshold": 0.0834,
         "r": 0.1084,
         "g_used": 0.025,
         "g_source": "kapitalni trajni g 2.5% (sidro zone je residual_income — ista pretpostavka rasta kojom je zona izračunata)",
-        "dividend_floor": null,
+        "dividend_floor": {
+          "v_div": 119.88,
+          "confidence": 0.8,
+          "formula": "V_div = D_sust 10.00 € / (r 10.84% − g 2.5%) = 119.88 € — Gordonova donja granica iz stvarno isplaćenog novca",
+          "applied_floor": true,
+          "zone_before": [
+            80.31,
+            84.43
+          ],
+          "zone_after": [
+            119.88,
+            125.88
+          ]
+        },
         "passes": true,
-        "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 5.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (76.77 €), samo od te dividende dobivao bi 6.5% godišnje. Fer cijena to ne dopušta iznad 8.3% (traženi prinos 10.8% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "verdict": "prolazi (uz dividendni pod)",
+        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 10.00 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (119.88 €), samo od te dividende dobivao bi 8.3% godišnje. Fer cijena to ne dopušta iznad 8.3% (traženi prinos 10.8% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: Dividendni pod primijenjen: održiva dividenda od 10.00 € podržava vrijednost od najmanje 119.88 € (Gordonov izračun) — uključeno u zonu."
       },
       "low_float_note": null,
       "pro_forma_note": null,
@@ -1314,7 +1425,17 @@
       "komponente traženog prinosa r = 10.84%: nerizična stopa 2.70% + β 1.05 × tržišna premija 4.23% + premija rizika zemlje 1.2 p.b. + premija nelikvidnosti 2.5 p.b. — nerizična stopa, tržišna premija i premija rizika zemlje referentne su tržišne veličine; rizik Hrvatske uračunava se točno jednom — kroz premiju rizika zemlje, ne kroz nerizičnu stopu ni tržišnu premiju. Dodatno se dodaje premija nelikvidnosti 2.5 p.b. jer se ova dionica rijetko trguje — izlazak iz pozicije nosi stvaran trošak, a niska beta taj rizik ne obuhvaća; zato je traženi prinos viši (i fer-vrijednost niža) nego kod likvidnih dionica (postupak u Metodologiji)",
       "peer multipli (P/E 12, P/B 1,5) — nema usporedivog osiguratelja na ZSE (kriteriji odabira peera opisani u Metodologiji)"
     ],
-    "changelog": [],
+    "changelog": [
+      {
+        "date": "2026-08-04",
+        "old_low": 76.76928127456657,
+        "old_high": 80.7061674937751,
+        "new_low": 119.88251513516755,
+        "new_high": 125.87664089192593,
+        "reason": "novi ulazi iz zadnjeg izvješća/kalibracije",
+        "kind": "recompute"
+      }
+    ],
     "notes": [
       "Rast čitamo iz forward signala zadnjeg izvješća (backlog, guidance) — povijesni prosjek je samo kontekst.",
       "Konzervativnost se primjenjuje JEDNOM (npr. popust se ne slaže na već konzervativne procjene).",
