@@ -287,6 +287,56 @@ def _zagreb_now():
     return datetime.now(ZoneInfo("Europe/Zagreb"))
 
 
+def _easter(year: int):
+    """Datum Uskrsa (gregorijanski, tzv. anonimni Gaussov algoritam) —
+    deterministički, bez vanjskih ovisnosti; treba za pomične blagdane."""
+    from datetime import date as _d
+    a = year % 19
+    b, c = divmod(year, 100)
+    d, e = divmod(b, 4)
+    g = (8 * b + 13) // 25
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = divmod(c, 4)
+    l = (32 + 2 * e + 2 * i - h - k) % 7  # noqa: E741
+    m = (a + 11 * h + 19 * l) // 433
+    month = (h + l - 7 * m + 90) // 25
+    day = (h + l - 7 * m + 33 * month + 19) % 32
+    return _d(year, month, day)
+
+
+def non_trading_reason(d) -> str | None:
+    """M61: razlog zašto ZSE taj dan NE trguje, ili None ako je radni dan.
+
+    Burza ne radi vikendom i na državne blagdane (Zakon o blagdanima,
+    spomendanima i neradnim danima u RH; ZSE kalendar trgovanja slijedi
+    blagdane — incident 5.8.2026.: Dan pobjede, tečajnica ne postoji pa je
+    zadnji satni pokušaj digao LAŽNI alarm). Pomični blagdani (Uskrsni
+    ponedjeljak, Tijelovo) računaju se iz datuma Uskrsa. Ako ZSE ikad uvede
+    poseban neradni dan izvan blagdana, alarm će se javiti jednom i dan se
+    dodaje ovdje s izvorom."""
+    if d.weekday() >= 5:
+        return "vikend"
+    fixed = {
+        (1, 1): "Nova godina", (1, 6): "Bogojavljenje",
+        (5, 1): "Praznik rada", (5, 30): "Dan državnosti",
+        (6, 22): "Dan antifašističke borbe",
+        (8, 5): "Dan pobjede i domovinske zahvalnosti",
+        (8, 15): "Velika Gospa", (11, 1): "Svi sveti",
+        (11, 18): "Dan sjećanja na žrtve Domovinskog rata",
+        (12, 25): "Božić", (12, 26): "Sveti Stjepan",
+    }
+    name = fixed.get((d.month, d.day))
+    if name:
+        return f"državni blagdan ({name})"
+    from datetime import timedelta as _td
+    e = _easter(d.year)
+    if d == e + _td(days=1):
+        return "državni blagdan (Uskrsni ponedjeljak)"
+    if d == e + _td(days=60):
+        return "državni blagdan (Tijelovo)"
+    return None
+
+
 def _live_class_tickers(conn) -> list[str]:
     with conn.cursor() as cur:
         cur.execute(
@@ -609,6 +659,17 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="dnevni prolaz (M6/M32; satni pokušaji)")
     p.add_argument("--digest-only", default=None, help="samo digest za run_id")
     a = p.parse_args(argv)
+
+    # M61: neradni dan burze (vikend/blagdan) -> tečajnica NE POSTOJI, pa ni
+    # zadnji satni pokušaj ne smije dizati alarm (5.8.2026.: Dan pobjede,
+    # 8 pokušaja + lažni issue + mail). Izlaz je neutralan; izvješća/objave
+    # pokupi lookback prvog sljedećeg radnog dana.
+    if not a.digest_only:
+        nt = non_trading_reason(_zagreb_now().date())
+        if nt:
+            print(f"burza zatvorena — {nt}; tečajnica se ne objavljuje, "
+                  "izlazim neutralno")
+            return 0
 
     with get_conn() as conn:
         if a.digest_only:
