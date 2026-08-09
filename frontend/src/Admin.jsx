@@ -354,14 +354,64 @@ function NewsList({ items, onEdit, onRefresh }) {
   )
 }
 
+/* M62: pregled prijavljenih korisnika (portfelj) — podaci kroz SECURITY
+   DEFINER rpc admin_users_overview (SAMA provjerava is_admin; ne-adminu
+   vraća 0 redaka). Frontend nikad ne vidi service key. */
+function UsersList({ rows, error }) {
+  if (error) {
+    return <p className="imp-p">Greška pri dohvatu korisnika: {error}. Ako funkcija
+      ne postoji, pokreni supabase/migration_admin_users.sql u Supabase SQL editoru.</p>
+  }
+  const d = (s) => (s ? new Date(s).toLocaleDateString('hr-HR') : '—')
+  const now = new Date()
+  const thisMonth = rows.filter((r) => {
+    const t = r.registered_at && new Date(r.registered_at)
+    return t && t.getFullYear() === now.getFullYear() && t.getMonth() === now.getMonth()
+  }).length
+  const active = rows.filter((r) => r.n_positions > 0).length
+  return (
+    <section>
+      <div className="sec-label">
+        Prijavljeni korisnici: {rows.length} · ovaj mjesec: {thisMonth} ·
+        s pozicijama u portfelju: {active}
+      </div>
+      <table>
+        <thead>
+          <tr><th>Email</th><th>Ime</th><th>Prijava preko</th><th>Registriran</th>
+            <th>Zadnja prijava</th><th>Uvjeti</th><th>Portfelja</th><th>Pozicija</th></tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.user_id}>
+              <td>{r.email}</td>
+              <td>{r.display_name || '—'}</td>
+              <td>{r.provider}</td>
+              <td>{d(r.registered_at)}</td>
+              <td>{d(r.last_sign_in_at)}</td>
+              <td>{r.terms_accepted_at ? 'prihvaćeni' : '—'}</td>
+              <td className="num">{r.n_portfolios}</td>
+              <td className="num">{r.n_positions}</td>
+            </tr>
+          ))}
+          {!rows.length && <tr><td colSpan={8} className="subnote">nema prijavljenih korisnika</td></tr>}
+        </tbody>
+      </table>
+      <p className="subnote">Redoslijed: najnovije registracije prve. Osobni podaci —
+        samo za administraciju servisa, ne izvoziti.</p>
+    </section>
+  )
+}
+
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [isAdmin, setIsAdmin] = useState(undefined) // undefined = provjera traje
   const [posts, setPosts] = useState([])
   const [editing, setEditing] = useState(null) // null | {} (novi) | post
-  const [tab, setTab] = useState('blog') // 'blog' | 'vijesti'
+  const [tab, setTab] = useState('blog') // 'blog' | 'vijesti' | 'korisnici'
   const [news, setNews] = useState([])
   const [editingNews, setEditingNews] = useState(null)
+  const [users, setUsers] = useState([])
+  const [usersError, setUsersError] = useState(null)
 
   useEffect(() => {
     document.title = 'Admin · Burzovni list'
@@ -394,9 +444,14 @@ export default function Admin() {
       .select('*').order('created_at', { ascending: false })
     setNews(data || [])
   }, [])
+  const loadUsers = useCallback(async () => {
+    const { data, error } = await supabase.rpc('admin_users_overview')
+    setUsers(data || [])
+    setUsersError(error ? (error.message || String(error)) : null)
+  }, [])
   useEffect(() => {
-    if (session && isAdmin) { load(); loadNews() }
-  }, [session, isAdmin, load, loadNews])
+    if (session && isAdmin) { load(); loadNews(); loadUsers() }
+  }, [session, isAdmin, load, loadNews, loadUsers])
 
   let body
   if (!supabase) {
@@ -428,13 +483,19 @@ export default function Admin() {
             onClick={() => setTab('blog')}>BLOG</button>
           <button className={tab === 'vijesti' ? 'on' : ''}
             onClick={() => setTab('vijesti')}>VIJESTI</button>
+          <button className={tab === 'korisnici' ? 'on' : ''}
+            onClick={() => setTab('korisnici')}>KORISNICI</button>
           {tab === 'blog'
-            ? <button className="on" onClick={() => setEditing({})}>+ NOVI POST</button>
-            : <button className="on" onClick={() => setEditingNews({})}>+ NOVA VIJEST</button>}
+            && <button className="on" onClick={() => setEditing({})}>+ NOVI POST</button>}
+          {tab === 'vijesti'
+            && <button className="on" onClick={() => setEditingNews({})}>+ NOVA VIJEST</button>}
         </div>
         {tab === 'blog'
-          ? <PostList posts={posts} onEdit={(p) => setEditing(p)} onRefresh={load} />
-          : <NewsList items={news} onEdit={(n) => setEditingNews(n)} onRefresh={loadNews} />}
+          && <PostList posts={posts} onEdit={(p) => setEditing(p)} onRefresh={load} />}
+        {tab === 'vijesti'
+          && <NewsList items={news} onEdit={(n) => setEditingNews(n)} onRefresh={loadNews} />}
+        {tab === 'korisnici'
+          && <UsersList rows={users} error={usersError} />}
       </>
     )
   }
@@ -443,7 +504,7 @@ export default function Admin() {
     <div className="shellpg">
       <SiteHeader />
       <main className="wrap-wide">
-        <div className="mk-title"><h1>Admin — blog</h1></div>
+        <div className="mk-title"><h1>Admin</h1></div>
         {body}
       </main>
       <SiteFooter />
