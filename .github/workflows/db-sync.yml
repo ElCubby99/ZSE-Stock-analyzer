@@ -17,6 +17,10 @@ on:
         description: 'Regeneriraj exporte + commit + deploy nakon synca (true/false)'
         required: false
         default: 'false'
+      admin_sql:
+        description: "M62: 'true' = primijeni supabase/migration_admin_users.sql (admin pregled prijavljenih korisnika; idempotentno)"
+        required: false
+        default: ''
 
 concurrency:
   group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
@@ -55,6 +59,26 @@ jobs:
           with get_conn() as conn:
               ensure_schema(conn)
           print("shema ok")
+          EOF
+
+      # M62: admin pregled korisnika — SECURITY DEFINER funkcija čita
+      # auth.users; ako ZSE_DSN rola nema pristup auth shemi, korak padne
+      # s jasnom porukom i migracija se pokreće ručno u SQL editoru
+      - name: Admin users migracija (M62, opcionalno)
+        if: inputs.admin_sql == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python - <<'EOF'
+          import pathlib
+          from src.db import get_conn
+          sql = pathlib.Path("supabase/migration_admin_users.sql").read_text(encoding="utf-8")
+          with get_conn() as conn, conn.cursor() as cur:
+              cur.execute(sql)
+              cur.execute("select count(*) from public.admin_users_overview()")
+              print("migracija ok; funkcija instalirana (poziv bez admin JWT-a vraća",
+                    cur.fetchone()[0], "redaka — očekivano 0)")
           EOF
 
       - name: Sync sadržaja (dump -> produkcija)
