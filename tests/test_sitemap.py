@@ -94,6 +94,7 @@ TABLE_ROUTES = {  # ruta -> minimalan broj redaka podataka
     f"{SITE}/usporedba": 60,
     f"{SITE}/dividende": 10,
     f"{SITE}/obveznice": 25,
+    f"{SITE}/etf-ovi": 5,
 }
 MIN_TEXT = {  # ruta -> minimalan broj znakova VIDLJIVOG teksta u #root
     f"{SITE}/": 2000,
@@ -101,6 +102,7 @@ MIN_TEXT = {  # ruta -> minimalan broj znakova VIDLJIVOG teksta u #root
     f"{SITE}/usporedba": 2000,
     f"{SITE}/dividende": 2000,
     f"{SITE}/obveznice": 2000,
+    f"{SITE}/etf-ovi": 800,
     f"{SITE}/mirovinski-fondovi": 1200,
     f"{SITE}/indeksi": 1500,
     f"{SITE}/metodologija": 1500,

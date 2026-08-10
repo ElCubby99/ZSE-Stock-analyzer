@@ -115,6 +115,22 @@ export const ROUTES = [
     expand: 'bonds',
   },
   {
+    path: '/etf-ovi',
+    en: {
+      path: '/en/etfs',
+      seo: {
+        title: 'ETFs on the Zagreb Stock Exchange — 7CRO, 7SLO, 7BET, 7POL | Burzovni list',
+        description: 'All ETFs listed on the Zagreb Stock Exchange (InterCapital: CROBEX10tr, SBITOP TR, BET-TRN, WIG30TR, Romania Govt Bond, Euro Money Market) — prices, turnover, liquidity and the index each fund tracks.',
+      },
+    },
+    component: 'EtfoviIndex',
+    indexable: true,
+    seo: {
+      title: 'ETF-ovi na Zagrebačkoj burzi — 7CRO, 7SLO, 7BET, 7POL | Burzovni list',
+      description: 'Svi ETF-ovi uvršteni na Zagrebačku burzu (InterCapital: CROBEX10tr, SBITOP TR, BET-TRN, WIG30TR, rumunjske državne obveznice, novčano tržište) — cijene, promet, likvidnost i indeks koji svaki fond prati.',
+    },
+  },
+  {
     path: '/mirovinski-fondovi',
     en: {
       path: '/en/pension-funds',
