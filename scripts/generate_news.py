@@ -92,6 +92,10 @@ def collect_dividend_news(cur, date_from: date) -> list[dict]:
              AND COALESCE(d.fiscal_year,
                           EXTRACT(YEAR FROM CURRENT_DATE)::int)
                  >= EXTRACT(YEAR FROM CURRENT_DATE)::int - 1
+             -- M66: 'najava' smije nastati SAMO za aktualnu isplatu — redak
+             -- ubačen backfillom za davno prošlu dividendu nije vijest
+             -- (incident 4.8.2026.: ~200 povijesnih rata preplavilo /vijesti)
+             AND (d.ex_date IS NULL OR d.ex_date >= CURRENT_DATE - 7)
            ORDER BY d.created_at""", (date_from,))
     items = []
     for did, ticker, name, amount, pub in cur.fetchall():
