@@ -40,6 +40,13 @@ create unique index if not exists uq_newsletter_unsub_token
 -- dolje) ne vidi ništa; FORCE da ni vlasnik tablice ne zaobilazi policyje
 alter table public.newsletter_subscribers enable row level security;
 alter table public.newsletter_subscribers force row level security;
+-- service_role (Edge Function) treba i table-level GRANT — BYPASSRLS
+-- preskače RLS, ali NE i privilegije; tablicu kreira naš DSN pa Supabase
+-- defaultne privilegije (za tablice koje kreira 'postgres') ne moraju
+-- vrijediti (10.08.2026.: subscribe vraćao 500 permission denied)
+grant usage on schema public to service_role;
+grant select, insert, update, delete
+  on public.newsletter_subscribers to service_role;
 drop policy if exists newsletter_admin_read on public.newsletter_subscribers;
 create policy newsletter_admin_read on public.newsletter_subscribers
   for select using (public.is_admin());
