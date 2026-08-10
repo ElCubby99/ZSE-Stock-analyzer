@@ -660,6 +660,11 @@ try {
   fondoviData = JSON.parse(await fs.readFile(path.join(DIST, 'data/fondovi.json'), 'utf8'))
 } catch { /* bez podataka o fondovima */ }
 
+let etfovi = { rows: [], as_of: null }
+try {
+  etfovi = JSON.parse(await fs.readFile(path.join(DIST, 'data/etfovi.json'), 'utf8'))
+} catch { /* prvi build prije prvog regena — stranica ostaje bez tablice */ }
+
 let obveznice = { rows: [], as_of: null }
 try {
   obveznice = JSON.parse(await fs.readFile(path.join(DIST, 'data/obveznice.json'), 'utf8'))
@@ -953,6 +958,22 @@ const BODY_BUILDERS = {
       <p>Izračuni: <a href="/metodologija">Metodologija — sekcija Obveznice</a>.</p>
       <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
   }),
+  '/etf-ovi': () => ({
+    body: `<main><h1>ETF-ovi na Zagrebačkoj burzi</h1>
+      <p>Svi ETF-ovi uvršteni na ZSE${etfovi.as_of ? ` (zadnje trgovanje ${esc(etfovi.as_of)})` : ''}:
+      cijene i promet iz službene tečajnice, imena fondova i indeksi koje prate iz
+      službenih objava izdavatelja (EHO). ETF replicira indeks — procjena fer
+      vrijednosti se za ETF-ove ne izrađuje.</p>
+      <table><thead><tr><th>Oznaka</th><th>Fond</th><th>Prati indeks</th>
+      <th>Zadnja cijena (EUR)</th><th>Dani trgovanja (1 g.)</th></tr></thead>
+      <tbody>${etfovi.rows.map((r) => `<tr>
+        <td>${esc(r.symbol)}${r.stale ? ' (ILIKV.)' : ''}</td>
+        <td>${esc(r.name || 'u obradi')}</td>
+        <td>${esc(r.index_name || 'n/p')}${r.index_data ? ` — ${num(r.index_data.last_value, 2)}` : ''}</td>
+        <td>${r.last_close_eur !== null && r.last_close_eur !== undefined ? num(r.last_close_eur, 2) : 'n/p'}</td>
+        <td>${r.traded_days_1y}/${r.workdays_1y || 250}</td></tr>`).join('')}</tbody></table>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
   '/mirovinski-fondovi': () => {
     const f = fondoviData
     const byT = new Map()
@@ -1077,6 +1098,22 @@ const BODY_BUILDERS_EN = {
         <td>${bondPct(r.ytm_pct)}</td>
         <td>${r.duration ? num(r.duration.modified, 2) : 'n/a'}</td></tr>`).join('')}</tbody></table>
       <p>Formulas and conventions: <a href="/en/methodology">Methodology — Bonds section</a>.</p>
+      <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
+  }),
+  '/en/etfs': () => ({
+    body: `<main><h1>ETFs on the Zagreb Stock Exchange</h1>
+      <p>Every ETF listed on the ZSE${etfovi.as_of ? ` (last trade ${esc(etfovi.as_of)})` : ''}:
+      prices and turnover from the official price list, fund names and tracked
+      indices from official issuer publications (EHO). An ETF replicates an
+      index — no fair-value estimate is produced for ETFs.</p>
+      <table><thead><tr><th>Symbol</th><th>Fund</th><th>Tracks index</th>
+      <th>Last price (EUR)</th><th>Trading days (1y)</th></tr></thead>
+      <tbody>${etfovi.rows.map((r) => `<tr>
+        <td>${esc(r.symbol)}${r.stale ? ' (ILLIQ.)' : ''}</td>
+        <td>${esc(r.name || 'in progress')}</td>
+        <td>${esc(r.index_name || 'n/a')}${r.index_data ? ` — ${num(r.index_data.last_value, 2)}` : ''}</td>
+        <td>${r.last_close_eur !== null && r.last_close_eur !== undefined ? num(r.last_close_eur, 2) : 'n/a'}</td>
+        <td>${r.traded_days_1y}/${r.workdays_1y || 250}</td></tr>`).join('')}</tbody></table>
       <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
   }),
   '/en/pension-funds': () => {

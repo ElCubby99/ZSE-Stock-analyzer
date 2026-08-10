@@ -575,6 +575,14 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
         log("regen", None, "ok", "obveznice.json regeneriran")
     except Exception as e:  # noqa: BLE001
         log("regen", None, "failed", f"obveznice.json: {type(e).__name__}: {e}")
+    # M63: etfovi.json (ZSE ETF-ovi — cijene, likvidnost, indeks koji prate)
+    try:
+        import subprocess
+        subprocess.run([os.sys.executable, "-m", "scripts.build_etfovi"],
+                       check=True, capture_output=True, text=True)
+        log("regen", None, "ok", "etfovi.json regeneriran")
+    except Exception as e:  # noqa: BLE001
+        log("regen", None, "failed", f"etfovi.json: {type(e).__name__}: {e}")
     # M-FOND4: fondovi.json i dnevno — TRŽIŠNA VRIJEDNOST OMF udjela ovisi o
     # zadnjem EOD-u dionica pa mora pratiti cijene; jedinice/Mirex/AUM se u
     # bazi i dalje mijenjaju samo mjesečnim HANFA uvozom (build ih samo čita)
@@ -808,9 +816,20 @@ def main(argv=None) -> int:
             conn.rollback()
             log("bonds", None, "failed", f"{type(e).__name__}: {e}")
             n_bond = 0
+        # M63: ETF-ovi (master iz tečajnice + EOD cijene; kurirana imena/indeksi)
+        try:
+            from .etfs import sync_master as etf_master
+            from .etfs import update_prices as etf_prices
+            etf_master(conn, log=lambda m: None)
+            n_etf = etf_prices(conn, log=lambda m: None)
+            log("etfs", None, "ok", f"{n_etf} EOD zapisa ETF-ova")
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("etfs", None, "failed", f"{type(e).__name__}: {e}")
+            n_etf = 0
         stage_regen(conn, run_id, log,
                     changed=bool(touched or n_prices or n_idx or n_bond
-                                 or force_regen))
+                                 or n_etf or force_regen))
         conn.commit()
         digest = build_digest(conn, run_id)
         os.makedirs("data/digests", exist_ok=True)

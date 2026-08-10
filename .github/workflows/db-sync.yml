@@ -21,6 +21,10 @@ on:
         description: "M62: 'true' = primijeni supabase/migration_admin_users.sql (admin pregled prijavljenih korisnika; idempotentno)"
         required: false
         default: ''
+      etf_backfill:
+        description: "M63: 'true' = ETF master + povijest cijena sa ZSE (jednokratni backfill; idempotentno)"
+        required: false
+        default: ''
 
 concurrency:
   group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
@@ -80,6 +84,14 @@ jobs:
               print("migracija ok; funkcija instalirana (poziv bez admin JWT-a vraća",
                     cur.fetchone()[0], "redaka — očekivano 0)")
           EOF
+
+      # M63: ETF registar + povijest cijena (ZSE tečajnica + securityHistory)
+      - name: ETF backfill (M63, opcionalno)
+        if: inputs.etf_backfill == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m src.etfs --backfill
 
       - name: Sync sadržaja (dump -> produkcija)
         env:

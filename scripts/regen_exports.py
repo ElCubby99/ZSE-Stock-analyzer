@@ -35,7 +35,7 @@ def main() -> int:
         for f in fail:
             print("  FAIL", f)
     for mod in ("scripts.build_financije", "scripts.build_overview",
-                "scripts.build_indeksi"):
+                "scripts.build_indeksi", "scripts.build_etfovi"):
         r = subprocess.run([sys.executable, "-m", mod], capture_output=True, text=True)
         print(f"{mod}: {'ok' if r.returncode == 0 else 'FAIL'}")
         if r.returncode != 0:

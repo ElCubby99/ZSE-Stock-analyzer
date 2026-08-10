@@ -472,6 +472,31 @@ export const DATA_TX = {
   'pokrivenost najave matice uključuje očekivane priljeve dividendi kćeri — činjenično iz zadnje izglasane isplate kćeri × naš udio':
     "the coverage of the parent's announcement includes expected dividend inflows from subsidiaries — factually from the subsidiary's latest approved payout × our stake",
 
+  // ---- M63: /etf-ovi — kurirani podatkovni tekstovi ----
+  'dionički (Hrvatska)': 'equity (Croatia)',
+  'dionički (Slovenija)': 'equity (Slovenia)',
+  'dionički (Rumunjska)': 'equity (Romania)',
+  'dionički (Poljska)': 'equity (Poland)',
+  'obveznički (Rumunjska)': 'bond (Romania)',
+  'novčani (eurozona)': 'money market (euro area)',
+  'SBITOP TR (Ljubljanska burza)': 'SBITOP TR (Ljubljana Stock Exchange)',
+  'BET-TRN (Burza u Bukureštu)': 'BET-TRN (Bucharest Stock Exchange)',
+  'WIG30TR (Varšavska burza)': 'WIG30TR (Warsaw Stock Exchange)',
+  'košarica rumunjskih državnih obveznica u EUR (5-10 g.)':
+    'a basket of Romanian government bonds in EUR (5-10 yr)',
+  'novčano tržište eurozone (nema dioničkog indeksa)':
+    'the euro-area money market (no equity index)',
+  'KIID pod-fonda, EHO objave izdavatelja InterCapital ETF d.o.o.':
+    'sub-fund KIID, EHO publications of the issuer InterCapital ETF d.o.o.',
+  "KIID pod-fonda, EHO objave izdavatelja InterCapital ETF d.o.o. (npr. eho.zse.hr, 'Dokument s ključnim informacijama … INTERCAPITAL CROBEX10tr UCITS ETF')":
+    "sub-fund KIID, EHO publications of the issuer InterCapital ETF d.o.o. (e.g. eho.zse.hr, 'Key information document … INTERCAPITAL CROBEX10tr UCITS ETF')",
+  'Odluka Burze o uvrštenju HRICAMFPWIG3 (EHO, 13.5.2026.) + Prezentacija o uvrštenju (EHO, 20.5.2026.)':
+    'Exchange listing decision for HRICAMFPWIG3 (EHO, 13 May 2026) + listing presentation (EHO, 20 May 2026)',
+  'Odluka Burze o uvrštenju HRICAMFERGB2 (EHO, 3.6.2024.) + KIID pod-fonda (EHO objave izdavatelja)':
+    'Exchange listing decision for HRICAMFERGB2 (EHO, 3 Jun 2024) + sub-fund KIID (EHO issuer publications)',
+  'Cijene i promet iz službene ZSE tečajnice; imena fondova i indeksi koje prate iz službenih objava izdavatelja na EHO portalu (KIID / odluke o uvrštenju). ETF replicira indeks — procjena fer vrijednosti se za ETF-ove ne izrađuje. Za strane indekse ne prikazujemo vrijednosti (nemamo izvor serije). Nije investicijski savjet.':
+    'Prices and turnover from the official ZSE price list; fund names and the indices they track from official issuer publications on the EHO portal (KIID / listing decisions). An ETF replicates an index — no fair-value estimate is produced for ETFs. For foreign indices we do not show values (no data source for the series). Not investment advice.',
+
 }
 
 /* Pattern pravila za stringove s dinamičkim dijelovima (datumi, n=,

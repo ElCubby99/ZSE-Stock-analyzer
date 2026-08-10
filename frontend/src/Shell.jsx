@@ -99,6 +99,7 @@ function navGroups(lang, t) {
         { to: '/screener', label: t('nav.screener') },
         { to: '/indeksi', label: t('nav.indices') },
         { to: '/obveznice', label: t('nav.bonds') },
+        { to: '/etf-ovi', label: t('nav.etfs') },
         { to: '/mirovinski-fondovi', label: t('nav.pensionFunds') },
         { to: '/dividende', label: t('nav.dividends') },
         { to: '/usporedba', label: t('nav.comparison') },

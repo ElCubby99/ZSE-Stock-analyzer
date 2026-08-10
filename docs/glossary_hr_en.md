@@ -85,3 +85,7 @@ glosar. Novi pojam = novi red OVDJE + ključ u `frontend/src/i18n/strings.mjs`.
 | dobrovoljni mirovinski fond (DMF) | voluntary pension fund | otvoreni / zatvoreni |
 | otvoreni (DMF) | open-ended (voluntary fund) | dostupan svima |
 | zatvoreni (DMF) | closed-ended (voluntary fund) | vezan uz poslodavca/strukovnu skupinu |
+| ETF (fond čijim se udjelima trguje na burzi) | ETF (exchange-traded fund) | M63: replicira indeks; bez fer-zone |
+| prati indeks | tracks index | ETF-ovi |
+| očekivana dividenda uz dosadašnju politiku isplate | expected dividend under the payout practice to date | M60: zamjena za "održiva dividenda" u UI |
+| rata (dividende) | instalment (of a dividend) | M59: HPB 2 rate iste dividende |
