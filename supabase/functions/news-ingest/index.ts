@@ -80,6 +80,16 @@ Deno.serve(async (req) => {
       .select("id").eq("auto_source_ref", auto_source_ref).maybeSingle();
     if (existing) { skipped += 1; continue; }
 
+    // M66: vijest nosi datum objave NA IZVORU (EHO/ZSE), ne trenutak uvoza —
+    // payload ga šalje kao published_at (ISO datum); sanity: 2020..danas+1
+    let srcDate: string | null = null;
+    const rawDate = it.published_at == null ? "" : String(it.published_at);
+    if (/^\d{4}-\d{2}-\d{2}/.test(rawDate)) {
+      const t = new Date(rawDate).getTime();
+      if (t >= Date.UTC(2020, 0, 1) && t <= Date.now() + 86_400_000) {
+        srcDate = new Date(t).toISOString();
+      }
+    }
     const { error } = await admin.from("news_items").insert({
       ticker: it.ticker == null ? null : String(it.ticker),
       category, headline,
@@ -89,7 +99,8 @@ Deno.serve(async (req) => {
       auto_source_ref,
       // činjenične kategorije odmah published; ostalo draft (admin pregled)
       status: AUTO_PUBLISH.has(category) ? "published" : "draft",
-      published_at: AUTO_PUBLISH.has(category) ? new Date().toISOString() : null,
+      published_at: AUTO_PUBLISH.has(category)
+        ? (srcDate ?? new Date().toISOString()) : null,
     });
     if (error) {
       // 23505 = unique violation (utrka s paralelnim runom) -> dedup, ne greška

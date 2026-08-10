@@ -55,13 +55,14 @@ def collect_filing_news(cur, date_from: date) -> list[dict]:
     # svjež ingested_at, ali NIJE novost — vijest "novo izvješće" smije
     # nastati samo za tekuću i prošlu fiskalnu godinu
     cur.execute(
-        """SELECT f.id, c.ticker, c.name, f.fiscal_year, f.period_type
+        """SELECT f.id, c.ticker, c.name, f.fiscal_year, f.period_type,
+                  f.published_at
            FROM filings f JOIN companies c ON c.id = f.company_id
            WHERE f.doc_type = 'financial_report' AND f.ingested_at >= %s
              AND f.fiscal_year >= EXTRACT(YEAR FROM CURRENT_DATE)::int - 1
            ORDER BY f.ingested_at""", (date_from,))
     items = []
-    for fid, ticker, name, fy, period in cur.fetchall():
+    for fid, ticker, name, fy, period, pub in cur.fetchall():
         what = PERIOD_HR.get(period, "izvješće")
         fy_txt = f" za {fy}." if fy else ""
         items.append({
@@ -71,6 +72,9 @@ def collect_filing_news(cur, date_from: date) -> list[dict]:
             "body": None,
             "link_path": f"/dionica/{ticker.lower()}",
             "auto_source_ref": f"filing:{fid}",
+            # M66: datum objave NA IZVORU (EHO/ZSE) — vijest nosi taj datum,
+            # ne trenutak našeg uvoza
+            "published_at": pub.isoformat() if pub else None,
         })
     return items
 
@@ -79,8 +83,10 @@ def collect_dividend_news(cur, date_from: date) -> list[dict]:
     # samo stvarne objave: bez izvedenih (NT backfill) i bez zapisa bez iznosa
     # ("ništa izmišljeno" — vijest bez iznosa nema sadržaja)
     cur.execute(
-        """SELECT d.id, c.ticker, c.name, d.amount_eur
+        """SELECT d.id, c.ticker, c.name, d.amount_eur,
+                  COALESCE(a.published_at, d.published_at, d.created_at::date)
            FROM dividends d JOIN companies c ON c.id = d.company_id
+           LEFT JOIN announcements a ON a.external_id = d.source_url
            WHERE d.created_at >= %s AND d.amount_eur IS NOT NULL
              AND (d.div_type IS NULL OR d.div_type NOT ILIKE '%%izvedeno%%')
              AND COALESCE(d.fiscal_year,
@@ -88,7 +94,7 @@ def collect_dividend_news(cur, date_from: date) -> list[dict]:
                  >= EXTRACT(YEAR FROM CURRENT_DATE)::int - 1
            ORDER BY d.created_at""", (date_from,))
     items = []
-    for did, ticker, name, amount in cur.fetchall():
+    for did, ticker, name, amount, pub in cur.fetchall():
         items.append({
             "ticker": ticker,
             "category": "dividenda",
@@ -98,6 +104,8 @@ def collect_dividend_news(cur, date_from: date) -> list[dict]:
             "body": None,
             "link_path": f"/dionica/{ticker.lower()}",
             "auto_source_ref": f"dividend:{did}",
+            # M66: datum objave odluke/obavijesti na EHO-u kad ga imamo
+            "published_at": pub.isoformat() if pub else None,
         })
     return items
 

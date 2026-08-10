@@ -29,7 +29,7 @@ def test_kandidati_ispravnog_oblika():
     assert filings, "u bazi postoje filingi — kandidata mora biti"
     for it in filings + divs:
         assert set(it) == {"ticker", "category", "headline", "body",
-                           "link_path", "auto_source_ref"}
+                           "link_path", "auto_source_ref", "published_at"}
         assert 1 <= len(it["headline"]) <= 120, it["headline"]
         assert it["link_path"].startswith("/dionica/")
         assert it["link_path"] == it["link_path"].lower()

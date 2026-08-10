@@ -1,0 +1,25 @@
+# M66 jednokratni forenzički workflow: stanje news_items u produkcijskoj
+# bazi (zašto /vijesti stoje na lipnju iako pipeline javlja dedup).
+# Samo čitanje i ispis — bez pisanja, bez commita. Ukloniti nakon popravka.
+name: debug-news
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install psycopg2-binary python-dotenv
+      - env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: python scripts/debug_news_items.py
