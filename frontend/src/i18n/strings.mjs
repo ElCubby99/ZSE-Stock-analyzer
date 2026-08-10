@@ -105,6 +105,41 @@ export const STR = {
     hr: 'Link za odjavu nije valjan. Pišite nam na info@burzovnilist.com i odjavit ćemo vas ručno.',
     en: 'The unsubscribe link is invalid. Write to info@burzovnilist.com and we will unsubscribe you manually.',
   },
+  // M68: /newsletter landing stranica (odredište oglasa + SEO)
+  'nl.pageTitle': {
+    hr: 'Newsletter Burzovnog lista',
+    en: 'The Burzovni list newsletter',
+  },
+  'nl.pageLead': {
+    hr: 'Povremeni pregled sa Zagrebačke burze, izravno u vaš sandučić. Informativno — bez preporuka i bez spama.',
+    en: 'An occasional Zagreb Stock Exchange digest, straight to your inbox. Informational — no recommendations, no spam.',
+  },
+  'nl.whatH': { hr: 'Što stiže u sandučić', en: 'What you get' },
+  'nl.b1': {
+    hr: 'nova financijska izvješća firmi sa Zagrebačke burze — čim ih obradimo, s poveznicom na analizu',
+    en: 'new financial reports of Zagreb Stock Exchange companies — as soon as we process them, with a link to the analysis',
+  },
+  'nl.b2': {
+    hr: 'najavljene dividende: iznosi po dionici, ex-datumi i datumi isplate iz službenih objava',
+    en: 'announced dividends: per-share amounts, ex-dates and payment dates from official filings',
+  },
+  'nl.b3': {
+    hr: 'ažurirane fer-zone i pokazatelji nakon novih rezultata',
+    en: 'updated fair-value zones and indicators after new results',
+  },
+  'nl.b4': {
+    hr: 'kratke vijesti s burze — svaka vodi na stranicu s podacima i izvorima',
+    en: 'short news from the exchange — each links to the page with data and sources',
+  },
+  'nl.freq': {
+    hr: 'Šaljemo povremeno — kad ima novosti, najviše nekoliko puta mjesečno. Adrese ne dijelimo ni s kim.',
+    en: 'We send occasionally — when there is news, at most a few times a month. We never share addresses.',
+  },
+  'nl.doiH': { hr: 'Kako radi prijava', en: 'How subscribing works' },
+  'nl.doiTxt': {
+    hr: 'Prijava ide uz dvostruku potvrdu (double opt-in): nakon upisa adrese stiže vam mail s linkom za potvrdu — bez potvrde se ništa ne šalje, a nepotvrđene prijave brišemo nakon 30 dana. Odjava je moguća u svakom trenutku, jednim klikom u svakom emailu.',
+    en: 'Subscribing uses double opt-in: after you enter your address, you receive an email with a confirmation link — nothing is sent without confirmation, and unconfirmed requests are deleted after 30 days. You can unsubscribe at any time with one click in every email.',
+  },
   'nl.unsubHowTo': {
     hr: 'Link za odjavu nalazi se na dnu svakog našeg emaila. Ako ga nemate, pišite nam na info@burzovnilist.com i odjavit ćemo vas ručno.',
     en: 'The unsubscribe link is at the bottom of every email we send. If you do not have it, write to info@burzovnilist.com and we will unsubscribe you manually.',

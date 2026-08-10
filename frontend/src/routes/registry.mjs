@@ -312,6 +312,25 @@ export const ROUTES = [
     },
   },
   {
+    // M68: landing stranica za prijavu (odredište oglasa + SEO) — forma
+    // inline, bez modala; klijentski router NE dira query string pa UTM
+    // parametri iz oglasa ostaju netaknuti za GTM/GA4
+    path: '/newsletter',
+    en: {
+      path: '/en/newsletter',
+      seo: {
+        title: 'Newsletter — Zagreb Stock Exchange digest by email | Burzovni list',
+        description: 'An occasional Zagreb Stock Exchange digest by email: new reports, announced dividends and updated analyses. Double opt-in, one-click unsubscribe.',
+      },
+    },
+    component: 'NewsletterPage',
+    indexable: true,
+    seo: {
+      title: 'Newsletter — pregled Zagrebačke burze na mail | Burzovni list',
+      description: 'Povremeni pregled sa Zagrebačke burze na vaš email: nova izvješća, najavljene dividende i ažurirane analize. Dvostruka potvrda prijave, odjava jednim klikom.',
+    },
+  },
+  {
     // M67: potvrda double opt-in prijave (link iz maila, ?token=...) —
     // noindex, bez prerendera (sadržaj ovisi o tokenu)
     path: '/newsletter/potvrda',

@@ -994,6 +994,23 @@ const BODY_BUILDERS = {
       <ul>${posts.map((b) => `<li><a href="/blog/${esc(b.slug)}">${esc(b.title)}</a>${b.date ? ` (${esc(b.date)})` : ''}${b.summary ? ` — ${esc(b.summary)}` : ''}</li>`).join('')}</ul>
       <p><em>Edukativni sadržaj — nije investicijski savjet ni preporuka.</em></p></main>`,
   }),
+  '/newsletter': () => ({
+    // M68: landing za oglase — sadržaj zrcali SPA stranicu (forma se
+    // aktivira hidracijom aplikacije)
+    body: `<main><h1>Newsletter Burzovnog lista</h1>
+      <p>Povremeni pregled sa Zagrebačke burze, izravno u vaš sandučić. Informativno — bez preporuka i bez spama.</p>
+      <h2>Što stiže u sandučić</h2>
+      <ul>
+        <li>nova financijska izvješća firmi sa Zagrebačke burze — čim ih obradimo, s poveznicom na analizu</li>
+        <li>najavljene dividende: iznosi po dionici, ex-datumi i datumi isplate iz službenih objava</li>
+        <li>ažurirane fer-zone i pokazatelji nakon novih rezultata</li>
+        <li>kratke vijesti s burze — svaka vodi na stranicu s podacima i izvorima</li>
+      </ul>
+      <p>Šaljemo povremeno — kad ima novosti, najviše nekoliko puta mjesečno. Adrese ne dijelimo ni s kim.</p>
+      <h2>Kako radi prijava</h2>
+      <p>Prijava ide uz dvostruku potvrdu (double opt-in): nakon upisa adrese stiže vam mail s linkom za potvrdu — bez potvrde se ništa ne šalje, a nepotvrđene prijave brišemo nakon 30 dana. Odjava je moguća u svakom trenutku, jednim klikom u svakom emailu. Detalji obrade podataka u <a href="/politika-privatnosti">Politici privatnosti</a>.</p>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
   '/alati': () => ({
     body: `<main><h1>Alati i kalkulatori za ulagače</h1>
       <ul>
@@ -1122,6 +1139,21 @@ const temperatureHtmlEn = () => {
 }
 
 const BODY_BUILDERS_EN = {
+  '/en/newsletter': () => ({
+    body: `<main><h1>The Burzovni list newsletter</h1>
+      <p>An occasional Zagreb Stock Exchange digest, straight to your inbox. Informational — no recommendations, no spam.</p>
+      <h2>What you get</h2>
+      <ul>
+        <li>new financial reports of Zagreb Stock Exchange companies — as soon as we process them, with a link to the analysis</li>
+        <li>announced dividends: per-share amounts, ex-dates and payment dates from official filings</li>
+        <li>updated fair-value zones and indicators after new results</li>
+        <li>short news from the exchange — each links to the page with data and sources</li>
+      </ul>
+      <p>We send occasionally — when there is news, at most a few times a month. We never share addresses.</p>
+      <h2>How subscribing works</h2>
+      <p>Subscribing uses double opt-in: after you enter your address, you receive an email with a confirmation link — nothing is sent without confirmation, and unconfirmed requests are deleted after 30 days. You can unsubscribe at any time with one click in every email. Data-processing details are in the <a href="/en/privacy">Privacy Policy</a>.</p>
+      <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
+  }),
   '/en': () => ({
     body: `<main><h1>Zagreb Stock Exchange stock analysis</h1>
       <p>Fair value, CROBEX, dividends and key indicators for every listed Croatian stock — official end-of-day data${eod ? ` (${esc(eod)})` : ''}. Built for international investors: no paywall, every number carries its source.</p>

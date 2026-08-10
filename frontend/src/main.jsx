@@ -22,7 +22,9 @@ import { EtfDetail, EtfoviIndex } from './Etfovi.jsx'
 import MirovinskiFondovi, { FondDetail } from './MirovinskiFondovi.jsx'
 import Admin from './Admin.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
-import { NewsletterOdjava, NewsletterPopup, NewsletterPotvrda } from './Newsletter.jsx'
+import {
+  NewsletterOdjava, NewsletterPage, NewsletterPopup, NewsletterPotvrda,
+} from './Newsletter.jsx'
 import { ConsentProvider, fbqTrack, pushEvent } from './consent.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import AuthCallback from './AuthCallback.jsx'
@@ -108,6 +110,7 @@ const COMPONENTS = {
   PolitikaKolacica: <PolitikaKolacica />,
   UvjetiKoristenja: <UvjetiKoristenja />,
   PolitikaPrivatnosti: <PolitikaPrivatnosti />,
+  NewsletterPage: <NewsletterPage />,
   NewsletterPotvrda: <NewsletterPotvrda />,
   NewsletterOdjava: <NewsletterOdjava />,
 }
