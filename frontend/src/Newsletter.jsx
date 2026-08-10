@@ -94,6 +94,8 @@ export function NewsletterForm({ source, onDone }) {
 
 export function NewsletterModal({ source, onClose }) {
   const { t } = useLang()
+  // nakon uspješne prijave "Ne, hvala" više nema smisla -> "Zatvori"
+  const [sent, setSent] = useState(false)
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
@@ -108,11 +110,11 @@ export function NewsletterModal({ source, onClose }) {
           <button type="button" className="cc-x" onClick={onClose}
             aria-label={t('nl.close')}>×</button>
         </div>
-        <p className="nl-lead">{t('nl.lead')}</p>
-        <NewsletterForm source={source} />
+        {!sent && <p className="nl-lead">{t('nl.lead')}</p>}
+        <NewsletterForm source={source} onDone={() => setSent(true)} />
         <div className="cc-btns" style={{ marginTop: 8 }}>
           <button type="button" className="cc-btn acct-link-btn" onClick={onClose}>
-            {t('nl.notNow')}
+            {sent ? t('nl.close') : t('nl.notNow')}
           </button>
         </div>
       </div>
