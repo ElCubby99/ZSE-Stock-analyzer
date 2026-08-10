@@ -54,7 +54,8 @@ export function EtfoviIndex() {
                       onClick={(e) => e.stopPropagation()}><b>{x.symbol}</b></Link>
                       {x.stale && <i className="mk-ill" title={t('etf.staleTitle')}> {t('mkt.illiq')}</i>}</td>
                     <td>{x.name ? tx(x.name, lang) : <span className="flag">{t('bond.masterInProgress')}</span>}
-                      {x.category && <div className="fund-src">{tx(x.category, lang)}</div>}</td>
+                      <div className="fund-src">{x.category ? tx(x.category, lang) : ''}
+                        {x.listed_since ? ` · ${t('etf.listedSince')} ${fmtDate(x.listed_since)}` : ''}</div></td>
                     <td>{x.index_name ? tx(x.index_name, lang) : t('common.na')}
                       {x.index_data && (
                         <div className="fund-src">
@@ -70,7 +71,7 @@ export function EtfoviIndex() {
                       ? `${x.change_pct > 0 ? '+' : ''}${num(x.change_pct, 2)} %` : '—'}</td>
                     <td className="num">{x.last_turnover_eur
                       ? eur(x.last_turnover_eur, 0) : '—'}</td>
-                    <td className="num">{x.traded_days_1y}/{x.workdays_1y}</td>
+                    <td className="num">{x.traded_days_1y}/{x.liq_workdays || x.workdays_1y}</td>
                   </tr>
                 ))}
               </tbody>
@@ -98,7 +99,7 @@ export function EtfoviIndex() {
                   ? eur(r.last_close_eur, 2) : t('common.na')}</div>
                 <div className="n">{r.last_date ? `EOD ${fmtDate(r.last_date)}` : ''}</div></div>
               <div className="cell"><div className="k">{t('etf.colLiquidity')}</div>
-                <div className="v">{r.traded_days_1y}/{r.workdays_1y}</div>
+                <div className="v">{r.traded_days_1y}/{r.liq_workdays || r.workdays_1y}</div>
                 <div className="n">{t('etf.liquidityNote')}</div></div>
             </div>
             {r.series?.length > 1 && (
@@ -180,8 +181,13 @@ export function EtfDetail() {
                     <div className="n"><Link to={lang === 'en' ? `/en/index/${r.index_data.slug}` : `/indeks/${r.index_data.slug}`}>{t('etf.indexDataLink')}</Link></div>
                   )}</div>
                 <div className="cell"><div className="k">{t('etf.colLiquidity')}</div>
-                  <div className="v">{r.traded_days_1y}/{r.workdays_1y}</div>
-                  <div className="n">{t('etf.liquidityNote')}</div></div>
+                  <div className="v">{r.traded_days_1y}/{r.liq_workdays || r.workdays_1y}</div>
+                  <div className="n">{(r.liq_workdays || 250) < 250 ? t('etf.liqSinceListing') : t('etf.liquidityNote')}</div></div>
+                {r.listed_since && (
+                  <div className="cell"><div className="k">{t('etf.listedSinceH')}</div>
+                    <div className="v" style={{ fontSize: 15 }}>{fmtDate(r.listed_since)}</div>
+                    <div className="n">{r.listed_since_src === 'factsheet' ? t('etf.listedSrcFs') : t('etf.listedSrcSeries')}</div></div>
+                )}
               </div>
               {pi && (
                 <section style={{ marginBottom: 16 }}>

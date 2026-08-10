@@ -702,7 +702,8 @@ async function buildEtfPages() {
         <h1>${esc(r.symbol)} — ${esc(r.name || 'ETF na Zagrebačkoj burzi')}</h1>
         <p>${esc((r.desc && r.desc.hr) || '')}</p>
         <p>Zadnja cijena na ZSE: <strong>${n1(r.last_close_eur)} EUR</strong>${r.last_date ? ` (EOD ${esc(r.last_date)})` : ''}${r.stale ? ' — indikativna (rijetko trgovanje)' : ''} ·
-        likvidnost ${r.traded_days_1y}/${r.workdays_1y || 250} dana s trgovanjem u zadnjih godinu dana ·
+        likvidnost ${r.traded_days_1y}/${r.liq_workdays || r.workdays_1y || 250} dana s trgovanjem${(r.liq_workdays || 250) < 250 ? ' od početka klase (fond je mlađi od godinu dana)' : ' u zadnjih godinu dana'} ·
+        ${r.listed_since ? `početak klase ${esc(r.listed_since)} ·` : ''}
         ISIN ${esc(r.isin)} · izdavatelj ${esc(r.issuer || 'n/p')}.</p>
         ${f.nav_meur !== undefined && f.nav_meur !== null ? `<p>Imovina fonda (NAV): ${num(f.nav_meur, 1)} milijuna EUR · vrijednost udjela ${n1(f.unit_value, 4)} EUR (mjesečni izvještaj, ${esc(r.facts_period || '')}) · početak klase ${esc(f.inception_date || 'n/p')}.</p>` : ''}
         ${pi ? `<h2>Pokazatelji portfelja</h2><p>${indHr}. Izvor: mjesečni izvještaj izdavatelja (${esc(r.facts_period || '')}).</p>` : ''}
@@ -726,7 +727,8 @@ async function buildEtfPages() {
         <h1>${esc(r.symbol)} — ${esc(r.name || 'ETF on the Zagreb Stock Exchange')}</h1>
         <p>${esc((r.desc && r.desc.en) || '')}</p>
         <p>Last ZSE price: <strong>${n1(r.last_close_eur)} EUR</strong>${r.last_date ? ` (end-of-day ${esc(r.last_date)})` : ''}${r.stale ? ' — indicative (infrequent trading)' : ''} ·
-        liquidity ${r.traded_days_1y}/${r.workdays_1y || 250} trading days over the last year ·
+        liquidity ${r.traded_days_1y}/${r.liq_workdays || r.workdays_1y || 250} trading days${(r.liq_workdays || 250) < 250 ? ' since class inception (the fund is younger than one year)' : ' over the last year'} ·
+        ${r.listed_since ? `class inception ${esc(r.listed_since)} ·` : ''}
         ISIN ${esc(r.isin)} · issuer ${esc(r.issuer || 'n/a')}.</p>
         ${f.nav_meur !== undefined && f.nav_meur !== null ? `<p>Fund assets (NAV): EUR ${num(f.nav_meur, 1)}m · unit value ${n1(f.unit_value, 4)} EUR (monthly report, ${esc(r.facts_period || '')}) · class inception ${esc(f.inception_date || 'n/a')}.</p>` : ''}
         ${pi ? `<h2>Portfolio indicators</h2><p>${indEn}. Source: the issuer's monthly report (${esc(r.facts_period || '')}).</p>` : ''}
@@ -1047,7 +1049,7 @@ const BODY_BUILDERS = {
         <td>${esc(r.name || 'u obradi')}</td>
         <td>${esc(r.index_name || 'n/p')}${r.index_data ? ` — ${num(r.index_data.last_value, 2)}` : ''}</td>
         <td>${r.last_close_eur !== null && r.last_close_eur !== undefined ? num(r.last_close_eur, 2) : 'n/p'}</td>
-        <td>${r.traded_days_1y}/${r.workdays_1y || 250}</td></tr>`).join('')}</tbody></table>
+        <td>${r.traded_days_1y}/${r.liq_workdays || r.workdays_1y || 250}</td></tr>`).join('')}</tbody></table>
       <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
   }),
   '/mirovinski-fondovi': () => {
@@ -1189,7 +1191,7 @@ const BODY_BUILDERS_EN = {
         <td>${esc(r.name || 'in progress')}</td>
         <td>${esc(r.index_name || 'n/a')}${r.index_data ? ` — ${num(r.index_data.last_value, 2)}` : ''}</td>
         <td>${r.last_close_eur !== null && r.last_close_eur !== undefined ? num(r.last_close_eur, 2) : 'n/a'}</td>
-        <td>${r.traded_days_1y}/${r.workdays_1y || 250}</td></tr>`).join('')}</tbody></table>
+        <td>${r.traded_days_1y}/${r.liq_workdays || r.workdays_1y || 250}</td></tr>`).join('')}</tbody></table>
       <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
   }),
   '/en/pension-funds': () => {

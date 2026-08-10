@@ -25,6 +25,18 @@ OUT = ROOT / "frontend" / "public" / "data" / "etfovi.json"
 WORKDAYS_1Y = 250  # ista aproksimacija kao likvidnost na stranici dionice
 
 
+def _workdays_since(d0: date, today: date) -> int:
+    """Radni dani (pon-pet) od d0 do danas, cap na WORKDAYS_1Y — nazivnik
+    likvidnosti za fond uvršten prije manje od godinu dana (M64.1: 7POL
+    uvršten 5/2026 ne smije izgledati nelikvidno na nazivniku 250)."""
+    days = (today - d0).days
+    if days >= 365:
+        return WORKDAYS_1Y
+    wd = sum(1 for i in range(max(days, 0))
+             if (d0 + timedelta(days=i)).weekday() < 5)
+    return max(wd, 1)
+
+
 def main() -> int:
     rows = []
     yr_ago = (date.today() - timedelta(days=365)).isoformat()
@@ -103,18 +115,30 @@ def main() -> int:
         facts_by_sym = {s: (p, pay, u, pub) for s, p, pay, u, pub in cur.fetchall()}
         for row in rows:
             f = facts_by_sym.get(row["symbol"])
-            if not f:
+            if f:
+                period, payload, url, pub = f
+                payload = dict(payload)
+                payload.pop("skipped", None)
+                for h in payload.get("holdings") or []:
+                    h["zse"] = bool(h.get("ticker") and h["ticker"] in zse_tickers)
+                row["facts"] = payload
+                row["facts_period"] = period
+                row["facts_source_url"] = url
+                row["facts_published"] = pub.isoformat() if pub else None
+            else:
                 row["facts"] = None
-                continue
-            period, payload, url, pub = f
-            payload = dict(payload)
-            payload.pop("skipped", None)
-            for h in payload.get("holdings") or []:
-                h["zse"] = bool(h.get("ticker") and h["ticker"] in zse_tickers)
-            row["facts"] = payload
-            row["facts_period"] = period
-            row["facts_source_url"] = url
-            row["facts_published"] = pub.isoformat() if pub else None
+            # M64.1: datum početka klase (službeni mjesečni izvještaj) ili,
+            # bez njega, prvi zabilježeni dan trgovanja u našoj seriji —
+            # nazivnik likvidnosti broji radne dane OD tog datuma (cap 250)
+            inception = (row["facts"] or {}).get("inception_date")
+            first_trade = row["series"][0]["date"] if row["series"] else None
+            listed_since = inception or first_trade
+            row["listed_since"] = listed_since
+            row["listed_since_src"] = ("factsheet" if inception
+                                       else ("series" if first_trade else None))
+            row["liq_workdays"] = (_workdays_since(date.fromisoformat(listed_since),
+                                                   date.today())
+                                   if listed_since else WORKDAYS_1Y)
     out = {
         "as_of": market_last.isoformat() if market_last else None,
         "rows": rows,
