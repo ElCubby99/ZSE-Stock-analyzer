@@ -42,8 +42,19 @@ function popupAllowed(pathname) {
   return !skip.some((p) => pathname === p || pathname.startsWith(`${p}/`))
 }
 
-/* forma — koristi je i header modal i popup; 'website' polje je honeypot
-   (skriveno pravim korisnicima; bot koji ga popuni se tiho ignorira) */
+/* forma — koristi je landing (/newsletter), header modal i popup; 'website'
+   polje je honeypot (skriveno pravim korisnicima; bot koji ga popuni se
+   tiho ignorira).
+
+   M68 mjerni lijevak (sve kroz dataLayer/GTM, NIKAD izravni gtag i NIKAD
+   email adresa u dataLayeru):
+   - newsletter_submit  {source, method:'email'}  SAMO nakon OK odgovora
+     backenda (klik koji padne nije konverzija); jednom po uspješnom upisu
+     (forma nakon 'sent' nestaje pa dvostruko slanje nije moguće)
+   - newsletter_error   {source, reason: invalid_email | server_error}
+   - honeypot popunjen -> NIJEDAN event (boti ne ulaze u brojke)
+   source vrijednosti: 'page' (landing) | 'header' (gumb u navigaciji) |
+   'popup' — iste koje se spremaju uz prijavu u bazi. */
 export function NewsletterForm({ source, onDone }) {
   const { lang, t } = useLang()
   const [email, setEmail] = useState('')
@@ -53,17 +64,32 @@ export function NewsletterForm({ source, onDone }) {
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setState('erremail'); return }
-    if (!supabase) { setState('err'); return }
+    const isBot = hp.trim() !== ''
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
+      setState('erremail')
+      if (!isBot) pushEvent('newsletter_error', { source, reason: 'invalid_email' })
+      return
+    }
+    if (!supabase) {
+      setState('err')
+      if (!isBot) pushEvent('newsletter_error', { source, reason: 'server_error' })
+      return
+    }
     setState('busy')
     const { data, error } = await supabase.functions.invoke('newsletter', {
       body: { action: 'subscribe', email: email.trim(), lang, source, website: hp },
     })
-    if (error || !data?.ok) { setState('err'); return }
+    if (error || !data?.ok) {
+      setState('err')
+      if (!isBot) pushEvent('newsletter_error', { source, reason: 'server_error' })
+      return
+    }
     setState('sent')
     markNewsletterDone()
-    pushEvent('newsletter_signup', { source })
-    fbqTrack('Lead')
+    if (!isBot) {
+      pushEvent('newsletter_submit', { source, method: 'email' })
+      fbqTrack('Lead')
+    }
     if (onDone) onDone()
   }
 
@@ -96,6 +122,11 @@ export function NewsletterModal({ source, onClose }) {
   const { t } = useLang()
   // nakon uspješne prijave "Ne, hvala" više nema smisla -> "Zatvori"
   const [sent, setSent] = useState(false)
+  useEffect(() => {
+    // M68: forma postala vidljiva — jednom po otvaranju (mount), ne po
+    // re-renderu; modal se svakim otvaranjem montira iznova
+    pushEvent('newsletter_view', { source })
+  }, [source])
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
@@ -150,6 +181,50 @@ export function NewsletterPopup() {
   return <NewsletterModal source="popup" onClose={close} />
 }
 
+/* ---------- M68: /newsletter — landing za oglase + SEO ----------
+   Forma vidljiva odmah, bez klika i bez scrolla; isti backend poziv kao
+   modal. Klijentski router ne dira query string pa UTM parametri iz
+   oglasa ostaju u URL-u za GTM/GA4. */
+export function NewsletterPage() {
+  const { t } = useLang()
+  const viewFired = useRef(false)
+  useEffect(() => { document.title = `${t('nl.pageTitle')} · Burzovni list` }, [t])
+  useEffect(() => {
+    // newsletter_view jednom po učitavanju stranice, ne po re-renderu
+    if (viewFired.current) return
+    viewFired.current = true
+    pushEvent('newsletter_view', { source: 'page' })
+  }, [])
+  return (
+    <div className="shellpg">
+      <SiteHeader />
+      <main className="wrap">
+        <h1 className="page-h1">{t('nl.pageTitle')}</h1>
+        <section>
+          <p className="imp-p">{t('nl.pageLead')}</p>
+          <NewsletterForm source="page" />
+        </section>
+        <section>
+          <div className="sec-label">{t('nl.whatH')}</div>
+          <ul className="imp-p">
+            <li>{t('nl.b1')}</li>
+            <li>{t('nl.b2')}</li>
+            <li>{t('nl.b3')}</li>
+            <li>{t('nl.b4')}</li>
+          </ul>
+          <p className="imp-p">{t('nl.freq')}</p>
+        </section>
+        <section>
+          <div className="sec-label">{t('nl.doiH')}</div>
+          <p className="imp-p">{t('nl.doiTxt')}</p>
+          <p className="imp-p"><em>{t('common.notAdvice')}</em></p>
+        </section>
+      </main>
+      <SiteFooter />
+    </div>
+  )
+}
+
 /* ---------- /newsletter/potvrda i /newsletter/odjava ---------- */
 
 function useNoindex(title) {
@@ -174,12 +249,32 @@ function TokenPage({ action, title, workingKey, okKey, alreadyKey, badKey, extra
   const [state, setState] = useState(token ? 'busy' : 'notoken')
   useNoindex(title)
   useEffect(() => {
-    if (!token || !supabase) { if (token && !supabase) setState('bad'); return }
+    if (!token || !supabase) {
+      if (token && !supabase) setState('bad')
+      // link bez valjanog tokena (okrnjen pri kopiranju i sl.)
+      if (action === 'confirm' && !token) {
+        pushEvent('newsletter_error', { source: 'email_link', reason: 'invalid_token' })
+      }
+      return
+    }
     supabase.functions.invoke('newsletter', { body: { action, token } })
       .then(({ data, error }) => {
         if (error || !data?.ok) setState('bad')
         else setState(data.already ? 'already' : 'ok')
-        if (!error && data?.ok && action === 'confirm') markNewsletterDone()
+        if (action === 'confirm') {
+          /* M68: klik iz maila je NOVA sesija (izvor direct/email), pa se
+             newsletter_confirmed u GA4 NE pripisuje oglasu koji je doveo
+             korisnika. Konverzija kampanje je newsletter_submit;
+             newsletter_confirmed je mjera kvalitete (postotak potvrda).
+             Ne spajati kroz cross-session atribuciju. */
+          if (!error && data?.ok) {
+            markNewsletterDone()
+            // samo svježa potvrda — ponovni klik na isti link nije nova potvrda
+            if (!data.already) pushEvent('newsletter_confirmed', { source: 'email_link' })
+          } else {
+            pushEvent('newsletter_error', { source: 'email_link', reason: 'invalid_token' })
+          }
+        }
       })
   }, [action, token])
   return (
