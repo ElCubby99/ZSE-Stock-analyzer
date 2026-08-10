@@ -335,6 +335,23 @@ DO $$ BEGIN
        AND n.auto_source_ref LIKE 'filing:%'
        AND NOT EXISTS (SELECT 1 FROM filings f
                        WHERE 'filing:' || f.id = n.auto_source_ref);
+    -- M66.1: vijest iz PRIJEDLOGA dividende je duplikat kad postoji i
+    -- objavljena vijest iz izglasane dividende iste isplate (JNAF 2x
+    -- "Najavljena isplata ... 20,21 €") -> prijedlog-vijest u draft
+    UPDATE news_items n SET status = 'draft'
+      FROM dividends dp
+     WHERE n.source_type = 'auto'
+       AND n.status = 'published'
+       AND n.auto_source_ref = 'dividend:' || dp.id
+       AND dp.div_type ILIKE '%rijedlog%'
+       AND EXISTS (
+             SELECT 1 FROM dividends di
+             JOIN news_items n2 ON n2.auto_source_ref = 'dividend:' || di.id
+            WHERE di.company_id = dp.company_id
+              AND di.amount_eur = dp.amount_eur
+              AND COALESCE(di.fiscal_year, 0) = COALESCE(dp.fiscal_year, 0)
+              AND (di.div_type IS NULL OR di.div_type NOT ILIKE '%rijedlog%')
+              AND n2.status = 'published');
   END IF;
 END $$;
 

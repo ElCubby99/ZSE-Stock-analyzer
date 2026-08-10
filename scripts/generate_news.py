@@ -84,7 +84,8 @@ def collect_dividend_news(cur, date_from: date) -> list[dict]:
     # ("ništa izmišljeno" — vijest bez iznosa nema sadržaja)
     cur.execute(
         """SELECT d.id, c.ticker, c.name, d.amount_eur,
-                  COALESCE(a.published_at, d.published_at, d.created_at::date)
+                  COALESCE(a.published_at, d.published_at, d.created_at::date),
+                  (d.div_type ILIKE '%%rijedlog%%')
            FROM dividends d JOIN companies c ON c.id = d.company_id
            LEFT JOIN announcements a ON a.external_id = d.source_url
            WHERE d.created_at >= %s AND d.amount_eur IS NOT NULL
@@ -96,15 +97,31 @@ def collect_dividend_news(cur, date_from: date) -> list[dict]:
              -- ubačen backfillom za davno prošlu dividendu nije vijest
              -- (incident 4.8.2026.: ~200 povijesnih rata preplavilo /vijesti)
              AND (d.ex_date IS NULL OR d.ex_date >= CURRENT_DATE - 7)
+             -- M66.1: prijedlog NIJE zasebna vijest kad je ista dividenda
+             -- već izglasana (JNAF 4.8.2026.: prijedlog + izglasana = ista
+             -- isplata dvaput na /vijesti)
+             AND NOT (d.div_type ILIKE '%%rijedlog%%' AND EXISTS (
+                   SELECT 1 FROM dividends di
+                   WHERE di.company_id = d.company_id
+                     AND di.amount_eur = d.amount_eur
+                     AND COALESCE(di.fiscal_year, 0) = COALESCE(d.fiscal_year, 0)
+                     AND (di.div_type IS NULL
+                          OR di.div_type NOT ILIKE '%%rijedlog%%')))
            ORDER BY d.created_at""", (date_from,))
     items = []
-    for did, ticker, name, amount, pub in cur.fetchall():
+    for did, ticker, name, amount, pub, is_proposal in cur.fetchall():
+        # prijedlog je vijest, ali NE smije zvučati kao izglasana isplata
+        # ("ništa izmišljeno" — skupština prijedlog može i odbiti)
+        headline = (
+            f"Predložena dividenda za {name} ({ticker}) — "
+            f"{_fmt_amount(amount)} € po dionici (prijedlog)"
+            if is_proposal else
+            f"Najavljena isplata dividende za {name} ({ticker}) — "
+            f"{_fmt_amount(amount)} € po dionici")
         items.append({
             "ticker": ticker,
             "category": "dividenda",
-            "headline": _clip(
-                f"Najavljena isplata dividende za {name} ({ticker}) — "
-                f"{_fmt_amount(amount)} € po dionici"),
+            "headline": _clip(headline),
             "body": None,
             "link_path": f"/dionica/{ticker.lower()}",
             "auto_source_ref": f"dividend:{did}",
