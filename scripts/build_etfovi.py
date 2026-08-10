@@ -15,6 +15,7 @@ from datetime import date, timedelta
 sys.path.insert(0, ".")
 
 from src.db import get_conn  # noqa: E402
+from src.etfs import DESCRIPTIONS  # noqa: E402
 from src.indices import INDICES  # noqa: E402
 
 ISIN_SLUG = {isin: slug for _n, (isin, slug, _d) in INDICES.items()}
@@ -87,7 +88,33 @@ def main() -> int:
                 "traded_days_1y": traded_1y,
                 "workdays_1y": WORKDAYS_1Y,
                 "series": series,
+                # M64: kurirani opis (SEO tekst stranice fonda; HR+EN)
+                "desc": DESCRIPTIONS.get(sym),
             })
+
+        # M64: mjesečni factsheet (etf_facts) — naknade, pokazatelji
+        # portfelja, deset najvećih pozicija, prinosi, NAV; svaka brojka
+        # nosi izvor (EHO objava). ZSE tickeri pozicija (7CRO) dobivaju
+        # oznaku za link na našu stranicu dionice.
+        cur.execute("SELECT ticker FROM share_classes")
+        zse_tickers = {r[0] for r in cur.fetchall()}
+        cur.execute("""SELECT symbol, report_period, payload, source_url,
+                              published_at FROM etf_facts""")
+        facts_by_sym = {s: (p, pay, u, pub) for s, p, pay, u, pub in cur.fetchall()}
+        for row in rows:
+            f = facts_by_sym.get(row["symbol"])
+            if not f:
+                row["facts"] = None
+                continue
+            period, payload, url, pub = f
+            payload = dict(payload)
+            payload.pop("skipped", None)
+            for h in payload.get("holdings") or []:
+                h["zse"] = bool(h.get("ticker") and h["ticker"] in zse_tickers)
+            row["facts"] = payload
+            row["facts_period"] = period
+            row["facts_source_url"] = url
+            row["facts_published"] = pub.isoformat() if pub else None
     out = {
         "as_of": market_last.isoformat() if market_last else None,
         "rows": rows,

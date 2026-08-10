@@ -472,6 +472,12 @@ export const DATA_TX = {
   'pokrivenost najave matice uključuje očekivane priljeve dividendi kćeri — činjenično iz zadnje izglasane isplate kćeri × naš udio':
     "the coverage of the parent's announcement includes expected dividend inflows from subsidiaries — factually from the subsidiary's latest approved payout × our stake",
 
+  // ---- M64: factsheet podatkovni tekstovi (razdoblja prinosa) ----
+  'Godišnji prosjek od osnutka': 'Annualised average since inception',
+  '1 mjesec (1M)': '1 month (1M)',
+  'Tekuća godina (YTD)': 'Year to date (YTD)',
+  '1 godina (1Y)': '1 year (1Y)',
+
   // ---- M63: /etf-ovi — kurirani podatkovni tekstovi ----
   'dionički (Hrvatska)': 'equity (Croatia)',
   'dionički (Slovenija)': 'equity (Slovenia)',

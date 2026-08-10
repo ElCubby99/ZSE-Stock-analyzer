@@ -36,12 +36,31 @@ function Search() {
   const { lang } = useLang()
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
+  const [etfs, setEtfs] = useState([])
   const box = useRef(null)
-  const hits = !q ? [] : (ov?.stocks || [])
-    .filter((s) => (s.ticker + ' ' + s.name).toLowerCase().includes(q.toLowerCase()))
+  useEffect(() => {
+    // M64: i ETF-ovi u pretrazi (mala lista — dohvat jednom, lijeno)
+    fetch('/data/etfovi.json').then((r) => r.json())
+      .then((d) => setEtfs((d.rows || []).map((r) => ({
+        ticker: r.symbol, name: r.name || 'ETF', etf: true,
+      }))))
+      .catch(() => setEtfs([]))
+  }, [])
+  const ql = q.toLowerCase()
+  const stockHits = !q ? [] : (ov?.stocks || [])
+    .filter((s) => (s.ticker + ' ' + s.name).toLowerCase().includes(ql))
     .filter((s, i, a) => a.findIndex((x) => x.company === s.company) === i)
-    .slice(0, 8)
-  const go = (c) => { setQ(''); setOpen(false); nav(stockPath(lang, c)) }
+  const etfHits = !q ? [] : etfs
+    .filter((s) => (s.ticker + ' ' + s.name + ' etf').toLowerCase().includes(ql))
+  const hits = [...etfHits, ...stockHits].slice(0, 8)
+  const go = (h) => {
+    setQ(''); setOpen(false)
+    if (h.etf) {
+      nav(lang === 'en' ? `/en/etf/${h.ticker.toLowerCase()}` : `/etf/${h.ticker.toLowerCase()}`)
+    } else {
+      nav(stockPath(lang, h.company))
+    }
+  }
   return (
     <div className="hdr-search" ref={box}>
       <input value={q} placeholder={lang === 'en' ? 'ticker or name…' : 'ticker ili ime…'}
@@ -49,14 +68,15 @@ function Search() {
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && hits.length) go(hits[0].company)
+          if (e.key === 'Enter' && hits.length) go(hits[0])
           if (e.key === 'Escape') { setQ(''); setOpen(false) }
         }} />
       {open && hits.length > 0 && (
         <div className="hdr-search-dd">
           {hits.map((s) => (
-            <button key={s.ticker} onMouseDown={() => go(s.company)}>
+            <button key={s.ticker} onMouseDown={() => go(s)}>
               <b>{s.ticker}</b> <span>{s.name}</span>
+              {s.etf && <i className="mk-ill"> ETF</i>}
             </button>
           ))}
         </div>

@@ -817,12 +817,18 @@ def main(argv=None) -> int:
             log("bonds", None, "failed", f"{type(e).__name__}: {e}")
             n_bond = 0
         # M63: ETF-ovi (master iz tečajnice + EOD cijene; kurirana imena/indeksi)
+        # M64: + mjesečni factsheet s EHO-a (naknade, pozicije, pokazatelji) —
+        # već obrađena objava se preskače pa je dnevni trošak zanemariv
         try:
+            from .etfs import sync_facts as etf_facts
             from .etfs import sync_master as etf_master
             from .etfs import update_prices as etf_prices
             etf_master(conn, log=lambda m: None)
             n_etf = etf_prices(conn, log=lambda m: None)
-            log("etfs", None, "ok", f"{n_etf} EOD zapisa ETF-ova")
+            n_facts = etf_facts(conn, log=lambda m: None)
+            log("etfs", None, "ok",
+                f"{n_etf} EOD zapisa ETF-ova"
+                + (f" + {n_facts} novih factsheeta" if n_facts else ""))
         except Exception as e:  # noqa: BLE001
             conn.rollback()
             log("etfs", None, "failed", f"{type(e).__name__}: {e}")
