@@ -265,3 +265,50 @@ DO $$ BEGIN
       AND NOT p.is_admin;
   END IF;
 END $$;
+
+-- M66: dedup ključ dividendi v3 — v2 (s punim div_type) je uz prijedlog
+-- propustio i TREĆI zapis iste isplate s drugim tipom ('cash' sa zse.hr
+-- stranice papira uz 'Izglasana dividenda' s EHO-a): SNBA 0,72 € se
+-- prikazivala dvaput, a povijest je zbrajala 1,44 €. Ključ razlikuje SAMO
+-- prijedlog od stvarne isplate; među stvarnima ostaje jedan zapis
+-- (prednost 'Izglasana%' — nosi puni EHO izvor).
+DELETE FROM dividends d USING dividends k
+ WHERE d.id <> k.id
+   AND d.class_ticker = k.class_ticker
+   AND d.ex_date IS NOT NULL AND d.ex_date = k.ex_date
+   AND d.amount_eur = k.amount_eur
+   AND COALESCE(d.payment_date, '0001-01-01') = COALESCE(k.payment_date, '0001-01-01')
+   AND d.div_type NOT ILIKE '%rijedlog%' AND k.div_type NOT ILIKE '%rijedlog%'
+   AND (CASE WHEN d.div_type ILIKE 'Izglasana%' THEN 0 ELSE 1 END, d.id)
+     > (CASE WHEN k.div_type ILIKE 'Izglasana%' THEN 0 ELSE 1 END, k.id);
+DROP INDEX IF EXISTS uq_dividends_event_v2;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_dividends_event_v3
+  ON dividends (class_ticker, ex_date, amount_eur,
+                COALESCE(payment_date, '0001-01-01'::date),
+                (div_type ILIKE '%rijedlog%'));
+
+-- M66: vijesti nose datum objave NA IZVORU (EHO/ZSE), ne trenutak našeg
+-- uvoza. Idempotentna noćna korekcija postojećih auto vijesti iz izvora
+-- (filings.published_at; za dividende datum EHO objave kroz announcements).
+-- Guard: lokalni dev nema news_items (Supabase-only migracija) — no-op.
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables
+             WHERE table_schema='public' AND table_name='news_items') THEN
+    UPDATE news_items n
+       SET published_at = f.published_at::timestamptz
+      FROM filings f
+     WHERE n.source_type = 'auto'
+       AND n.auto_source_ref = 'filing:' || f.id
+       AND f.published_at IS NOT NULL
+       AND (n.published_at IS NULL OR n.published_at::date <> f.published_at);
+    UPDATE news_items n
+       SET published_at = COALESCE(a.published_at, d.published_at)::timestamptz
+      FROM dividends d
+      LEFT JOIN announcements a ON a.external_id = d.source_url
+     WHERE n.source_type = 'auto'
+       AND n.auto_source_ref = 'dividend:' || d.id
+       AND COALESCE(a.published_at, d.published_at) IS NOT NULL
+       AND (n.published_at IS NULL
+            OR n.published_at::date <> COALESCE(a.published_at, d.published_at));
+  END IF;
+END $$;
