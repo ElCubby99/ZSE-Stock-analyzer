@@ -75,6 +75,14 @@ export const STR = {
   },
   // ---- M64: /etf/<oznaka> detaljna stranica ----
   'etf.detailLink': { hr: 'sve o fondu (naknade, sastav, prinosi)', en: 'everything about the fund (fees, holdings, returns)' },
+  'etf.listedSince': { hr: 'od', en: 'since' },
+  'etf.listedSinceH': { hr: 'Početak klase', en: 'Class inception' },
+  'etf.listedSrcFs': { hr: 'mjesečni izvještaj izdavatelja', en: "the issuer's monthly report" },
+  'etf.listedSrcSeries': { hr: 'prvi zabilježeni dan trgovanja', en: 'first recorded trading day' },
+  'etf.liqSinceListing': {
+    hr: 'dana s trgovanjem od početka klase (fond je mlađi od godinu dana)',
+    en: 'days with trading since class inception (the fund is younger than one year)',
+  },
   'etf.notFound': { hr: 'ETF nije pronađen', en: 'ETF not found' },
   'etf.all': { hr: 'svi ETF-ovi', en: 'all ETFs' },
   'etf.unitValue': { hr: 'Vrijednost udjela (NAV)', en: 'Unit value (NAV)' },
