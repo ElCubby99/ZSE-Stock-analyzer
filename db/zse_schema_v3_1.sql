@@ -248,3 +248,20 @@ UPDATE dividends
    SET note='2. od 2 rate (ukupno 23,90 € po dionici iz zadržane dobiti 2023.) — dospijeće 26.6.2025., uz uvjet iz čl. 312.a Zakona o kreditnim institucijama'
  WHERE class_ticker='HPB' AND ex_date=DATE '2024-12-23'
    AND amount_eur=11.95 AND payment_date=DATE '2025-06-26' AND note IS NULL;
+
+-- M63a: admin oznaka za vlasnika (boris.cubric@gmail.com) — idempotentno i
+-- SIGURNO prije registracije: čim se račun pojavi u auth.users, prvi
+-- sljedeći run ga promovira. Guard: lokalni dev nema auth shemu ni
+-- profiles.is_admin (Supabase-only migracije) — tada no-op.
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables
+             WHERE table_schema='auth' AND table_name='users')
+     AND EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema='public' AND table_name='profiles'
+                   AND column_name='is_admin') THEN
+    UPDATE public.profiles p SET is_admin = true
+    FROM auth.users u
+    WHERE u.id = p.id AND lower(u.email) = 'boris.cubric@gmail.com'
+      AND NOT p.is_admin;
+  END IF;
+END $$;
