@@ -131,6 +131,13 @@ export const ROUTES = [
     },
   },
   {
+    path: '/etf/:symbol',
+    en: { path: '/en/etf/:symbol' },
+    component: 'EtfDetail',
+    indexable: true,
+    expand: 'etfs',
+  },
+  {
     path: '/mirovinski-fondovi',
     en: {
       path: '/en/pension-funds',

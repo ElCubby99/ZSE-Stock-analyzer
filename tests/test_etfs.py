@@ -26,3 +26,18 @@ def test_index_isin_postoji_u_registru_indeksa():
 
 def test_7cro_prati_crobex10tr():
     assert CURATED["7CRO"]["index_isin"] == INDICES["CROBEX10tr"][0]
+
+
+def test_opisi_za_sve_fondove_oba_jezika():
+    """M64: SEO opis stranice fonda mora postojati HR+EN za svaki kurirani
+    fond (činjenično iz ciljeva fonda u službenim izvještajima)."""
+    from src.etfs import DESCRIPTIONS
+    for sym in CURATED:
+        assert sym in DESCRIPTIONS, f"{sym}: nema opisa"
+        assert DESCRIPTIONS[sym].get("hr") and DESCRIPTIONS[sym].get("en"), \
+            f"{sym}: opis mora imati OBA jezika"
+
+
+def test_hr_mjeseci_kompletni():
+    from src.etfs import HR_MONTHS
+    assert sorted(HR_MONTHS.values()) == list(range(1, 13))

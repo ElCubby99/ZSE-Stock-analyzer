@@ -81,6 +81,67 @@ CURATED = {
 }
 ISSUER = "InterCapital ETF d.o.o."
 
+# M64: kurirani opisi za stranicu fonda (SEO) — ČINJENIČNO prepričani
+# ulagateljski ciljevi iz službenog mjesečnog izvještaja/prospekta fonda
+# (izvor: EHO objave izdavatelja); bez ocjena i preporuka.
+DESCRIPTIONS = {
+    "7CRO": {
+        "hr": ("Fond pasivno replicira dionički indeks CROBEX10tr — fizički "
+               "kupuje dionice u sastavu indeksa (u pravilu 10 najlikvidnijih "
+               "dionica Zagrebačke burze). Primljene dividende automatski se "
+               "reinvestiraju; fond ne isplaćuje dividendu."),
+        "en": ("The fund passively replicates the CROBEX10tr equity index — it "
+               "physically buys the index constituents (as a rule the 10 most "
+               "liquid stocks on the Zagreb Stock Exchange). Dividends received "
+               "are automatically reinvested; the fund pays no dividend."),
+    },
+    "7SLO": {
+        "hr": ("Fond pasivno replicira SBITOP TR, total-return indeks "
+               "Ljubljanske burze — fizički drži dionice u sastavu indeksa, a "
+               "primljene dividende se reinvestiraju."),
+        "en": ("The fund passively replicates SBITOP TR, the total-return index "
+               "of the Ljubljana Stock Exchange — it physically holds the index "
+               "constituents and reinvests dividends received."),
+    },
+    "7BET": {
+        "hr": ("Fond pasivno replicira BET-TRN, total-return indeks vodećih "
+               "dionica Burze u Bukureštu (Rumunjska); dividende se "
+               "reinvestiraju."),
+        "en": ("The fund passively replicates BET-TRN, the total-return index "
+               "of leading Bucharest Stock Exchange (Romania) stocks; dividends "
+               "are reinvested."),
+    },
+    "7POL": {
+        "hr": ("Fond pasivno replicira WIG30TR, total-return indeks 30 vodećih "
+               "dionica Varšavske burze (Poljska); dividende se reinvestiraju."),
+        "en": ("The fund passively replicates WIG30TR, the total-return index "
+               "of 30 leading Warsaw Stock Exchange (Poland) stocks; dividends "
+               "are reinvested."),
+    },
+    "7GROM": {
+        "hr": ("Aktivno upravljan obveznički fond (ne replicira indeks): ulaže "
+               "u obveznice i druge dužničke papire Rumunjske denominirane u "
+               "euru, s prosječnim vaganim trajanjem imovine ograničenim na "
+               "raspon 5-10 godina."),
+        "en": ("An actively managed bond fund (it does not replicate an index): "
+               "it invests in euro-denominated Romanian government bonds and "
+               "other debt securities, with the weighted average life of assets "
+               "kept within a 5-10 year range."),
+    },
+    "7CASH": {
+        "hr": ("Aktivno upravljan novčani fond: ulaže u instrumente tržišta "
+               "novca (primarno trezorske zapise RH, Francuske i drugih članica "
+               "EU/OECD-a) i depozite, s ciljem prinosa iznad kratkoročnih "
+               "stopa tržišta novca uz visoku likvidnost; referentna vrijednost "
+               "je €STR indeks ECB-a."),
+        "en": ("An actively managed money-market fund: it invests in "
+               "money-market instruments (primarily treasury bills of Croatia, "
+               "France and other EU/OECD members) and deposits, aiming for "
+               "returns above short-term money-market rates with high "
+               "liquidity; the benchmark is the ECB's €STR index."),
+    },
+}
+
 
 def ensure_tables(conn) -> None:
     with conn.cursor() as cur:
@@ -237,6 +298,98 @@ def backfill_history(conn, log=print) -> None:
         log(f"  {sym}: {len(hist)} zapisa")
 
 
+# ---- M64: mjesečni factsheet (EHO) -> etf_facts ----
+# Prepoznavanje pod-fonda iz naslova objave "… - Mjesečni izvještaj …"
+FUND_TOKENS = {
+    "7CRO": "CROBEX10", "7SLO": "SBITOP", "7BET": "BET-TRN",
+    "7POL": "WIG30", "7GROM": "Romania Govt Bond", "7CASH": "Euro Money Market",
+}
+HR_MONTHS = {"siječanj": 1, "veljača": 2, "ožujak": 3, "travanj": 4,
+             "svibanj": 5, "lipanj": 6, "srpanj": 7, "kolovoz": 8,
+             "rujan": 9, "listopad": 10, "studeni": 11, "prosinac": 12}
+
+
+def ensure_facts_table(conn) -> None:
+    with conn.cursor() as cur:
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS etf_facts (
+                symbol TEXT PRIMARY KEY REFERENCES etfs(symbol),
+                report_period TEXT,      -- 'YYYY-MM' iz naslova izvještaja
+                payload JSONB NOT NULL,  -- parse_factsheet izlaz (gateovi prošli)
+                source_url TEXT NOT NULL,
+                published_at DATE,
+                updated_at TIMESTAMPTZ DEFAULT now());
+        """)
+    conn.commit()
+
+
+def sync_facts(conn, lookback_days: int = 45, log=print) -> int:
+    """Najnoviji 'Mjesečni izvještaj' po pod-fondu s EHO-a -> etf_facts.
+    Idempotentno: već obrađen source_url se preskače (bez downloada)."""
+    import json as _json
+    import re as _re
+
+    import requests
+
+    from . import eho
+    from .etf_factsheet import parse_factsheet
+    ensure_facts_table(conn)
+    d = eho.feed("issuerNews", ticker="ICAM",
+                 date_from=(date.today() - timedelta(days=lookback_days)).isoformat(),
+                 date_to=date.today().isoformat())
+    newest: dict[str, dict] = {}
+    for it in d.get("items") or []:      # feed je najnoviji-prvi
+        title = it.get("title") or ""
+        if "mjese" not in title.lower():
+            continue
+        for sym, token in FUND_TOKENS.items():
+            if token.lower() in title.lower() and sym not in newest:
+                newest[sym] = it
+    n = 0
+    with conn.cursor() as cur:
+        for sym, it in sorted(newest.items()):
+            link = it.get("link")
+            cur.execute("SELECT source_url FROM etf_facts WHERE symbol=%s", (sym,))
+            r = cur.fetchone()
+            if r and r[0] == link:
+                continue      # već obrađeno — mjesečni ritam, ne dnevni posao
+            try:
+                from .prices import _verify
+                page = requests.get(link, timeout=60, verify=_verify()).text
+                pdfs = _re.findall(r'href="(/fileadmin/[^"]+\.pdf[^"]*)"', page, _re.I)
+                if not pdfs:
+                    log(f"  [skip] {sym}: objava bez PDF-a ({link})")
+                    continue
+                pdf = requests.get("https://eho.zse.hr" + pdfs[0], timeout=90,
+                                   verify=_verify()).content
+                parsed = parse_factsheet(pdf)
+            except Exception as e:  # noqa: BLE001 — jedan fond ne ruši sync
+                log(f"  [skip] {sym}: {type(e).__name__}: {e}")
+                continue
+            if not (parsed.get("fees_pct") or parsed.get("holdings")):
+                log(f"  [skip] {sym}: parser nije prošao gateove ({parsed.get('skipped')})")
+                continue
+            period = None
+            m = _re.search(r"(\w+)\s+(20\d\d)", parsed.get("report_period") or "")
+            if m and m.group(1).lower() in HR_MONTHS:
+                period = f"{m.group(2)}-{HR_MONTHS[m.group(1).lower()]:02d}"
+            cur.execute(
+                """INSERT INTO etf_facts (symbol, report_period, payload,
+                     source_url, published_at)
+                   VALUES (%s,%s,%s,%s,%s)
+                   ON CONFLICT (symbol) DO UPDATE SET
+                     report_period=EXCLUDED.report_period,
+                     payload=EXCLUDED.payload, source_url=EXCLUDED.source_url,
+                     published_at=EXCLUDED.published_at, updated_at=now()""",
+                (sym, period, _json.dumps(parsed, ensure_ascii=False), link,
+                 (it.get("publishDate") or "")[:10] or None))
+            n += 1
+            log(f"  {sym}: factsheet {period} obrađen "
+                f"({len(parsed.get('holdings') or [])} pozicija)")
+    conn.commit()
+    return n
+
+
 if __name__ == "__main__":
     import sys
     sys.path.insert(0, ".")
@@ -246,3 +399,4 @@ if __name__ == "__main__":
         if "--backfill" in sys.argv:
             backfill_history(conn)
         print(f"cijene: +{update_prices(conn)}")
+        print(f"factsheeti: +{sync_facts(conn)}")

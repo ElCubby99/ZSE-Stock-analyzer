@@ -669,6 +669,82 @@ let obveznice = { rows: [], as_of: null }
 try {
   obveznice = JSON.parse(await fs.readFile(path.join(DIST, 'data/obveznice.json'), 'utf8'))
 } catch { /* bez obveznica nema tablice */ }
+
+/* M64: statičke stranice po ETF-u (SEO tekst iz kuriranih opisa + mjesečnog
+   factsheeta izdavatelja — naknade, pokazatelji, pozicije, prinosi) */
+async function buildEtfPages() {
+  const n1 = (v, d = 2) => (v === null || v === undefined ? 'n/p' : num(v, d))
+  for (const r of etfovi.rows) {
+    const sym = r.symbol.toLowerCase()
+    const canonical = `${SITE}/etf/${sym}`
+    const canonicalEn = `${SITE}/en/etf/${sym}`
+    const alternates = { hr: canonical, en: canonicalEn }
+    const f = r.facts || {}
+    const pi = f.portfolio_indicators || null
+    const fees = f.fees_pct || null
+    const holdRows = (lang) => (f.holdings || []).map((h) => `<tr>
+      <td>${h.zse ? `<a href="${lang === 'en' ? '/en/stock/' : '/dionica/'}${esc((h.ticker || '').toLowerCase())}">${esc(h.name)}</a>` : esc(h.name)}</td>
+      <td>${num(h.weight_pct, 1)} %</td></tr>`).join('')
+    const perfRows = (f.performance || []).map((p) => `<tr><td>${esc(p.period)}</td>
+      <td>${n1(p.fund_pct)} %</td><td>${p.benchmark_pct !== null && p.benchmark_pct !== undefined ? `${num(p.benchmark_pct, 2)} %` : '—'}</td></tr>`).join('')
+    const indHr = pi ? (pi.kind === 'equity'
+      ? `P/E portfelja ${n1(pi.pe, 1)} · dividendni prinos ${n1(pi.div_yield_pct, 1)} % · ROE ${n1(pi.roe_pct, 1)} %`
+      : `prosječno dospijeće ${n1(pi.avg_maturity)} (${esc(pi.unit)}) · modificirana duracija ${n1(pi.mod_duration)} · prosj. prinos do dospijeća ${n1(pi.avg_ytm_pct)} % (prije troškova)`) : ''
+    const indEn = pi ? (pi.kind === 'equity'
+      ? `portfolio P/E ${n1(pi.pe, 1)} · dividend yield ${n1(pi.div_yield_pct, 1)}% · ROE ${n1(pi.roe_pct, 1)}%`
+      : `average maturity ${n1(pi.avg_maturity)} (${pi.unit === 'godine' ? 'years' : 'months'}) · modified duration ${n1(pi.mod_duration)} · avg. yield to maturity ${n1(pi.avg_ytm_pct)}% (before costs)`) : ''
+    await write(`etf/${sym}`, page({
+      title: `${r.symbol} ETF — ${esc(r.name || 'fond')}: cijena, naknade (TER), sastav | Burzovni list`,
+      description: `${r.symbol} (${r.name || 'ETF na ZSE'}): zadnja cijena ${n1(r.last_close_eur)} EUR, TER ${fees ? num(fees.ter, 2) : 'n/p'} %, prati ${r.index_name || 'n/p'}. Sastav fonda, naknade i prinosi iz službenih izvještaja.`.slice(0, 155),
+      canonical, alternates,
+      body: `<main>
+        <nav><a href="/">Naslovnica</a> › <a href="/etf-ovi">ETF-ovi</a> › ${esc(r.symbol)}</nav>
+        <h1>${esc(r.symbol)} — ${esc(r.name || 'ETF na Zagrebačkoj burzi')}</h1>
+        <p>${esc((r.desc && r.desc.hr) || '')}</p>
+        <p>Zadnja cijena na ZSE: <strong>${n1(r.last_close_eur)} EUR</strong>${r.last_date ? ` (EOD ${esc(r.last_date)})` : ''}${r.stale ? ' — indikativna (rijetko trgovanje)' : ''} ·
+        likvidnost ${r.traded_days_1y}/${r.workdays_1y || 250} dana s trgovanjem u zadnjih godinu dana ·
+        ISIN ${esc(r.isin)} · izdavatelj ${esc(r.issuer || 'n/p')}.</p>
+        ${f.nav_meur !== undefined && f.nav_meur !== null ? `<p>Imovina fonda (NAV): ${num(f.nav_meur, 1)} milijuna EUR · vrijednost udjela ${n1(f.unit_value, 4)} EUR (mjesečni izvještaj, ${esc(r.facts_period || '')}) · početak klase ${esc(f.inception_date || 'n/p')}.</p>` : ''}
+        ${pi ? `<h2>Pokazatelji portfelja</h2><p>${indHr}. Izvor: mjesečni izvještaj izdavatelja (${esc(r.facts_period || '')}).</p>` : ''}
+        ${fees ? `<h2>Naknade fonda</h2>
+        <p>Ukupni troškovi (TER): <strong>${num(fees.ter, 2)} %</strong> godišnje — upravljanje ${n1(fees.management)} %, depozitar ${n1(fees.depositary)} %, ostalo ${n1(fees.other)} %; transakcijski troškovi ${n1(fees.transaction)} %. Bez ulazne/izlazne naknade i naknade za uspješnost; kupnja na burzi može nositi brokersku proviziju.</p>` : ''}
+        ${holdRows('hr') ? `<h2>Deset najvećih pozicija fonda</h2>
+        <table><thead><tr><th>Pozicija</th><th>Udio</th></tr></thead><tbody>${holdRows('hr')}</tbody></table>` : ''}
+        ${perfRows ? `<h2>Povijesni prinosi fonda (NAV)</h2>
+        <table><thead><tr><th>Razdoblje</th><th>Fond</th><th>Benchmark</th></tr></thead><tbody>${perfRows}</tbody></table>
+        <p>Prinosi na vrijednost udjela s uključenim naknadama; povijesni prinosi nisu pokazatelj budućih.</p>` : ''}
+        <p>Izvori: službena ZSE tečajnica (cijene) i objave izdavatelja na EHO portalu — mjesečni izvještaj${r.facts_source_url ? ` (<a href="${esc(r.facts_source_url)}" rel="nofollow">EHO objava</a>)` : ''}, KIID i prospekt fonda.</p>
+        <p><em>ETF replicira indeks ili upravlja košaricom — procjena fer vrijednosti se za ETF-ove ne izrađuje. Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+    }))
+    PRLOC = 'en-GB'
+    await write(`en/etf/${sym}`, page({
+      title: `${r.symbol} ETF — ${esc(r.name || 'fund')}: price, fees (TER), holdings | Burzovni list`,
+      description: `${r.symbol} (${r.name || 'ZSE ETF'}): last price ${n1(r.last_close_eur)} EUR, TER ${fees ? num(fees.ter, 2) : 'n/a'}%, tracks ${r.index_name || 'n/a'}. Holdings, fees and returns from official reports.`.slice(0, 155),
+      canonical: canonicalEn, lang: 'en', alternates,
+      body: `<main>
+        <nav><a href="/en">Home</a> › <a href="/en/etfs">ETFs</a> › ${esc(r.symbol)}</nav>
+        <h1>${esc(r.symbol)} — ${esc(r.name || 'ETF on the Zagreb Stock Exchange')}</h1>
+        <p>${esc((r.desc && r.desc.en) || '')}</p>
+        <p>Last ZSE price: <strong>${n1(r.last_close_eur)} EUR</strong>${r.last_date ? ` (end-of-day ${esc(r.last_date)})` : ''}${r.stale ? ' — indicative (infrequent trading)' : ''} ·
+        liquidity ${r.traded_days_1y}/${r.workdays_1y || 250} trading days over the last year ·
+        ISIN ${esc(r.isin)} · issuer ${esc(r.issuer || 'n/a')}.</p>
+        ${f.nav_meur !== undefined && f.nav_meur !== null ? `<p>Fund assets (NAV): EUR ${num(f.nav_meur, 1)}m · unit value ${n1(f.unit_value, 4)} EUR (monthly report, ${esc(r.facts_period || '')}) · class inception ${esc(f.inception_date || 'n/a')}.</p>` : ''}
+        ${pi ? `<h2>Portfolio indicators</h2><p>${indEn}. Source: the issuer's monthly report (${esc(r.facts_period || '')}).</p>` : ''}
+        ${fees ? `<h2>Fund fees</h2>
+        <p>Total expense ratio (TER): <strong>${num(fees.ter, 2)}%</strong> p.a. — management ${n1(fees.management)}%, depositary ${n1(fees.depositary)}%, other ${n1(fees.other)}%; transaction costs ${n1(fees.transaction)}%. No entry/exit or performance fees; buying on the exchange may incur a brokerage commission.</p>` : ''}
+        ${holdRows('en') ? `<h2>Ten largest fund holdings</h2>
+        <table><thead><tr><th>Holding</th><th>Weight</th></tr></thead><tbody>${holdRows('en')}</tbody></table>` : ''}
+        ${perfRows ? `<h2>Historical fund returns (NAV)</h2>
+        <table><thead><tr><th>Period</th><th>Fund</th><th>Benchmark</th></tr></thead><tbody>${perfRows}</tbody></table>
+        <p>Returns are on unit value with fees included; past returns do not indicate future returns.</p>` : ''}
+        <p>Sources: the official ZSE price list (prices) and issuer publications on the EHO portal — the monthly report${r.facts_source_url ? ` (<a href="${esc(r.facts_source_url)}" rel="nofollow">EHO notice</a>)` : ''}, the fund KIID and prospectus.</p>
+        <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
+    }))
+    PRLOC = 'hr-HR'
+    urls.push({ loc: canonical, lastmod: r.last_date || etfovi.as_of || eod, alt: alternates })
+    urls.push({ loc: canonicalEn, lastmod: r.last_date || etfovi.as_of || eod, alt: alternates })
+  }
+}
 const bondPct = (v, d = 2) => (v === null || v === undefined ? 'n/p' : `${num(v, d)} %`)
 
 async function buildBondPages() {
@@ -1176,6 +1252,7 @@ for (const r of ROUTES) {
   if (r.expand === 'news') { await buildNewsPages(); continue }
   if (r.expand === 'indices') { await buildIndexPages(); continue }
   if (r.expand === 'bonds') { await buildBondPages(); continue }
+  if (r.expand === 'etfs') { await buildEtfPages(); continue }
   if (r.expand === 'funds') { await buildFundPages(); continue }
   const route = r.path.replace(/^\//, '')
   const canonical = route ? `${SITE}/${route}` : `${SITE}/`
