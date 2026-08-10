@@ -22,6 +22,7 @@ import { EtfDetail, EtfoviIndex } from './Etfovi.jsx'
 import MirovinskiFondovi, { FondDetail } from './MirovinskiFondovi.jsx'
 import Admin from './Admin.jsx'
 import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal.jsx'
+import { NewsletterOdjava, NewsletterPopup, NewsletterPotvrda } from './Newsletter.jsx'
 import { ConsentProvider, fbqTrack, pushEvent } from './consent.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import AuthCallback from './AuthCallback.jsx'
@@ -47,7 +48,13 @@ function RootLayout() {
     // Meta Pixel: base kod broji samo prvi load — SPA navigacije okidamo ručno
     fbqTrack('PageView')
   }, [loc.pathname])
-  return <LangProvider><Outlet /></LangProvider>
+  return (
+    <LangProvider>
+      <Outlet />
+      {/* M67: nenametljivi newsletter popup (30 s, pamti odbijanje) */}
+      <NewsletterPopup />
+    </LangProvider>
+  )
 }
 
 /* SEO higijena: vlastita 404 s linkom na popis dionica (bez redirecta na /) */
@@ -101,6 +108,8 @@ const COMPONENTS = {
   PolitikaKolacica: <PolitikaKolacica />,
   UvjetiKoristenja: <UvjetiKoristenja />,
   PolitikaPrivatnosti: <PolitikaPrivatnosti />,
+  NewsletterPotvrda: <NewsletterPotvrda />,
+  NewsletterOdjava: <NewsletterOdjava />,
 }
 
 const routeChildren = ROUTES.flatMap((r) => {

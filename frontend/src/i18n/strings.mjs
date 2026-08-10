@@ -45,6 +45,70 @@ export const STR = {
   'nav.indices': { hr: 'Indeksi', en: 'Indices' },
   'nav.bonds': { hr: 'Obveznice', en: 'Bonds' },
   'nav.etfs': { hr: 'ETF-ovi', en: 'ETFs' },
+  /* ---------- M67: newsletter (double opt-in) ---------- */
+  'nl.navBtn': { hr: 'Newsletter', en: 'Newsletter' },
+  'nl.navAria': {
+    hr: 'Pretplati se na naš newsletter',
+    en: 'Subscribe to our newsletter',
+  },
+  'nl.title': { hr: 'Newsletter Burzovnog lista', en: 'Burzovni list newsletter' },
+  'nl.lead': {
+    hr: 'Povremeni pregled sa Zagrebačke burze na vaš mail: nova izvješća, najavljene dividende i ažurirane analize. Bez preporuka i bez spama.',
+    en: 'An occasional Zagreb Stock Exchange digest in your inbox: new reports, announced dividends and updated analyses. No recommendations, no spam.',
+  },
+  'nl.placeholder': { hr: 'vaša email adresa', en: 'your email address' },
+  'nl.submit': { hr: 'Prijavi se', en: 'Subscribe' },
+  'nl.consentNote': {
+    hr: 'Prijavom pristajete primati naš newsletter. Prijavu potvrđujete klikom na link koji šaljemo na vašu adresu — bez potvrde se ništa ne šalje. Odjava je moguća u svakom trenutku, jednim klikom u svakom emailu. Detalji u dokumentu',
+    en: 'By subscribing you agree to receive our newsletter. You confirm the subscription by clicking the link we send to your address — nothing is sent without confirmation. You can unsubscribe at any time with one click in every email. Details in',
+  },
+  'nl.privacyLink': { hr: 'Politika privatnosti', en: 'the Privacy Policy' },
+  'nl.sent': {
+    hr: 'Provjerite sandučić — poslali smo vam link za potvrdu prijave. Bez potvrde se ništa ne šalje.',
+    en: 'Check your inbox — we sent you a confirmation link. Nothing is sent without confirmation.',
+  },
+  'nl.errEmail': { hr: 'Unesite valjanu email adresu.', en: 'Enter a valid email address.' },
+  'nl.errSend': {
+    hr: 'Prijava trenutno nije moguća — pokušajte kasnije ili nam pišite na info@burzovnilist.com.',
+    en: 'Subscription is temporarily unavailable — try again later or write to info@burzovnilist.com.',
+  },
+  'nl.close': { hr: 'Zatvori', en: 'Close' },
+  'nl.notNow': { hr: 'Ne, hvala', en: 'No, thanks' },
+  'nl.confirmTitle': {
+    hr: 'Potvrda prijave na newsletter',
+    en: 'Newsletter subscription confirmation',
+  },
+  'nl.confirmWorking': { hr: 'potvrđujem prijavu…', en: 'confirming your subscription…' },
+  'nl.confirmOk': {
+    hr: 'Prijava je potvrđena — hvala! Newsletter stiže na vašu adresu; odjaviti se možete jednim klikom u svakom emailu.',
+    en: 'Your subscription is confirmed — thank you! The newsletter will arrive at your address; you can unsubscribe with one click in every email.',
+  },
+  'nl.confirmAlready': {
+    hr: 'Ova je prijava već potvrđena.',
+    en: 'This subscription has already been confirmed.',
+  },
+  'nl.confirmBad': {
+    hr: 'Link nije valjan ili je istekao. Prijavite se ponovno pa potvrdite novim linkom iz maila.',
+    en: 'The link is invalid or has expired. Subscribe again and confirm with the new link from the email.',
+  },
+  'nl.unsubTitle': { hr: 'Odjava s newslettera', en: 'Newsletter unsubscribe' },
+  'nl.unsubWorking': { hr: 'odjavljujem…', en: 'unsubscribing…' },
+  'nl.unsubOk': {
+    hr: 'Odjavljeni ste — newsletter vam više nećemo slati.',
+    en: 'You are unsubscribed — we will no longer send you the newsletter.',
+  },
+  'nl.unsubAlready': {
+    hr: 'Ova je adresa već odjavljena.',
+    en: 'This address has already been unsubscribed.',
+  },
+  'nl.unsubBad': {
+    hr: 'Link za odjavu nije valjan. Pišite nam na info@burzovnilist.com i odjavit ćemo vas ručno.',
+    en: 'The unsubscribe link is invalid. Write to info@burzovnilist.com and we will unsubscribe you manually.',
+  },
+  'nl.unsubHowTo': {
+    hr: 'Link za odjavu nalazi se na dnu svakog našeg emaila. Ako ga nemate, pišite nam na info@burzovnilist.com i odjavit ćemo vas ručno.',
+    en: 'The unsubscribe link is at the bottom of every email we send. If you do not have it, write to info@burzovnilist.com and we will unsubscribe you manually.',
+  },
   // ---- M63: /etf-ovi ----
   'etf.pageTitle': { hr: 'ETF-ovi na Zagrebačkoj burzi', en: 'ETFs on the Zagreb Stock Exchange' },
   'etf.subtitle': {

@@ -312,6 +312,23 @@ export const ROUTES = [
     },
   },
   {
+    // M67: potvrda double opt-in prijave (link iz maila, ?token=...) —
+    // noindex, bez prerendera (sadržaj ovisi o tokenu)
+    path: '/newsletter/potvrda',
+    en: { path: '/en/newsletter/confirm' },
+    component: 'NewsletterPotvrda',
+    indexable: false,
+    prerender: false,
+  },
+  {
+    // M67: jednoklik odjava (link iz svakog maila)
+    path: '/newsletter/odjava',
+    en: { path: '/en/newsletter/unsubscribe' },
+    component: 'NewsletterOdjava',
+    indexable: false,
+    prerender: false,
+  },
+  {
     path: '/portfelj',
     component: 'Portfelj',
     indexable: false, // privatna stranica: noindex + nema je u sitemapu

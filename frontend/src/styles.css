@@ -805,6 +805,34 @@ td.pos{color:var(--zone)} td.neg{color:var(--ordinary)}
   color:rgba(38,46,51,0.7); text-decoration:none; white-space:nowrap}
 .hdr-lang:hover{color:var(--ink); border-color:var(--ink)}
 
+/* M67: newsletter — header gumb + modal + forma */
+.hdr-nl{font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:600;
+  letter-spacing:.08em; padding:6px 10px; border:1px solid #9E2B25;
+  color:#9E2B25; background:none; cursor:pointer; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:6px; text-transform:uppercase}
+.hdr-nl:hover{background:#9E2B25; color:#fff}
+.hdr-nl-ico{font-size:13px; line-height:1}
+.nl-overlay{align-items:center} /* centriran modal (cc-overlay je flex-end) */
+.nl-panel{max-width:440px}
+.nl-lead{font-size:13.5px; line-height:1.55; margin:10px 0 12px}
+.nl-form .nl-row{display:flex; gap:8px}
+.nl-form input[type=email]{flex:1; min-width:0; font-family:"IBM Plex Sans",sans-serif;
+  font-size:13.5px; padding:9px 10px; border:1px solid var(--hair-strong);
+  background:#fff; color:var(--ink)}
+.nl-form input[type=email]:focus{outline:none; border-color:#2F5D86}
+.nl-hp{position:absolute; left:-9999px; width:1px; height:1px; opacity:0}
+.nl-note{font-size:11.5px; line-height:1.5; color:rgba(38,46,51,0.65); margin:10px 0 0}
+.nl-note a{color:#2F5D86}
+.nl-sent{font-size:13.5px; line-height:1.55; color:#1F6E5A; margin:8px 0}
+.nl-err{font-size:12px; color:#9E2B25; margin:8px 0 0}
+@media(max-width:680px){
+  .hdr-nl{order:1; flex:none}
+  .hdr-nl-txt{display:none} /* na mobitelu samo ikona ✉ */
+  .nl-overlay{align-items:flex-end} /* bottom-sheet umjesto centriranog modala */
+  .nl-panel{max-width:none; width:100%}
+  .nl-form .nl-row{flex-direction:column}
+}
+
 /* M-FOND2: graf usporedbe fondova */
 .fnd-sel { margin: 8px 0 12px; }
 .fnd-selrow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 5px; }

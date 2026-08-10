@@ -402,16 +402,82 @@ function UsersList({ rows, error }) {
   )
 }
 
+/* M67: pregled newsletter pretplatnika — SECURITY DEFINER rpc
+   admin_newsletter_overview (SAMA provjerava is_admin). CSV export za
+   slanje (potvrđeni!) — osobni podaci, samo za administraciju servisa. */
+function NewsletterList({ rows, error }) {
+  if (error) {
+    return <p className="imp-p">Greška pri dohvatu pretplatnika: {error}. Ako
+      funkcija ne postoji, pokreni supabase/migration_newsletter.sql u
+      Supabase SQL editoru (ili db-sync s newsletter_sql=true).</p>
+  }
+  const d = (s) => (s ? new Date(s).toLocaleDateString('hr-HR') : '—')
+  const confirmed = rows.filter((r) => r.status === 'confirmed')
+  const pending = rows.filter((r) => r.status === 'pending').length
+  const unsub = rows.filter((r) => r.status === 'unsubscribed').length
+  const STATUS_HR = { confirmed: 'potvrđen', pending: 'čeka potvrdu', unsubscribed: 'odjavljen' }
+  const exportCsv = () => {
+    const csv = ['email;jezik;potvrdjen'].concat(confirmed.map(
+      (r) => `${r.email};${r.lang};${(r.confirmed_at || '').slice(0, 10)}`)).join('\n')
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }))
+    a.download = 'newsletter-potvrdjeni.csv'
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
+  return (
+    <section>
+      <div className="sec-label">
+        Newsletter: {confirmed.length} potvrđenih · {pending} čeka potvrdu ·
+        {' '}{unsub} odjavljenih
+      </div>
+      <div className="cc-btns" style={{ marginBottom: 10 }}>
+        <button type="button" className="cc-btn acct-link-btn" onClick={exportCsv}>
+          Preuzmi CSV potvrđenih
+        </button>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Email</th><th>Status</th><th>Jezik</th><th>Izvor</th>
+            <th>Prijava</th><th>Potvrda</th><th>Odjava</th></tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.id}>
+              <td>{r.email}</td>
+              <td>{r.status === 'confirmed'
+                ? <span className="okflag">{STATUS_HR[r.status]}</span>
+                : <span className="flag">{STATUS_HR[r.status] || r.status}</span>}</td>
+              <td>{r.lang}</td>
+              <td className="fund-src">{r.source || '—'}</td>
+              <td className="fund-src">{d(r.created_at)}</td>
+              <td className="fund-src">{d(r.confirmed_at)}</td>
+              <td className="fund-src">{d(r.unsubscribed_at)}</td>
+            </tr>
+          ))}
+          {!rows.length && <tr><td colSpan={7} className="subnote">nema prijava</td></tr>}
+        </tbody>
+      </table>
+      <p className="subnote">Newsletter se šalje ISKLJUČIVO potvrđenima
+        (double opt-in); svaki mail mora sadržavati link za odjavu
+        (/newsletter/odjava?token=…). Odjavljene adrese ostaju kao lista
+        isključenja — ne uklanjati ih ručno.</p>
+    </section>
+  )
+}
+
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [isAdmin, setIsAdmin] = useState(undefined) // undefined = provjera traje
   const [posts, setPosts] = useState([])
   const [editing, setEditing] = useState(null) // null | {} (novi) | post
-  const [tab, setTab] = useState('blog') // 'blog' | 'vijesti' | 'korisnici'
+  const [tab, setTab] = useState('blog') // 'blog' | 'vijesti' | 'korisnici' | 'newsletter'
   const [news, setNews] = useState([])
   const [editingNews, setEditingNews] = useState(null)
   const [users, setUsers] = useState([])
   const [usersError, setUsersError] = useState(null)
+  const [nl, setNl] = useState([])
+  const [nlError, setNlError] = useState(null)
 
   useEffect(() => {
     document.title = 'Admin · Burzovni list'
@@ -449,9 +515,14 @@ export default function Admin() {
     setUsers(data || [])
     setUsersError(error ? (error.message || String(error)) : null)
   }, [])
+  const loadNl = useCallback(async () => {
+    const { data, error } = await supabase.rpc('admin_newsletter_overview')
+    setNl(data || [])
+    setNlError(error ? (error.message || String(error)) : null)
+  }, [])
   useEffect(() => {
-    if (session && isAdmin) { load(); loadNews(); loadUsers() }
-  }, [session, isAdmin, load, loadNews, loadUsers])
+    if (session && isAdmin) { load(); loadNews(); loadUsers(); loadNl() }
+  }, [session, isAdmin, load, loadNews, loadUsers, loadNl])
 
   let body
   if (!supabase) {
@@ -485,6 +556,8 @@ export default function Admin() {
             onClick={() => setTab('vijesti')}>VIJESTI</button>
           <button className={tab === 'korisnici' ? 'on' : ''}
             onClick={() => setTab('korisnici')}>KORISNICI</button>
+          <button className={tab === 'newsletter' ? 'on' : ''}
+            onClick={() => setTab('newsletter')}>NEWSLETTER</button>
           {tab === 'blog'
             && <button className="on" onClick={() => setEditing({})}>+ NOVI POST</button>}
           {tab === 'vijesti'
@@ -496,6 +569,8 @@ export default function Admin() {
           && <NewsList items={news} onEdit={(n) => setEditingNews(n)} onRefresh={loadNews} />}
         {tab === 'korisnici'
           && <UsersList rows={users} error={usersError} />}
+        {tab === 'newsletter'
+          && <NewsletterList rows={nl} error={nlError} />}
       </>
     )
   }
