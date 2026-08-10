@@ -9,7 +9,7 @@ import { useLang } from './i18n/LangContext.jsx'
    bez pristanka na kolačiće. Tablica kolačića odražava STVARNO stanje
    (bl_consent, sb-* auth, lastTicker; analitika još nije uvedena). */
 
-const UPDATED = '17.07.2026.'
+const UPDATED = '10.08.2026.' // M67: newsletter (double opt-in) dodan u politike
 
 function LegalPage({ title, children }) {
   useEffect(() => { document.title = `${title} · Burzovni list` }, [title])
@@ -42,6 +42,11 @@ const COOKIES = [
     name: 'lastTicker',
     purpose: 'pamti zadnju otvorenu dionicu radi navigacijske prečice u zaglavlju',
     cat: 'nužni (funkcionalni)', dur: 'do brisanja iz preglednika', party: 'prva strana (localStorage)',
+  },
+  {
+    name: 'bl_nl',
+    purpose: 'pamti da ste newsletter prozorčić zatvorili (da vas ne pitamo ponovno) ili da ste već prijavljeni',
+    cat: 'nužni (funkcionalni)', dur: '60 dana od zatvaranja', party: 'prva strana (localStorage)',
   },
   {
     name: '_ga',
@@ -299,15 +304,26 @@ export function PolitikaPrivatnostiContent() {
                 bez pristanka se ništa ne učitava</td>
             </tr>
             <tr>
+              <td>email adresa za newsletter (uz jezik, datum prijave i
+                potvrde)</td>
+              <td>slanje newslettera — isključivo ako se sami prijavite i
+                prijavu potvrdite klikom na link iz maila (double opt-in)</td>
+              <td>privola (čl. 6. st. 1. t. (a) GDPR i čl. 107. Zakona o
+                elektroničkim komunikacijama) — opoziva se jednim klikom
+                na link za odjavu u svakom emailu</td>
+            </tr>
+            <tr>
               <td>server logovi (IP adresa, user-agent, vrijeme zahtjeva)</td>
               <td>sigurnost, otkrivanje zlouporabe i otklanjanje kvarova</td>
               <td>legitimni interes (čl. 6. st. 1. t. (f) GDPR)</td>
             </tr>
           </tbody>
         </table>
-        <p className="imp-p" style={{ marginTop: 10 }}>Email koristimo
-        isključivo za prijavu i oporavak lozinke — bez newslettera i
-        marketinga. Napomena: fontovi stranice učitavaju se s Google Fonts
+        <p className="imp-p" style={{ marginTop: 10 }}>Email adresu računa
+        koristimo isključivo za prijavu i oporavak lozinke — newsletter se
+        šalje SAMO na adrese koje su se zasebno prijavile i prijavu potvrdile
+        (double opt-in); račun i newsletter su odvojene evidencije. Napomena:
+        fontovi stranice učitavaju se s Google Fonts
         poslužitelja; pri dohvaćanju fonta vaš preglednik Googleu prenosi IP
         adresu (tehnička nužnost dohvata resursa).</p>
       </section>
@@ -324,7 +340,10 @@ export function PolitikaPrivatnostiContent() {
         Ltd.) — web analitika kroz Google Tag Manager, isključivo uz vašu
         privolu; Google može podatke obrađivati i izvan EU/EEA na temelju
         EU–US okvira za privatnost podataka (Data Privacy Framework) i
-        standardnih ugovornih klauzula. Podatke ne prodajemo niti dijelimo s
+        standardnih ugovornih klauzula. <b>Resend</b> (Resend, Inc., SAD) —
+        tehničko slanje newsletter emailova (potvrdni mail i newsletter);
+        prijenos u SAD temelji se na standardnim ugovornim klauzulama.
+        Podatke ne prodajemo niti dijelimo s
         trećima u marketinške svrhe.</p>
       </section>
 
@@ -333,7 +352,11 @@ export function PolitikaPrivatnostiContent() {
         <p className="imp-p">Podaci računa i portfelja čuvaju se dok račun
         postoji, a nakon brisanja računa najviše 30 dana (sigurnosne kopije).
         Server logovi čuvaju se najviše 12 mjeseci. Zapis privole za kolačiće
-        vrijedi najviše 12 mjeseci, nakon čega se privola ponovno traži.</p>
+        vrijedi najviše 12 mjeseci, nakon čega se privola ponovno traži.
+        Newsletter: nepotvrđene prijave brišu se automatski nakon 30 dana;
+        nakon odjave zapis (adresa i datumi prijave/odjave) čuvamo kao dokaz
+        privole i internu listu isključenja — na tu se adresu više ništa ne
+        šalje.</p>
       </section>
 
       <section>
@@ -400,6 +423,9 @@ const COOKIES_EN = [
   { name: 'lastTicker',
     purpose: 'remembers the last opened stock for the header navigation shortcut',
     cat: 'necessary (functional)', dur: 'until deleted from the browser', party: 'first party (localStorage)' },
+  { name: 'bl_nl',
+    purpose: 'remembers that you closed the newsletter prompt (so we do not ask again) or that you already subscribed',
+    cat: 'necessary (functional)', dur: '60 days after closing', party: 'first party (localStorage)' },
   { name: '_ga',
     purpose: 'Google analytics (loaded via Google Tag Manager) — distinguishes visitors; set ONLY if you consent to analytics cookies',
     cat: 'analytics', dur: 'up to 2 years', party: 'third party (Google)' },
@@ -625,6 +651,15 @@ export function EnPrivacyContent() {
                 loads without consent</td>
             </tr>
             <tr>
+              <td>newsletter email address (with language, subscription and
+                confirmation dates)</td>
+              <td>sending the newsletter — only if you subscribe yourself
+                and confirm by clicking the emailed link (double opt-in)</td>
+              <td>consent (Art. 6(1)(a) GDPR and Art. 107 of the Croatian
+                Electronic Communications Act) — withdrawn with one click
+                on the unsubscribe link in every email</td>
+            </tr>
+            <tr>
               <td>server logs (IP address, user agent, request time)</td>
               <td>security, abuse detection and troubleshooting</td>
               <td>legitimate interest (Art. 6(1)(f) GDPR)</td>
@@ -632,11 +667,13 @@ export function EnPrivacyContent() {
           </tbody>
         </table>
         </div>
-        <p className="imp-p" style={{ marginTop: 10 }}>We use email
-        exclusively for sign-in and password recovery — no newsletters, no
-        marketing. Note: the site's fonts load from Google Fonts servers;
-        when fetching a font your browser transmits your IP address to
-        Google (a technical necessity of resource loading).</p>
+        <p className="imp-p" style={{ marginTop: 10 }}>Your account email is
+        used exclusively for sign-in and password recovery — the newsletter
+        is sent ONLY to addresses that subscribed separately and confirmed
+        the subscription (double opt-in); the account and the newsletter are
+        separate records. Note: the site's fonts load from Google Fonts
+        servers; when fetching a font your browser transmits your IP address
+        to Google (a technical necessity of resource loading).</p>
       </section>
 
       <section>
@@ -650,7 +687,10 @@ export function EnPrivacyContent() {
         (Google Ireland Ltd.) — web analytics via Google Tag Manager,
         strictly with your consent; Google may process data outside the
         EU/EEA on the basis of the EU–US Data Privacy Framework and standard
-        contractual clauses. We do not sell data, nor share it with third
+        contractual clauses. <b>Resend</b> (Resend, Inc., USA) — technical
+        delivery of newsletter emails (confirmation email and the
+        newsletter); transfers to the USA rely on standard contractual
+        clauses. We do not sell data, nor share it with third
         parties for marketing purposes.</p>
       </section>
 
@@ -660,7 +700,11 @@ export function EnPrivacyContent() {
         account exists, and for at most 30 days after account deletion
         (backups). Server logs are kept for at most 12 months. The cookie
         consent record is valid for at most 12 months, after which consent
-        is requested again.</p>
+        is requested again. Newsletter: unconfirmed subscriptions are
+        deleted automatically after 30 days; after you unsubscribe we keep
+        the record (address and subscription/unsubscription dates) as proof
+        of consent and an internal suppression list — nothing further is
+        sent to that address.</p>
       </section>
 
       <section>

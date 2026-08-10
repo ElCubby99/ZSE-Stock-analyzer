@@ -337,3 +337,16 @@ DO $$ BEGIN
                        WHERE 'filing:' || f.id = n.auto_source_ref);
   END IF;
 END $$;
+
+-- M67: newsletter — minimizacija podataka (GDPR čl. 5. st. 1. t. (c) i (e)):
+-- nepotvrđena double opt-in prijava starija od 30 dana se briše (privola
+-- nikad nije dovršena). Potvrđeni i odjavljeni zapisi OSTAJU (dokaz privole
+-- i lista isključenja). Guard: tablicu kreira supabase/migration_newsletter.sql
+-- (Supabase-only) — lokalni dev bez nje = no-op.
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables
+             WHERE table_schema='public' AND table_name='newsletter_subscribers') THEN
+    DELETE FROM newsletter_subscribers
+     WHERE status = 'pending' AND created_at < now() - interval '30 days';
+  END IF;
+END $$;

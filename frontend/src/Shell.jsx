@@ -4,6 +4,7 @@ import { num } from './format.js'
 import { useConsent } from './consent.jsx'
 import { useLang } from './i18n/LangContext.jsx'
 import { pairPath } from './routes/registry.mjs'
+import { NewsletterModal } from './Newsletter.jsx'
 
 /* App ljuska po dizajnu: logo + top-level nav + search; footer s MAR ogradom.
    M38: sve user-facing stringove daje i18n rječnik (useLang().t); navigacija
@@ -219,6 +220,7 @@ export function SiteHeader() {
   const last = lastTicker()
   const { lang, t } = useLang()
   const [mobOpen, setMobOpen] = useState(false)
+  const [nlOpen, setNlOpen] = useState(false) // M67: newsletter modal
   const { pathname } = useLocation()
   useEffect(() => { setMobOpen(false) }, [pathname]) // navigacija zatvara panel
   const groups = navGroups(lang, t)
@@ -244,6 +246,11 @@ export function SiteHeader() {
           </NavLink>
         </nav>
         <Search />
+        <button type="button" className="hdr-nl" title={t('nl.navAria')}
+          aria-label={t('nl.navAria')} onClick={() => setNlOpen(true)}>
+          <span className="hdr-nl-ico" aria-hidden="true">✉</span>
+          <span className="hdr-nl-txt">{t('nl.navBtn')}</span>
+        </button>
         <LangSwitch />
         <button type="button" className="hdr-burger"
           aria-label={lang === 'en' ? 'Menu' : 'Izbornik'}
@@ -253,6 +260,7 @@ export function SiteHeader() {
       </div>
       {mobOpen && <MobileNav last={last} groups={groups} lang={lang} t={t}
         onClose={() => setMobOpen(false)} />}
+      {nlOpen && <NewsletterModal source="header" onClose={() => setNlOpen(false)} />}
     </header>
   )
 }

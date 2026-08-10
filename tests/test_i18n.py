@@ -39,6 +39,7 @@ I18N_CLEAN = [
     "src/consent.jsx",
     "src/StockPage.jsx",
     "src/i18n/LangContext.jsx",
+    "src/Newsletter.jsx",  # M67
 ]
 
 
