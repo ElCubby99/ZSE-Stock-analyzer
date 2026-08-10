@@ -310,5 +310,15 @@ DO $$ BEGIN
        AND COALESCE(a.published_at, d.published_at) IS NOT NULL
        AND (n.published_at IS NULL
             OR n.published_at::date <> COALESCE(a.published_at, d.published_at));
+    -- M66: 'najava isplate' nastala NAKON ex-datuma je backfill artefakt
+    -- (nikad nije bila aktualna najava) -> makni iz objavljenih (draft);
+    -- incident 4.8.2026.: ~200 povijesnih rata preplavilo /vijesti
+    UPDATE news_items n SET status = 'draft'
+      FROM dividends d
+     WHERE n.source_type = 'auto'
+       AND n.auto_source_ref = 'dividend:' || d.id
+       AND n.status = 'published'
+       AND d.ex_date IS NOT NULL
+       AND d.ex_date < n.created_at::date - 7;
   END IF;
 END $$;
