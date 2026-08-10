@@ -320,5 +320,20 @@ DO $$ BEGIN
        AND n.status = 'published'
        AND d.ex_date IS NOT NULL
        AND d.ex_date < n.created_at::date - 7;
+    -- M66: vijest čiji izvorni zapis više ne postoji (dedup v3 briše
+    -- duplikate dividendi) ostaje siroče s dupliciranim naslovom
+    -- (npr. JNAF 2x) -> makni iz objavljenih
+    UPDATE news_items n SET status = 'draft'
+     WHERE n.source_type = 'auto'
+       AND n.status = 'published'
+       AND n.auto_source_ref LIKE 'dividend:%'
+       AND NOT EXISTS (SELECT 1 FROM dividends d
+                       WHERE 'dividend:' || d.id = n.auto_source_ref);
+    UPDATE news_items n SET status = 'draft'
+     WHERE n.source_type = 'auto'
+       AND n.status = 'published'
+       AND n.auto_source_ref LIKE 'filing:%'
+       AND NOT EXISTS (SELECT 1 FROM filings f
+                       WHERE 'filing:' || f.id = n.auto_source_ref);
   END IF;
 END $$;
