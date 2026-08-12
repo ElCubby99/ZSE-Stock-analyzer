@@ -53,9 +53,14 @@ function GapBand({ zone, price, pref }) {
 }
 
 export function ProfileHeader({ data, zone }) {
-  const { t } = useLang()
+  const { lang, t } = useLang()
   const sum = data.price_summary?.classes || []
   const primary = data.share_classes.find((c) => c.is_primary) || data.share_classes[0]
+  // M69: klasni pogled (povlaštena dionica) — poveznica na redovnu
+  const vc = data.view_class
+  const vcHref = vc && (lang === 'en'
+    ? `/en/stock/${vc.company_ticker.toLowerCase()}`
+    : `/dionica/${vc.company_ticker.toLowerCase()}`)
   return (
     <div className="prof-head">
       <div>
@@ -66,6 +71,12 @@ export function ProfileHeader({ data, zone }) {
         <div className="prof-subline">
           {data.sector_hr || data.sector || t('stock.unknownSector')} · {t('stock.zseEur')}
         </div>
+        {vc && (
+          <div className="prof-subline prof-classview">
+            {t('mp.classViewPref')}{' '}
+            <a href={vcHref}>{vc.company_ticker}</a>.
+          </div>
+        )}
       </div>
       <div className="prof-head-right">
         {sum.map((s) => {

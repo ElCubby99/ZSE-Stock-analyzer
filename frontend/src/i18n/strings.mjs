@@ -45,6 +45,11 @@ export const STR = {
   'nav.indices': { hr: 'Indeksi', en: 'Indices' },
   'nav.bonds': { hr: 'Obveznice', en: 'Bonds' },
   'nav.etfs': { hr: 'ETF-ovi', en: 'ETFs' },
+  /* ---------- M69: klasni pogled (povlaštene dionice) ---------- */
+  'mp.classViewPref': {
+    hr: 'Povlaštena dionica — prikaz s cijenom, dioničarima i dividendom ove klase. Firma, financije i fer vrijednost zajednički su s redovnom dionicom',
+    en: 'Preferred share — shown with this class’s price, shareholders and dividend. The company, financials and fair value are shared with the ordinary share',
+  },
   /* ---------- M67: newsletter (double opt-in) ---------- */
   'nl.navBtn': { hr: 'Newsletter', en: 'Newsletter' },
   'nl.navAria': {

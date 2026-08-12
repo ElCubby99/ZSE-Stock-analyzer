@@ -516,6 +516,14 @@ def stage_regen(conn, run_id, log, changed: bool) -> None:
     except CycleError as e:
         log("regen", None, "failed", str(e))
         raise
+    # M69: + neprimarne klase s vlastitim tickerom (CROS2, KODT2, ADRS2,
+    # PLAG2...) — klasni pogled na istu firmu (<KLASA>.json)
+    with conn.cursor() as cur:
+        cur.execute("""SELECT sc.ticker FROM share_classes sc
+                       JOIN companies c ON c.id = sc.company_id
+                       WHERE c.is_live AND sc.ticker <> c.ticker
+                       ORDER BY sc.ticker""")
+        tickers += [r[0] for r in cur.fetchall()]
     os.makedirs("frontend/public/data", exist_ok=True)
     for t in tickers:
         try:

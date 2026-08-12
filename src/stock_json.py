@@ -721,32 +721,47 @@ def _match_snapshots(cur_rows: list[dict], prev_rows: list[dict]) -> None:
         p["_left"] = id(p) in free_prev
 
 
-def _top10_block(cur, company_id: int) -> dict | None:
+def _top10_block(cur, company_id: int, class_ticker: str | None = None,
+                 class_is_primary: bool = True) -> dict | None:
     """M23: top 10 dioničara iz tablice shareholders + PROMJENE između zadnja
     dva snapshota. Jedan snapshot -> stanje s datumom, BEZ izmišljenih
-    promjena. Imena točno kako su objavljena (SKDD/izvješće)."""
+    promjena. Imena točno kako su objavljena (SKDD/izvješće).
+    M69: lista je PO KLASI (ZSE objavljuje zaseban top 10 za svaki ISIN);
+    stariji redovi bez class_tickera pripadaju primarnoj klasi."""
+    # NULL class_ticker (redovi prije M69) = primarna klasa
+    cls_cond = ("(class_ticker = %s OR class_ticker IS NULL)"
+                if class_is_primary else "class_ticker = %s")
+    cls_par = (class_ticker,) if class_ticker else ()
+    if class_ticker is None:
+        cls_cond = "TRUE"
     cur.execute(
-        """SELECT DISTINCT snapshot_date, source FROM shareholders
-           WHERE company_id = %s ORDER BY snapshot_date DESC""",
-        (company_id,))
+        f"""SELECT DISTINCT snapshot_date, source FROM shareholders
+           WHERE company_id = %s AND {cls_cond}
+           ORDER BY snapshot_date DESC""",
+        (company_id, *cls_par))
     snaps = cur.fetchall()
     if not snaps:
         return None
 
-    # M58: ukupan broj izdanih dionica -> broj dionica po imatelju kad
-    # izvor (SKDD/ZSE) objavljuje samo postotak
-    cur.execute("SELECT SUM(shares_issued) FROM share_classes WHERE company_id=%s",
-                (company_id,))
-    _tot = cur.fetchone()[0]
-    total_shares = float(_tot) if _tot else None
+    # M58: broj izdanih dionica KLASE -> broj dionica po imatelju kad izvor
+    # (SKDD/ZSE) objavljuje samo postotak (lista je po ISIN-u klase)
+    if class_ticker:
+        cur.execute("SELECT shares_issued FROM share_classes WHERE ticker=%s",
+                    (class_ticker,))
+    else:
+        cur.execute("SELECT SUM(shares_issued) FROM share_classes WHERE company_id=%s",
+                    (company_id,))
+    _tot = cur.fetchone()
+    total_shares = float(_tot[0]) if _tot and _tot[0] else None
 
     def _rows(snap_date, source):
         cur.execute(
-            """SELECT rank, holder_name, shares, pct, is_custody, source_detail
+            f"""SELECT rank, holder_name, shares, pct, is_custody, source_detail
                FROM shareholders
                WHERE company_id = %s AND snapshot_date = %s AND source = %s
+                 AND {cls_cond}
                ORDER BY rank""",
-            (company_id, snap_date, source))
+            (company_id, snap_date, source, *cls_par))
         out_rows = []
         for rk, nm, sh, p, cu, det in cur.fetchall():
             derived = False
@@ -809,9 +824,13 @@ def _top10_block(cur, company_id: int) -> dict | None:
     }
 
 
-def _ownership(cur, company_id: int, ticker: str) -> dict:
-    """DIO 5: top 10 dioničara (M23) + obrnuti holdings graf + free float."""
-    top10 = _top10_block(cur, company_id)
+def _ownership(cur, company_id: int, ticker: str,
+               class_ticker: str | None = None,
+               class_is_primary: bool = True) -> dict:
+    """DIO 5: top 10 dioničara (M23) + obrnuti holdings graf + free float.
+    M69: class_ticker -> top 10 imatelja TE klase (ZSE lista po ISIN-u)."""
+    top10 = _top10_block(cur, company_id, class_ticker=class_ticker,
+                         class_is_primary=class_is_primary)
     cur.execute(
         """SELECT p.name, p.ticker, h.ownership_pct, h.source_page
            FROM holdings h JOIN companies p ON p.id = h.parent_company_id
@@ -996,33 +1015,42 @@ def _price_summary(cur, classes: list[dict], as_of) -> dict:
     }
 
 
-def _last_dividend(cur, company_id: int):
+def _last_dividend(cur, company_id: int, class_ticker: str | None = None):
     """Z2: zadnja STVARNA dividenda (bez prijedloga) + fiskalna godina —
     DIV. PRINOS se računa iz zadnje izglasane isplate, ne '—'.
     M59: ZBROJ svih isplata/rata zadnje fiskalne godine (HPB 2x8,77 = 17,54;
-    ista konvencija kao dps u financials), samo primarna linija klase."""
+    ista konvencija kao dps u financials), primarna linija klase.
+    M69: class_ticker -> dividenda TE klase (PLAG2 15,33 vs PLAG 15,30)."""
+    if class_ticker:
+        cls_cond = "d.class_ticker = %s"
+        params = (company_id, class_ticker)
+    else:
+        cls_cond = "(sc.is_primary_line IS TRUE OR d.share_class_id IS NULL)"
+        params = (company_id,)
     cur.execute(
-        """SELECT SUM(d.amount_eur),
+        f"""SELECT SUM(d.amount_eur),
                   COALESCE(d.fiscal_year,
                            EXTRACT(YEAR FROM COALESCE(d.ex_date, d.payment_date))::int - 1) AS fy
            FROM dividends d
            LEFT JOIN share_classes sc ON sc.id = d.share_class_id
            WHERE d.company_id=%s AND d.div_type NOT ILIKE '%%rijedlog%%'
              AND d.amount_eur IS NOT NULL
-             AND (sc.is_primary_line IS TRUE OR d.share_class_id IS NULL)
+             AND {cls_cond}
            GROUP BY 2
            ORDER BY 2 DESC NULLS LAST
-           LIMIT 1""", (company_id,))
+           LIMIT 1""", params)
     r = cur.fetchone()
     if not r:
         return None, None
     return _f(r[0]), (int(r[1]) if r[1] is not None else None)
 
 
-def _dividend_calendar(cur, company_id: int, as_of) -> dict:
+def _dividend_calendar(cur, company_id: int, as_of,
+                       view_class: str | None = None) -> dict:
     """Jedinstveni pogled: isplaćene (povijest) + izglasane/najavljene nadolazeće.
     Statusi iz PODATAKA (datumi iz EHO objava) — datumi koji fale ostaju null.
-    Z2: + povijest po fiskalnim godinama i metrike (kontinuitet, rast, prosjek)."""
+    Z2: + povijest po fiskalnim godinama i metrike (kontinuitet, rast, prosjek).
+    M69: view_class -> povijest/metrike se računaju za TU klasu (klasni pogled)."""
     cur.execute(
         """SELECT d.class_ticker, d.fiscal_year, d.amount_eur, d.div_type,
                   d.ex_date, d.record_date, d.payment_date, d.source_url,
@@ -1091,8 +1119,11 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
     # Z2: povijest po fiskalnoj godini — jedna klasa (primarna linija ako je
     # označena, inače prva), M59: ZBROJ svih isplata/rata te fiskalne godine
     # (ista konvencija kao dps u financials; HPB FY2025 = 21,83 + 2x8,77)
-    hist_class = next((ct for _fy, ct, _a, prim in hist_rows if prim),
-                      hist_rows[0][1] if hist_rows else None)
+    if view_class and any(ct == view_class for _fy, ct, _a, _p in hist_rows):
+        hist_class = view_class
+    else:
+        hist_class = next((ct for _fy, ct, _a, prim in hist_rows if prim),
+                          hist_rows[0][1] if hist_rows else None)
     by_fy = {}
     for fy_val, ct, a, _prim in hist_rows:
         if ct == hist_class:
@@ -1130,17 +1161,24 @@ def _dividend_calendar(cur, company_id: int, as_of) -> dict:
     }
 
 
-def _per_class_ratios(classes: list[dict], eps, bvps, dps) -> list[dict]:
-    """P/E, P/B, div. prinos po klasi iz zadnjeg closea. Izvedeno iz baze — bez novih brojki."""
+def _per_class_ratios(cur, company_id: int, classes: list[dict],
+                      eps, bvps, dps) -> list[dict]:
+    """P/E, P/B, div. prinos po klasi iz zadnjeg closea. Izvedeno iz baze —
+    bez novih brojki. M69: prinos iz dividende TE klase kad postoji njezina
+    linija u dividends (povlaštene mogu imati drugačiji iznos, npr. PLAG2);
+    fallback je dps firme (primarna linija)."""
     out = []
     for c in classes:
         px = c["last_price"]["close_eur"] if c["last_price"] else None
+        dps_c, _fy = _last_dividend(cur, company_id, class_ticker=c["ticker"])
+        eff_dps = dps_c if dps_c is not None else dps
         out.append({
             "class_ticker": c["ticker"],
             "price": px,
             "pe": (px / eps) if (px and eps and eps > 0) else None,
             "pb": (px / bvps) if (px and bvps and bvps > 0) else None,
-            "div_yield": (dps / px) if (px and dps) else None,
+            "div_yield": (eff_dps / px) if (px and eff_dps) else None,
+            "dps": eff_dps,
             "basis": "izvedeno: zadnji close / per-share iz FY financija",
         })
     return out
@@ -1361,6 +1399,14 @@ def build_stock_json(conn, ticker: str) -> dict:
                 "WHERE ticker = %s", (ticker,))
     row = cur.fetchone()
     if not row:
+        # M69: ticker KLASE (CROS2, KODT2, ADRS2, PLAG2...) -> klasni pogled
+        # na firmu (kompletan prikaz, omjeri po cijeni te klase)
+        cur.execute("""SELECT c.ticker FROM share_classes sc
+                       JOIN companies c ON c.id = sc.company_id
+                       WHERE sc.ticker = %s""", (ticker,))
+        r2 = cur.fetchone()
+        if r2 and r2[0] != ticker:
+            return _class_view_json(conn, r2[0], ticker)
         raise ValueError(f"nepoznat ticker: {ticker}")
     company_id, name, sector, is_group, comp_isin, is_live = row
     if not is_live:
@@ -1708,14 +1754,15 @@ def build_stock_json(conn, ticker: str) -> dict:
         "global_peers": _global_peers(sector),
         "risks": _risks(sector, is_group, sotp_breakdown,
                         _liquidity(cur, classes, today),
-                        _ownership(cur, company_id, ticker),
+                        _ownership(cur, company_id, ticker,
+                                   class_ticker=_prim_tk),
                         assumption_flags,
                         _bank_kpi(cur, company_id, latest_fy) if is_bank else None,
                         reconciliation),
         "balance": _balance(cur, company_id, sector, latest_fy, bvps),
         "liquidity": _liquidity(cur, classes, today),
         "segments": _segments(cur, company_id, latest_fy),
-        "ownership": _ownership(cur, company_id, ticker),
+        "ownership": _ownership(cur, company_id, ticker, class_ticker=_prim_tk),
         "bank_kpi": _bank_kpi(cur, company_id, latest_fy) if is_bank else None,
         "share_classes": classes,
         "metrics": {
@@ -1724,7 +1771,7 @@ def build_stock_json(conn, ticker: str) -> dict:
             "shares_ex_treasury": shares,
             "market_cap_eur": _f(ctx.own_market_cap),
             "ebitda_eur": _val(fund, "ebitda"),
-            "per_class": _per_class_ratios(classes, eps, bvps, dps),
+            "per_class": _per_class_ratios(cur, company_id, classes, eps, bvps, dps),
             "basis_note": ("per-share: FY konsolidirane financije / dionice bez "
                            "trezorskih; trž.kap = Σ zadnji close klase × dionice klase"),
         },
@@ -1811,6 +1858,54 @@ def build_stock_json(conn, ticker: str) -> dict:
         "mar_note": ("Informativni prikaz metoda, raspona i pretpostavki iz javno "
                      "objavljenih izvješća; nije investicijski savjet ni preporuka."),
     }
+
+
+def _class_view_json(conn, company_ticker: str, class_ticker: str) -> dict:
+    """M69: kompletan prikaz za NEPRIMARNU klasu dionice (povlaštene: CROS2,
+    KODT2, ADRS2, PLAG2...). Firma, financije i fer-zona su ZAJEDNIČKI —
+    fer po dionici je klasno-agnostična (v2 §7). Klasni pogled preklapa ono
+    što je stvarno klasno: naslovnu cijenu (is_primary flip — frontend svugdje
+    gleda primarnu), top 10 dioničara (ZSE lista po ISIN-u klase), dividendnu
+    povijest klase i naslovni DPS; per_class omjeri (P/E, P/B, prinos po
+    cijeni klase) računaju se ionako za sve klase."""
+    from datetime import date
+
+    out = build_stock_json(conn, company_ticker)
+    cls = next((c for c in out.get("share_classes", [])
+                if c["ticker"] == class_ticker), None)
+    if cls is None:
+        raise ValueError(
+            f"klasa {class_ticker} nije u share_classes firme {company_ticker}")
+    for c in out["share_classes"]:
+        c["is_primary"] = (c["ticker"] == class_ticker)  # pogled, ne baza
+    out["ticker"] = class_ticker
+    out["isin"] = cls.get("isin")
+    out["view_class"] = {
+        "company_ticker": company_ticker,
+        "class_type": cls.get("class_type"),
+    }
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM companies WHERE ticker=%s", (company_ticker,))
+    company_id = cur.fetchone()[0]
+    today = date.today()
+    # top 10 dioničara TE klase (bez fallbacka na primarnu — radije prazno
+    # s razlogom nego kriva lista)
+    out["ownership"] = _ownership(cur, company_id, class_ticker,
+                                  class_ticker=class_ticker,
+                                  class_is_primary=False)
+    if out.get("data_status") == "full":
+        d_sust = (out.get("dividend_calendar") or {}).get("d_sust")
+        out["dividend_calendar"] = {
+            **_dividend_calendar(cur, company_id, today, view_class=class_ticker),
+            "d_sust": d_sust,
+        }
+        # naslovni DPS = dividenda KLASE kad postoji njezina linija
+        dps_c, fy_c = _last_dividend(cur, company_id, class_ticker=class_ticker)
+        if dps_c is not None and out.get("metrics"):
+            out["metrics"]["dps"] = dps_c
+            out["metrics"]["dps_label"] = (
+                f"zadnja isplata FY{fy_c}" if fy_c is not None else None)
+    return out
 
 
 def main(argv=None) -> int:
