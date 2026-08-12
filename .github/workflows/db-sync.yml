@@ -29,6 +29,10 @@ on:
         description: "M67: 'true' = primijeni supabase/migration_newsletter.sql (newsletter pretplatnici + admin pregled; idempotentno)"
         required: false
         default: ''
+      shareholders:
+        description: "M69: 'true' = snapshot top 10 dioničara sa ZSE (sve klase; inače samo 1. u mjesecu)"
+        required: false
+        default: ''
 
 concurrency:
   group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
@@ -114,6 +118,14 @@ jobs:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           PYTHONUNBUFFERED: '1'
         run: python -m src.etfs --backfill
+
+      # M69: izvanredni snapshot dioničara (redovni je 1. u mjesecu iz dailyja)
+      - name: Snapshot dioničara (M69, opcionalno)
+        if: inputs.shareholders == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m scripts.scrape_shareholders_zse
 
       - name: Sync sadržaja (dump -> produkcija)
         env:

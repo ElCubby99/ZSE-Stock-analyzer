@@ -17,6 +17,7 @@ Pravila (nalog M37):
 """
 import json
 import os
+import shutil
 import sys
 
 sys.path.insert(0, ".")
@@ -231,6 +232,16 @@ def main() -> int:
             with open(f"{OUT_DIR}/{ticker}.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=1)
             n += 1
+        # M69: kopije za neprimarne klase (CROS2 -> financije su firmine;
+        # /dionica/cros2/financije čita fin/CROS2.json)
+        cur.execute("""SELECT c.ticker, sc.ticker FROM share_classes sc
+                       JOIN companies c ON c.id = sc.company_id
+                       WHERE c.is_live AND sc.ticker <> c.ticker""")
+        for comp, cls in cur.fetchall():
+            src = f"{OUT_DIR}/{comp}.json"
+            if os.path.exists(src):
+                shutil.copyfile(src, f"{OUT_DIR}/{cls}.json")
+                n += 1
     print(f"[financije] {n} firmi -> {OUT_DIR}/")
     return 0
 

@@ -68,47 +68,48 @@ def main(argv=None) -> int:
     today = datetime.date.today()
     ok = empty = fail = 0
     with get_conn() as conn, conn.cursor() as cur:
-        # primarna klasa po firmi (top_shareholders je na razini izdavatelja)
-        cur.execute("""SELECT c.id, c.ticker, sc.isin FROM companies c
+        # M69: SVE klase dionica — ZSE stranica papira objavljuje zasebnu
+        # top-10 listu za svaki ISIN (redovna i povlaštena imaju različite
+        # imatelje); --tickers filtrira po tickeru KLASE ili firme
+        cur.execute("""SELECT c.id, c.ticker, sc.ticker, sc.isin FROM companies c
                        JOIN share_classes sc ON sc.company_id = c.id
-                       WHERE sc.is_primary_line OR sc.id = (
-                             SELECT MIN(id) FROM share_classes WHERE company_id = c.id)
-                       ORDER BY c.ticker""")
-        firms = [(cid, t, i) for cid, t, i in cur.fetchall() if i]
+                       ORDER BY c.ticker, sc.ticker""")
+        lines = [(cid, t, ct, i) for cid, t, ct, i in cur.fetchall() if i]
         if a.tickers:
-            firms = [f for f in firms if f[1] in a.tickers]
+            lines = [f for f in lines if f[1] in a.tickers or f[2] in a.tickers]
         seen = set()
-        for cid, tick, isin in firms:
-            if cid in seen:
+        for cid, tick, cls_tick, isin in lines:
+            if (cid, cls_tick) in seen:
                 continue
-            seen.add(cid)
+            seen.add((cid, cls_tick))
             try:
                 rows = fetch_top_shareholders(isin)
                 if not rows:
                     empty += 1
-                    print(f"[dioničari] {tick}: ZSE stranica nema top_shareholders")
+                    print(f"[dioničari] {cls_tick}: ZSE stranica nema top_shareholders")
                     continue
                 detail = (f"{PAPER_URL}?isin={isin} (izvor SKDD; lista bez "
                           f"objavljenog as-of datuma — datum = dan dohvata)")
                 for r in rows:
                     cur.execute(
-                        """INSERT INTO shareholders (company_id, snapshot_date,
-                             source, source_detail, rank, holder_name, pct,
-                             is_custody)
-                           VALUES (%s,%s,'zse_skdd',%s,%s,%s,%s,%s)
-                           ON CONFLICT (company_id, snapshot_date, source, rank)
+                        """INSERT INTO shareholders (company_id, class_ticker,
+                             snapshot_date, source, source_detail, rank,
+                             holder_name, pct, is_custody)
+                           VALUES (%s,%s,%s,'zse_skdd',%s,%s,%s,%s,%s)
+                           ON CONFLICT (company_id, class_ticker, snapshot_date,
+                                        source, rank)
                            DO UPDATE SET holder_name=EXCLUDED.holder_name,
                              pct=EXCLUDED.pct, is_custody=EXCLUDED.is_custody,
                              source_detail=EXCLUDED.source_detail""",
-                        (cid, today, detail, r["rank"], r["name"], r["pct"],
-                         r["is_custody"]))
+                        (cid, cls_tick, today, detail, r["rank"], r["name"],
+                         r["pct"], r["is_custody"]))
                 conn.commit()
                 ok += 1
-                print(f"[dioničari] {tick}: {len(rows)} redova (snapshot {today})")
+                print(f"[dioničari] {cls_tick}: {len(rows)} redova (snapshot {today})")
             except Exception as e:  # noqa: BLE001
                 conn.rollback()
                 fail += 1
-                print(f"[dioničari] {tick}: GREŠKA {str(e)[:70]}")
+                print(f"[dioničari] {cls_tick}: GREŠKA {str(e)[:70]}")
     print(f"\nGOTOVO: ok={ok}, bez_podataka={empty}, fail={fail}")
     return 0
 

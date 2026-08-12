@@ -143,6 +143,13 @@ def main() -> int:
                 skipped += 1
                 continue
             cid = r[0]
+            # M69: shareholders nosi class_ticker — knjiga dionica u godišnjem
+            # izvješću odnosi se na primarnu (redovnu) klasu
+            cur.execute("""SELECT ticker FROM share_classes
+                           WHERE company_id=%s
+                           ORDER BY is_primary_line DESC, id LIMIT 1""", (cid,))
+            cls_row = cur.fetchone()
+            cls_tick = cls_row[0] if cls_row else tick
             try:
                 parsed = parse_pdf(path)
             except Exception as e:  # noqa: BLE001
@@ -157,16 +164,18 @@ def main() -> int:
             snap = datetime.date(fy, 12, 31)
             for row in rows:
                 cur.execute(
-                    """INSERT INTO shareholders (company_id, snapshot_date,
-                         source, source_detail, rank, holder_name, shares, pct,
-                         is_custody)
-                       VALUES (%s,%s,'annual_report',%s,%s,%s,%s,%s,%s)
-                       ON CONFLICT (company_id, snapshot_date, source, rank)
+                    """INSERT INTO shareholders (company_id, class_ticker,
+                         snapshot_date, source, source_detail, rank,
+                         holder_name, shares, pct, is_custody)
+                       VALUES (%s,%s,%s,'annual_report',%s,%s,%s,%s,%s,%s)
+                       ON CONFLICT (company_id, class_ticker, snapshot_date,
+                                    source, rank)
                        DO UPDATE SET holder_name=EXCLUDED.holder_name,
                          shares=EXCLUDED.shares, pct=EXCLUDED.pct,
                          is_custody=EXCLUDED.is_custody,
                          source_detail=EXCLUDED.source_detail""",
-                    (cid, snap, f"{base}, {page} (godišnje izvješće FY{fy})",
+                    (cid, cls_tick, snap,
+                     f"{base}, {page} (godišnje izvješće FY{fy})",
                      row["rank"], row["name"], row.get("shares"), row["pct"],
                      row["is_custody"]))
             conn.commit()

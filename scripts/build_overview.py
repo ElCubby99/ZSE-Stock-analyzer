@@ -68,10 +68,17 @@ def load_indices() -> list[dict]:
 
 def build_stocks() -> list[dict]:
     stocks: list[dict] = []
+    # M69: klasni exporti (CROS2.json...) su POGLED na istu firmu — redove
+    # ne dupliraju, ali klasa s vlastitom stranicom linka na sebe
+    datas: dict[str, dict] = {}
+    class_pages: set[str] = set()
     for company in TICKERS:
-        path = DATA_DIR / f"{company}.json"
-        d = json.loads(path.read_text(encoding="utf-8"))
-
+        d = json.loads((DATA_DIR / f"{company}.json").read_text(encoding="utf-8"))
+        if d.get("view_class"):
+            class_pages.add(company)
+            continue
+        datas[company] = d
+    for company, d in datas.items():
         market_only = d.get("data_status") == "market_only"
         rec = (d.get("valuation") or {}).get("reconciliation") or {}
         # M51.3: red rules (v2 §8) = analiza zadržana -> zona se NE objavljuje
@@ -117,7 +124,8 @@ def build_stocks() -> list[dict]:
             pe = m.get("pe")
             stocks.append({
                 "ticker": ct,
-                "company": company,
+                # klasa s vlastitom stranicom (CROS2) linka na /dionica/cros2
+                "company": ct if ct in class_pages else company,
                 "name": d.get("name"),
                 "sector": d.get("sector"),
                 "price": last.get("close_eur"),

@@ -355,6 +355,22 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- M69: top 10 dioničara PO KLASI dionice — ZSE stranica papira objavljuje
+-- zasebnu listu za svaki ISIN (CROS i CROS2 imaju različite imatelje).
+-- Postojeći redovi su skidani s primarne klase -> backfill; unique ključ
+-- dobiva class_ticker da snapshoti klasa koegzistiraju.
+ALTER TABLE shareholders ADD COLUMN IF NOT EXISTS class_ticker TEXT;
+UPDATE shareholders s SET class_ticker = COALESCE(
+    (SELECT sc.ticker FROM share_classes sc
+      WHERE sc.company_id = s.company_id AND sc.is_primary_line LIMIT 1),
+    (SELECT sc2.ticker FROM share_classes sc2
+      WHERE sc2.company_id = s.company_id ORDER BY sc2.id LIMIT 1))
+  WHERE s.class_ticker IS NULL;
+ALTER TABLE shareholders DROP CONSTRAINT IF EXISTS
+  shareholders_company_id_snapshot_date_source_rank_key;
+CREATE UNIQUE INDEX IF NOT EXISTS uq_shareholders_snap
+  ON shareholders (company_id, class_ticker, snapshot_date, source, rank);
+
 -- M67: newsletter — minimizacija podataka (GDPR čl. 5. st. 1. t. (c) i (e)):
 -- nepotvrđena double opt-in prijava starija od 30 dana se briše (privola
 -- nikad nije dovršena). Potvrđeni i odjavljeni zapisi OSTAJU (dokaz privole
