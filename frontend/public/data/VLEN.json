@@ -6,7 +6,7 @@
   "isin": null,
   "fiscal_year": 2025,
   "audited": true,
-  "generated_at": "2026-08-12",
+  "generated_at": "2026-08-13",
   "data_status": "full",
   "financials_3y": {
     "years": [
@@ -227,7 +227,7 @@
     "cards": [
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
-        "txt": "free float približno 9%; VLEN: zadnja trgovina 2026-08-12: 220 kom / 847 € prometa (0 d)."
+        "txt": "free float približno 9%; VLEN: zadnja trgovina 2026-08-12: 220 kom / 847 € prometa (1 d)."
       },
       {
         "l": "PRETPOSTAVKE PROCJENE",
@@ -256,7 +256,7 @@
     }
   },
   "liquidity": {
-    "as_of": "2026-08-12",
+    "as_of": "2026-08-13",
     "thresholds": {
       "min_turnover_eur": 5000.0,
       "stale_days": 5,
@@ -272,9 +272,9 @@
           "volume": 220.0,
           "turnover_eur": 847.0
         },
-        "days_since_trade": 0,
+        "days_since_trade": 1,
         "flag": "low",
-        "note": "zadnja trgovina 2026-08-12: 220 kom / 847 € prometa (0 d)"
+        "note": "zadnja trgovina 2026-08-12: 220 kom / 847 € prometa (1 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -446,8 +446,8 @@
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, ISIN HRVLENRB0001); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 3.85,
-        "trade_date": "2026-08-12",
-        "volume": 220.0,
+        "trade_date": "2026-08-13",
+        "volume": 0.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -645,20 +645,20 @@
     }
   ],
   "price_summary": {
-    "as_of": "2026-08-12",
+    "as_of": "2026-08-13",
     "classes": [
       {
         "class_ticker": "VLEN",
         "last": {
-          "date": "2026-08-12",
+          "date": "2026-08-13",
           "close_eur": 3.85
         },
-        "prev_close_eur": 3.8,
-        "change_pct": 0.013157894736842257,
+        "prev_close_eur": 3.85,
+        "change_pct": 0.0,
         "high_52w_eur": 4.1,
         "low_52w_eur": 3.79,
         "avg_turnover_20d_eur": null,
-        "traded_days_1y": 21,
+        "traded_days_1y": 22,
         "workdays_1y": 250,
         "data_from": "2026-07-14",
         "note": "povijest dostupna od 2026-07-14 — 52-tjedni raspon pokriva kraće razdoblje"
@@ -667,7 +667,7 @@
     "note": "dani bez trgovanja nisu u seriji (nema zapisa); promjena je vs prethodni TRGOVANI dan, ne kalendarski"
   },
   "dividend_calendar": {
-    "as_of": "2026-08-12",
+    "as_of": "2026-08-13",
     "events": [],
     "upcoming_count": 0,
     "history": null,
@@ -840,6 +840,14 @@
       "trade_date": "2026-08-12",
       "close_eur": 3.85,
       "volume": 220.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "VLEN",
+      "trade_date": "2026-08-13",
+      "close_eur": 3.85,
+      "volume": 0.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
@@ -1182,11 +1190,10 @@
         "items": [
           {
             "k": "Povrat 1M",
-            "v": null,
-            "unit": null,
-            "basis": null,
-            "formula": null,
-            "np_reason": "nema podataka"
+            "v": -0.060975609756097504,
+            "unit": "%",
+            "basis": "EOD do 2026-08-13 · ilikvidna (indikativno)",
+            "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
