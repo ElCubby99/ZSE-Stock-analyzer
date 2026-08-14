@@ -57,14 +57,14 @@ def md_to_html(md: str) -> str:
     return "\n".join(out)
 
 
-def main():
-    os.makedirs(OUT, exist_ok=True)
+def _build_dir(src: str, out: str) -> int:
+    os.makedirs(out, exist_ok=True)
     index = []
-    for fn in sorted(os.listdir(SRC)):
+    for fn in sorted(os.listdir(src)):
         if not fn.endswith(".md"):
             continue
         slug = fn[:-3]
-        raw = open(os.path.join(SRC, fn), encoding="utf-8").read()
+        raw = open(os.path.join(src, fn), encoding="utf-8").read()
         m = re.match(r"---\n(.*?)\n---\n(.*)", raw, re.S)
         if not m:
             print(f"[skip] {fn}: nema frontmattera"); continue
@@ -73,13 +73,24 @@ def main():
                 "category": meta.get("category", "Edukacija"),
                 "date": meta.get("date"), "summary": meta.get("summary", ""),
                 "html": md_to_html(m.group(2))}
-        with open(f"{OUT}/{slug}.json", "w", encoding="utf-8") as f:
+        with open(f"{out}/{slug}.json", "w", encoding="utf-8") as f:
             json.dump(post, f, ensure_ascii=False)
         index.append({k: post[k] for k in ("slug", "title", "category", "date", "summary")})
     index.sort(key=lambda p: p["date"] or "", reverse=True)
-    with open(f"{OUT}/index.json", "w", encoding="utf-8") as f:
+    with open(f"{out}/index.json", "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False)
-    print(f"blog: {len(index)} postova -> {OUT}")
+    return len(index)
+
+
+def main():
+    n = _build_dir(SRC, OUT)
+    print(f"blog: {n} postova -> {OUT}")
+    # M70: engleske verzije — content/blog/en/<isti-slug>.md (ISTI slug
+    # spaja HR i EN par za hreflang i jezični switcher)
+    src_en = os.path.join(SRC, "en")
+    if os.path.isdir(src_en):
+        n_en = _build_dir(src_en, os.path.join(OUT, "en"))
+        print(f"blog EN: {n_en} postova -> {OUT}/en")
 
 
 if __name__ == "__main__":

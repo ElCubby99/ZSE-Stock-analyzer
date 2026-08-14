@@ -20,6 +20,8 @@ const render = (md) => DOMPurify.sanitize(marked.parse(md || '', { async: false 
 
 const EMPTY = {
   id: null, slug: '', title: '', meta_description: '', content_md: '',
+  // M70: dvojezično — objava traži i englesku verziju
+  title_en: '', meta_description_en: '', content_md_en: '',
   tags: [], cover_image_url: '', status: 'draft', published_at: null,
 }
 
@@ -49,6 +51,12 @@ function Editor({ post, onDone }) {
     if (!p.title.trim()) { setMsg({ t: 'err', s: 'Naslov je obavezan.' }); return }
     if (!SLUG_RX.test(p.slug)) { setMsg({ t: 'err', s: 'Slug mora biti kebab-case (mala slova, brojke, crtice).' }); return }
     if (!p.content_md.trim()) { setMsg({ t: 'err', s: 'Sadržaj je obavezan.' }); return }
+    // M70: svaki objavljeni post ima OBA jezika; draft smije biti samo HR
+    if (status === 'published'
+        && (!(p.title_en || '').trim() || !(p.content_md_en || '').trim())) {
+      setMsg({ t: 'err', s: 'Objava traži i englesku verziju (naslov EN + sadržaj EN). Spremi kao draft dok prijevod nije gotov.' })
+      return
+    }
     setBusy(true)
     // slug kolizija — provjera PRIJE spremanja
     const dup = await supabase.from('blog_posts').select('id').eq('slug', p.slug)
@@ -61,6 +69,9 @@ function Editor({ post, onDone }) {
       slug: p.slug, title: p.title,
       meta_description: (p.meta_description || '').slice(0, 160) || null,
       content_md: p.content_md,
+      title_en: (p.title_en || '').trim() || null,
+      meta_description_en: (p.meta_description_en || '').slice(0, 160) || null,
+      content_md_en: (p.content_md_en || '').trim() || null,
       tags: p.tags, cover_image_url: p.cover_image_url || null, status,
     }
     if (status === 'published' && !p.published_at) row.published_at = new Date().toISOString()
@@ -123,6 +134,31 @@ function Editor({ post, onDone }) {
             <div className="prof-klabel">PREGLED</div>
             <div className="blog-body adm-preview"
               dangerouslySetInnerHTML={{ __html: render(p.content_md) }} />
+          </div>
+        </div>
+        {/* M70: engleska verzija — obavezna za objavu (draft smije bez) */}
+        <div className="sec-label" style={{ marginTop: 14 }}>Engleska verzija
+          {' '}<span className="fund-src">(obavezna za objavu — post izlazi i na /en/blog)</span></div>
+        <label>Title (EN)
+          <input value={p.title_en || ''} onChange={(e) => set('title_en', e.target.value)} />
+          {!((p.title_en || '').trim()) && <span className="flag">bez EN naslova post se ne može objaviti</span>}
+        </label>
+        <label>Meta description (EN)
+          <textarea rows={2} value={p.meta_description_en || ''}
+            onChange={(e) => set('meta_description_en', e.target.value)} />
+          <span className={(p.meta_description_en || '').length > 160 ? 'flag' : 'fund-src'}>
+            {(p.meta_description_en || '').length}/160
+          </span>
+        </label>
+        <div className="adm-md">
+          <label>Content (EN, Markdown)
+            <textarea rows={18} value={p.content_md_en || ''}
+              onChange={(e) => set('content_md_en', e.target.value)} />
+          </label>
+          <div>
+            <div className="prof-klabel">PREVIEW (EN)</div>
+            <div className="blog-body adm-preview"
+              dangerouslySetInnerHTML={{ __html: render(p.content_md_en) }} />
           </div>
         </div>
         <div className="cc-btns">

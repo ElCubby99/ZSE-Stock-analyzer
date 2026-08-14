@@ -40,6 +40,7 @@ I18N_CLEAN = [
     "src/StockPage.jsx",
     "src/i18n/LangContext.jsx",
     "src/Newsletter.jsx",  # M67
+    "src/Blog.jsx",  # M70
 ]
 
 
