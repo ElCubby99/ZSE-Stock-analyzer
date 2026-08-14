@@ -450,14 +450,14 @@
       {
         "class_ticker": "HT",
         "last_trade": {
-          "date": "2026-08-13",
+          "date": "2026-08-14",
           "close_eur": 40.1,
-          "volume": 1368.0,
-          "turnover_eur": 54856.8
+          "volume": 1149.0,
+          "turnover_eur": 46074.9
         },
-        "days_since_trade": 1,
+        "days_since_trade": 0,
         "flag": "ok",
-        "note": "zadnja trgovina 2026-08-13: 1368 kom / 54,857 € prometa (1 d)"
+        "note": "zadnja trgovina 2026-08-14: 1149 kom / 46,075 € prometa (0 d)"
       }
     ],
     "note": "cijena bez prometa je indikativna; flag: low = dnevni promet < 5000 € ili > 5 d bez trgovine; very_low = < 3 kom ili > 20 d"
@@ -629,8 +629,8 @@
       "note": "broj dionica NEPOZNAT — čeka izvor (ekstrakcija/GS) | broj dionica = Uvrštena količina (zse.hr papir, listing); trezorske NEPOZNATE (0 uz ogradu)",
       "last_price": {
         "close_eur": 40.1,
-        "trade_date": "2026-08-13",
-        "volume": 1368.0,
+        "trade_date": "2026-08-14",
+        "volume": 1149.0,
         "source": "zse.hr sluzbena tecajnica (web REST JSON)"
       }
     }
@@ -833,15 +833,15 @@
       {
         "class_ticker": "HT",
         "last": {
-          "date": "2026-08-13",
+          "date": "2026-08-14",
           "close_eur": 40.1
         },
-        "prev_close_eur": 39.9,
-        "change_pct": 0.005012531328320913,
+        "prev_close_eur": 40.1,
+        "change_pct": 0.0,
         "high_52w_eur": 43.6,
         "low_52w_eur": 37.1,
         "avg_turnover_20d_eur": 169788.41,
-        "traded_days_1y": 246,
+        "traded_days_1y": 247,
         "workdays_1y": 250,
         "data_from": "2024-07-01",
         "note": null
@@ -5217,6 +5217,14 @@
       "volume": 1368.0,
       "turnover_eur": null,
       "source": "zse.hr sluzbena tecajnica (web REST JSON)"
+    },
+    {
+      "class_ticker": "HT",
+      "trade_date": "2026-08-14",
+      "close_eur": 40.1,
+      "volume": 1149.0,
+      "turnover_eur": null,
+      "source": "zse.hr sluzbena tecajnica (web REST JSON)"
     }
   ],
   "share_class_explainer": null,
@@ -5242,7 +5250,7 @@
       "erp": 0.0423,
       "crp": 0.012,
       "sources": {
-        "r": "r=0.0707 = rf 2.70% + β 0.75×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.75: regresijska (OLS tjednih log-prinosa HT vs CROBEX, 2024-07-01..2026-07-14, n=106 tj.) Blume-prilagođena na 0.83 (0,67·0.747+0,33·1), ali R²=0.19 je NIZAK (<0.5) — tržište objašnjava tek 19% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 0.70 u omjeru 38%/62% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 223/247 trgovanih dana (90%), prosj. promet 111,303 €/dan.",
+        "r": "r=0.0707 = rf 2.70% + β 0.75×ERP 4.23% + CRP 1.2 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=0.75: regresijska (OLS tjednih log-prinosa HT vs CROBEX, 2024-07-01..2026-07-14, n=106 tj.) Blume-prilagođena na 0.83 (0,67·0.747+0,33·1), ali R²=0.19 je NIZAK (<0.5) — tržište objašnjava tek 19% kretanja dionice, pa se bučna regresijska beta miješa sa sektorskom 0.70 u omjeru 38%/62% (ponder = R²/0.5). Time visok momentum (npr. dionica koja je snažno i volatilno rasla) ne diže traženi prinos preko onoga što fundamenti nose. Likvidnost iznad praga: 223/248 trgovanih dana (90%), prosj. promet 111,303 €/dan.",
         "rf": "rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput.",
         "erp": "ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u.",
         "crp": "CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom).",
@@ -5557,35 +5565,35 @@
             "k": "Povrat 1M",
             "v": -0.02195121951219514,
             "unit": "%",
-            "basis": "EOD do 2026-08-13",
+            "basis": "EOD do 2026-08-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 3M",
-            "v": -0.0383693045563549,
+            "v": -0.03605769230769229,
             "unit": "%",
-            "basis": "EOD do 2026-08-13",
+            "basis": "EOD do 2026-08-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 6M",
-            "v": -0.033734939759036076,
+            "v": -0.024330900243308973,
             "unit": "%",
-            "basis": "EOD do 2026-08-13",
+            "basis": "EOD do 2026-08-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat YTD",
             "v": -0.033734939759036076,
             "unit": "%",
-            "basis": "EOD do 2026-08-13",
+            "basis": "EOD do 2026-08-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
             "k": "Povrat 1G",
-            "v": -0.02669902912621358,
+            "v": -0.0314009661835748,
             "unit": "%",
-            "basis": "EOD do 2026-08-13",
+            "basis": "EOD do 2026-08-14",
             "formula": "close_zadnji / close_najbliži_ciljnom_danu − 1"
           },
           {
