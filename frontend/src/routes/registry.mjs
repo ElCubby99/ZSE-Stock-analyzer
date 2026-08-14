@@ -210,12 +210,20 @@ export const ROUTES = [
   },
   {
     path: '/blog/:slug',
+    en: { path: '/en/blog/:slug' }, // M70: EN par (isti slug spaja jezike)
     component: 'BlogPost',
     indexable: true,
     expand: 'blog',
   },
   {
     path: '/blog',
+    en: {
+      path: '/en/blog',
+      seo: {
+        title: 'Blog — learning to read Croatian stocks | Burzovni list',
+        description: 'Educational articles and data walk-throughs: how to read P/E, what the fair-value zone is, why a holding trades below the sum of its parts — no recommendations.',
+      },
+    },
     component: 'BlogIndex',
     indexable: true,
     seo: {

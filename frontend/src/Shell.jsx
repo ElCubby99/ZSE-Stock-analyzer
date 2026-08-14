@@ -106,7 +106,15 @@ function navGroups(lang, t) {
           { to: '/en/comparison', label: t('nav.comparison') },
         ],
       },
-      { label: t('nav.news').toUpperCase(), to: '/en/news' },
+      {
+        // M70: EN blog — ista grupa kao HR (blog + vijesti)
+        label: t('nav.blog').toUpperCase(),
+        to: '/en/blog',
+        items: [
+          { to: '/en/blog', label: t('nav.blog'), end: true },
+          { to: '/en/news', label: t('nav.news') },
+        ],
+      },
       { label: t('nav.methodology').toUpperCase(), to: '/en/methodology' },
     ]
   }

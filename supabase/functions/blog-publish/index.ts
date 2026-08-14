@@ -51,6 +51,10 @@ Deno.serve(async (req) => {
   const title = String(p.title ?? "").trim();
   const content_md = String(p.content_md ?? "");
   const meta_description = p.meta_description == null ? null : String(p.meta_description);
+  // M70: dvojezični blog — objavljeni post MORA imati i englesku verziju
+  const title_en = p.title_en == null ? "" : String(p.title_en).trim();
+  const content_md_en = p.content_md_en == null ? "" : String(p.content_md_en);
+  const meta_description_en = p.meta_description_en == null ? null : String(p.meta_description_en);
   const status = String(p.status ?? "draft");
   const tags = Array.isArray(p.tags) ? p.tags.map(String).slice(0, 20) : [];
   const cover_image_url = p.cover_image_url == null ? null : String(p.cover_image_url);
@@ -61,8 +65,18 @@ Deno.serve(async (req) => {
   if (meta_description && meta_description.length > 160) {
     return json(400, { error: "meta_description: hard cap 160 znakova" });
   }
+  if (title_en.length > 200) return json(400, { error: "title_en: <=200 znakova" });
+  if (meta_description_en && meta_description_en.length > 160) {
+    return json(400, { error: "meta_description_en: hard cap 160 znakova" });
+  }
   if (!["draft", "published"].includes(status)) {
     return json(400, { error: "status: draft | published" });
+  }
+  if (status === "published" && (!title_en || !content_md_en.trim())) {
+    return json(400, {
+      error: "published traži i englesku verziju (title_en + content_md_en) — "
+        + "pošalji kao draft dok prijevod nije gotov",
+    });
   }
   if (cover_image_url && !/^https:\/\//.test(cover_image_url)) {
     return json(400, { error: "cover_image_url: mora biti https URL" });
@@ -79,6 +93,9 @@ Deno.serve(async (req) => {
     .select("id, published_at").eq("slug", slug).maybeSingle();
   const row: Record<string, unknown> = {
     slug, title, meta_description, content_md, tags, cover_image_url, status,
+    title_en: title_en || null,
+    meta_description_en: meta_description_en || null,
+    content_md_en: content_md_en.trim() ? content_md_en : null,
   };
   if (status === "published" && !existing?.published_at) {
     row.published_at = new Date().toISOString();

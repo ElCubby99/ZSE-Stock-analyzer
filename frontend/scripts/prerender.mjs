@@ -353,28 +353,37 @@ async function buildFinPages() {
 
 /* ---------- blog ---------- */
 let posts = []
+let postsEn = [] // M70: EN par po ISTOM slugu
 async function buildBlogPages() {
 try {
   posts = JSON.parse(await fs.readFile(path.join(DIST, 'blog/index.json'), 'utf8'))
 } catch { /* bez bloga */ }
+try {
+  postsEn = JSON.parse(await fs.readFile(path.join(DIST, 'blog/en/index.json'), 'utf8'))
+} catch { /* bez EN file-based postova */ }
 
 /* M27: CMS postovi iz Supabase (SAMO status=published — RLS to i garantira
    za anon ključ). Markdown -> HTML uz ESCAPE sirovog HTML-a u izvoru
    (nikad neprovjereni HTML u stranicu), pa marked. Bez env ključeva build
-   ostaje file-based (logirano). */
+   ostaje file-based (logirano). M70: + EN polja (title_en, ...); fallback
+   select BEZ en stupaca pokriva build koji se utrkuje s migracijom. */
 const SB_URL = process.env.VITE_SUPABASE_URL
 const SB_KEY = process.env.VITE_SUPABASE_ANON_KEY
 if (SB_URL && SB_KEY) {
   try {
     const { marked } = await import('marked')
-    const r = await fetch(
-      `${SB_URL}/rest/v1/blog_posts?status=eq.published`
+    const sel = (en) => `${SB_URL}/rest/v1/blog_posts?status=eq.published`
       + `&select=slug,title,meta_description,content_md,tags,cover_image_url,published_at`
-      + `&order=published_at.desc`,
-      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } })
+      + (en ? ',title_en,meta_description_en,content_md_en' : '')
+      + `&order=published_at.desc`
+    const hdrs = { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    let r = await fetch(sel(true), hdrs)
+    if (!r.ok) r = await fetch(sel(false), hdrs) // baza još bez EN stupaca
     if (!r.ok) throw new Error(`REST ${r.status}`)
     const cms = await r.json()
     const seen = new Set(posts.map((p) => p.slug))
+    const seenEn = new Set(postsEn.map((p) => p.slug))
+    await fs.mkdir(path.join(DIST, 'blog/en'), { recursive: true })
     for (const c of cms) {
       if (seen.has(c.slug)) continue // file-based post istog sluga ima prednost
       const safeMd = String(c.content_md).replace(/</g, '&lt;')
@@ -388,9 +397,21 @@ if (SB_URL && SB_KEY) {
       await fs.writeFile(path.join(DIST, `blog/${c.slug}.json`),
         JSON.stringify({ ...entry, html }, null, 1))
       posts.push(entry)
+      if (c.title_en && c.content_md_en && !seenEn.has(c.slug)) {
+        const htmlEn = marked.parse(
+          String(c.content_md_en).replace(/</g, '&lt;'), { async: false })
+        const entryEn = {
+          ...entry, title: c.title_en, summary: c.meta_description_en || '',
+        }
+        await fs.writeFile(path.join(DIST, `blog/en/${c.slug}.json`),
+          JSON.stringify({ ...entryEn, html: htmlEn }, null, 1))
+        postsEn.push(entryEn)
+      }
     }
     posts.sort((a, b) => String(b.date).localeCompare(String(a.date)))
+    postsEn.sort((a, b) => String(b.date).localeCompare(String(a.date)))
     await fs.writeFile(path.join(DIST, 'blog/index.json'), JSON.stringify(posts, null, 1))
+    await fs.writeFile(path.join(DIST, 'blog/en/index.json'), JSON.stringify(postsEn, null, 1))
     console.log(`[prerender] CMS blog: ${cms.length} objavljenih postova iz Supabase`)
   } catch (e) {
     console.log(`[prerender] CMS blog preskočen (${e.message}) — file-based postovi ostaju`)
@@ -398,19 +419,37 @@ if (SB_URL && SB_KEY) {
 } else {
   console.log('[prerender] CMS blog preskočen — VITE_SUPABASE_URL/ANON_KEY nisu u build env')
 }
+const enSlugs = new Set(postsEn.map((p) => p.slug))
 for (const p of posts) {
   try {
     const post = JSON.parse(await fs.readFile(path.join(DIST, `blog/${p.slug}.json`), 'utf8'))
     const canonical = `${SITE}/blog/${p.slug}`
+    const canonicalEn = `${SITE}/en/blog/${p.slug}`
+    const alternates = enSlugs.has(p.slug) ? { hr: canonical, en: canonicalEn } : null
     await write(`blog/${p.slug}`, page({
       title: `${post.title} | Burzovni list`,
-      description: (post.excerpt || post.title).slice(0, 155),
+      description: (post.summary || post.excerpt || post.title).slice(0, 155),
       canonical,
       ogType: 'article',
       published: post.date || null,
+      alternates,
       body: `<main><h1>${esc(post.title)}</h1>${post.html || ''}</main>`,
     }))
-    urls.push({ loc: canonical, lastmod: post.date || null })
+    urls.push({ loc: canonical, lastmod: post.date || null, alt: alternates })
+    if (alternates) {
+      const postEn = JSON.parse(
+        await fs.readFile(path.join(DIST, `blog/en/${p.slug}.json`), 'utf8'))
+      await write(`en/blog/${p.slug}`, page({
+        title: `${postEn.title} | Burzovni list`,
+        description: (postEn.summary || postEn.title).slice(0, 155),
+        canonical: canonicalEn, lang: 'en',
+        ogType: 'article',
+        published: postEn.date || null,
+        alternates,
+        body: `<main><h1>${esc(postEn.title)}</h1>${postEn.html || ''}</main>`,
+      }))
+      urls.push({ loc: canonicalEn, lastmod: postEn.date || null, alt: alternates })
+    }
   } catch { /* preskoči post bez JSON-a */ }
 }
 }
@@ -1139,6 +1178,12 @@ const temperatureHtmlEn = () => {
 }
 
 const BODY_BUILDERS_EN = {
+  '/en/blog': () => ({
+    // M70: EN blog index — samo postovi s EN verzijom
+    body: `<main><h1>Blog — learning to read Croatian stocks</h1>
+      <ul>${postsEn.map((b) => `<li><a href="/en/blog/${esc(b.slug)}">${esc(b.title)}</a>${b.date ? ` (${esc(b.date)})` : ''}${b.summary ? ` — ${esc(b.summary)}` : ''}</li>`).join('')}</ul>
+      <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
+  }),
   '/en/newsletter': () => ({
     body: `<main><h1>The Burzovni list newsletter</h1>
       <p>An occasional Zagreb Stock Exchange digest, straight to your inbox. Informational — no recommendations, no spam.</p>

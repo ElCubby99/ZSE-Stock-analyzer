@@ -45,6 +45,20 @@ export const STR = {
   'nav.indices': { hr: 'Indeksi', en: 'Indices' },
   'nav.bonds': { hr: 'Obveznice', en: 'Bonds' },
   'nav.etfs': { hr: 'ETF-ovi', en: 'ETFs' },
+  /* ---------- M70: blog (dvojezično) ---------- */
+  'blog.catAll': { hr: 'Sve', en: 'All' },
+  'blog.catEdu': { hr: 'Edukacija', en: 'Learning' },
+  'blog.catAnalyses': { hr: 'Analize', en: 'Analyses' },
+  'blog.catMarket': { hr: 'Tržište', en: 'Market' },
+  'blog.emptyCat': {
+    hr: 'Nema objava u ovoj kategoriji.',
+    en: 'No posts in this category.',
+  },
+  'blog.allArticles': { hr: '← svi članci', en: '← all articles' },
+  'blog.disc': {
+    hr: 'Edukativni i informativni sadržaj — nije investicijski savjet ni preporuka.',
+    en: 'Educational and informational content — not investment advice or a recommendation.',
+  },
   /* ---------- M69: klasni pogled (povlaštene dionice) ---------- */
   'mp.classViewPref': {
     hr: 'Povlaštena dionica — prikaz s cijenom, dioničarima i dividendom ove klase. Firma, financije i fer vrijednost zajednički su s redovnom dionicom',
