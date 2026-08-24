@@ -373,7 +373,7 @@
     "cards": [
       {
         "l": "OVISNOST O KĆERIMA",
-        "txt": "Vrijednost i dividende matice ovise o društvima: Dalekovod (DLKV) (75%), KONČAR standalone (ex-uvrštene kćeri) (100%), KPT (Siemens JV, 49%) (49%), KONČAR D&ST (KODT) (53%)."
+        "txt": "Vrijednost i dividende matice ovise o društvima: KONČAR D&ST (KODT) (53%), Dalekovod (DLKV) (75%), KONČAR standalone (ex-uvrštene kćeri) (100%), KPT (Siemens JV, 49%) (49%)."
       },
       {
         "l": "KONCENTRACIJA I LIKVIDNOST",
@@ -1017,8 +1017,8 @@
       "subsidiary_inflows": {
         "total_eur": 22796569.0,
         "per_holding": [
-          "Dalekovod (DLKV): 3,402,893 €",
-          "KONČAR D&ST (KODT): 19,393,676 €"
+          "KONČAR D&ST (KODT): 19,393,676 €",
+          "Dalekovod (DLKV): 3,402,893 €"
         ],
         "note": "pokrivenost najave matice uključuje očekivane priljeve dividendi kćeri — činjenično iz zadnje izglasane isplate kćeri × naš udio"
       },
@@ -5436,7 +5436,7 @@
           "growth_source": "g1=22.0% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +23.4%, CAGR +22.1%; samofinanciranje (ROE×zadržano) +20.7%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +23.4% POKLAPA SE s kapacitetom samofinanciranja +20.7% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": false,
           "nci_bridge": "Manjinski interes uklonjen PROPORCIONALNO: manjina drži 16.0% kapitala (NCI 156 M€ / ukupni kapital 975 M€), pa vrijednost dioničaru matice = (EV − neto dug) × (1 − 16.0%). Konsolidirani DCF broji 100% kćeri — proporcionalni odbitak poštuje udjel manjine u RASTUĆEM toku (statični knjigovodstveni NCI bi drastično podcijenio manjinu i precijenio maticu).",
-          "consolidated_double_count": "OPREZ: konsolidirani DCF raste 100% novčanih tokova UVRŠTENIH kćeri (Dalekovod, KONČAR D&ST) po grupnom g1 i vrednuje ih znatno iznad njihove tržišne cijene — zato ovaj broj STRUKTURNO nadmašuje SOTP (koji kćeri uzima po tržištu). DCF je ovdje samo kontekst; sidro je SOTP.",
+          "consolidated_double_count": "OPREZ: konsolidirani DCF raste 100% novčanih tokova UVRŠTENIH kćeri (KONČAR D&ST, Dalekovod) po grupnom g1 i vrednuje ih znatno iznad njihove tržišne cijene — zato ovaj broj STRUKTURNO nadmašuje SOTP (koji kćeri uzima po tržištu). DCF je ovdje samo kontekst; sidro je SOTP.",
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
             "g": "dvorazinski g: TERMINAL g=4,0% za DCF/DDM (nominalni BDP proxy: realni ~2% + inflacija ~2%) uz EKSPLICITNU fazu rasta g1 ISKLJUČIVO iz objavljenih brojki — min(3g CAGR prihoda/zarade iz baze, cap 10%), linearni fade 5 g; kratka serija: min(TTM vs zadnje godišnje, cap 8%) s oznakom; ručne forward procjene se NE koriste. Kapitalni g=2,5% za opravdani P/B i RI (konzervativniji — kapital ne smije perpetuirati ciklus); g<r zadovoljeno (min r ~6,9% uz β=0,7)"
@@ -5446,9 +5446,9 @@
       {
         "key": "sotp_nav",
         "label": "Sum-of-the-parts / NAV",
-        "low": 941.8792196520931,
-        "base": 966.6655149060955,
-        "high": 991.4518101600979,
+        "low": 941.8792196520932,
+        "base": 966.6655149060957,
+        "high": 991.4518101600981,
         "confidence": 0.5,
         "no_value": false,
         "assumptions": {
@@ -5460,6 +5460,17 @@
           "net_cash_excludes_insurance_portfolio": true,
           "placeholder": false,
           "parts": [
+            {
+              "name": "KONČAR D&ST (KODT)",
+              "value_eur": 1161523574.0,
+              "value_market_eur": 1161523574.0,
+              "our_estimate_eur": 1972460301.0,
+              "fair_basis": "market",
+              "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,077–8,557 €/dionici × 511,232 dionica × 0.5273 = 1,972,460,301 € (ulazi u usporedni SOTP, ne u primarni)",
+              "basis": "tržišna vrijednost: burzovna kapitalizacija 2,202,775,600 € × 0.5273 udjela = 1,161,523,574 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
+              "pct": 0.5273,
+              "placeholder": false
+            },
             {
               "name": "Dalekovod (DLKV)",
               "value_eur": 522808171.0,
@@ -5488,17 +5499,6 @@
               "basis": "DCF udjela u dobiti pridruženog društva / JV-a: naš udio u NORMALIZIRANOJ godišnjoj dobiti 34,153,000 € (100% dobiti 69,700,000 € × 49%) kapitaliziran po trošku kapitala 9.6% uz dugoročni rast 2.5% = 478,042,758 €. Knjigovodstvena vrijednost udjela (44,232,000 €) je samo donji pod — JV gotovo cijelu dobit isplaćuje kao dividendu pa knjiga po metodi udjela ostaje niska. KOEI GI 2025, bilj. 16, str. 130-131: KONČAR – Energetski transformatori (Siemens JV, 49%). Dobit nakon poreza 2025.: 87,7 M€ (2024.: 51,7 M€) — NORMALIZIRANO (⌀) 69,7 M€ za DCF. Knjigovodstvena vrijednost udjela 44,2 M€; JV gotovo cijelu dobit isplaćuje kao dividendu (2025.: 43,0 M€) pa knjiga ostaje niska.",
               "pct": 0.49,
               "placeholder": true
-            },
-            {
-              "name": "KONČAR D&ST (KODT)",
-              "value_eur": 1161523574.0,
-              "value_market_eur": 1161523574.0,
-              "our_estimate_eur": 1972460301.0,
-              "fair_basis": "market",
-              "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,077–8,557 €/dionici × 511,232 dionica × 0.5273 = 1,972,460,301 € (ulazi u usporedni SOTP, ne u primarni)",
-              "basis": "tržišna vrijednost: burzovna kapitalizacija 2,202,775,600 € × 0.5273 udjela = 1,161,523,574 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
-              "pct": 0.5273,
-              "placeholder": false
             },
             {
               "name": "KONČAR – Digital d.o.o.",
@@ -5649,6 +5649,16 @@
           "nav_total_eur": 2550132038.0,
           "identity": [
             {
+              "item": "KONČAR D&ST (KODT)",
+              "eur": 1161523574.0,
+              "per_share": 451.5823622468478,
+              "basis": "market",
+              "pct": 0.5273,
+              "listed": true,
+              "our_eur": 1972460301.0,
+              "our_per_share": 766.8619923883771
+            },
+            {
               "item": "Dalekovod (DLKV)",
               "eur": 522808171.0,
               "per_share": 203.25971348915039,
@@ -5671,16 +5681,6 @@
               "per_share": 185.85561476743496,
               "basis": "multiple",
               "pct": 0.49
-            },
-            {
-              "item": "KONČAR D&ST (KODT)",
-              "eur": 1161523574.0,
-              "per_share": 451.5823622468478,
-              "basis": "market",
-              "pct": 0.5273,
-              "listed": true,
-              "our_eur": 1972460301.0,
-              "our_per_share": 766.8619923883771
             },
             {
               "item": "KONČAR – Digital d.o.o.",
@@ -5796,14 +5796,14 @@
             {
               "item": "holding diskont (2% sredina)",
               "eur": -63753301.0,
-              "per_share": -24.786295254002447,
+              "per_share": -24.786295254002454,
               "basis": "diskont matice"
             }
           ],
           "identity_note": "Zbroj svih stavki = procjena po dionici. Uvrštene tvrtke kćeri uzete su po BURZOVNOJ cijeni, neuvrštene po našoj procjeni ili knjigovodstvenoj vrijednosti (kako je navedeno uz svaku stavku).",
           "sotp_market": {
             "nav_eur": 2550132038.0,
-            "base_per_share": 966.6655149060955,
+            "base_per_share": 966.6655149060957,
             "note": "GLAVNA procjena (sidro fer-zone): uvrštene tvrtke kćeri uzete po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstveno"
           },
           "sotp_fair": {
@@ -5853,9 +5853,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 942.4988770334431,
-      "zone_high": 990.8321527787477,
-      "dispersion": 0.048780487804877884,
+      "zone_low": 942.4988770334433,
+      "zone_high": 990.832152778748,
+      "dispersion": 0.04878048780487799,
       "divergent": false,
       "archetype": "holding_operating",
       "anchor_methods": [
@@ -5866,12 +5866,12 @@
         "comps": {
           "role": "secondary",
           "note": "integrirani operativni parent: SOTP BEZ holding diskonta; konsolidirani DCF je potvrda",
-          "vs_zone_pct": -0.15623057766451776
+          "vs_zone_pct": -0.15623057766451787
         },
         "dcf_fcf": {
           "role": "anchor_alt",
           "note": "DCF računa buduće novčane tokove CIJELE grupe (sve tvrtke kćeri zajedno) po procijenjenom rastu. SOTP je zbroj dijelova: uvrštene tvrtke kćeri uzima po današnjoj BURZOVNOJ cijeni, a ne po budućem rastu. Glavni razlog zašto je DCF viši: naša procjena tih uvrštenih kćeri (koju DCF u sebi nosi) osjetno je iznad njihove današnje cijene na burzi — tržište im pripisuje manji rast nego mi. Zato je SOTP (oslonjen na vidljive burzovne cijene) glavna procjena, a DCF pokazuje koliko bi vrijedilo ako se procijenjeni rast ostvari.",
-          "vs_zone_pct": 1.322440259500345
+          "vs_zone_pct": 1.3224402595003446
         },
         "sotp_nav": {
           "role": "anchor",
@@ -5886,7 +5886,7 @@
       "method_bases": {
         "comps": 795.251733026349,
         "dcf_fcf": 2245.022909288547,
-        "sotp_nav": 966.6655149060955
+        "sotp_nav": 966.6655149060957
       },
       "qa_flags": [
         "ULAZI NEKONZISTENTNI: dcf_fcf +132% vs primarno sidro — uskladi pretpostavke, ne širi zonu",
@@ -5919,7 +5919,7 @@
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 9.42 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (942.50 €), samo od te dividende dobivao bi 1.0% godišnje. Fer cijena to ne dopušta iznad 7.1% (traženi prinos 9.6% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 9.42 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (942.50 €), samo od te dividende dobivao bi 1.0% godišnje. Fer cijena to ne dopušta iznad 7.1% (traženi prinos 9.6% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": null,
       "pro_forma_note": null,
@@ -5928,6 +5928,17 @@
     "no_value_data": null,
     "sotp": {
       "parts": [
+        {
+          "name": "KONČAR D&ST (KODT)",
+          "value_eur": 1161523574.0,
+          "value_market_eur": 1161523574.0,
+          "our_estimate_eur": 1972460301.0,
+          "fair_basis": "market",
+          "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,077–8,557 €/dionici × 511,232 dionica × 0.5273 = 1,972,460,301 € (ulazi u usporedni SOTP, ne u primarni)",
+          "basis": "tržišna vrijednost: burzovna kapitalizacija 2,202,775,600 € × 0.5273 udjela = 1,161,523,574 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
+          "pct": 0.5273,
+          "placeholder": false
+        },
         {
           "name": "Dalekovod (DLKV)",
           "value_eur": 522808171.0,
@@ -5956,17 +5967,6 @@
           "basis": "DCF udjela u dobiti pridruženog društva / JV-a: naš udio u NORMALIZIRANOJ godišnjoj dobiti 34,153,000 € (100% dobiti 69,700,000 € × 49%) kapitaliziran po trošku kapitala 9.6% uz dugoročni rast 2.5% = 478,042,758 €. Knjigovodstvena vrijednost udjela (44,232,000 €) je samo donji pod — JV gotovo cijelu dobit isplaćuje kao dividendu pa knjiga po metodi udjela ostaje niska. KOEI GI 2025, bilj. 16, str. 130-131: KONČAR – Energetski transformatori (Siemens JV, 49%). Dobit nakon poreza 2025.: 87,7 M€ (2024.: 51,7 M€) — NORMALIZIRANO (⌀) 69,7 M€ za DCF. Knjigovodstvena vrijednost udjela 44,2 M€; JV gotovo cijelu dobit isplaćuje kao dividendu (2025.: 43,0 M€) pa knjiga ostaje niska.",
           "pct": 0.49,
           "placeholder": true
-        },
-        {
-          "name": "KONČAR D&ST (KODT)",
-          "value_eur": 1161523574.0,
-          "value_market_eur": 1161523574.0,
-          "our_estimate_eur": 1972460301.0,
-          "fair_basis": "market",
-          "our_note": "naša procjena: naša procjena KODT: industrial_forward (dcf_fcf, comps, pouzdanost 0.6) sredina zone 6,077–8,557 €/dionici × 511,232 dionica × 0.5273 = 1,972,460,301 € (ulazi u usporedni SOTP, ne u primarni)",
-          "basis": "tržišna vrijednost: burzovna kapitalizacija 2,202,775,600 € × 0.5273 udjela = 1,161,523,574 € — uvrštena tvrtka kći po BURZI (naša procjena kćeri NIJE u primarnom zbroju)",
-          "pct": 0.5273,
-          "placeholder": false
         },
         {
           "name": "KONČAR – Digital d.o.o.",
@@ -6129,7 +6129,7 @@
       },
       "sotp_market": {
         "nav_eur": 2550132038.0,
-        "base_per_share": 966.6655149060955,
+        "base_per_share": 966.6655149060957,
         "note": "GLAVNA procjena (sidro fer-zone): uvrštene tvrtke kćeri uzete po njihovoj današnjoj burzovnoj cijeni, neuvrštene po našoj procjeni ili knjigovodstveno"
       },
       "our_vs_market_pct": 41.6,
@@ -6138,6 +6138,16 @@
         "Novi Siemens JV (60%): nema podataka u bazi (udjel 60%) — dio NIJE u NAV-u"
       ],
       "identity": [
+        {
+          "item": "KONČAR D&ST (KODT)",
+          "eur": 1161523574.0,
+          "per_share": 451.5823622468478,
+          "basis": "market",
+          "pct": 0.5273,
+          "listed": true,
+          "our_eur": 1972460301.0,
+          "our_per_share": 766.8619923883771
+        },
         {
           "item": "Dalekovod (DLKV)",
           "eur": 522808171.0,
@@ -6161,16 +6171,6 @@
           "per_share": 185.85561476743496,
           "basis": "multiple",
           "pct": 0.49
-        },
-        {
-          "item": "KONČAR D&ST (KODT)",
-          "eur": 1161523574.0,
-          "per_share": 451.5823622468478,
-          "basis": "market",
-          "pct": 0.5273,
-          "listed": true,
-          "our_eur": 1972460301.0,
-          "our_per_share": 766.8619923883771
         },
         {
           "item": "KONČAR – Digital d.o.o.",
@@ -6286,7 +6286,7 @@
         {
           "item": "holding diskont (2% sredina)",
           "eur": -63753301.0,
-          "per_share": -24.786295254002447,
+          "per_share": -24.786295254002454,
           "basis": "diskont matice"
         }
       ],
@@ -6295,8 +6295,8 @@
     },
     "value_vs_book": {
       "kind": "iznad_knjige",
-      "zone_low": 942.4988770334431,
-      "zone_high": 990.8321527787477,
+      "zone_low": 942.4988770334433,
+      "zone_high": 990.832152778748,
       "bvps": 245.0,
       "roe": 0.215975,
       "r": 0.0964434,

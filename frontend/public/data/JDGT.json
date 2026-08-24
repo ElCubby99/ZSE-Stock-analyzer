@@ -685,23 +685,6 @@
         "class_ticker": "JDGT",
         "fiscal_year": 2025,
         "amount_eur": 11.0,
-        "div_type": "Izglasana dividenda",
-        "ex_date": "2026-05-21",
-        "payout_type": "iz_zadrzane_dobiti",
-        "payout_ratio": 1.9475751447948912,
-        "classified_reason": "payout 195% > 100% dobiti FY2025 — isplata crpi zadržanu dobit",
-        "note": null,
-        "record_date": "2026-05-22",
-        "payment_date": "2026-05-29",
-        "status": "paid",
-        "status_hr": "isplaćena",
-        "stale": false,
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/65846"
-      },
-      {
-        "class_ticker": "JDGT",
-        "fiscal_year": 2025,
-        "amount_eur": 11.0,
         "div_type": "Prijedlog dividende",
         "ex_date": "2026-05-21",
         "payout_type": "iz_zadrzane_dobiti",
@@ -714,6 +697,23 @@
         "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
         "stale": true,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/65385"
+      },
+      {
+        "class_ticker": "JDGT",
+        "fiscal_year": 2025,
+        "amount_eur": 11.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2026-05-21",
+        "payout_type": "iz_zadrzane_dobiti",
+        "payout_ratio": 1.9475751447948912,
+        "classified_reason": "payout 195% > 100% dobiti FY2025 — isplata crpi zadržanu dobit",
+        "note": null,
+        "record_date": "2026-05-22",
+        "payment_date": "2026-05-29",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/65846"
       },
       {
         "class_ticker": "JDGT",
@@ -804,23 +804,6 @@
         "class_ticker": "JDGT",
         "fiscal_year": 2023,
         "amount_eur": 8.0,
-        "div_type": "Izglasana dividenda",
-        "ex_date": "2024-04-18",
-        "payout_type": null,
-        "payout_ratio": null,
-        "classified_reason": null,
-        "note": null,
-        "record_date": "2024-04-19",
-        "payment_date": "2024-04-26",
-        "status": "paid",
-        "status_hr": "isplaćena",
-        "stale": false,
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/54337"
-      },
-      {
-        "class_ticker": "JDGT",
-        "fiscal_year": 2023,
-        "amount_eur": 8.0,
         "div_type": "Prijedlog dividende",
         "ex_date": "2024-04-18",
         "payout_type": null,
@@ -833,6 +816,23 @@
         "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
         "stale": true,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/53946"
+      },
+      {
+        "class_ticker": "JDGT",
+        "fiscal_year": 2023,
+        "amount_eur": 8.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-04-18",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2024-04-19",
+        "payment_date": "2024-04-26",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/54337"
       },
       {
         "class_ticker": "JDGT",
@@ -3461,7 +3461,7 @@
           "vs_zone_pct": -0.6840915208550997
         }
       },
-      "zone_note": "dvije prihvaćene metode razmaknute su 210% pa ih ne prosječujemo — sredinu nosi glavna metoda 'dcf_fcf', druga ostaje kontekst; iz zone isključeno (negativna vrijednost ili nekalibrirani ulazi): comps; DIVIDENDNI POD: V_div 101.54 € uključen u medijan kvalificiranih metoda — održiva dividenda podržava vrijednost, ne gasi zonu",
+      "zone_note": "dvije prihvaćene metode razmaknute su 210% pa ih ne prosječujemo — sredinu nosi glavna metoda 'dcf_fcf', druga ostaje kontekst; iz zone isključeno (negativna vrijednost ili nekalibrirani ulazi): comps; DIVIDENDNI POD: V_div 101.54 € uključen u medijan kvalificiranih metoda — pretpostavljena isplata podržava vrijednost, ne gasi zonu",
       "all_methods_low": 117.67375493222855,
       "all_methods_high": 364.6151992357306,
       "dispersion_all": 0.6772659088845326,
@@ -3524,7 +3524,7 @@
         },
         "passes": false,
         "verdict": "preniska",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 7.04 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (100.43 €), samo od te dividende dobivao bi 7.0% godišnje. Fer cijena to ne dopušta iznad 6.9% (traženi prinos 10.9% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: V_div je uključen u medijan — zona objavljena bez suspenzije."
+        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 7.04 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (100.43 €), samo od te dividende dobivao bi 7.0% godišnje. Fer cijena to ne dopušta iznad 6.9% (traženi prinos 10.9% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: V_div je uključen u medijan — zona objavljena bez suspenzije."
       },
       "low_float_note": null,
       "pro_forma_note": null,

@@ -732,23 +732,6 @@
         "class_ticker": "INA",
         "fiscal_year": 2024,
         "amount_eur": 12.0,
-        "div_type": "Izglasana dividenda",
-        "ex_date": "2025-06-17",
-        "payout_type": null,
-        "payout_ratio": null,
-        "classified_reason": null,
-        "note": null,
-        "record_date": "2025-06-18",
-        "payment_date": "2025-07-11",
-        "status": "paid",
-        "status_hr": "isplaćena",
-        "stale": false,
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61775"
-      },
-      {
-        "class_ticker": "INA",
-        "fiscal_year": 2024,
-        "amount_eur": 12.0,
         "div_type": "Prijedlog dividende",
         "ex_date": "2025-06-17",
         "payout_type": null,
@@ -761,6 +744,23 @@
         "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
         "stale": true,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61393"
+      },
+      {
+        "class_ticker": "INA",
+        "fiscal_year": 2024,
+        "amount_eur": 12.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2025-06-17",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2025-06-18",
+        "payment_date": "2025-07-11",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61775"
       },
       {
         "class_ticker": "INA",
@@ -3389,7 +3389,7 @@
           "vs_zone_pct": 0.0
         }
       },
-      "zone_note": "glavna metoda za ovaj tip firme nije dostupna — zona je raspon pozitivnih procjena preostalih metoda; razlog za svaku izostavljenu metodu piše uz nju; isključene metode preosjetljive na pretpostavke: dcf_fcf; DIVIDENDNI POD: V_div 332.34 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (23.34 → 332.34) — održiva dividenda podržava vrijednost, ne gasi zonu; ŠIROK RASPON — metode se razilaze (raspis po metodi iza klika); zona se objavljuje šira, ne suspendira",
+      "zone_note": "glavna metoda za ovaj tip firme nije dostupna — zona je raspon pozitivnih procjena preostalih metoda; razlog za svaku izostavljenu metodu piše uz nju; isključene metode preosjetljive na pretpostavke: dcf_fcf; DIVIDENDNI POD: V_div 332.34 € uključen u medijan kvalificiranih metoda, donji rub podignut na pod (23.34 → 332.34) — pretpostavljena isplata podržava vrijednost, ne gasi zonu; ŠIROK RASPON — metode se razilaze (raspis po metodi iza klika); zona se objavljuje šira, ne suspendira",
       "all_methods_low": 23.33562449153724,
       "all_methods_high": 301.92833333333334,
       "dispersion_all": 0.9227113791080535,
@@ -3436,7 +3436,7 @@
         },
         "passes": true,
         "verdict": "prolazi (uz dividendni pod)",
-        "plain": "Test održive dividende: procjenjujemo da firma može trajno isplaćivati 25.37 € po dionici godišnje (održivi payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne ulaze). Tko bi dionicu kupio po donjem rubu naše zone (332.34 €), samo od te dividende dobivao bi 7.6% godišnje. Fer cijena to ne dopušta iznad 7.6% (traženi prinos 10.1% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: Dividendni pod primijenjen: održiva dividenda od 25.37 € podržava vrijednost od najmanje 332.34 € (Gordonov izračun) — uključeno u zonu."
+        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 25.37 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (332.34 €), samo od te dividende dobivao bi 7.6% godišnje. Fer cijena to ne dopušta iznad 7.6% (traženi prinos 10.1% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: Dividendni pod primijenjen: dividendna pretpostavka od 25.37 € podržava vrijednost od najmanje 332.34 € (Gordonov izračun) — uključeno u zonu."
       },
       "low_float_note": "free float ~1% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan",
       "pro_forma_note": null,
