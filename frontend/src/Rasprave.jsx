@@ -187,6 +187,7 @@ export function RaspravaPage() {
         <h1 className="page-h1">{t('disc.threadH')} · {String(ticker).toUpperCase()}</h1>
         <p className="imp-p"><Link to={stockHref}>{t('common.backToStock')}</Link></p>
         <div className="disc-disclaimer">{t('disc.disclaimer')}</div>
+        <div className="disc-invite">{t('disc.invite')}</div>
         {data === undefined && <div className="loading">{t('common.loading')}</div>}
         {data === null && <p className="imp-p">{t('disc.none')}</p>}
         {d && (
@@ -244,6 +245,56 @@ export function RaspravaPage() {
   )
 }
 
+/* ---------- M72: forumska tema (ETF, mirovinski fondovi) ---------- */
+
+export function TopicPage() {
+  const { lang, t } = useLang()
+  const { slug } = useParams()
+  const [data, setData] = useState(undefined)
+  useEffect(() => {
+    setData(undefined)
+    fetch(`/data/rasprave/topic-${String(slug).toLowerCase()}.json`)
+      .then((r) => { if (!r.ok) throw new Error('404'); return r.json() })
+      .then(setData).catch(() => setData(null))
+  }, [slug])
+  const d = data?.discussion
+  const title = d ? ((lang === 'en' && d.title_en) ? d.title_en : d.title_hr) : String(slug)
+  useEffect(() => { document.title = `${title} · AI Forum · Burzovni list` }, [title])
+  const related = d && ((lang === 'en' && d.related_href_en) ? d.related_href_en : d.related_href)
+  const relatedLabel = related && (related.includes('/etf/') || related.includes('/etf-')
+    ? t('disc.linkEtf') : t('disc.related'))
+  const pick = (o) => ((lang === 'en' && o?.en) ? o.en : (o?.hr ?? o))
+  return (
+    <div className="shellpg">
+      <SiteHeader />
+      <main className="wrap">
+        <h1 className="page-h1">{t('disc.topicH')} · {title}</h1>
+        {related && <p className="imp-p"><Link to={related}>{relatedLabel}</Link></p>}
+        <div className="disc-disclaimer">{t('disc.disclaimer')}</div>
+        <div className="disc-invite">{t('disc.invite')}</div>
+        {data === undefined && <div className="loading">{t('common.loading')}</div>}
+        {data === null && (
+          <p className="imp-p">{t('disc.topicNone')}{' '}
+            <Link to={lang === 'en' ? '/en/discussions' : '/rasprave'}>{t('disc.feedH')}</Link></p>
+        )}
+        {d && (
+          <>
+            {(data.posts || []).map((p) => <AiPost key={p.id} post={p} agents={data.agents} />)}
+            {d.questions_for_humans?.length > 0 && (
+              <section>
+                <div className="sec-label">{t('disc.questionsH')}</div>
+                <ol className="imp-p">{d.questions_for_humans.map((x, i) => <li key={i}>{pick(x)}</li>)}</ol>
+              </section>
+            )}
+            <Comments discussionId={d.id} />
+          </>
+        )}
+      </main>
+      <SiteFooter />
+    </div>
+  )
+}
+
 /* ---------- feed ---------- */
 
 export function RaspraveIndex() {
@@ -254,9 +305,47 @@ export function RaspraveIndex() {
       .then((d) => setFeed(d.rows || [])).catch(() => setFeed([]))
     document.title = `${t('disc.feedH')} · Burzovni list`
   }, [t])
-  const threadHref = (tk) => (lang === 'en'
-    ? `/en/stock/${tk.toLowerCase()}/discussion` : `/dionica/${tk.toLowerCase()}/rasprava`)
+  const threadHref = (r) => {
+    if (r.kind === 'topic') return lang === 'en' ? `/en/forum/${r.slug}` : `/forum/${r.slug}`
+    const tk = r.ticker.toLowerCase()
+    return lang === 'en' ? `/en/stock/${tk}/discussion` : `/dionica/${tk}/rasprava`
+  }
+  const relatedHref = (r) => {
+    if (r.kind === 'topic') {
+      return (lang === 'en' && r.related_href_en) ? r.related_href_en : r.related_href
+    }
+    const tk = r.ticker.toLowerCase()
+    return lang === 'en' ? `/en/stock/${tk}` : `/dionica/${tk}`
+  }
+  const relatedLabel = (r) => {
+    if (r.kind !== 'topic') return t('disc.linkStock')
+    return (r.related_href || '').includes('/etf/') ? t('disc.linkEtf') : t('disc.related')
+  }
   const pick = (o) => ((lang === 'en' && o?.en) ? o.en : (o?.hr ?? o))
+  const rows = feed || []
+  const groups = [
+    { key: 'stocks', label: t('disc.groupStocks'), rows: rows.filter((r) => r.kind !== 'topic') },
+    { key: 'etfs', label: t('disc.groupEtfs'), rows: rows.filter((r) => r.kind === 'topic' && (r.related_href || '').includes('/etf/')) },
+    { key: 'topics', label: t('disc.groupTopics'), rows: rows.filter((r) => r.kind === 'topic' && !(r.related_href || '').includes('/etf/')) },
+  ].filter((g) => g.rows.length)
+  const card = (r) => (
+    <div key={`${r.kind || 'r'}-${r.ticker}-${r.round_no}`} className="blog-card disc-card">
+      <div className="blog-meta">{r.ticker} · {t('disc.roundMeta')} {r.round_no}
+        {r.published_at ? ` · ${fmtDate(r.published_at.slice(0, 10))}` : ''}</div>
+      <div className="blog-title">
+        <Link to={threadHref(r)}>
+          {r.kind === 'topic'
+            ? pick({ hr: r.title_hr, en: r.title_en }) || r.ticker
+            : `${t('disc.threadH')} · ${r.name || r.ticker}`}
+        </Link>
+      </div>
+      {r.teaser && <div className="blog-sum">{t('disc.disagreeH')}: {pick(r.teaser)}</div>}
+      <div className="disc-card-links">
+        <Link to={threadHref(r)}>{t('disc.openThread')}</Link>
+        {relatedHref(r) && <>{' · '}<Link to={relatedHref(r)}>{relatedLabel(r)}</Link></>}
+      </div>
+    </div>
+  )
   return (
     <div className="shellpg">
       <SiteHeader />
@@ -264,6 +353,7 @@ export function RaspraveIndex() {
         <h1 className="page-h1">{t('disc.feedH')}</h1>
         <div className="disc-disclaimer">{t('disc.disclaimer')}</div>
         <p className="imp-p">{t('disc.feedLead')}</p>
+        <div className="disc-invite">{t('disc.invite')}</div>
         <section>
           <div className="sec-label">{t('disc.agentsH')}</div>
           <ul className="imp-p">
@@ -277,19 +367,19 @@ export function RaspraveIndex() {
             ))}
           </ul>
         </section>
-        <section>
-          <div className="sec-label">{t('disc.latestH')}</div>
-          {feed === null ? <div className="loading">{t('common.loading')}</div>
-            : !feed.length ? <p className="imp-p">{t('disc.feedEmpty')}</p>
-              : feed.map((r) => (
-                <Link key={`${r.ticker}-${r.round_no}`} to={threadHref(r.ticker)} className="blog-card">
-                  <div className="blog-meta">{r.ticker} · {t('disc.roundMeta')} {r.round_no}
-                    {r.published_at ? ` · ${fmtDate(r.published_at.slice(0, 10))}` : ''}</div>
-                  <div className="blog-title">{t('disc.threadH')} · {r.name || r.ticker}</div>
-                  {r.teaser && <div className="blog-sum">{t('disc.disagreeH')}: {pick(r.teaser)}</div>}
-                </Link>
-              ))}
-        </section>
+        {feed === null && <div className="loading">{t('common.loading')}</div>}
+        {feed !== null && !rows.length && (
+          <section>
+            <div className="sec-label">{t('disc.latestH')}</div>
+            <p className="imp-p">{t('disc.feedEmpty')}</p>
+          </section>
+        )}
+        {groups.map((g) => (
+          <section key={g.key}>
+            <div className="sec-label">{g.label}</div>
+            {g.rows.map(card)}
+          </section>
+        ))}
       </main>
       <SiteFooter />
     </div>

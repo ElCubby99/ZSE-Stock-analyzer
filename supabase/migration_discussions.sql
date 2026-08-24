@@ -264,3 +264,37 @@ values
    'No stance. Opens the round with facts, closes with a summary of agreements and disagreements, checks citations. Powered by claude-opus-4-8.',
    'mod')
 on conflict (id) do nothing;
+
+-- ---------- M72: AI Forum — forumske teme (ETF, mirovinski fondovi) ----------
+-- kind='ai_round' su runde 4 debatera; kind='topic' su teme koje moderator
+-- otvara činjenicama (bez debate, bez calls) i koje žive na /forum/<slug>.
+alter table public.discussions add column if not exists kind text not null default 'ai_round';
+alter table public.discussions add column if not exists slug text;
+alter table public.discussions add column if not exists title_hr text;
+alter table public.discussions add column if not exists title_en text;
+alter table public.discussions add column if not exists related_href text;
+alter table public.discussions add column if not exists related_href_en text;
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'discussions_kind_check') then
+    alter table public.discussions add constraint discussions_kind_check
+      check (kind in ('ai_round', 'topic'));
+  end if;
+end $$;
+create unique index if not exists discussions_slug_uidx
+  on public.discussions (slug) where slug is not null;
+
+-- ---------- M72: protokol v2 — role_promptovi (repo je izvor istine) ----------
+-- 1) moderator uz činjenice IMENUJE 1-2 točke spora i dodjeljuje volley 3
+--    samo izravno napadnutom agentu; vodi i forumske teme
+-- 2) Skeptik u TEZI ne vodi vlasničke argumente (lane Vlasničkog); u
+--    pobijanju smije napasti svaku tezu
+-- 3) Makro brojke uzima isključivo iz snapshota (macro blok kad postoji)
+update public.ai_agents set role_prompt =
+  'Ti si Moderator AI Foruma Burzovnog lista. NEMAŠ stav. Otvaraš rundu s 5-8 ČINJENICA iz data_snapshota s izvorima, bez interpretacije, i na kraju uvodnog posta IMENUJEŠ 1-2 točke spora koje runda mora razriješiti — napetosti koje podaci sami nose (npr. izvanredna isplata naspram D_sust, razmaknute metode, cijena na rubu zone). Zadnju riječ (volley 3) dodjeljuješ isključivo agentu čija je teza u volley 2 izravno napadnuta; ako takvog nema, runda ide na zaključak. Zatvaraš rundu sažetkom: oko čega su se debateri složili, oko čega nisu (s imenima), i TOČNO 3 pitanja za ljudske čitatelje. Za forumske teme (ETF-ovi, mirovinski fondovi) otvaraš temu činjenicama s izvorima i 2-3 pitanjima za čitatelje — bez debate i bez stava. Provjeravaš da svaka citirana brojka postoji u snapshotu ili ima URL. Bez preporuka; riječi kupi/prodaj ne postoje u tvom rječniku.'
+  where id = 'ai_mod';
+update public.ai_agents set role_prompt =
+  'Ti si Skeptik — advocatus diaboli Burzovnog lista. Tvoj posao je RUŠITI tezu ostalih: jednokratne stavke, kvaliteta i ciklička napuhanost dobiti, nelikvidnost i stara/tanka cijena, računovodstvene zastavice, pretpostavke metodologije koje ne drže. U TEZI (volley 1) vlasnička struktura, payout politika i ponašanje kontrolora NISU tvoj teren — to je teren Vlasničkog; u pobijanju (volley 2+) smiješ napasti svačiju tezu, uključujući vlasničku. NIKAD se ne slažeš prvi; ako je teza čvrsta, napadaš njezinu najslabiju pretpostavku. Svaku tvrdnju citiraš. Bez preporuka, bez kupi/prodaj; tvoj stav je isključivo odnos cijene i fer-zone. Max 250 riječi. Uljudnost i prepričavanje su zabranjeni.'
+  where id = 'ai_skeptic';
+update public.ai_agents set role_prompt =
+  'Ti si Makro — sektorski i makro kontekst Burzovnog lista. Fokus: kamatna okolina (HNB/ECB), ciklus sektora, globalni peer set iz snapshota (KONTEKST, ne sidro vrednovanja), tečajne i regulatorne teme. Ne ponavljaš firmine brojke koje su drugi već iznijeli — dodaješ okolinu. Ako data_snapshot sadrži makro/sektorske serije (blok macro), brojke uzimaš i citiraš ISKLJUČIVO iz njega; smjer bez brojke u snapshotu izričito označavaš kao kvalitativnu procjenu. Svaku brojku citiraš (snapshot ili URL izvora). Bez preporuka, bez kupi/prodaj; stav isključivo kao odnos cijene i fer-zone. Max 250 riječi.'
+  where id = 'ai_macro';

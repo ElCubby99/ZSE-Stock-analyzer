@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""NALOG M30 faza 1: upis ručno generiranih rundi (data/discussions/*.json)
+"""NALOG M30 faza 1 + M72: upis ručno generiranih rundi i forumskih tema
+(data/discussions/*.json, data/discussions/topics/*.json)
 u bazu kao DRAFT. Pokreće se kroz db-sync workflow (discussions_seed=true)
 nad produkcijom (ZSE_DSN) ili lokalno. Idempotentno: runda (ticker,
 round_no) se pri ponovnom učitavanju ZAMJENJUJE (AI postovi + calls);
@@ -28,6 +29,11 @@ def _check(doc: dict, fn: str) -> None:
     assert d["ticker"] and int(d["round_no"]) >= 1, f"{fn}: ticker/round_no"
     assert d.get("data_snapshot"), f"{fn}: data_snapshot obavezan"
     assert doc.get("posts"), f"{fn}: nema postova"
+    kind = d.get("kind", "ai_round")
+    assert kind in ("ai_round", "topic"), f"{fn}: kind"
+    if kind == "topic":
+        assert d.get("slug"), f"{fn}: topic bez sluga"
+        assert d.get("title_hr") and d.get("title_en"), f"{fn}: topic bez naslova"
     for p in doc["posts"]:
         who = p.get("agent_id", "?")
         assert p.get("body_hr", "").strip(), f"{fn}/{who}: prazan body_hr"
@@ -59,13 +65,18 @@ def load_file(cur, path: str) -> str:
             d.get("summary_hr"), d.get("summary_en"),
             json.dumps(d.get("agree_points") or [], ensure_ascii=False),
             json.dumps(d.get("disagree_points") or [], ensure_ascii=False),
-            json.dumps(d.get("questions_for_humans") or [], ensure_ascii=False))
+            json.dumps(d.get("questions_for_humans") or [], ensure_ascii=False),
+            d.get("kind", "ai_round"), d.get("slug"),
+            d.get("title_hr"), d.get("title_en"),
+            d.get("related_href"), d.get("related_href_en"))
     if row:
         disc_id = row[0]
         cur.execute("""UPDATE discussions SET ticker=%s, round_no=%s, trigger=%s,
                          data_snapshot=%s, summary_hr=%s, summary_en=%s,
                          agree_points=%s, disagree_points=%s,
-                         questions_for_humans=%s
+                         questions_for_humans=%s, kind=%s, slug=%s,
+                         title_hr=%s, title_en=%s, related_href=%s,
+                         related_href_en=%s
                        WHERE id=%s""", (*args, disc_id))
         cur.execute("""DELETE FROM discussion_posts
                        WHERE discussion_id=%s AND author_type='ai'""", (disc_id,))
@@ -73,8 +84,11 @@ def load_file(cur, path: str) -> str:
     else:
         cur.execute("""INSERT INTO discussions (ticker, round_no, trigger,
                          data_snapshot, summary_hr, summary_en, agree_points,
-                         disagree_points, questions_for_humans, status)
-                       VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,'draft')
+                         disagree_points, questions_for_humans, kind, slug,
+                         title_hr, title_en, related_href, related_href_en,
+                         status)
+                       VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                               'draft')
                        RETURNING id""", args)
         disc_id = cur.fetchone()[0]
     for p in doc["posts"]:
@@ -99,7 +113,8 @@ def load_file(cur, path: str) -> str:
 
 
 def main() -> int:
-    files = sorted(glob.glob(f"{SRC}/*.json"))
+    # runde po dionicama + forumske teme (ETF-ovi, mirovinski fondovi)
+    files = sorted(glob.glob(f"{SRC}/*.json")) + sorted(glob.glob(f"{SRC}/topics/*.json"))
     if not files:
         print(f"[rasprave] nema datoteka u {SRC}/")
         return 0

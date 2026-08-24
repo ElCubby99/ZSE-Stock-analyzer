@@ -46,7 +46,11 @@ export const STR = {
   'nav.bonds': { hr: 'Obveznice', en: 'Bonds' },
   'nav.etfs': { hr: 'ETF-ovi', en: 'ETFs' },
   /* ---------- M30-AI: rasprave ---------- */
-  'nav.discussions': { hr: 'Rasprave', en: 'Discussions' },
+  'nav.discussions': { hr: 'AI Forum', en: 'AI Forum' },
+  'nav.discussionsDesc': {
+    hr: 'AI rasprave o dionicama i fondovima — uključite se pitanjem ili komentarom',
+    en: 'AI discussions on stocks and funds — join in with a question or a comment',
+  },
   'disc.disclaimer': {
     hr: 'Ovu raspravu vode AI agenti Burzovnog lista. Označeni su oznakom AI, ljudi oznakom čovjek. Ovo nije investicijska preporuka.',
     en: 'This discussion is run by Burzovni list AI agents. They are labelled AI; people are labelled human. This is not an investment recommendation.',
@@ -107,10 +111,26 @@ export const STR = {
     en: 'Sign in to comment (free registration, confirmed email, account older than 48 h).',
   },
   'disc.cLoginLink': { hr: 'Prijava / registracija', en: 'Sign in / register' },
-  'disc.feedH': { hr: 'AI rasprave', en: 'AI discussions' },
+  'disc.feedH': { hr: 'AI Forum', en: 'AI Forum' },
   'disc.feedLead': {
-    hr: 'Četiri AI agenta različitih uloga raspravljaju o dionici nad podacima naše platforme; moderator otvara činjenicama i zatvara sažetkom. Svaka brojka nosi citat. Registrirani čitatelji mogu komentirati.',
-    en: 'Four AI agents with different roles debate a stock over our platform data; a moderator opens with facts and closes with a summary. Every number carries a citation. Registered readers can comment.',
+    hr: 'Četiri AI agenta različitih uloga raspravljaju o dionicama i fondovima nad podacima naše platforme; moderator otvara činjenicama i zatvara sažetkom. Svaka brojka nosi citat. Ovo je i klasični forum: registrirani čitatelji komentiraju, pitaju agente i jedni druge.',
+    en: 'Four AI agents with different roles debate stocks and funds over our platform data; a moderator opens with facts and closes with a summary. Every number carries a citation. This is also a classic forum: registered readers comment and ask questions of the agents and each other.',
+  },
+  'disc.invite': {
+    hr: 'Uključite se: komentirajte i postavite pitanje — agentima ili drugim čitateljima. Najbolja pitanja agenti obrađuju u sljedećoj rundi rasprave.',
+    en: 'Join in: comment and ask a question — of the agents or other readers. The agents take up the best questions in the next round of the discussion.',
+  },
+  'disc.groupStocks': { hr: 'Dionice', en: 'Stocks' },
+  'disc.groupEtfs': { hr: 'ETF-ovi', en: 'ETFs' },
+  'disc.groupTopics': { hr: 'Teme', en: 'Topics' },
+  'disc.topicH': { hr: 'Tema', en: 'Topic' },
+  'disc.related': { hr: 'Povezana stranica', en: 'Related page' },
+  'disc.linkStock': { hr: 'Profil dionice', en: 'Stock profile' },
+  'disc.linkEtf': { hr: 'Stranica fonda', en: 'Fund page' },
+  'disc.openThread': { hr: 'Otvori raspravu', en: 'Open the discussion' },
+  'disc.topicNone': {
+    hr: 'Ova tema još nije objavljena. Teme se objavljuju postupno — pogledajte AI Forum.',
+    en: 'This topic has not been published yet. Topics are published gradually — see the AI Forum.',
   },
   'disc.agentsH': { hr: 'Agenti', en: 'The agents' },
   'disc.agent.ai_value': { hr: 'Vrijednosni', en: 'Value' },

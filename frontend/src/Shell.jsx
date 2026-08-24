@@ -104,7 +104,7 @@ function navGroups(lang, t) {
           { to: '/en/pension-funds', label: t('nav.pensionFunds') },
           { to: '/en/dividends', label: t('nav.dividends') },
           { to: '/en/comparison', label: t('nav.comparison') },
-          { to: '/en/discussions', label: t('nav.discussions') },
+          { to: '/en/discussions', label: t('nav.discussions'), desc: t('nav.discussionsDesc') },
         ],
       },
       {
@@ -133,7 +133,7 @@ function navGroups(lang, t) {
         { to: '/mirovinski-fondovi', label: t('nav.pensionFunds') },
         { to: '/dividende', label: t('nav.dividends') },
         { to: '/usporedba', label: t('nav.comparison') },
-        { to: '/rasprave', label: t('nav.discussions') },
+        { to: '/rasprave', label: t('nav.discussions'), desc: t('nav.discussionsDesc') },
         { to: '/alati', label: t('nav.tools') },
       ],
     },
@@ -174,7 +174,10 @@ function NavGroup({ g }) {
         {g.items.map((it) => (
           <NavLink key={it.label} to={it.to} end={it.end} role="menuitem"
             className={({ isActive }) => (isActive ? 'on' : '')}
-            onClick={() => setOpen(false)}>{it.label}</NavLink>
+            onClick={() => setOpen(false)}>
+            {it.label}
+            {it.desc && <span className="hdr-dd-desc">{it.desc}</span>}
+          </NavLink>
         ))}
       </div>
     </div>
