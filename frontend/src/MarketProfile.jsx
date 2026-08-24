@@ -327,25 +327,29 @@ export function Dividends({ data }) {
             {' '}<i className="fund-src">({tx(h.growth_note, lang)})</i></span>
         </div>
       )}
-      {cal.d_sust && cal.d_sust.d_sust_ps !== null && cal.d_sust.d_sust_ps !== undefined && (
-        <div className="div-hist-strip">
-          <span>{t('mp.dsustLabel')} <b>{num(cal.d_sust.d_sust_ps, 2)} €</b>{t('mp.perShare')}
-            {cal.d_sust.payout_used !== null && cal.d_sust.payout_used !== undefined && (
-              <> <i className="fund-src">({t('mp.dsustShare1')} {num(cal.d_sust.payout_used * 100, 0)} {t('mp.dsustShare2')})</i></>
-            )}
-            {cal.d_sust.flags && cal.d_sust.flags.length > 0 && (
-              <> {cal.d_sust.flags.map((f) => <span key={f} className="flag"> {tx(f, lang)}</span>)}</>
-            )}
-          </span>
-          <details className="src-details"><summary>{t('mp.fullBreakdown')}</summary>
-            <div className="src">
-              {cal.d_sust.fallback_raw
-                ? tx(cal.d_sust.note, lang)
-                : `${t('mp.ds1')} ${num((cal.d_sust.payout_used || 0) * 100, 0)} % (${tx(cal.d_sust.payout_basis, lang)}) ${t('mp.ds2')} ${cal.d_sust.excluded_years && cal.d_sust.excluded_years.length ? `${t('mp.dsExcluded')} ${cal.d_sust.excluded_years.join(', ')}. ` : ''}${cal.d_sust.coverage_announced ? `${t('mp.dsCoverage')} ${num(cal.d_sust.coverage_announced, 2)}×. ` : ''}${tx(cal.d_sust.note, lang)}`}
-            </div>
-          </details>
-        </div>
-      )}
+      {(() => {
+        /* M73: održivost = pokrivenost ZADNJE isplate dobiti pripadne godine
+           (CFA: dividend coverage). Projekcija "očekivane održive dividende"
+           je uklonjena — isplata je odluka firme, ne svojstvo dobiti. */
+        const le = (cal.events || []).find((e) => e.status === 'paid'
+          && e.payout_ratio !== null && e.payout_ratio !== undefined)
+        if (!le) return null
+        const ok = le.payout_ratio <= 1
+        return (
+          <div className="div-hist-strip">
+            <span>{t('mp.sustLabel')} (FY{le.fiscal_year}):{' '}
+              {ok ? <b className="okflag">{t('mp.sustOk')}</b>
+                : <b className="flag">{t('mp.sustNo')}</b>}
+              {' '}<i className="fund-src">({t('mp.sustPayout')}{' '}
+                {num(le.payout_ratio * 100, 0)} %
+                {ok && le.payout_ratio > 0.8 ? ` · ${t('mp.sustTight')}` : ''})</i>
+            </span>
+            <details className="src-details"><summary>{t('mp.fullBreakdown')}</summary>
+              <div className="src">{t('mp.sustDef')}</div>
+            </details>
+          </div>
+        )
+      })()}
       <div className="prof-div-grid">
         <div>
           {paid.length ? (
@@ -370,8 +374,9 @@ export function Dividends({ data }) {
                     <td className="num">{e.payout_ratio === null || e.payout_ratio === undefined
                       ? <i className="np" title={`${t('mp.profitFy1')}${e.fiscal_year ?? '?'}${t('mp.profitFy2')}`}>—</i>
                       : e.payout_ratio > 1
-                        ? <span title={tx(e.classified_reason, lang) || ''}>{t('div.payoutOver')}</span>
-                        : <span title={tx(e.classified_reason, lang) || ''}>{num(e.payout_ratio * 100, 0)} %</span>}</td>
+                        ? <span className="flag" title={tx(e.classified_reason, lang) || ''}>{t('div.payoutOver')}</span>
+                        : <span title={tx(e.classified_reason, lang) || ''}>{num(e.payout_ratio * 100, 0)} %{' '}
+                          <i className="fund-src">· {t('div.sustTag')}</i></span>}</td>
                     <td>{e.payout_type ? (e.payout_type === 'redovna'
                       ? <span className="div-onoff reg" title={tx(e.classified_reason, lang) || ''}>{t('div.type.regular')}</span>
                       : <span className="div-onoff" title={tx(e.classified_reason, lang) || ''}>
