@@ -104,9 +104,14 @@ def dump() -> int:
                        ORDER BY c.ticker""")
         out["business_profiles"] = [[_j(x) for x in r] for r in cur.fetchall()]
 
+        # M74b: BEZ prijedloga — prijedlog dijeli prirodni ključ (klasa,
+        # ex-datum, iznos) s izglasanom verzijom iste odluke, pa bi njegovi
+        # NULL payout stupci pri applyju pregazili klasifikaciju izglasane
         cur.execute(f"""SELECT class_ticker, ex_date, amount_eur,
                                {', '.join(DIV_COLS)}
-                        FROM dividends ORDER BY id""")
+                        FROM dividends
+                        WHERE div_type NOT ILIKE '%rijedlog%'
+                        ORDER BY id""")
         out["dividends"] = [[_j(x) for x in r] for r in cur.fetchall()]
 
         cur.execute(f"""
@@ -259,7 +264,8 @@ def apply() -> int:
                 """UPDATE dividends SET payout_type=%s, payout_ratio=%s,
                      classified_reason=%s,
                      fiscal_year=COALESCE(%s, fiscal_year)
-                   WHERE class_ticker=%s AND ex_date=%s AND amount_eur=%s""",
+                   WHERE class_ticker=%s AND ex_date=%s AND amount_eur=%s
+                     AND div_type NOT ILIKE '%%rijedlog%%'""",
                 (ptype, pratio, reason, fy, ct, ex_date, amount))
             stats["dividends"] += cur.rowcount
 
