@@ -154,3 +154,25 @@ def test_ddm_ulaz_je_dsust(conn):
         ds = d_sust(conn, _cid(cur, "CROS"), ctx.val("net_income_parent"))
     assert ds is not None and dps is not None
     assert abs(dps[0] - ds["d_sust_ps"]) < 1e-6
+
+
+def test_m74_sijecanjski_ex_nasljedjuje_fy(conn):
+    """M74: izglasana s ex-datumom u siječnju (odluka GS iz prosinca)
+    nasljeđuje fiskalnu godinu prosinačke najave iste klase i iznosa —
+    HPB slučaj (21,83 € ex 5.1.2026. pripada FY2024). Repair je idempotentan."""
+    from scripts.repair_div_fy import REPAIR_SQL
+    with conn.cursor() as cur:
+        cid = _cid(cur, "HPB")
+        cur.execute(
+            """INSERT INTO dividends (company_id, class_ticker, fiscal_year,
+                   amount_eur, div_type, ex_date, payment_date, source_url)
+               VALUES (%s,'TSTX',2030,5.55,'Prijedlog dividende',
+                       '2031-12-20','2031-12-30','test://m74'),
+                      (%s,'TSTX',2031,5.55,'Izglasana dividenda',
+                       '2032-01-05','2032-01-08','test://m74')""", (cid, cid))
+        cur.execute(REPAIR_SQL)
+        fixed = cur.fetchall()
+        assert any(r[2] == "TSTX" and r[5] == 2030 for r in fixed), \
+            "siječanjski red nije naslijedio FY prosinačke najave"
+        cur.execute(REPAIR_SQL)  # drugi prolaz mora biti no-op za TSTX
+        assert not [r for r in cur.fetchall() if r[2] == "TSTX"]

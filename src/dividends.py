@@ -103,6 +103,24 @@ def store_dividends(conn, company_ticker: str, divs: list[eho.DividendInfo]) -> 
             cur.execute("SELECT id FROM share_classes WHERE ticker = %s", (b.class_ticker,))
             sc = cur.fetchone()
             fiscal_year = b.ex_date.year - 1 if b.ex_date else None
+            # M74: Nova godina — GS iz prosinca s ex-datumom u siječnju ne
+            # smije preskočiti fiskalnu godinu (HPB: prijedlog ex 22.12.2025.
+            # -> FY2024, a izglasana verzija iste dividende ex 5.1.2026. bi
+            # po goloj konvenciji dobila FY2025). Siječanjski ex nasljeđuje
+            # fiskalnu godinu ranije objave iste klase i istog iznosa unutar
+            # 60 dana (prijedlog/izglasana par iste odluke).
+            if b.ex_date is not None and b.ex_date.month == 1:
+                cur.execute(
+                    """SELECT fiscal_year FROM dividends
+                       WHERE class_ticker = %s AND amount_eur = %s
+                         AND ex_date >= %s::date - INTERVAL '60 days'
+                         AND ex_date < %s
+                         AND fiscal_year IS NOT NULL
+                       ORDER BY ex_date DESC LIMIT 1""",
+                    (b.class_ticker, b.amount_eur, b.ex_date, b.ex_date))
+                prior = cur.fetchone()
+                if prior is not None:
+                    fiscal_year = prior[0]
             # M59: zbirni blok podijeljen u rate? -> upiši rate umjesto zbroja
             key = (b.class_ticker, b.ex_date.isoformat() if b.ex_date else "",
                    round(float(b.amount_eur), 2))

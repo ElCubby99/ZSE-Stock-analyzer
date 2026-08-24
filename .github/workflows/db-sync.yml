@@ -41,6 +41,10 @@ on:
         description: "M30-AI: 'true' = učitaj data/discussions/*.json kao draft runde"
         required: false
         default: ''
+      div_fy_repair:
+        description: "M74: 'true' = popravi fiskalnu godinu dividendi sa siječanjskim ex-datumom (HPB 21,83 FY2025->FY2024) + reklasifikacija + dps"
+        required: false
+        default: ''
 
 concurrency:
   group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
@@ -151,6 +155,14 @@ jobs:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           PYTHONUNBUFFERED: '1'
         run: python -m scripts.load_discussions
+
+      # M74: siječanjski ex-datum ne smije preskočiti fiskalnu godinu
+      - name: Popravak fiskalne godine dividendi (M74, opcionalno)
+        if: inputs.div_fy_repair == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m scripts.repair_div_fy
 
       # M69: izvanredni snapshot dioničara (redovni je 1. u mjesecu iz dailyja)
       - name: Snapshot dioničara (M69, opcionalno)
