@@ -810,8 +810,8 @@
         "amount_eur": 2.15,
         "div_type": "Izglasana dividenda",
         "ex_date": "2026-06-26",
-        "payout_type": null,
-        "payout_ratio": null,
+        "payout_type": "redovna",
+        "payout_ratio": 0.5896680501941212,
         "classified_reason": "prva zabilježena isplata klase",
         "note": null,
         "record_date": "2026-06-29",
@@ -893,23 +893,6 @@
         "class_ticker": "KBZ",
         "fiscal_year": 2023,
         "amount_eur": 2.0,
-        "div_type": "Izglasana dividenda",
-        "ex_date": "2024-06-17",
-        "payout_type": null,
-        "payout_ratio": null,
-        "classified_reason": null,
-        "note": null,
-        "record_date": "2024-06-18",
-        "payment_date": "2024-07-10",
-        "status": "paid",
-        "status_hr": "isplaćena",
-        "stale": false,
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55933"
-      },
-      {
-        "class_ticker": "KBZ",
-        "fiscal_year": 2023,
-        "amount_eur": 2.0,
         "div_type": "Prijedlog dividende",
         "ex_date": "2024-06-17",
         "payout_type": null,
@@ -922,6 +905,23 @@
         "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
         "stale": true,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55571"
+      },
+      {
+        "class_ticker": "KBZ",
+        "fiscal_year": 2023,
+        "amount_eur": 2.0,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2024-06-17",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2024-06-18",
+        "payment_date": "2024-07-10",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/55933"
       },
       {
         "class_ticker": "KBZ",
@@ -944,23 +944,6 @@
         "class_ticker": "KBZ",
         "fiscal_year": 2022,
         "amount_eur": 1.55,
-        "div_type": "Prijedlog dividende",
-        "ex_date": "2023-06-20",
-        "payout_type": null,
-        "payout_ratio": null,
-        "classified_reason": null,
-        "note": null,
-        "record_date": "2023-06-21",
-        "payment_date": "2023-07-14",
-        "status": "proposed",
-        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
-        "stale": true,
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/49826"
-      },
-      {
-        "class_ticker": "KBZ",
-        "fiscal_year": 2022,
-        "amount_eur": 1.55,
         "div_type": "Izglasana dividenda",
         "ex_date": "2023-06-20",
         "payout_type": null,
@@ -973,6 +956,23 @@
         "status_hr": "isplaćena",
         "stale": false,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/50196"
+      },
+      {
+        "class_ticker": "KBZ",
+        "fiscal_year": 2022,
+        "amount_eur": 1.55,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2023-06-20",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2023-06-21",
+        "payment_date": "2023-07-14",
+        "status": "proposed",
+        "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
+        "stale": true,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/49826"
       },
       {
         "class_ticker": "KBZ",
@@ -1024,9 +1024,14 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 2.15,
-      "fallback_raw": true,
-      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korišten zbroj REDOVNIH isplata zadnje fiskalne godine"
+      "d_sust_ps": 2.1781,
+      "payout_used": 0.5897,
+      "payout_basis": "udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom (1 g.)",
+      "coverage_announced": 1.718,
+      "flags": [],
+      "excluded_years": [],
+      "subsidiary_inflows": null,
+      "note": "očekivana dividenda = udio dobiti koji firma dosad isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena isplate po dosadašnjoj praksi firme, NE najveći iznos koji bi si firma mogla priuštiti — koliki udio dobiti isplaćuje odluka je firme; jednokratne isplate ne ulaze u bazu"
     }
   },
   "prices": [
@@ -1848,22 +1853,20 @@
         "peers": "KBZ: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": 0.0645,
+        "g1": 0.0751,
         "signals": {
           "g_obs": 0.1106,
-          "g_sust": 0.0965,
+          "g_sust": 0.0396,
           "g_terminal": 0.04
         },
-        "origin": "održiv (samofinanciran)",
+        "origin": "iznad kapaciteta samofinanciranja",
         "winner": null,
-        "badges": [
-          "usporavanje (zadnja YoY +3%)"
-        ],
+        "badges": [],
         "ttm_context": -0.0075,
         "short_series": false,
-        "verdict": "odrziv_samofinanciran",
-        "assessment": "Opaženi rast +11.1% POKLAPA SE s kapacitetom samofinanciranja +9.6% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Zadnja godina (+2.6%) bitno je ispod medijana (+11.1%) — rast usporava; near-term pomaknut prema recentnijem signalu na +6.5%.",
-        "source": "g1=6.5% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +11.1%, CAGR +8.3%; samofinanciranje (ROE×zadržano) +9.7%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +11.1% POKLAPA SE s kapacitetom samofinanciranja +9.6% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Zadnja godina (+2.6%) bitno je ispod medijana (+11.1%) — rast usporava; near-term pomaknut prema recentnijem signalu na +6.5%. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
+        "verdict": "iznad_samofinanciranja",
+        "assessment": "Opaženi rast (prihoda) +11.1% PREMAŠUJE kapacitet samofinanciranja +4.0% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (+7.5%).",
+        "source": "g1=7.5% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +11.1%, CAGR +8.3%; samofinanciranje (ROE×zadržano) +4.0%; sidro terminala 4.0%. Verdikt: iznad kapaciteta samofinanciranja. Opaženi rast (prihoda) +11.1% PREMAŠUJE kapacitet samofinanciranja +4.0% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (+7.5%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -1940,23 +1943,28 @@
       {
         "key": "ddm_gordon",
         "label": "Dividendni diskont",
-        "low": 30.111053977235784,
-        "base": 34.527987633074545,
-        "high": 40.457680792446894,
+        "low": 31.223497712425413,
+        "base": 35.81049764900071,
+        "high": 41.96872241337031,
         "confidence": 0.7,
         "no_value": false,
         "assumptions": {
-          "dps": 2.15,
+          "dps": 2.1781,
           "r": 0.10841499999999998,
           "g_terminal": 0.04,
-          "g1_explicit": 0.0645,
+          "g1_explicit": 0.0751,
           "model": "dvofazni DDM",
-          "growth_source": "g1=6.5% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +11.1%, CAGR +8.3%; samofinanciranje (ROE×zadržano) +9.7%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +11.1% POKLAPA SE s kapacitetom samofinanciranja +9.6% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Zadnja godina (+2.6%) bitno je ispod medijana (+11.1%) — rast usporava; near-term pomaknut prema recentnijem signalu na +6.5%. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
+          "growth_source": "g1=7.5% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +11.1%, CAGR +8.3%; samofinanciranje (ROE×zadržano) +4.0%; sidro terminala 4.0%. Verdikt: iznad kapaciteta samofinanciranja. Opaženi rast (prihoda) +11.1% PREMAŠUJE kapacitet samofinanciranja +4.0% (ROE × zadržana dobit) — dio rasta traži vanjsko financiranje ili je ciklički; bez objavljene knjige narudžbi sidrimo prema fundabilnoj stopi (+7.5%). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "d_sust": {
-            "d_sust_ps": 2.15,
-            "fallback_raw": true,
-            "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korišten zbroj REDOVNIH isplata zadnje fiskalne godine"
+            "d_sust_ps": 2.1781,
+            "payout_used": 0.5897,
+            "payout_basis": "udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom (1 g.)",
+            "coverage_announced": 1.718,
+            "flags": [],
+            "excluded_years": [],
+            "subsidiary_inflows": null,
+            "note": "očekivana dividenda = udio dobiti koji firma dosad isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena isplate po dosadašnjoj praksi firme, NE najveći iznos koji bi si firma mogla priuštiti — koliki udio dobiti isplaćuje odluka je firme; jednokratne isplate ne ulaze u bazu"
           },
           "sources": {
             "r": "r=0.1084 = rf 2.70% + β 1.05×ERP 4.23% + CRP 1.2 p.b. + premija nelikvidnosti 2.5 p.b.. rf = 2,70%: nerizična stopa u eurima — njemački 10-godišnji Bund (sredina 2026.). Rizik Hrvatske se ne uračunava ovdje, nego zasebno kroz premiju rizika zemlje (CRP), da se ne bi brojao dvaput. ERP = 4,23%: premija tržišnog rizika za zrelo dioničko tržište (Damodaran, siječanj 2026.). Ne uključuje premiju rizika zemlje — ona je zasebno u CRP-u. CRP = 1,2 p.b.: premija rizika Hrvatske — zasebna, mala komponenta primjerena članici eurozone s investicijskim rejtingom (Moody's A3, S&P/Fitch A−). Dodaje se ravno na traženi prinos (ne množi se betom). beta=1.05: SEKTORSKA levered (Banks (Regional)) — nema kalibrirane regresijske bete (serija prekratka/nelikvidna; 25/249 trgovanih dana (10%), prosj. promet 328 €/dan). sektorske (unlevered/levered) bete prema Damodaranovoj tablici za Europu (siječanj 2026.). Financijski sektor: poluga je dio poslovnog modela, relever se ne primjenjuje. premija nelikvidnosti +2.5 p.b. na traženi prinos: 25/249 trgovanih dana (10%), prosj. promet 328 €/dan — izlazak iz pozicije nosi stvaran trošak (širok raspon cijena, plitka knjiga naloga), a niska sektorska beta taj rizik ne obuhvaća; stupnjevano: <20% dana ili <300 €/dan -> +2,5 p.b., ispod praga (60% dana / 1,000 €/dan) -> +1,5 p.b. Nelikvidnosna premija je standardan dodatak na CAPM za slabo trgovane dionice.",
@@ -2033,9 +2041,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 30.831794555616483,
-      "zone_high": 39.23111201270739,
-      "dispersion": 0.21409837820478494,
+      "zone_low": 31.977012914322057,
+      "zone_high": 40.68831521339501,
+      "dispersion": 0.214098378204785,
       "divergent": false,
       "archetype": "bank",
       "anchor_methods": [
@@ -2046,7 +2054,7 @@
         "comps": {
           "role": "secondary",
           "note": "kapitalno sidro — DDM i comps (P/B, P/E) su potvrda; ovise o isplati i peer skupu",
-          "vs_zone_pct": 0.2970128540858339
+          "vs_zone_pct": 0.2505618945807657
         },
         "ddm_gordon": {
           "role": "secondary",
@@ -2061,7 +2069,7 @@
         "residual_income": {
           "role": "anchor_alt",
           "note": "potvrda glavne procjene: ista pretpostavka rasta i troška kapitala, drugi kut",
-          "vs_zone_pct": 0.05361162732510327
+          "vs_zone_pct": 0.01587779077847773
         }
       },
       "zone_note": "zona = sredina (medijan) metoda koje su prošle provjere (ddm_gordon, justified_pb_roe, residual_income), a širina dolazi iz osjetljivosti glavne metode 'justified_pb_roe' na trošak kapitala ±1 postotni bod",
@@ -2070,14 +2078,14 @@
       "dispersion_all": 0.44231158124001646,
       "method_bases": {
         "comps": 50.88325656056266,
-        "ddm_gordon": 34.527987633074545,
+        "ddm_gordon": 35.81049764900071,
         "justified_pb_roe": 28.377002892618748,
         "residual_income": 36.909546502289196
       },
       "qa_flags": [],
-      "vs_market_pct": 13.6,
+      "vs_market_pct": 9.5,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +6.5% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +11.1%) — nijedna procjena 'iz glave'. Firma ima 74 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 9.6% godišnje — manje od 10.8% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 28.38 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) +5% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva.",
+      "reasoning": "Rast +7.5% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'iznad kapaciteta samofinanciranja' (višegodišnja serija: +11.1%) — nijedna procjena 'iz glave'. Firma ima 74 M€ vlastitog kapitala ('knjiga') i na njemu zarađuje 9.6% godišnje — manje od 10.8% koliko ulagač razumno traži za ovaj rizik. Kapital koji zarađuje ispod zahtjeva vrijedi manje od knjigovodstvene brojke — sidro je 28.38 € po dionici. Kontrolne metode uz sidro: Rezidualni dohodak (RI) +2% (razlog odstupanja naveden je uz svaku metodu). Glavni rizik za procjenu: koliko je današnja zarada na kapital održiva.",
       "red_rules": [],
       "market_implied": null,
       "qualified_methods": [
@@ -2088,11 +2096,11 @@
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 2.15,
-        "fallback_raw": true,
-        "zone_low": 30.83,
-        "zone_high": 39.23,
-        "implied_yield_low": 0.0697,
+        "d_sust_ps": 2.1781,
+        "fallback_raw": false,
+        "zone_low": 31.98,
+        "zone_high": 40.69,
+        "implied_yield_low": 0.0681,
         "threshold": 0.0834,
         "r": 0.1084,
         "g_used": 0.025,
@@ -2100,7 +2108,7 @@
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 2.15 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (30.83 €), samo od te dividende dobivao bi 7.0% godišnje. Fer cijena to ne dopušta iznad 8.3% (traženi prinos 10.8% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 2.18 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (31.98 €), samo od te dividende dobivao bi 6.8% godišnje. Fer cijena to ne dopušta iznad 8.3% (traženi prinos 10.8% minus trajni rast dividende 2.5%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": "free float ~8% (proxy: 100 − zbroj top-10 dioničara) — cijena se formira pod dominantnim vlasnicima uz zanemariv float; raskorak cijene i fer-zone NIJE informativan",
       "pro_forma_note": null,
@@ -2125,8 +2133,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "6,5%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (samofinanciran)'"
+        "v": "7,5%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'iznad kapaciteta samofinanciranja'"
       },
       {
         "k": "Peer multipli",

@@ -704,23 +704,6 @@
         "fiscal_year": 2025,
         "amount_eur": 0.5,
         "div_type": "Prijedlog dividende",
-        "ex_date": "2026-08-28",
-        "payout_type": null,
-        "payout_ratio": null,
-        "classified_reason": null,
-        "note": null,
-        "record_date": "2026-08-31",
-        "payment_date": "2026-09-15",
-        "status": "proposed",
-        "status_hr": "prijedlog (nije izglasana)",
-        "stale": false,
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67707"
-      },
-      {
-        "class_ticker": "CKML",
-        "fiscal_year": 2025,
-        "amount_eur": 0.5,
-        "div_type": "Prijedlog dividende",
         "ex_date": "2026-08-27",
         "payout_type": null,
         "payout_ratio": null,
@@ -732,6 +715,23 @@
         "status_hr": "prijedlog (nije izglasana)",
         "stale": false,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67692"
+      },
+      {
+        "class_ticker": "CKML",
+        "fiscal_year": 2025,
+        "amount_eur": 0.5,
+        "div_type": "Prijedlog dividende",
+        "ex_date": "2026-08-28",
+        "payout_type": null,
+        "payout_ratio": null,
+        "classified_reason": null,
+        "note": null,
+        "record_date": "2026-08-31",
+        "payment_date": "2026-09-15",
+        "status": "proposed",
+        "status_hr": "prijedlog (nije izglasana)",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/67707"
       },
       {
         "class_ticker": "CKML",
@@ -771,23 +771,6 @@
         "class_ticker": "CKML",
         "fiscal_year": 2024,
         "amount_eur": 0.5,
-        "div_type": "Izglasana dividenda",
-        "ex_date": "2025-08-26",
-        "payout_type": null,
-        "payout_ratio": null,
-        "classified_reason": "payout 118% > 100% dobiti FY2024 — isplata crpi zadržanu dobit",
-        "note": null,
-        "record_date": "2025-08-27",
-        "payment_date": "2025-09-18",
-        "status": "paid",
-        "status_hr": "isplaćena",
-        "stale": false,
-        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/62861"
-      },
-      {
-        "class_ticker": "CKML",
-        "fiscal_year": 2024,
-        "amount_eur": 0.5,
         "div_type": "Prijedlog dividende",
         "ex_date": "2025-08-26",
         "payout_type": null,
@@ -800,6 +783,23 @@
         "status_hr": "prijedlog s proteklim datumima (nije izglasana isplata)",
         "stale": true,
         "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/61948"
+      },
+      {
+        "class_ticker": "CKML",
+        "fiscal_year": 2024,
+        "amount_eur": 0.5,
+        "div_type": "Izglasana dividenda",
+        "ex_date": "2025-08-26",
+        "payout_type": "iz_zadrzane_dobiti",
+        "payout_ratio": 1.184264977292717,
+        "classified_reason": "payout 118% > 100% dobiti FY2024 — isplata crpi zadržanu dobit",
+        "note": null,
+        "record_date": "2025-08-27",
+        "payment_date": "2025-09-18",
+        "status": "paid",
+        "status_hr": "isplaćena",
+        "stale": false,
+        "source_url": "https://eho.zse.hr/obavijesti-izdavatelja/view/62861"
       },
       {
         "class_ticker": "CKML",
@@ -862,12 +862,14 @@
     "d_sust": {
       "d_sust_ps": 0.1456,
       "payout_used": 0.221,
-      "payout_basis": "udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom (1 g.)",
+      "payout_basis": "udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom (1 g.); isključene godine s jednokratnim/iz zadržane dobiti: FY2024",
       "coverage_announced": 0.666,
       "flags": [
         "najava nije pokrivena tekućom dobiti po našim ulazima (pokrivenost 0.67) — koristi se medijan"
       ],
-      "excluded_years": [],
+      "excluded_years": [
+        "FY2024"
+      ],
       "subsidiary_inflows": null,
       "note": "očekivana dividenda = udio dobiti koji firma dosad isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena isplate po dosadašnjoj praksi firme, NE najveći iznos koji bi si firma mogla priuštiti — koliki udio dobiti isplaćuje odluka je firme; jednokratne isplate ne ulaze u bazu"
     }

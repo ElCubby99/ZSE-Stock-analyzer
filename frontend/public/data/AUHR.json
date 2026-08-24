@@ -259,7 +259,7 @@
       },
       {
         "l": "RASKORAK METODA",
-        "txt": "Sve metode zajedno raspinju 367–630 € (raspon 42%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
+        "txt": "Sve metode zajedno raspinju 367–643 € (raspon 43%) — svaka leća mjeri drugo svojstvo; sidrena zona je uža."
       }
     ],
     "note": "činjenični kontekst izveden iz podataka ovog exporta — bez ocjena i preporuka; zaključak je čitateljev"
@@ -699,8 +699,8 @@
         "amount_eur": 9.0,
         "div_type": "Izglasana dividenda",
         "ex_date": "2026-05-07",
-        "payout_type": null,
-        "payout_ratio": null,
+        "payout_type": "redovna",
+        "payout_ratio": 0.422988417872138,
         "classified_reason": "prva zabilježena isplata klase",
         "note": null,
         "record_date": "2026-05-08",
@@ -913,9 +913,14 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": 9.0,
-      "fallback_raw": true,
-      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korišten zbroj REDOVNIH isplata zadnje fiskalne godine"
+      "d_sust_ps": 12.9255,
+      "payout_used": 0.423,
+      "payout_basis": "udio dobiti koji firma isplaćuje: medijan godina s redovnom isplatom (1 g.)",
+      "coverage_announced": 3.395,
+      "flags": [],
+      "excluded_years": [],
+      "subsidiary_inflows": null,
+      "note": "očekivana dividenda = udio dobiti koji firma dosad isplaćuje × dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena isplate po dosadašnjoj praksi firme, NE najveći iznos koji bi si firma mogla priuštiti — koliki udio dobiti isplaćuje odluka je firme; jednokratne isplate ne ulaze u bazu"
     }
   },
   "prices": [
@@ -3033,20 +3038,20 @@
         "peers": "AUHR: peer skup nije kalibriran — na ZSE nema dovoljno usporedivih firmi u sektoru (kriteriji odabira peera opisani u Metodologiji; regionalni peeri se ne koriste) -> peer multipli OSTAJU placeholder (P/E 12, P/B 1,5), a multipl-metode nose NISKU pouzdanost (0,3)"
       },
       "growth": {
-        "g1": 0.0895,
+        "g1": 0.0995,
         "signals": {
           "g_obs": 0.0895,
-          "g_sust": 0.1899,
+          "g_sust": 0.1095,
           "g_terminal": 0.04
         },
-        "origin": "održiv (serija)",
+        "origin": "održiv (samofinanciran)",
         "winner": null,
         "badges": [],
         "ttm_context": -0.4367,
         "short_series": false,
-        "verdict": "odrziv_serija",
-        "assessment": "Rast +8.9% (medijan godišnjih stopa) iz dosljedne serije.",
-        "source": "g1=8.9% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +8.9%, CAGR +8.6%; samofinanciranje (ROE×zadržano) +19.0%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast +8.9% (medijan godišnjih stopa) iz dosljedne serije. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
+        "verdict": "odrziv_samofinanciran",
+        "assessment": "Opaženi rast +8.9% POKLAPA SE s kapacitetom samofinanciranja +11.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete).",
+        "source": "g1=10.0% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +8.9%, CAGR +8.6%; samofinanciranje (ROE×zadržano) +10.9%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +8.9% POKLAPA SE s kapacitetom samofinanciranja +11.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean)."
       }
     },
     "assumption_flags": [
@@ -3135,17 +3140,17 @@
       {
         "key": "dcf_fcf",
         "label": "DCF (FCF)",
-        "low": 516.3153154192514,
-        "base": 629.5078265585952,
-        "high": 810.0779568505952,
+        "low": 527.2749641276249,
+        "base": 643.109111066332,
+        "high": 827.8975127676463,
         "confidence": 0.6,
         "no_value": false,
         "assumptions": {
           "wacc": 0.08360999999999999,
           "g_terminal": 0.04,
-          "g1_explicit": 0.0895,
+          "g1_explicit": 0.0995,
           "model": "dvofazni: 5 g eksplicitno (g1 fade->gT) + terminal",
-          "growth_source": "g1=8.9% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +8.9%, CAGR +8.6%; samofinanciranje (ROE×zadržano) +19.0%; sidro terminala 4.0%. Verdikt: održiv (serija). Rast +8.9% (medijan godišnjih stopa) iz dosljedne serije. Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
+          "growth_source": "g1=10.0% = PROCJENA ODRŽIVOG RASTA: opaženi rast prihoda (medijan god. stopa) +8.9%, CAGR +8.6%; samofinanciranje (ROE×zadržano) +10.9%; sidro terminala 4.0%. Verdikt: održiv (samofinanciran). Opaženi rast +8.9% POKLAPA SE s kapacitetom samofinanciranja +11.0% (ROE × zadržana dobit) — rast je financiran iz vlastite dobiti, dakle strukturno održiv (a ne jednokratan). Marže rastu kroz razdoblje — rast nosi i veća profitabilnost, ne samo obujam (potvrda kvalitete). Eksplicitna faza 5 g s linearnim fadeom prema terminalnom g (reversion to mean).",
           "placeholder": true,
           "sources": {
             "wacc": "wacc≈r (pretpostavka strukture bez duga na razini metode; DCF ionako gate-an za ADRS/CROS)",
@@ -3187,9 +3192,9 @@
       }
     ],
     "reconciliation": {
-      "zone_low": 516.3153154192514,
-      "zone_high": 810.0779568505952,
-      "dispersion": 0.36263502660093144,
+      "zone_low": 527.2749641276249,
+      "zone_high": 827.8975127676463,
+      "dispersion": 0.3631156562302569,
       "divergent": true,
       "archetype": "industrial_forward",
       "anchor_methods": [
@@ -3209,18 +3214,18 @@
       },
       "zone_note": "zona = sredina (medijan) metoda koje su prošle provjere (dcf_fcf), a širina dolazi iz osjetljivosti glavne metode 'dcf_fcf' na trošak kapitala ±1 postotni bod; iz zone isključeno (negativna vrijednost ili nekalibrirani ulazi): comps",
       "all_methods_low": 366.69118,
-      "all_methods_high": 629.5078265585952,
-      "dispersion_all": 0.41749543924714333,
+      "all_methods_high": 643.109111066332,
+      "dispersion_all": 0.42981498210778973,
       "method_bases": {
         "comps": 366.69118,
-        "dcf_fcf": 629.5078265585952
+        "dcf_fcf": 643.109111066332
       },
       "qa_flags": [
-        "fer-zona odstupa -60% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
+        "fer-zona odstupa -61% od tržišta — mogući propust u pretpostavkama (rast, arhetip, jedinice) ili tržišni raskorak; tretiraj kao pitanje, ne zaključak"
       ],
-      "vs_market_pct": -59.9,
+      "vs_market_pct": -60.7,
       "anchor_inconsistency": [],
-      "reasoning": "Rast +8.9% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (serija)' (višegodišnja serija: +8.9%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 10 € operativne zarade (EBITDA marža 9.9%). Firma je lani stvorila 13.6 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 8.4%, uz izračunati rast 8.9% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 629.51 € po dionici. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira ~-1.0% trajnog rasta godišnje / multipl P/E 8.7×; naš kompozitni rast (serija/održivi/terminal) je +8.9% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
+      "reasoning": "Rast +10.0% godišnje je kompozit tri signala iz objavljenih brojki — višegodišnja serija, održivi rast iz zadržane dobiti i konzervativno terminalno sidro; presudio je medijan, najbliži mu je signal 'održiv (samofinanciran)' (višegodišnja serija: +8.9%) — nijedna procjena 'iz glave'. Od svakih 100 € prihoda firmi ostaje 10 € operativne zarade (EBITDA marža 9.9%). Firma je lani stvorila 13.6 M€ slobodnog novca (ono što ostane nakon ulaganja). Budući novac vrijedi manje od današnjeg, pa ga svodimo na danas uz zahtijevani prinos 8.4%, uz izračunati rast 10.0% kroz pet godina i zatim dugoročni rast 4% — tako izlazi 643.11 € po dionici. Glavni rizik za procjenu: naša procjena osjetno se razlikuje od tržišne cijene — prikazujemo obje i objašnjavamo zašto se razlikuju; zaključak je čitateljev. Tržišna cijena implicira ~-1.0% trajnog rasta godišnje / multipl P/E 8.7×; naš kompozitni rast (serija/održivi/terminal) je +10.0% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev.",
       "red_rules": [],
       "market_implied": {
         "implied_g_pct": -1.0,
@@ -3230,7 +3235,7 @@
         "implied_pe": 8.7,
         "peer_pe": 12.0,
         "implied_pe_note": "cijena implicira P/E 8.7× vs peer medijan 12.0× (placeholder)",
-        "narrative": "Tržišna cijena implicira ~-1.0% trajnog rasta godišnje / multipl P/E 8.7×; naš kompozitni rast (serija/održivi/terminal) je +8.9% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
+        "narrative": "Tržišna cijena implicira ~-1.0% trajnog rasta godišnje / multipl P/E 8.7×; naš kompozitni rast (serija/održivi/terminal) je +10.0% — razlika je upitna jer implicirani rast odstupa više od 2 p.b. od našeg kompozitnog rasta (serija/održivi/terminal). Ovo je usporedba implikacija, ne preporuka; zaključak je čitateljev."
       },
       "qualified_methods": [
         "dcf_fcf"
@@ -3238,11 +3243,11 @@
       "class_zones": null,
       "recalibrating": null,
       "dividend_sanity": {
-        "d_sust_ps": 9.0,
-        "fallback_raw": true,
-        "zone_low": 516.32,
-        "zone_high": 810.08,
-        "implied_yield_low": 0.0174,
+        "d_sust_ps": 12.9255,
+        "fallback_raw": false,
+        "zone_low": 527.27,
+        "zone_high": 827.9,
+        "implied_yield_low": 0.0245,
         "threshold": 0.0436,
         "r": 0.0836,
         "g_used": 0.04,
@@ -3250,7 +3255,7 @@
         "dividend_floor": null,
         "passes": true,
         "verdict": "prolazi",
-        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 9.00 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (516.32 €), samo od te dividende dobivao bi 1.7% godišnje. Fer cijena to ne dopušta iznad 4.4% (traženi prinos 8.4% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 12.93 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (527.27 €), samo od te dividende dobivao bi 2.5% godišnje. Fer cijena to ne dopušta iznad 4.4% (traženi prinos 8.4% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
       },
       "low_float_note": null,
       "pro_forma_note": null,
@@ -3260,15 +3265,15 @@
     "sotp": null,
     "value_vs_book": {
       "kind": "iznad_knjige",
-      "zone_low": 516.3153154192514,
-      "zone_high": 810.0779568505952,
+      "zone_low": 527.2749641276249,
+      "zone_high": 827.8975127676463,
       "bvps": 158.47,
       "roe": 0.170869,
       "r": 0.08360999999999999,
       "price": 266.0,
       "pb_market": 1.68,
       "title": "Zašto je naša procjena iznad knjigovodstvene vrijednosti",
-      "plain": "Fer-zona (516,32–810,08 €) viša je od knjigovodstvene vrijednosti (158,47 € po dionici). Firma na vlastitom kapitalu zarađuje oko 17,1 % godišnje, više od zahtijevanog prinosa od 8,4 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
+      "plain": "Fer-zona (527,27–827,90 €) viša je od knjigovodstvene vrijednosti (158,47 € po dionici). Firma na vlastitom kapitalu zarađuje oko 17,1 % godišnje, više od zahtijevanog prinosa od 8,4 % — kapital koji trajno zarađuje iznad tražene stope opravdano vrijedi više od knjige (ista logika po kojoj slab povrat vuče vrijednost ispod nje). Zaključak je čitateljev."
     }
   },
   "methodology": {
@@ -3286,8 +3291,8 @@
       },
       {
         "k": "Rast eksplicitne faze g1 (kompozit)",
-        "v": "8,9%",
-        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (serija)'"
+        "v": "10,0%",
+        "why": "medijan tri signala iz objavljenih brojki (serija / održivi rast / terminalno sidro); presudio je signal 'održiv (samofinanciran)'"
       },
       {
         "k": "Peer multipli",
