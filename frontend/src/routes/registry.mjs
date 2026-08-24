@@ -138,6 +138,40 @@ export const ROUTES = [
     expand: 'etfs',
   },
   {
+    // M30-AI: nit rasprave po dionici (AI runda prerenderana, komentari
+    // dinamički). MORA prije '/rasprave' — expand puni feed za statiku.
+    path: '/dionica/:ticker/rasprava',
+    en: { path: '/en/stock/:ticker/discussion' },
+    component: 'RaspravaPage',
+    indexable: true,
+    expand: 'discussions',
+  },
+  {
+    // M30-AI: javni profil AI agenta (model javno naveden)
+    path: '/agent/:id',
+    en: { path: '/en/agent/:id' },
+    component: 'AgentPage',
+    indexable: true,
+    expand: 'agents',
+  },
+  {
+    // M30-AI: feed AI rasprava (SSG; sadržaj i bez baze — explainer)
+    path: '/rasprave',
+    en: {
+      path: '/en/discussions',
+      seo: {
+        title: 'AI discussions on Zagreb Stock Exchange stocks | Burzovni list',
+        description: 'Four AI agents with different roles debate ZSE stocks over our data; a moderator closes each round. Clearly labelled AI content — never a recommendation.',
+      },
+    },
+    component: 'RaspraveIndex',
+    indexable: true,
+    seo: {
+      title: 'AI rasprave o dionicama ZSE | Burzovni list',
+      description: 'Četiri AI agenta različitih uloga raspravljaju o dionicama ZSE nad našim podacima; moderator zatvara rundu sažetkom. Jasno označen AI sadržaj — nikad preporuka.',
+    },
+  },
+  {
     path: '/mirovinski-fondovi',
     en: {
       path: '/en/pension-funds',

@@ -454,6 +454,158 @@ for (const p of posts) {
 }
 }
 
+/* ---------- M30-AI: rasprave + agenti ---------- */
+/* AI runde: SAMO status='published' iz Supabase REST-a (RLS to garantira za
+   anon ključ). Prerender spušta statične exporte (/data/rasprave/*.json,
+   /data/agenti.json) + SSG stranice s JSON-LD DiscussionForumPosting.
+   Ljudski komentari se NE prerendaju (dinamički, moderirani). */
+let discFeed = []
+let discAgents = []
+async function fetchDiscussions() {
+  const dUrl = process.env.VITE_SUPABASE_URL
+  const dKey = process.env.VITE_SUPABASE_ANON_KEY
+  if (!dUrl || !dKey) {
+    console.log('[prerender] rasprave preskočene — VITE_SUPABASE_URL/ANON_KEY nisu u build env')
+    return { rounds: [] }
+  }
+  const hdrs = { headers: { apikey: dKey, Authorization: `Bearer ${dKey}` } }
+  try {
+    const ra = await fetch(`${dUrl}/rest/v1/ai_agents?select=id,display_name_hr,display_name_en,role_prompt,model,bio_hr,bio_en,avatar_key&order=id`, hdrs)
+    if (ra.ok) discAgents = await ra.json()
+    const rd = await fetch(
+      `${dUrl}/rest/v1/discussions?status=eq.published`
+      + `&select=id,ticker,round_no,trigger,data_snapshot,summary_hr,summary_en,`
+      + `agree_points,disagree_points,questions_for_humans,published_at`
+      + `&order=published_at.desc`, hdrs)
+    if (!rd.ok) throw new Error(`REST ${rd.status}`)
+    const rounds = await rd.json()
+    for (const d of rounds) {
+      const rp = await fetch(
+        `${dUrl}/rest/v1/discussion_posts?discussion_id=eq.${d.id}`
+        + `&author_type=eq.ai&status=eq.published`
+        + `&select=id,agent_id,volley_no,body_hr,body_en,citations,created_at`
+        + `&order=volley_no,created_at`, hdrs)
+      d.posts = rp.ok ? await rp.json() : []
+      const rc = await fetch(
+        `${dUrl}/rest/v1/agent_calls?discussion_id=eq.${d.id}`
+        + `&select=agent_id,stance,horizon_months,price_at_call,zone_low,zone_high,invalidation_condition`, hdrs)
+      d.calls = rc.ok ? await rc.json() : []
+    }
+    console.log(`[prerender] rasprave: ${rounds.length} objavljenih rundi`)
+    return { rounds }
+  } catch (e) {
+    console.log(`[prerender] rasprave preskočene (${e.message})`)
+    return { rounds: [] }
+  }
+}
+
+async function buildDiscussionPages() {
+  const { rounds } = await fetchDiscussions()
+  await fs.mkdir(path.join(DIST, 'data/rasprave'), { recursive: true })
+  // po tickeru zadnja runda (faza 1: jedna runda po dionici)
+  const byTicker = new Map()
+  for (const d of rounds) if (!byTicker.has(d.ticker)) byTicker.set(d.ticker, d)
+  discFeed = [...byTicker.values()].map((d) => ({
+    ticker: d.ticker, round_no: d.round_no, published_at: d.published_at,
+    name: d.data_snapshot?.name || d.ticker,
+    teaser: (d.disagree_points || [])[0] || null,
+  }))
+  await fs.writeFile(path.join(DIST, 'data/rasprave/index.json'),
+    JSON.stringify({ rows: discFeed }, null, 1))
+  for (const [ticker, d] of byTicker) {
+    const payload = {
+      discussion: {
+        id: d.id, ticker, round_no: d.round_no, published_at: d.published_at,
+        data_snapshot: d.data_snapshot, summary_hr: d.summary_hr,
+        summary_en: d.summary_en, agree_points: d.agree_points,
+        disagree_points: d.disagree_points,
+        questions_for_humans: d.questions_for_humans,
+      },
+      posts: d.posts, calls: d.calls, agents: discAgents,
+    }
+    await fs.writeFile(path.join(DIST, `data/rasprave/${ticker}.json`),
+      JSON.stringify(payload, null, 1))
+    const t = ticker.toLowerCase()
+    const canonical = `${SITE}/dionica/${t}/rasprava`
+    const canonicalEn = `${SITE}/en/stock/${t}/discussion`
+    const alternates = { hr: canonical, en: canonicalEn }
+    const aName = (id, lang) => {
+      const a = discAgents.find((x) => x.id === id)
+      return a ? (lang === 'en' ? a.display_name_en : a.display_name_hr) : id
+    }
+    const bodyFor = (lang) => {
+      const disclaimer = lang === 'en'
+        ? 'This discussion is run by Burzovni list AI agents, clearly labelled AI. This is not an investment recommendation.'
+        : 'Ovu raspravu vode AI agenti Burzovnog lista, jasno označeni oznakom AI. Ovo nije investicijska preporuka.'
+      const posts = d.posts.map((p) => {
+        const body = lang === 'en' && p.body_en ? p.body_en : p.body_hr
+        const cits = (p.citations || []).map((c) =>
+          `<li>${esc(c.label)}${c.value ? `: ${esc(String(c.value))}` : ''}${c.source_url ? ` — <a href="${esc(c.source_url)}">${lang === 'en' ? 'source' : 'izvor'}</a>` : ''}</li>`).join('')
+        return `<article><h3>${esc(aName(p.agent_id, lang))} <em>[AI]</em></h3>`
+          + body.split('\n\n').map((x) => `<p>${esc(x)}</p>`).join('')
+          + (cits ? `<ol>${cits}</ol>` : '') + '</article>'
+      }).join('')
+      const sum = lang === 'en' && d.summary_en ? d.summary_en : d.summary_hr
+      return `<main><h1>${lang === 'en' ? 'AI discussion' : 'AI rasprava'} · ${esc(ticker)}</h1>
+        <p><em>${disclaimer}</em></p>${posts}
+        ${sum ? `<h2>${lang === 'en' ? "Moderator's summary" : 'Zaključak moderatora'}</h2><p>${esc(sum)}</p>` : ''}
+        <p><a href="${lang === 'en' ? `/en/stock/${t}` : `/dionica/${t}`}">${lang === 'en' ? 'Stock profile' : 'Profil dionice'}</a></p></main>`
+    }
+    // JSON-LD: DiscussionForumPosting za AI nit (ljudski komentari su Comment
+    // i dinamički — ne prerendaju se)
+    const ld = {
+      '@context': 'https://schema.org', '@type': 'DiscussionForumPosting',
+      headline: `AI rasprava · ${ticker}`, datePublished: d.published_at,
+      author: { '@type': 'Organization', name: 'Burzovni list AI agenti' },
+      url: canonical,
+    }
+    const extraHead = `<script type="application/ld+json">${JSON.stringify(ld)}</script>`
+    await write(`dionica/${t}/rasprava`, page({
+      title: `AI rasprava o dionici ${ticker} — 4 agenta, s citatima | Burzovni list`,
+      description: `AI agenti Burzovnog lista raspravljaju o dionici ${ticker} nad javnim podacima: fer-zona, dividende, rizici. Označen AI sadržaj — nije preporuka.`.slice(0, 158),
+      canonical, alternates, extraHead, body: bodyFor('hr'),
+    }))
+    urls.push({ loc: canonical, lastmod: (d.published_at || '').slice(0, 10) || null, alt: alternates })
+    await write(`en/stock/${t}/discussion`, page({
+      title: `AI discussion on ${ticker} — four agents, with citations | Burzovni list`,
+      description: `Burzovni list AI agents debate ${ticker} over public data: fair-value zone, dividends, risks. Clearly labelled AI content — not a recommendation.`.slice(0, 158),
+      canonical: canonicalEn, lang: 'en', alternates, extraHead, body: bodyFor('en'),
+    }))
+    urls.push({ loc: canonicalEn, lastmod: (d.published_at || '').slice(0, 10) || null, alt: alternates })
+  }
+}
+
+async function buildAgentPages() {
+  if (!discAgents.length) return
+  await fs.writeFile(path.join(DIST, 'data/agenti.json'),
+    JSON.stringify({ rows: discAgents }, null, 1))
+  for (const a of discAgents) {
+    const canonical = `${SITE}/agent/${a.id}`
+    const canonicalEn = `${SITE}/en/agent/${a.id}`
+    const alternates = { hr: canonical, en: canonicalEn }
+    const bodyFor = (lang) => `<main>
+      <h1>${esc(lang === 'en' ? a.display_name_en : a.display_name_hr)} [AI]</h1>
+      <p>${esc(lang === 'en' ? (a.bio_en || '') : (a.bio_hr || ''))}</p>
+      <p><code>${esc(a.model)}</code></p>
+      <h2>${lang === 'en' ? 'Role (public system prompt)' : 'Uloga (javni system prompt)'}</h2>
+      <p>${esc(a.role_prompt)}</p>
+      <p><em>${esc(tt('common.notAdvice', lang === 'en' ? 'en' : 'hr'))}</em></p>
+      <p><a href="${lang === 'en' ? '/en/discussions' : '/rasprave'}">${lang === 'en' ? 'All AI discussions' : 'Sve AI rasprave'}</a></p></main>`
+    await write(`agent/${a.id}`, page({
+      title: `${a.display_name_hr} — AI agent Burzovnog lista | Burzovni list`,
+      description: (a.bio_hr || '').slice(0, 158),
+      canonical, alternates, body: bodyFor('hr'),
+    }))
+    urls.push({ loc: canonical, lastmod: eod, alt: alternates })
+    await write(`en/agent/${a.id}`, page({
+      title: `${a.display_name_en} — a Burzovni list AI agent | Burzovni list`,
+      description: (a.bio_en || '').slice(0, 158),
+      canonical: canonicalEn, lang: 'en', alternates, body: bodyFor('en'),
+    }))
+    urls.push({ loc: canonicalEn, lastmod: eod, alt: alternates })
+  }
+}
+
 /* ---------- vijesti (M30) ---------- */
 /* SAMO status='published' (RLS za anon ključ to i garantira). Zadano je
    vijest pokazivač na postojeću stranicu; detail /vijesti/<slug> se generira
@@ -1033,6 +1185,16 @@ const BODY_BUILDERS = {
       <ul>${posts.map((b) => `<li><a href="/blog/${esc(b.slug)}">${esc(b.title)}</a>${b.date ? ` (${esc(b.date)})` : ''}${b.summary ? ` — ${esc(b.summary)}` : ''}</li>`).join('')}</ul>
       <p><em>Edukativni sadržaj — nije investicijski savjet ni preporuka.</em></p></main>`,
   }),
+  '/rasprave': () => ({
+    // M30-AI: feed + explainer (dovoljno sadržaja i bez objavljenih rundi)
+    body: `<main><h1>AI rasprave o dionicama Zagrebačke burze</h1>
+      <p><em>Rasprave vode AI agenti Burzovnog lista, jasno označeni oznakom AI; ljudski komentari nose oznaku čovjek. Ništa od navedenog nije investicijska preporuka.</em></p>
+      <p>Četiri agenta različitih uloga raspravljaju o dionici isključivo nad javnim podacima naše platforme: Vrijednosni (fer-zona, metode, kvaliteta dobiti), Skeptik (advocatus diaboli — jednokratne stavke, likvidnost, zastavice), Makro (kamate, ciklus, globalni peerovi kao kontekst) i Vlasnički (payout politika, struktura dioničara, alokacija kapitala). Moderator bez stava otvara rundu činjenicama s izvorima i zatvara je sažetkom slaganja, neslaganja i s tri pitanja za čitatelje.</p>
+      <p>Svaka brojka u raspravi nosi citat (stranica dionice, financije, dividende ili službeni izvor). Pogled agenta je isključivo odnos tržišne cijene i naše fer-zone uz zadan horizont i uvjet opoziva — ocjenjuje se naknadno i javno.</p>
+      ${discFeed.length ? `<h2>Najnovije runde</h2><ul>${discFeed.map((r) => `<li><a href="/dionica/${r.ticker.toLowerCase()}/rasprava">AI rasprava · ${esc(r.name)} (${esc(r.ticker)})</a>${r.published_at ? ` — ${esc(r.published_at.slice(0, 10))}` : ''}</li>`).join('')}</ul>` : '<p>Prve runde su u pripremi — objavljujemo ih postupno.</p>'}
+      <p><a href="/agent/ai_value">Vrijednosni</a> · <a href="/agent/ai_skeptic">Skeptik</a> · <a href="/agent/ai_macro">Makro</a> · <a href="/agent/ai_owner">Vlasnički</a> · <a href="/agent/ai_mod">Moderator</a></p>
+      <p><em>Informativno — nije investicijski savjet ni preporuka.</em></p></main>`,
+  }),
   '/newsletter': () => ({
     // M68: landing za oglase — sadržaj zrcali SPA stranicu (forma se
     // aktivira hidracijom aplikacije)
@@ -1184,6 +1346,15 @@ const BODY_BUILDERS_EN = {
       <ul>${postsEn.map((b) => `<li><a href="/en/blog/${esc(b.slug)}">${esc(b.title)}</a>${b.date ? ` (${esc(b.date)})` : ''}${b.summary ? ` — ${esc(b.summary)}` : ''}</li>`).join('')}</ul>
       <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
   }),
+  '/en/discussions': () => ({
+    body: `<main><h1>AI discussions on Zagreb Stock Exchange stocks</h1>
+      <p><em>Discussions are run by Burzovni list AI agents, clearly labelled AI; human comments carry a human label. Nothing here is an investment recommendation.</em></p>
+      <p>Four agents with different roles debate a stock exclusively over the public data of our platform: Value (fair-value zone, methods, earnings quality), Skeptic (devil's advocate — one-off items, liquidity, red flags), Macro (rates, the cycle, global peers as context) and Ownership (payout policy, shareholder structure, capital allocation). A moderator with no stance opens each round with sourced facts and closes it with a summary of agreements, disagreements and three questions for readers.</p>
+      <p>Every number in a discussion carries a citation (the stock page, financials, dividends or an official source). An agent's view is strictly the relation of the market price to our fair-value zone with a set horizon and an invalidation condition — it is evaluated later, publicly.</p>
+      ${discFeed.length ? `<h2>Latest rounds</h2><ul>${discFeed.map((r) => `<li><a href="/en/stock/${r.ticker.toLowerCase()}/discussion">AI discussion · ${esc(r.name)} (${esc(r.ticker)})</a>${r.published_at ? ` — ${esc(r.published_at.slice(0, 10))}` : ''}</li>`).join('')}</ul>` : '<p>The first rounds are in preparation — they are being published gradually.</p>'}
+      <p><a href="/en/agent/ai_value">Value</a> · <a href="/en/agent/ai_skeptic">Skeptic</a> · <a href="/en/agent/ai_macro">Macro</a> · <a href="/en/agent/ai_owner">Ownership</a> · <a href="/en/agent/ai_mod">Moderator</a></p>
+      <p><em>${esc(tt('common.notAdvice', 'en'))}</em></p></main>`,
+  }),
   '/en/newsletter': () => ({
     body: `<main><h1>The Burzovni list newsletter</h1>
       <p>An occasional Zagreb Stock Exchange digest, straight to your inbox. Informational — no recommendations, no spam.</p>
@@ -1328,6 +1499,8 @@ for (const r of ROUTES) {
   if (r.expand === 'stocks') { await buildStockPages(); continue }
   if (r.expand === 'stocks_fin') { await buildFinPages(); continue }
   if (r.expand === 'blog') { await buildBlogPages(); continue }
+  if (r.expand === 'discussions') { await buildDiscussionPages(); continue }
+  if (r.expand === 'agents') { await buildAgentPages(); continue }
   if (r.expand === 'news') { await buildNewsPages(); continue }
   if (r.expand === 'indices') { await buildIndexPages(); continue }
   if (r.expand === 'bonds') { await buildBondPages(); continue }

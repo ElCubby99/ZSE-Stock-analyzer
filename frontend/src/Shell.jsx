@@ -104,6 +104,7 @@ function navGroups(lang, t) {
           { to: '/en/pension-funds', label: t('nav.pensionFunds') },
           { to: '/en/dividends', label: t('nav.dividends') },
           { to: '/en/comparison', label: t('nav.comparison') },
+          { to: '/en/discussions', label: t('nav.discussions') },
         ],
       },
       {
@@ -132,6 +133,7 @@ function navGroups(lang, t) {
         { to: '/mirovinski-fondovi', label: t('nav.pensionFunds') },
         { to: '/dividende', label: t('nav.dividends') },
         { to: '/usporedba', label: t('nav.comparison') },
+        { to: '/rasprave', label: t('nav.discussions') },
         { to: '/alati', label: t('nav.tools') },
       ],
     },

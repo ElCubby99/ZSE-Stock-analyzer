@@ -1,0 +1,40 @@
+# NALOG M30: automatske runde AI rasprava — ISKLJUČENO dok Boris ne
+# postavi DISCUSSIONS_ENABLED=true (env dolje) i doda secret
+# ANTHROPIC_API_KEY_BURZOVNILIST (zaseban Console Workspace ključ).
+# Skript je no-op dok je flag false, pa je cron bezopasan.
+name: discussions
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 6 * * 1'   # ponedjeljkom 06:00 UTC (tjedna runda — kad se uključi)
+
+env:
+  DISCUSSIONS_ENABLED: 'false'   # <- jedini prekidač za automatske runde
+  SUMMONS_ENABLED: 'false'       # <- red @spomena (gradi se, isključen)
+
+concurrency:
+  group: daily-eod     # ista baza kao daily — bez preklapanja
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          ANTHROPIC_API_KEY_BURZOVNILIST: ${{ secrets.ANTHROPIC_API_KEY_BURZOVNILIST }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m scripts.discussions_run
