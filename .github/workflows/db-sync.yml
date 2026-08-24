@@ -33,6 +33,14 @@ on:
         description: "M69: 'true' = snapshot top 10 dioničara sa ZSE (sve klase; inače samo 1. u mjesecu)"
         required: false
         default: ''
+      discussions_sql:
+        description: "M30-AI: 'true' = primijeni supabase/migration_discussions.sql (AI rasprave; idempotentno)"
+        required: false
+        default: ''
+      discussions_seed:
+        description: "M30-AI: 'true' = učitaj data/discussions/*.json kao draft runde"
+        required: false
+        default: ''
 
 concurrency:
   group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
@@ -118,6 +126,31 @@ jobs:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           PYTHONUNBUFFERED: '1'
         run: python -m src.etfs --backfill
+
+      # M30-AI: shema rasprava (tablice + RLS + seed agenata i limita)
+      - name: Discussions migracija (M30-AI, opcionalno)
+        if: inputs.discussions_sql == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          python - <<'EOF'
+          import pathlib
+          from src.db import get_conn
+          sql = pathlib.Path("supabase/migration_discussions.sql").read_text(encoding="utf-8")
+          with get_conn() as conn, conn.cursor() as cur:
+              cur.execute(sql)
+              cur.execute("select count(*) from public.ai_agents")
+              print("migracija ok; agenata u bazi:", cur.fetchone()[0])
+          EOF
+
+      # M30-AI: ručno generirane runde (faza 1) -> draft u bazi
+      - name: Discussions seed (M30-AI, opcionalno)
+        if: inputs.discussions_seed == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m scripts.load_discussions
 
       # M69: izvanredni snapshot dioničara (redovni je 1. u mjesecu iz dailyja)
       - name: Snapshot dioničara (M69, opcionalno)

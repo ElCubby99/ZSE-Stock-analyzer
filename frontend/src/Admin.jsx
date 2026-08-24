@@ -502,6 +502,131 @@ function NewsletterList({ rows, error }) {
   )
 }
 
+/* M30-AI: rasprave — objava rundi (draft -> published + rebuild), moderacija
+   ljudskih komentara (pending/flagged), uređivanje usage_limits. Sve kroz
+   RLS (is_admin); AI sadržaj upisuje isključivo pipeline/seed. */
+function DiscussionsAdmin() {
+  const [rounds, setRounds] = useState([])
+  const [pending, setPending] = useState([])
+  const [limits, setLimits] = useState([])
+  const [msg, setMsg] = useState(null)
+
+  const load = useCallback(async () => {
+    const { data: r } = await supabase.from('discussions')
+      .select('id,ticker,round_no,status,published_at,created_at')
+      .order('created_at', { ascending: false })
+    setRounds(r || [])
+    const { data: p } = await supabase.from('discussion_posts')
+      .select('id,discussion_id,user_id,body_hr,status,created_at')
+      .eq('author_type', 'human').in('status', ['pending', 'flagged'])
+      .order('created_at')
+    setPending(p || [])
+    const { data: l } = await supabase.from('usage_limits').select('*').order('key')
+    setLimits(l || [])
+  }, [])
+  useEffect(() => { load() }, [load])
+
+  const setStatus = async (d, status) => {
+    const row = { status }
+    if (status === 'published' && !d.published_at) row.published_at = new Date().toISOString()
+    const { error } = await supabase.from('discussions').update(row).eq('id', d.id)
+    if (error) { setMsg({ t: 'err', s: error.message }); return }
+    if (status === 'published') {
+      const { error: fe } = await supabase.functions.invoke('trigger-deploy',
+        { body: { slug: `rasprava-${d.ticker.toLowerCase()}` } })
+      setMsg({ t: 'ok', s: fe ? 'Objavljeno; deploy hook NIJE okinut — pokreni build ručno.'
+        : 'Objavljeno — build je pokrenut, stranica za par minuta.' })
+    } else setMsg({ t: 'ok', s: 'Vraćeno u draft (nestaje nakon sljedećeg builda).' })
+    load()
+  }
+  const modPost = async (p, status) => {
+    await supabase.from('discussion_posts').update({ status }).eq('id', p.id)
+    load()
+  }
+  const banUser = async (p) => {
+    if (!p.user_id) return
+    if (!window.confirm('Zabraniti komentiranje ovom korisniku?')) return
+    await supabase.from('user_flags').upsert({
+      user_id: p.user_id, can_comment: false, is_banned: true, note: 'ban iz moderacije',
+    })
+    await modPost(p, 'hidden')
+  }
+  const saveLimit = async (row, v) => {
+    const n = parseInt(v, 10)
+    if (!Number.isFinite(n) || n < 0) return
+    await supabase.from('usage_limits').update({ value_int: n }).eq('key', row.key)
+    load()
+  }
+
+  return (
+    <>
+      <section>
+        <div className="sec-label">AI runde ({rounds.length})</div>
+        <table>
+          <thead><tr><th>Ticker</th><th>Runda</th><th>Status</th><th>Objavljena</th><th /></tr></thead>
+          <tbody>
+            {rounds.map((d) => (
+              <tr key={d.id}>
+                <td><b>{d.ticker}</b>{' '}
+                  <a className="fund-src" href={`/dionica/${d.ticker.toLowerCase()}/rasprava`}>stranica</a></td>
+                <td className="num">{d.round_no}</td>
+                <td>{d.status === 'published'
+                  ? <span className="okflag">objavljena</span>
+                  : <span className="flag">{d.status}</span>}</td>
+                <td className="fund-src">{d.published_at ? d.published_at.slice(0, 10) : '—'}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>
+                  {d.status !== 'published'
+                    ? <button className="pf-logout" onClick={() => setStatus(d, 'published')}>objavi</button>
+                    : <button className="pf-logout" onClick={() => setStatus(d, 'draft')}>skini u draft</button>}
+                </td>
+              </tr>
+            ))}
+            {!rounds.length && <tr><td colSpan={5} className="subnote">nema rundi — pokreni db-sync s discussions_seed=true</td></tr>}
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <div className="sec-label">Komentari na čekanju ({pending.length})</div>
+        {pending.map((p) => (
+          <div key={p.id} className="disc-post human">
+            <div className="disc-head">
+              <span className="fund-src">{p.created_at.slice(0, 16).replace('T', ' ')}</span>
+              <span className="flag">{p.status}</span>
+            </div>
+            <div className="disc-body"><p>{p.body_hr}</p></div>
+            <div className="cc-btns">
+              <button className="pf-logout" onClick={() => modPost(p, 'published')}>odobri</button>
+              <button className="pf-logout" onClick={() => modPost(p, 'hidden')}>sakrij</button>
+              <button className="pf-del" onClick={() => banUser(p)}>sakrij + ban</button>
+            </div>
+          </div>
+        ))}
+        {!pending.length && <p className="subnote">nema komentara na čekanju</p>}
+      </section>
+      <section>
+        <div className="sec-label">Limiti (usage_limits)</div>
+        <table>
+          <thead><tr><th>Ključ</th><th>Vrijednost</th><th>Napomena</th></tr></thead>
+          <tbody>
+            {limits.map((l) => (
+              <tr key={l.key}>
+                <td className="fund-src">{l.key}</td>
+                <td className="num">
+                  <input type="number" defaultValue={l.value_int} style={{ width: 90 }}
+                    onBlur={(e) => saveLimit(l, e.target.value)} />
+                </td>
+                <td className="fund-src">{l.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="subnote">Vrijednost se sprema kad polje izgubi fokus.</p>
+      </section>
+      {msg && <div className={`auth-msg ${msg.t}`}>{msg.s}</div>}
+    </>
+  )
+}
+
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [isAdmin, setIsAdmin] = useState(undefined) // undefined = provjera traje
@@ -594,6 +719,8 @@ export default function Admin() {
             onClick={() => setTab('korisnici')}>KORISNICI</button>
           <button className={tab === 'newsletter' ? 'on' : ''}
             onClick={() => setTab('newsletter')}>NEWSLETTER</button>
+          <button className={tab === 'rasprave' ? 'on' : ''}
+            onClick={() => setTab('rasprave')}>RASPRAVE</button>
           {tab === 'blog'
             && <button className="on" onClick={() => setEditing({})}>+ NOVI POST</button>}
           {tab === 'vijesti'
@@ -607,6 +734,7 @@ export default function Admin() {
           && <UsersList rows={users} error={usersError} />}
         {tab === 'newsletter'
           && <NewsletterList rows={nl} error={nlError} />}
+        {tab === 'rasprave' && <DiscussionsAdmin />}
       </>
     )
   }

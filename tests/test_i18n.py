@@ -41,6 +41,7 @@ I18N_CLEAN = [
     "src/i18n/LangContext.jsx",
     "src/Newsletter.jsx",  # M67
     "src/Blog.jsx",  # M70
+    "src/Rasprave.jsx",  # M30-AI
 ]
 
 
