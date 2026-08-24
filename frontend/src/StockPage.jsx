@@ -11,6 +11,7 @@ import { AnchorPanel, FinChart, Risks, SecondaryList } from './AnalysisBlocks.js
 import { Legend } from './Legend.jsx'
 import MethodologyNote from './MethodologyNote.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
+import { ForumTeaser } from './Rasprave.jsx'
 import { Comparison, IndicatorGroups, KeyIndicators, NewsTab, TabBar } from './StockTabs.jsx'
 import { useLang } from './i18n/LangContext.jsx'
 import { tx } from './i18n/dataText.mjs'
@@ -1106,6 +1107,8 @@ export default function StockPage() {
             </div>
           )}
           <IlliquidBanner liquidity={data.liquidity} />
+          {/* M75: link na AI Forum nit ove dionice (samo ako je objavljena) */}
+          <ForumTeaser ticker={data.ticker} variant="stock" />
 
           <TabBar tab={tab} setTab={setTab} ticker={data.ticker} />
 

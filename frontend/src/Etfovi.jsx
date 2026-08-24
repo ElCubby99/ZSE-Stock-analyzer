@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
+import { ForumTeaser } from './Rasprave.jsx'
 import { IndexChart } from './Indeksi.jsx'
 import { eur, fmtDate, num } from './format.js'
 import { useLang } from './i18n/LangContext.jsx'
@@ -155,6 +156,8 @@ export function EtfDetail() {
                 <h1>{r.symbol} — {r.name ? tx(r.name, lang) : t('bond.masterInProgress')}</h1>
                 <span>{r.isin} · {r.issuer || ''}{r.stale ? ` · ${t('bond.priceIndicative')}` : ''}</span>
               </div>
+              {/* M75: link na AI Forum temu ovog fonda (samo ako je objavljena) */}
+              <ForumTeaser ticker={r.symbol} variant="etf" />
               {r.desc && <p className="imp-p">{lang === 'en' ? r.desc.en : r.desc.hr}</p>}
               <div className="kv" style={{ marginBottom: 16 }}>
                 <div className="cell"><div className="k">{t('etf.colPrice')}</div>
