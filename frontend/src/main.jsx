@@ -25,7 +25,7 @@ import { PolitikaKolacica, PolitikaPrivatnosti, UvjetiKoristenja } from './Legal
 import {
   NewsletterOdjava, NewsletterPage, NewsletterPopup, NewsletterPotvrda,
 } from './Newsletter.jsx'
-import { AgentPage, RaspravaPage, RaspraveIndex } from './Rasprave.jsx'
+import { AgentPage, RaspravaPage, RaspraveIndex, TopicPage } from './Rasprave.jsx'
 import { ConsentProvider, fbqTrack, pushEvent } from './consent.jsx'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
 import AuthCallback from './AuthCallback.jsx'
@@ -114,6 +114,7 @@ const COMPONENTS = {
   NewsletterPage: <NewsletterPage />,
   RaspraveIndex: <RaspraveIndex />,
   RaspravaPage: <RaspravaPage />,
+  TopicPage: <TopicPage />,
   AgentPage: <AgentPage />,
   NewsletterPotvrda: <NewsletterPotvrda />,
   NewsletterOdjava: <NewsletterOdjava />,

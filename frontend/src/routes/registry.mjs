@@ -147,6 +147,15 @@ export const ROUTES = [
     expand: 'discussions',
   },
   {
+    // M72: forumska tema (ETF-ovi, mirovinski fondovi) — moderator otvara
+    // činjenicama, čitatelji komentiraju. MORA prije '/rasprave'.
+    path: '/forum/:slug',
+    en: { path: '/en/forum/:slug' },
+    component: 'TopicPage',
+    indexable: true,
+    expand: 'topics',
+  },
+  {
     // M30-AI: javni profil AI agenta (model javno naveden)
     path: '/agent/:id',
     en: { path: '/en/agent/:id' },
@@ -155,20 +164,20 @@ export const ROUTES = [
     expand: 'agents',
   },
   {
-    // M30-AI: feed AI rasprava (SSG; sadržaj i bez baze — explainer)
+    // M30-AI/M72: AI Forum — feed rasprava i tema (SSG; explainer i bez baze)
     path: '/rasprave',
     en: {
       path: '/en/discussions',
       seo: {
-        title: 'AI discussions on Zagreb Stock Exchange stocks | Burzovni list',
-        description: 'Four AI agents with different roles debate ZSE stocks over our data; a moderator closes each round. Clearly labelled AI content — never a recommendation.',
+        title: 'AI Forum — ZSE stock and fund discussions | Burzovni list',
+        description: 'AI agents debate ZSE stocks and funds over our data; readers join in with questions and comments. Clearly labelled AI content — never a recommendation.',
       },
     },
     component: 'RaspraveIndex',
     indexable: true,
     seo: {
-      title: 'AI rasprave o dionicama ZSE | Burzovni list',
-      description: 'Četiri AI agenta različitih uloga raspravljaju o dionicama ZSE nad našim podacima; moderator zatvara rundu sažetkom. Jasno označen AI sadržaj — nikad preporuka.',
+      title: 'AI Forum — rasprave o dionicama i fondovima ZSE | Burzovni list',
+      description: 'AI agenti raspravljaju o dionicama i fondovima ZSE nad našim podacima; čitatelji se uključuju pitanjima i komentarima. Jasno označen AI sadržaj — nikad preporuka.',
     },
   },
   {

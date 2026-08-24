@@ -512,9 +512,15 @@ function DiscussionsAdmin() {
   const [msg, setMsg] = useState(null)
 
   const load = useCallback(async () => {
-    const { data: r } = await supabase.from('discussions')
-      .select('id,ticker,round_no,status,published_at,created_at')
+    // M72: kind/slug/title uz fallback (stupci možda još nisu migrirani)
+    let { data: r, error: re } = await supabase.from('discussions')
+      .select('id,ticker,round_no,status,published_at,created_at,kind,slug,title_hr')
       .order('created_at', { ascending: false })
+    if (re) {
+      ({ data: r } = await supabase.from('discussions')
+        .select('id,ticker,round_no,status,published_at,created_at')
+        .order('created_at', { ascending: false }))
+    }
     setRounds(r || [])
     const { data: p } = await supabase.from('discussion_posts')
       .select('id,discussion_id,user_id,body_hr,status,created_at')
@@ -567,8 +573,10 @@ function DiscussionsAdmin() {
           <tbody>
             {rounds.map((d) => (
               <tr key={d.id}>
-                <td><b>{d.ticker}</b>{' '}
-                  <a className="fund-src" href={`/dionica/${d.ticker.toLowerCase()}/rasprava`}>stranica</a></td>
+                <td><b>{d.ticker}</b>{d.kind === 'topic' && d.title_hr ? ` · ${d.title_hr}` : ''}{' '}
+                  <a className="fund-src"
+                    href={d.kind === 'topic' ? `/forum/${d.slug}` : `/dionica/${d.ticker.toLowerCase()}/rasprava`}>
+                    stranica</a></td>
                 <td className="num">{d.round_no}</td>
                 <td>{d.status === 'published'
                   ? <span className="okflag">objavljena</span>

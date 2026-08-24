@@ -116,6 +116,16 @@ def test_seed_agenata(cur):
     assert rows["ai_mod"] == "claude-opus-4-8"
     cur.execute("select count(*) from public.usage_limits")
     assert cur.fetchone()[0] >= 8
+    # M72: protokol v2 u role_promptovima
+    cur.execute("select role_prompt from public.ai_agents where id='ai_mod'")
+    assert "točke spora" in cur.fetchone()[0].lower()
+    cur.execute("select role_prompt from public.ai_agents where id='ai_skeptic'")
+    assert "NISU tvoj teren" in cur.fetchone()[0]
+    # M72: stupci za forumske teme
+    cur.execute("""select column_name from information_schema.columns
+                   where table_schema='public' and table_name='discussions'""")
+    cols = {r[0] for r in cur.fetchall()}
+    assert {"kind", "slug", "title_hr", "title_en", "related_href"} <= cols
 
 
 def test_anon_vidi_samo_objavljeno(cur):
@@ -184,9 +194,42 @@ def test_seed_datoteke_prolaze_validaciju():
         # protokol: mod otvara (volley 0) i postoji zaključak + 3 pitanja
         assert doc["posts"][0]["agent_id"] == "ai_mod"
         assert doc["posts"][0]["volley_no"] == 0
+        # protokol v2 (M72): mod imenuje točke spora u uvodnom postu
+        assert "Točke spora" in doc["posts"][0]["body_hr"], f"{f.name}: bez točaka spora"
+        assert "contention" in doc["posts"][0]["body_en"], f"{f.name}: bez EN točaka spora"
         assert len(doc["discussion"]["questions_for_humans"]) == 3
         assert doc["discussion"]["summary_hr"] and doc["discussion"]["summary_en"]
         assert len(doc.get("calls", [])) == 4, "svaki debater daje agent_call"
+        # protokol v2: volley 3 samo za agenta čija je teza napadnuta u
+        # volley 2 (meta replyja; Vrijednosni i kad v2 napada sam model)
+        targets_v2 = {p.get("reply_to_agent") for p in doc["posts"] if p["volley_no"] == 2}
+        for p in doc["posts"]:
+            if p["volley_no"] == 3:
+                assert p["agent_id"] in (targets_v2 | {"ai_value"}), \
+                    f"{f.name}: volley 3 bez pokrića ({p['agent_id']})"
         # EN prijevod za svaki AI post
         for p in doc["posts"]:
             assert (p.get("body_en") or "").strip(), f"{f.name}: post bez EN"
+
+
+def test_seed_teme_prolaze_validaciju():
+    """M72: forumske teme (ETF-ovi + mirovinski fondovi)."""
+    from scripts.load_discussions import _check
+    files = sorted(pathlib.Path("data/discussions/topics").glob("*.json"))
+    assert len(files) >= 7, "6 ETF tema + mirovinski fondovi"
+    slugs = set()
+    for f in files:
+        doc = json.loads(f.read_text(encoding="utf-8"))
+        _check(doc, f.name)
+        d = doc["discussion"]
+        assert d["kind"] == "topic"
+        assert d["slug"] and d["slug"] not in slugs, f"{f.name}: slug duplikat"
+        slugs.add(d["slug"])
+        assert d["title_hr"] and d["title_en"]
+        assert d["related_href"] and d["related_href_en"], f"{f.name}: bez linka"
+        assert doc["posts"][0]["agent_id"] == "ai_mod"
+        assert not doc.get("calls"), "teme nemaju agent_calls"
+        assert len(d["questions_for_humans"]) >= 2
+        for p in doc["posts"]:
+            assert (p.get("body_en") or "").strip(), f"{f.name}: post bez EN"
+    assert "mirovinski-fondovi" in slugs
