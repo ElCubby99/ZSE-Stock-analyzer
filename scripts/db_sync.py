@@ -52,7 +52,9 @@ HOLDING_COLS = ("ownership_pct", "listed", "valuation_basis", "segment_key",
                 "default_multiple", "is_insurance", "as_of", "source_page",
                 "confidence", "associate_ni", "jv_book_value_eur",
                 "jv_book_source")
-DIV_COLS = ("payout_type", "payout_ratio", "classified_reason")
+# M74: fiscal_year u syncu — siječanjski ex-datum (HPB 21,83 ex 5.1.2026.)
+# pripada FY2024; bez fiscal_year u dumpu apply ne može prenijeti popravak
+DIV_COLS = ("fiscal_year", "payout_type", "payout_ratio", "classified_reason")
 SC_COLS = ("isin", "class_type", "shares_issued", "treasury_shares",
            "has_voting", "dividend_note", "is_primary_line")
 
@@ -248,12 +250,17 @@ def apply() -> int:
                 stats["fin_rows"] += len(frec["fin"])
 
         for row in d["dividends"]:
-            ct, ex_date, amount, ptype, pratio, reason = row
+            if len(row) == 6:   # stari dump bez fiscal_year (prije M74)
+                ct, ex_date, amount, ptype, pratio, reason = row
+                fy = None
+            else:
+                ct, ex_date, amount, fy, ptype, pratio, reason = row
             cur.execute(
                 """UPDATE dividends SET payout_type=%s, payout_ratio=%s,
-                     classified_reason=%s
+                     classified_reason=%s,
+                     fiscal_year=COALESCE(%s, fiscal_year)
                    WHERE class_ticker=%s AND ex_date=%s AND amount_eur=%s""",
-                (ptype, pratio, reason, ct, ex_date, amount))
+                (ptype, pratio, reason, fy, ct, ex_date, amount))
             stats["dividends"] += cur.rowcount
 
         for row in d["holdings"]:
