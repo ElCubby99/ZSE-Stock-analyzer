@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SiteFooter, SiteHeader } from './Shell.jsx'
+import { ForumTeaser } from './Rasprave.jsx'
 import { fmtDate, meur, num } from './format.js'
 import { useLang } from './i18n/LangContext.jsx'
 
@@ -220,6 +221,8 @@ export default function MirovinskiFondovi() {
       <main className="wrap-wide">
         <div className="mk-title"><h1>{t('fund.pageTitle')}</h1>
           <span>{t('fund.subtitle')}</span></div>
+        {/* M75: link na AI Forum temu o mirovinskim fondovima (ako je objavljena) */}
+        <ForumTeaser ticker="OMF" variant="pension" />
         {!d ? <div className="loading">{t('common.loading')}</div> : (
           <>
             <FundChart />

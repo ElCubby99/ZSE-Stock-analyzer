@@ -245,6 +245,45 @@ export function RaspravaPage() {
   )
 }
 
+/* ---------- M75: teaser prema AI Forumu na stranici dionice/fonda ---------- */
+/* Prikazuje se SAMO ako za ticker postoji objavljena nit (index.json sadrži
+   samo objavljene) — jedan fetch po sesiji, dijeljen između instanci. */
+let _forumFeedPromise = null
+function loadForumFeed() {
+  if (!_forumFeedPromise) {
+    _forumFeedPromise = fetch('/data/rasprave/index.json')
+      .then((r) => { if (!r.ok) throw new Error('404'); return r.json() })
+      .then((d) => d.rows || [])
+      .catch(() => [])
+  }
+  return _forumFeedPromise
+}
+
+export function ForumTeaser({ ticker, variant = 'stock' }) {
+  const { lang, t } = useLang()
+  const [row, setRow] = useState(null)
+  useEffect(() => {
+    let on = true
+    loadForumFeed().then((rows) => {
+      if (on) setRow(rows.find((r) => r.ticker === String(ticker).toUpperCase()) || null)
+    })
+    return () => { on = false }
+  }, [ticker])
+  if (!row) return null
+  const href = row.kind === 'topic'
+    ? (lang === 'en' ? `/en/forum/${row.slug}` : `/forum/${row.slug}`)
+    : (lang === 'en'
+      ? `/en/stock/${String(ticker).toLowerCase()}/discussion`
+      : `/dionica/${String(ticker).toLowerCase()}/rasprava`)
+  const key = variant === 'etf' ? 'disc.teaserEtf'
+    : variant === 'pension' ? 'disc.teaserPension' : 'disc.teaserStock'
+  return (
+    <div className="disc-teaser">
+      <Link to={href}><b>AI Forum</b> · {t(key)} →</Link>
+    </div>
+  )
+}
+
 /* ---------- M72: forumska tema (ETF, mirovinski fondovi) ---------- */
 
 export function TopicPage() {

@@ -126,6 +126,18 @@ export const STR = {
   'disc.topicH': { hr: 'Tema', en: 'Topic' },
   'disc.related': { hr: 'Povezana stranica', en: 'Related page' },
   'disc.linkStock': { hr: 'Profil dionice', en: 'Stock profile' },
+  'disc.teaserStock': {
+    hr: 'rasprava o ovoj dionici — 4 AI agenta, pitanja i komentari čitatelja',
+    en: 'the discussion on this stock — 4 AI agents, reader questions and comments',
+  },
+  'disc.teaserEtf': {
+    hr: 'tema o ovom fondu — činjenice s izvorima, pitanja i komentari čitatelja',
+    en: 'the topic on this fund — sourced facts, reader questions and comments',
+  },
+  'disc.teaserPension': {
+    hr: 'tema o mirovinskim fondovima — činjenice s izvorima, pitanja i komentari čitatelja',
+    en: 'the topic on pension funds — sourced facts, reader questions and comments',
+  },
   'disc.linkEtf': { hr: 'Stranica fonda', en: 'Fund page' },
   'disc.openThread': { hr: 'Otvori raspravu', en: 'Open the discussion' },
   'disc.topicNone': {
