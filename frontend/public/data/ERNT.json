@@ -721,8 +721,8 @@
         "amount_eur": 13.52,
         "div_type": "Izglasana dividenda",
         "ex_date": "2026-06-15",
-        "payout_type": "iz_zadrzane_dobiti",
-        "payout_ratio": 1.0143940570312786,
+        "payout_type": null,
+        "payout_ratio": null,
         "classified_reason": "payout 101% > 100% dobiti FY2025 — isplata crpi zadržanu dobit",
         "note": null,
         "record_date": "2026-06-16",
@@ -738,8 +738,8 @@
         "amount_eur": 13.52,
         "div_type": "Prijedlog dividende",
         "ex_date": "2026-06-15",
-        "payout_type": "iz_zadrzane_dobiti",
-        "payout_ratio": 1.0143940570312786,
+        "payout_type": null,
+        "payout_ratio": null,
         "classified_reason": "payout 101% > 100% dobiti FY2025 — isplata crpi zadržanu dobit",
         "note": null,
         "record_date": "2026-06-16",
@@ -935,9 +935,9 @@
     },
     "note": "izvor: EHO objave izdavatelja (odluke GS / obavijesti o dividendi) i NT obrasci (izvedeni povijesni iznosi — ukupno isplaćeno / broj dionica, označeno); fiscal_year = godina dobiti iz koje se isplaćuje (godina isplate − 1); prijedlozi su označeni i NISU izglasane isplate",
     "d_sust": {
-      "d_sust_ps": null,
-      "suppressed_one_off": 13.52,
-      "note": "zadnja isplata je jednokratna/iz zadržane dobiti, a održiva baza nije izračunljiva — DDM se ne računa (radije prazno nego krivo)"
+      "d_sust_ps": 13.52,
+      "fallback_raw": true,
+      "note": "D_sust nije izračunljiv (nema payout povijesti s dobiti u bazi) — korišten zbroj REDOVNIH isplata zadnje fiskalne godine"
     }
   },
   "prices": [
@@ -5375,7 +5375,21 @@
       ],
       "class_zones": null,
       "recalibrating": null,
-      "dividend_sanity": null,
+      "dividend_sanity": {
+        "d_sust_ps": 13.52,
+        "fallback_raw": true,
+        "zone_low": 333.05,
+        "zone_high": 511.62,
+        "implied_yield_low": 0.0406,
+        "threshold": 0.044,
+        "r": 0.084,
+        "g_used": 0.04,
+        "g_source": "terminalni g 4.0% (sidro zone je dcf_fcf)",
+        "dividend_floor": null,
+        "passes": true,
+        "verdict": "prolazi",
+        "plain": "Dividendni test zone: model KONZERVATIVNO pretpostavlja isplatu od 13.52 € po dionici godišnje (udio dobiti koji je firma dosad redovito isplaćivala × dobit zadnjih 12 mjeseci — jednokratne ne ulaze; stvarna isplata je odluka firme). Tko bi dionicu kupio po donjem rubu naše zone (333.05 €), samo od te dividende dobivao bi 4.1% godišnje. Fer cijena to ne dopušta iznad 4.4% (traženi prinos 8.4% minus trajni rast dividende 4.0%) — jer ako sama dividenda nosi više nego što ulagač traži za rizik, cijena je preniska da bi bila fer i zona se sama pobija. Rezultat: prinos je unutar dopuštenog — zona prolazi test."
+      },
       "low_float_note": null,
       "pro_forma_note": null,
       "one_off_note": null
