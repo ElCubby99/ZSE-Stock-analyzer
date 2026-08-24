@@ -45,9 +45,15 @@ export function PayoutCell({ r, t }) {
     return <i className="np" title={`${t('div.payoutNa')} (FY${r.fiscal_year ?? '?'})`}>—</i>
   }
   if (r.payout_ratio > 1) {
-    return <span title={r.classified_reason || ''}>{t('div.payoutOver')}</span>
+    return <span className="flag" title={r.classified_reason || ''}>{t('div.payoutOver')}</span>
   }
-  return <span title={r.classified_reason || ''}>{num(r.payout_ratio * 100, 0)} %</span>
+  // M73: pokrivena dobiti godine = održiva (CFA: dividend coverage)
+  return (
+    <span title={r.classified_reason || ''}>
+      {num(r.payout_ratio * 100, 0)} %{' '}
+      <i className="fund-src">· {t('div.sustTag')}</i>
+    </span>
+  )
 }
 
 function StatusBadge({ s, t }) {

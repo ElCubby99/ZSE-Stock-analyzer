@@ -543,7 +543,11 @@ export const STR = {
     hr: 'dobit te fiskalne godine nije dostupna u bazi',
     en: 'profit of that fiscal year is not in our database',
   },
-  'div.payoutOver': { hr: '> 100% (iz zadržane dobiti)', en: '> 100% (from retained earnings)' },
+  'div.payoutOver': {
+    hr: '> 100 % — nije održiva iz tekuće dobiti',
+    en: '> 100% — not sustainable from current profit',
+  },
+  'div.sustTag': { hr: 'održiva', en: 'sustainable' },
   'div.soon': { hr: 'Ex-datum u sljedećih 30 dana', en: 'Ex-date in the next 30 days' },
   'div.soonNote': {
     hr: 'Tko drži dionicu na kraju dana prije ex-datuma ima pravo na isplatu; na sam ex-datum dionica se trguje bez tog prava. Prijedlog postaje isplata tek odlukom glavne skupštine.',
@@ -556,8 +560,8 @@ export const STR = {
     en: 'YIELD = amount / last price of that share class — an informational figure, not a ranking or recommendation',
   },
   'div.legendPayout': {
-    hr: '% DOBITI = ukupna isplata firme za tu fiskalnu godinu / neto dobit iste godine; — = dobit te godine nije u bazi',
-    en: '% OF PROFIT = the company\'s total payout for that fiscal year / net profit of the same year; — = that year\'s profit is not in our database',
+    hr: '% DOBITI = ukupna isplata firme za tu fiskalnu godinu / neto dobit iste godine; — = dobit te godine nije u bazi. Isplata je ODRŽIVA ako je pokrivena dobiti godine (payout ≤ 100 %) — činjenica o pokrivenosti, ne ocjena: koliki udio dobiti firma isplaćuje njezina je odluka',
+    en: "% OF PROFIT = the company's total payout for that fiscal year / net profit of the same year; — = that year's profit is not in our database. A payout is SUSTAINABLE if covered by the year's profit (payout ≤ 100%) — a fact about coverage, not a rating: how much of the profit gets paid out is the company's decision",
   },
   'div.legendTypes': {
     hr: 'redovna = isplata u liniji s dosadašnjima · izvanredna = više od 150% medijana prethodnih redovnih · iz zadržane dobiti = ukupna isplata veća od dobiti godine iz koje se isplaćuje — činjenične oznake, ne ocjene',
@@ -1151,13 +1155,13 @@ export const STR = {
   },
   'lg.k.dSust': { hr: 'D_sust', en: 'D_sust' },
   'lg.d.dSust': {
-    hr: 'Naša procjena ODRŽIVE godišnje dividende po dionici: održivi payout (medijan povijesnih payouta, samo redovne isplate — jednokratne ne ulaze; kod banaka najviše 70%) × dobit zadnjih 12 mjeseci ÷ broj dionica.',
-    en: 'Our estimate of the SUSTAINABLE annual dividend per share: the sustainable payout (the median of historical payouts, regular payouts only — one-offs excluded; for banks at most 70%) × trailing 12-month profit ÷ the number of shares.',
+    hr: 'Dividendna pretpostavka modela (interna oznaka D_sust): udio dobiti koji je firma dosad redovito isplaćivala (medijan; jednokratne ne ulaze; kod banaka najviše 70 %) × dobit zadnjih 12 mjeseci ÷ broj dionica. Koristi se ISKLJUČIVO kao konzervativan ulaz u DDM izračun i dividendni pod — nije procjena buduće dividende, jer je isplata odluka firme. Održivost pojedine isplate mjeri se odvojeno: isplata je održiva ako je pokrivena dobiti godine (payout ≤ 100 %).',
+    en: "The model's dividend assumption (internal tag D_sust): the share of profit the company has regularly paid out to date (the median; one-offs excluded; for banks at most 70%) × trailing 12-month profit ÷ the number of shares. Used SOLELY as a conservative input to the DDM calculation and the dividend floor — it is not a forecast of the future dividend, since the payout is the company's decision. The sustainability of an individual payout is measured separately: a payout is sustainable if covered by the year's profit (payout ≤ 100%).",
   },
   'lg.k.divPod': { hr: 'dividendni pod', en: 'dividend floor' },
   'lg.d.divPod': {
-    hr: 'Donja granica vrijednosti iz održive dividende (Gordonov izračun: D_sust ÷ (r − g)) — kad bi zona pala ispod nje, sama dividenda bi nosila više nego što ulagač traži za rizik, pa se pod uključuje u zonu.',
-    en: 'The lower bound of value from the sustainable dividend (Gordon calculation: D_sust ÷ (r − g)) — if the zone fell below it, the dividend alone would deliver more than the investor requires for the risk, so the floor is included in the zone.',
+    hr: 'Donja granica vrijednosti iz dividendne pretpostavke modela (Gordonov izračun: pretpostavka ÷ (r − g)) — kad bi zona pala ispod nje, sama pretpostavljena isplata bi nosila više nego što ulagač traži za rizik, pa se pod uključuje u zonu.',
+    en: "The lower bound of value from the model's dividend assumption (Gordon calculation: assumption ÷ (r − g)) — if the zone fell below it, the assumed payout alone would deliver more than the investor requires for the risk, so the floor is included in the zone.",
   },
   /* ---------- stranica dionice (StockPage.jsx) ---------- */
   'sp.docTitleMid': { hr: 'dionica —', en: 'stock —' },
@@ -1302,23 +1306,26 @@ export const STR = {
   'sp.sourceFlag': { hr: 'izvor', en: 'source' },
   'sp.assumptionFlag': { hr: 'pretpostavka', en: 'assumption' },
   'sp.assumpShort': { hr: 'pretp.', en: 'assum.' },
+  // M73: blok je preimenovan — ovo NIJE procjena buduće/"održive" dividende
+  // (isplata je odluka firme), nego pretpostavka isplate s kojom MODEL računa
+  // (ulaz DDM-a i dividendnog poda) + unutarnja kontrola zone
   'sp.dsTitle': {
-    hr: 'Test održive dividende — običnim jezikom',
-    en: 'Sustainable dividend test — in plain language',
+    hr: 'Dividendni test fer-zone — običnim jezikom',
+    en: 'Dividend test of the fair-value zone — in plain language',
   },
-  'sp.dsName1': { hr: 'Održiva dividenda (D_sust)', en: 'Sustainable dividend (D_sust)' },
+  'sp.dsName1': { hr: 'Dividendna pretpostavka modela', en: "The model's dividend assumption" },
   'sp.dsPlain1': {
-    hr: 'Naša procjena dividende koju firma može isplaćivati',
-    en: 'Our estimate of the dividend the company can pay',
+    hr: 'Pretpostavka isplate s kojom model računa',
+    en: 'The payout assumption the model computes with',
   },
-  'sp.dsPlain1b': { hr: 'trajno', en: 'permanently' },
+  'sp.dsPlain1b': { hr: 'konzervativno', en: 'conservatively' },
   'sp.dsPlain1c': {
-    hr: '— ne zadnja isplaćena, nego: održivi udio dobiti koji ide dioničarima (medijan povijesnih isplata, računan samo nad redovnima — jednokratne i isplate iz zadržane dobiti ne ulaze; kod banaka najviše 70%) × dobit zadnjih 12 mjeseci ÷ broj dionica.',
-    en: '— not the last one paid, but: the sustainable share of profit going to shareholders (the median of historical payouts, computed over regular ones only — one-offs and payouts from retained earnings are excluded; for banks at most 70%) × trailing 12-month profit ÷ the number of shares.',
+    hr: '— ne zadnja isplaćena, nego: udio dobiti koji je firma dosad isplaćivala u godinama s redovnom isplatom (medijan; jednokratne i isplate iz zadržane dobiti ne ulaze; kod banaka najviše 70 %) × dobit zadnjih 12 mjeseci ÷ broj dionica. Ovo NIJE procjena buduće dividende — koliki udio dobiti isplaćuje odluka je firme.',
+    en: '— not the last one paid, but: the share of profit the company has paid out to date in years with a regular payout (the median; one-offs and payouts from retained earnings excluded; for banks at most 70%) × trailing 12-month profit ÷ the number of shares. This is NOT a forecast of the future dividend — how much of the profit gets paid out is the company\'s decision.',
   },
   'sp.dsFallback': {
-    hr: 'Napomena: održivi payout nije izračunljiv jer u bazi nema višegodišnje dobiti za ovu firmu — ovdje je prikazana zadnja REDOVNA isplata, a ne potvrđena održiva razina. Čim se povijesne godišnje brojke dopune, D_sust se računa iz medijana payout ratija.',
-    en: 'Note: the sustainable payout cannot be computed because multi-year profit for this company is not in our database — the figure shown here is the last REGULAR payout, not a confirmed sustainable level. Once the historical annual figures are completed, D_sust is computed from the median payout ratio.',
+    hr: 'Napomena: pretpostavka nije izračunljiva jer u bazi nema višegodišnje dobiti za ovu firmu — ovdje je prikazana zadnja REDOVNA isplata. Čim se povijesne godišnje brojke dopune, pretpostavka se računa iz medijana payout ratija.',
+    en: 'Note: the assumption cannot be computed because multi-year profit for this company is not in our database — the figure shown here is the last REGULAR payout. Once the historical annual figures are completed, the assumption is computed from the median payout ratio.',
   },
   'sp.dsName2': { hr: 'Prinos na donjem rubu zone', en: 'Yield at the lower edge of the zone' },
   'sp.dsPlain2a': {
@@ -1340,19 +1347,19 @@ export const STR = {
   'sp.dsPassFloor': { hr: 'PROLAZI (UZ DIVIDENDNI POD)', en: 'PASSES (WITH DIVIDEND FLOOR)' },
   'sp.dsPass': { hr: 'PROLAZI', en: 'PASSES' },
   'sp.dsFloor1': {
-    hr: 'Dividendni pod primijenjen: održiva dividenda od',
-    en: 'Dividend floor applied: a sustainable dividend of',
+    hr: 'Dividendni pod primijenjen: dividendna pretpostavka modela od',
+    en: "Dividend floor applied: the model's dividend assumption of",
   },
   'sp.dsFloor2': { hr: 'podržava vrijednost od najmanje', en: 'supports a value of at least' },
   'sp.dsFloor3': {
-    hr: '(Gordonov izračun: D_sust ÷ (r − g)) — uključeno u zonu, donji rub je podignut na taj pod.',
-    en: '(Gordon calculation: D_sust ÷ (r − g)) — included in the zone; the lower edge was raised to that floor.',
+    hr: '(Gordonov izračun: pretpostavka ÷ (r − g)) — uključeno u zonu, donji rub je podignut na taj pod.',
+    en: '(Gordon calculation: assumption ÷ (r − g)) — included in the zone; the lower edge was raised to that floor.',
   },
   'sp.dsOk1': { hr: 'Prinos', en: 'The yield of' },
   'sp.dsOk2': { hr: 'je unutar dopuštenog (', en: 'is within the allowed limit (' },
   'sp.dsOk3': {
-    hr: ') — održiva dividenda ne pobija zonu.',
-    en: ') — the sustainable dividend does not contradict the zone.',
+    hr: ') — dividendna pretpostavka ne pobija zonu.',
+    en: ') — the dividend assumption does not contradict the zone.',
   },
   'sp.dsElse': {
     hr: 'V_div je uključen u medijan kvalificiranih metoda — zona je objavljena bez suspenzije (v3.1).',
@@ -1769,31 +1776,26 @@ export const STR = {
   'mp.perShare': { hr: '/dionici', en: '/share' },
   'mp.divGrowth': { hr: 'rast dividende:', en: 'dividend growth:' },
   'mp.pctPerYear': { hr: '%/g.', en: '%/yr' },
-  'mp.dsustLabel': {
-    hr: 'Očekivana dividenda uz dosadašnju politiku isplate:',
-    en: 'Expected dividend under the payout practice to date:',
+  // M73: projekcija "očekivane održive dividende" (D_sust) je uklonjena s
+  // prikaza — održivost je svojstvo POJEDINE isplate (pokrivenost dobiti
+  // godine; CFA: dividend coverage), a koliki udio dobiti firma isplaćuje
+  // njezina je odluka (firma koja ulaže smije isplaćivati malo ili ništa)
+  'mp.sustLabel': { hr: 'Održivost zadnje isplate', en: 'Sustainability of the latest payout' },
+  'mp.sustOk': {
+    hr: 'održiva — pokrivena dobiti godine',
+    en: "sustainable — covered by the year's profit",
   },
-  // M60: broj NE govori koliko bi firma MOGLA isplatiti, nego koliko po
-  // dosadašnjoj praksi isplaćuje — udio dobiti mora biti vidljiv uz iznos
-  'mp.dsustShare1': { hr: '≈', en: '≈' },
-  'mp.dsustShare2': {
-    hr: '% dobiti — toliki udio firma dosad isplaćuje u godinama s redovnom dividendom',
-    en: '% of profit — the share the company has paid out to date in years with a regular dividend',
+  'mp.sustNo': {
+    hr: 'nije održiva iz tekuće dobiti',
+    en: 'not sustainable from current profit',
+  },
+  'mp.sustPayout': { hr: 'isplaćeno', en: 'paid out:' },
+  'mp.sustTight': { hr: 'napeto: preko 80 % dobiti', en: 'tight: over 80% of profit' },
+  'mp.sustDef': {
+    hr: 'Isplata je označena održivom ako je UKUPNA isplata za fiskalnu godinu pokrivena neto dobiti te iste godine (payout ≤ 100 %). To je činjenica o pokrivenosti (u literaturi: dividend coverage), ne ocjena — koliki udio dobiti firma isplaćuje njezina je odluka: firma koja ulaže može isplaćivati malo ili ništa, a stabilna firma bez boljih ulaganja može isplaćivati puno.',
+    en: "A payout is labelled sustainable if the TOTAL payout for a fiscal year is covered by that same year's net profit (payout ≤ 100%). It is a fact about coverage (in the literature: dividend coverage), not a rating — how much of the profit gets paid out is the company's decision: a company that invests may pay little or nothing, while a stable one without better uses of capital may pay a lot.",
   },
   'mp.fullBreakdown': { hr: 'puni raspis', en: 'full breakdown' },
-  'mp.ds1': { hr: 'Udio dobiti koji firma isplaćuje', en: 'Share of profit the company pays out' },
-  'mp.ds2': {
-    hr: '× dobit zadnjih 12 mjeseci / broj dionica. Ovo je procjena onoga što bi firma po dosadašnjoj praksi isplatila iz današnje dobiti — ne najveći iznos koji bi si mogla priuštiti (koliki udio dobiti isplaćuje odluka je firme).',
-    en: "× profit of the last 12 months / number of shares. This estimates what the company would pay out of today's profit under its practice to date — not the largest amount it could afford (how much of the profit gets paid out is the company's decision).",
-  },
-  'mp.dsExcluded': {
-    hr: 'Isključene jednokratne/iz zadržane dobiti:',
-    en: 'Excluded one-offs / payouts from retained earnings:',
-  },
-  'mp.dsCoverage': {
-    hr: 'Pokrivenost zadnje najave tekućom dobiti:',
-    en: 'Coverage of the latest announcement by current profit:',
-  },
   'mp.colFy': { hr: 'FISK. GOD.', en: 'FISCAL YR' },
   'mp.colClass': { hr: 'KLASA', en: 'CLASS' },
   'mp.colAmount': { hr: 'IZNOS / DION.', en: 'AMOUNT / SHARE' },

@@ -2040,7 +2040,7 @@ def reconcile(results: dict, sector: Optional[str] = None,
                 "medijan kvalificiranih metoda"
                 + (f", donji rub podignut na pod ({old_lo:,.2f} → "
                    f"{zone_low:,.2f})" if preniska and zone_low > old_lo else "")
-                + " — održiva dividenda podržava vrijednost, ne gasi zonu")
+                + " — pretpostavljena isplata podržava vrijednost, ne gasi zonu")
             # re-test nad NOVOM zonom (po konstrukciji prolazi kod preniske)
             y_low = d_ps / zone_low
             preniska = y_low > prag * (1 + 1e-9)
@@ -2064,17 +2064,18 @@ def reconcile(results: dict, sector: Optional[str] = None,
                         else "preniska" if preniska else
                         "previsoka" if previsoka else "prolazi"),
             "plain": (
-                f"Test održive dividende: procjenjujemo da firma može trajno "
-                f"isplaćivati {d_ps:,.2f} € po dionici godišnje (održivi "
-                f"payout × dobit zadnjih 12 mjeseci — jednokratne isplate ne "
-                f"ulaze). Tko bi dionicu kupio po donjem rubu naše zone "
+                f"Dividendni test zone: model KONZERVATIVNO pretpostavlja "
+                f"isplatu od {d_ps:,.2f} € po dionici godišnje (udio dobiti "
+                f"koji je firma dosad redovito isplaćivala × dobit zadnjih "
+                f"12 mjeseci — jednokratne ne ulaze; stvarna isplata je "
+                f"odluka firme). Tko bi dionicu kupio po donjem rubu naše zone "
                 f"({zone_low:,.2f} €), samo od te dividende dobivao bi "
                 f"{y_low:.1%} godišnje. Fer cijena to ne dopušta iznad "
                 f"{prag:.1%} (traženi prinos {r_:.1%} minus trajni rast "
                 f"dividende {g_prag:.1%}) — jer ako sama dividenda nosi više "
                 f"nego što ulagač traži za rizik, cijena je preniska da bi "
                 f"bila fer i zona se sama pobija. Rezultat: "
-                + (("Dividendni pod primijenjen: održiva dividenda od "
+                + (("Dividendni pod primijenjen: dividendna pretpostavka od "
                     "{:,.2f} € podržava vrijednost od najmanje {:,.2f} € "
                     "(Gordonov izračun) — uključeno u zonu."
                     .format(d_ps, dividend_floor["v_div"])) if floor_applied
