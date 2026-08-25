@@ -803,6 +803,19 @@ def main(argv=None) -> int:
         except Exception as e:  # noqa: BLE001
             conn.rollback()
             log("freshness", None, "failed", f"{type(e).__name__}: {e}")
+        # M77: AI Forum živi — event-komentari (novo izvješće / dividendni
+        # događaj u nitima s objavljenom rundom) + odgovori na ODOBRENE
+        # @spomene. No-op bez ANTHROPIC_API_KEY_BURZOVNILIST (zaseban ključ;
+        # glavni se za forum ne koristi). Forum nikad ne ruši dnevni prolaz.
+        try:
+            from .forum_events import run as forum_run
+            fstats = forum_run(conn, lambda m: log("forum", None, "ok", m))
+            log("forum", None, "ok",
+                f"event-komentari: {fstats['events']}, "
+                f"odgovori na spomene: {fstats['summons']}")
+        except Exception as e:  # noqa: BLE001
+            conn.rollback()
+            log("forum", None, "failed", f"{type(e).__name__}: {e}")
         # M-IDX: indeksi (vrijednosti + sastavnice) — rupa: do M-IDX se
         # index_eod nikad nije ažurirao u dnevnom prolazu
         try:

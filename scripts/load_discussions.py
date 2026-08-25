@@ -78,8 +78,12 @@ def load_file(cur, path: str) -> str:
                          title_hr=%s, title_en=%s, related_href=%s,
                          related_href_en=%s
                        WHERE id=%s""", (*args, disc_id))
+        # M77: reseed briše SAMO protokolarne postove runde (volley_no
+        # postavljen u seed datotekama); "živi" AI postovi — event-komentari
+        # i odgovori na @spomene (volley_no NULL) — preživljavaju reseed
         cur.execute("""DELETE FROM discussion_posts
-                       WHERE discussion_id=%s AND author_type='ai'""", (disc_id,))
+                       WHERE discussion_id=%s AND author_type='ai'
+                         AND volley_no IS NOT NULL""", (disc_id,))
         cur.execute("DELETE FROM agent_calls WHERE discussion_id=%s", (disc_id,))
     else:
         cur.execute("""INSERT INTO discussions (ticker, round_no, trigger,

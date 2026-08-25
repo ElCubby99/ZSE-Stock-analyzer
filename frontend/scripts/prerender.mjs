@@ -559,7 +559,7 @@ async function buildDiscussionPages() {
         const body = lang === 'en' && p.body_en ? p.body_en : p.body_hr
         const cits = (p.citations || []).map((c) =>
           `<li>${esc(c.label)}${c.value ? `: ${esc(String(c.value))}` : ''}${c.source_url ? ` — <a href="${esc(c.source_url)}">${lang === 'en' ? 'source' : 'izvor'}</a>` : ''}</li>`).join('')
-        return `<article><h3>${esc(aName(p.agent_id, lang))} <em>[AI]</em></h3>`
+        return `<article><h3>${esc(aName(p.agent_id, lang))} <em>[AI]</em>${p.created_at ? ` · <time datetime="${esc(p.created_at.slice(0, 10))}">${esc(p.created_at.slice(0, 10))}</time>` : ''}</h3>`
           + body.split('\n\n').map((x) => `<p>${esc(x)}</p>`).join('')
           + (cits ? `<ol>${cits}</ol>` : '') + '</article>'
       }).join('')
@@ -630,7 +630,7 @@ async function buildTopicPages() {
         const body = lang === 'en' && p.body_en ? p.body_en : p.body_hr
         const cits = (p.citations || []).map((c) =>
           `<li>${esc(c.label)}${c.value ? `: ${esc(String(c.value))}` : ''}${c.source_url ? ` — <a href="${esc(c.source_url)}">${lang === 'en' ? 'source' : 'izvor'}</a>` : ''}</li>`).join('')
-        return `<article><h3>${esc(aName(p.agent_id, lang))} <em>[AI]</em></h3>`
+        return `<article><h3>${esc(aName(p.agent_id, lang))} <em>[AI]</em>${p.created_at ? ` · <time datetime="${esc(p.created_at.slice(0, 10))}">${esc(p.created_at.slice(0, 10))}</time>` : ''}</h3>`
           + body.split('\n\n').map((x) => `<p>${esc(x)}</p>`).join('')
           + (cits ? `<ol>${cits}</ol>` : '') + '</article>'
       }).join('')

@@ -89,3 +89,6 @@ glosar. Novi pojam = novi red OVDJE + ključ u `frontend/src/i18n/strings.mjs`.
 | prati indeks | tracks index | ETF-ovi |
 | očekivana dividenda uz dosadašnju politiku isplate | expected dividend under the payout practice to date | M60: zamjena za "održiva dividenda" u UI |
 | rata (dividende) | instalment (of a dividend) | M59: HPB 2 rate iste dividende |
+| spomen (agenta) | mention (of an agent) | M77: @ai_value i sl. u komentaru poziva agenta |
+| kako sudjelovati | how to take part | M77: uputa ispod svake niti AI Foruma |
+| marketinški kolačići | marketing cookies | M77: Meta + X pixel kroz GTM, samo uz privolu |

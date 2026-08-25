@@ -6,10 +6,11 @@ import { useLang } from './i18n/LangContext.jsx'
 
 /* M24: tri pravne stranice — Politika kolačića, Uvjeti korištenja,
    Politika privatnosti. Isti layout kao Impressum. Dostupne bez prijave i
-   bez pristanka na kolačiće. Tablica kolačića odražava STVARNO stanje
-   (bl_consent, sb-* auth, lastTicker; analitika još nije uvedena). */
+   bez pristanka na kolačiće. Tablica kolačića odražava STVARNO stanje:
+   nužni (localStorage) + analitički (GTM/GA4, v2) + marketinški (Meta i X
+   pixel kroz GTM, v3/M77) — promjena kategorija = bump CONSENT_VERSION. */
 
-const UPDATED = '10.08.2026.' // M67: newsletter (double opt-in) dodan u politike
+const UPDATED = '25.08.2026.' // M77: marketinška kategorija (Meta + X pixel kroz GTM)
 
 function LegalPage({ title, children }) {
   useEffect(() => { document.title = `${title} · Burzovni list` }, [title])
@@ -58,6 +59,16 @@ const COOKIES = [
     purpose: 'Google analitika — stanje sesije po mjernom svojstvu; postavlja se SAMO ako pristanete na analitičke kolačiće',
     cat: 'analitički', dur: 'do 2 godine', party: 'treća strana (Google)',
   },
+  {
+    name: '_fbp',
+    purpose: 'Meta (Facebook/Instagram) pixel — mjerenje učinka oglasa koji dovode posjetitelje; postavlja se SAMO ako pristanete na marketinške kolačiće',
+    cat: 'marketinški', dur: '3 mjeseca', party: 'Meta Platforms Ireland Ltd.',
+  },
+  {
+    name: 'muc_ads i srodni',
+    purpose: 'X (Twitter) pixel — mjerenje učinka oglasa koji dovode posjetitelje; postavlja se SAMO ako pristanete na marketinške kolačiće',
+    cat: 'marketinški', dur: 'do 2 godine', party: 'treća strana (X Corp. / Twitter International ULC)',
+  },
 ]
 
 /* Content komponente su ČISTE (bez hookova) — iste ih koristi SPA (kroz
@@ -70,10 +81,11 @@ export function PolitikaKolacicaContent({ openSettings }) {
         <p className="imp-p">Kolačići (cookies) i srodne tehnologije lokalne
         pohrane (localStorage) male su količine podataka koje preglednik čuva
         na vašem uređaju. Postavlja ih <b>Burzovni list</b> kao operator ove
-        stranice. Ovaj servis trenutno koristi isključivo pohranu prve strane
-        navedenu u tablici — tehnički kroz localStorage preglednika, na koju
-        se primjenjuju ista pravila privole kao na kolačiće (pohrana na
-        uređaju korisnika).</p>
+        stranice, a uz vaš pristanak i treće strane navedene u tablici
+        (Google, Meta, X). Nužna pohrana prve strane ide tehnički kroz
+        localStorage preglednika, na koju se primjenjuju ista pravila privole
+        kao na kolačiće (pohrana na uređaju korisnika); sve ostalo iz tablice
+        postavlja se isključivo nakon pristanka na pripadnu kategoriju.</p>
       </section>
 
       <section>
@@ -102,7 +114,20 @@ export function PolitikaKolacicaContent({ openSettings }) {
           kategoriju „Analitički" pohrana prelazi u „granted" i kolačići iz
           tablice se postavljaju. Povučete li pristanak, pohrana se odmah
           vraća na „denied", a postojeći <code>_ga</code>/<code>_ga_*</code>{' '}
-          kolačići se brišu. Marketinške kolačiće ne koristimo.
+          kolačići se brišu.
+        </p>
+        <p className="imp-p" style={{ marginTop: 10 }}>
+          <b>Marketing (Meta i X pixel kroz Google Tag Manager)</b>: koristimo
+          ih isključivo za mjerenje učinka vlastitih oglasa koji dovode
+          posjetitelje na stranicu — na samoj stranici NEMA oglasa trećih
+          strana. Pixeli se učitavaju kroz Google Tag Manager tek kad
+          pristanete na kategoriju „Marketinški" (prije toga je{' '}
+          <code>ad_storage</code> „denied" i kod pixela se uopće ne izvršava).
+          Obrađivači su Meta Platforms Ireland Ltd. i X Corp. (Twitter
+          International ULC); prijenos podataka izvan EGP-a uređen je
+          standardnim ugovornim klauzulama i EU-U.S. Data Privacy Frameworkom
+          tih pružatelja. Povučete li pristanak, pixeli se prestaju
+          izvršavati odmah.
         </p>
       </section>
 
@@ -367,9 +392,14 @@ export function PolitikaPrivatnostiContent() {
         EU–US okvira za privatnost podataka (Data Privacy Framework) i
         standardnih ugovornih klauzula. <b>Resend</b> (Resend, Inc., SAD) —
         tehničko slanje newsletter emailova (potvrdni mail i newsletter);
-        prijenos u SAD temelji se na standardnim ugovornim klauzulama.
-        Podatke ne prodajemo niti dijelimo s
-        trećima u marketinške svrhe.</p>
+        prijenos u SAD temelji se na standardnim ugovornim klauzulama.{' '}
+        <b>Meta</b> (Meta Platforms Ireland Ltd.) i <b>X</b> (X Corp. /
+        Twitter International ULC) — mjerenje učinka naših vlastitih oglasa
+        putem pixela, isključivo uz vašu privolu na marketinške kolačiće
+        (vidi Politiku kolačića); prijenos izvan EU/EEA temelji se na
+        standardnim ugovornim klauzulama i EU–US okviru za privatnost
+        podataka tih pružatelja. Podatke ne prodajemo; trećima ih ne
+        prosljeđujemo osim navedenim obrađivačima pod navedenim uvjetima.</p>
       </section>
 
       <section>
@@ -457,6 +487,12 @@ const COOKIES_EN = [
   { name: '_ga_*',
     purpose: 'Google analytics — session state per measurement property; set ONLY if you consent to analytics cookies',
     cat: 'analytics', dur: 'up to 2 years', party: 'third party (Google)' },
+  { name: '_fbp',
+    purpose: 'Meta (Facebook/Instagram) pixel — measures the performance of ads that bring visitors; set ONLY if you consent to marketing cookies',
+    cat: 'marketing', dur: '3 months', party: 'Meta Platforms Ireland Ltd.' },
+  { name: 'muc_ads and related',
+    purpose: 'X (Twitter) pixel — measures the performance of ads that bring visitors; set ONLY if you consent to marketing cookies',
+    cat: 'marketing', dur: 'up to 2 years', party: 'third party (X Corp. / Twitter International ULC)' },
 ]
 
 export function EnCookiesContent({ openSettings }) {
@@ -467,10 +503,11 @@ export function EnCookiesContent({ openSettings }) {
         <p className="imp-p">Cookies and related local-storage technologies
         (localStorage) are small amounts of data your browser keeps on your
         device. They are set by <b>Burzovni list</b> as the operator of this
-        site. The service currently uses exclusively the first-party storage
-        listed in the table — technically via the browser's localStorage, to
-        which the same consent rules apply as to cookies (storage on the
-        user's device).</p>
+        site and, with your consent, by the third parties listed in the table
+        (Google, Meta, X). Necessary first-party storage works technically
+        via the browser's localStorage, to which the same consent rules apply
+        as to cookies (storage on the user's device); everything else in the
+        table is set only after you consent to its category.</p>
       </section>
 
       <section>
@@ -499,8 +536,20 @@ export function EnCookiesContent({ openSettings }) {
           "Analytics" category does storage switch to "granted" and the
           cookies in the table get set. If you withdraw consent, storage
           immediately returns to "denied" and existing{' '}
-          <code>_ga</code>/<code>_ga_*</code> cookies are deleted. We use no
-          marketing cookies.
+          <code>_ga</code>/<code>_ga_*</code> cookies are deleted.
+        </p>
+        <p className="imp-p" style={{ marginTop: 10 }}>
+          <b>Marketing (Meta and X pixels via Google Tag Manager)</b>: we use
+          them exclusively to measure the performance of our own ads that
+          bring visitors to the site — the site itself carries NO third-party
+          advertising. The pixels are loaded through Google Tag Manager only
+          once you consent to the "Marketing" category (before that,{' '}
+          <code>ad_storage</code> is "denied" and the pixel code does not run
+          at all). The processors are Meta Platforms Ireland Ltd. and X Corp.
+          (Twitter International ULC); transfers outside the EEA are governed
+          by those providers' standard contractual clauses and the EU-U.S.
+          Data Privacy Framework. If you withdraw consent, the pixels stop
+          running immediately.
         </p>
       </section>
 
@@ -740,8 +789,13 @@ export function EnPrivacyContent() {
         contractual clauses. <b>Resend</b> (Resend, Inc., USA) — technical
         delivery of newsletter emails (confirmation email and the
         newsletter); transfers to the USA rely on standard contractual
-        clauses. We do not sell data, nor share it with third
-        parties for marketing purposes.</p>
+        clauses. <b>Meta</b> (Meta Platforms Ireland Ltd.) and <b>X</b>
+        (X Corp. / Twitter International ULC) — measuring the performance of
+        our own ads via pixels, strictly with your consent to marketing
+        cookies (see the Cookie Policy); transfers outside the EU/EEA rely
+        on those providers' standard contractual clauses and the EU–US Data
+        Privacy Framework. We do not sell data; we pass it to no third
+        parties other than the processors listed, under the stated terms.</p>
       </section>
 
       <section>

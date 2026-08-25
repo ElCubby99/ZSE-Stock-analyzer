@@ -94,6 +94,9 @@ jobs:
         env:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # M77: AI Forum (event-komentari + @spomeni) — ZASEBAN workspace
+          # ključ; bez secreta se forum korak tiho preskače s razlogom
+          ANTHROPIC_API_KEY_BURZOVNILIST: ${{ secrets.ANTHROPIC_API_KEY_BURZOVNILIST }}
           PYTHONUNBUFFERED: '1'   # log u živo (16.07.: 30 min bez retka)
         run: |
           set -o pipefail

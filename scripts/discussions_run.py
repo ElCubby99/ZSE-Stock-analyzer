@@ -2,7 +2,10 @@
 """NALOG M30: orkestrator AI rasprava — SKELET za buduće automatske runde.
 
 DISCUSSIONS_ENABLED je default 'false' i sve ispod flaga je NO-OP dok ga
-Boris ne uključi u workflow env-u. Faza 1 rundi je generirana ručno
+Boris ne uključi u workflow env-u. NAPOMENA (M77): @spomene i event-komentare
+obrađuje dnevni pipeline (src/forum_events.py iz src/daily.py) — ovaj skelet
+ostaje isključivo za buduće AUTOMATSKE RUNDE; ne uključivati mu summons
+obradu paralelno (dvostruki odgovori). Faza 1 rundi je generirana ručno
 (data/discussions/*.json + scripts/load_discussions.py) — ovaj skript ne
 radi nijedan API poziv dok je flag isključen, a i s uključenim flagom
 odbija raditi bez ANTHROPIC_API_KEY_BURZOVNILIST (zaseban Console

@@ -58,6 +58,10 @@ function AiPost({ post, agents }) {
           {agentName(agents, post.agent_id, lang)}
         </Link>
         <Badge type="ai" />
+        {/* M77: svaki post nosi datum — kao pravi forum */}
+        {post.created_at && (
+          <span className="fund-src">{fmtDate(post.created_at.slice(0, 10))}</span>
+        )}
       </div>
       <div className="disc-body">{body.split('\n\n').map((par, i) => <p key={i}>{par}</p>)}</div>
       <Citations citations={post.citations} />
@@ -122,6 +126,17 @@ function Comments({ discussionId }) {
   return (
     <section>
       <div className="sec-label">{t('disc.commentsH')}</div>
+      {/* M77: uputa za sudjelovanje — koraci odražavaju STVARNA pravila
+          (48 h račun, moderacija, @spomeni, dnevni limiti) */}
+      <div className="disc-howto">
+        <b>{t('disc.howH')}</b>
+        <ol>
+          <li>{t('disc.how1')}</li>
+          <li>{t('disc.how2')}</li>
+          <li>{t('disc.how3')}</li>
+        </ol>
+        <p>{t('disc.how4')}</p>
+      </div>
       {rows.length === 0 && <p className="subnote">{t('disc.cNone')}</p>}
       {rows.map((r) => (
         <div key={r.id} className="disc-post human">
