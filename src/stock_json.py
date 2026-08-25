@@ -1064,10 +1064,32 @@ def _dividend_calendar(cur, company_id: int, as_of,
                     DESC NULLS LAST, d.class_ticker,
                     d.payment_date NULLS LAST""",
         (company_id,))
+    raw = cur.fetchall()
+    # M76: potisni nadglasane prijedloge — isti (klasa, FY, iznos): postoji
+    # li izglasana/izvedena verzija, prijedlog se ne prikazuje (QTLG);
+    # među samim prijedlozima ostaje najnovija objava po EHO view id-u
+    # (CKML: ispravak poziva zamjenjuje original). Rate (ne-prijedlozi)
+    # se ne diraju.
+    def _vid(u):
+        m = re.search(r"/view/(\d+)", u or "")
+        return int(m.group(1)) if m else 0
+    grp: dict = {}
+    for row in raw:
+        grp.setdefault((row[0], row[1], row[2]), []).append(row)
+    keep = []
+    for g in grp.values():
+        props = [r for r in g if "rijedlog" in (r[3] or "")]
+        others = [r for r in g if r not in props]
+        keep.extend(others)
+        if props and not others:
+            newest = max(_vid(r[7]) for r in props)
+            keep.extend(r for r in props if _vid(r[7]) == newest)
+    keep.sort(key=lambda r: (-(r[1] or 0), r[0] or ""))
+
     events, n_upcoming = [], 0
     hist_rows = []   # (fy, klasa, iznos, primarna?) — bez prijedloga
     for (ct, fy, amt, dtyp, ex, rec, pay, src, ptype, pratio, preason,
-         note, primary) in cur.fetchall():
+         note, primary) in keep:
         derived = bool(dtyp and "izvedeno" in dtyp)
         stale = False
         if derived:

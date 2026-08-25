@@ -10,6 +10,7 @@ rang). Datumi koji ne postoje u objavi ostaju null. Izvor uz svaki red.
 """
 import json
 import os
+import re
 import sys
 from datetime import date
 
@@ -18,6 +19,36 @@ sys.path.insert(0, ".")
 from src.db import get_conn  # noqa: E402
 
 OUT = "frontend/public/data/dividende.json"
+
+
+def _src_id(url: str | None) -> int:
+    m = re.search(r"/view/(\d+)", url or "")
+    return int(m.group(1)) if m else 0
+
+
+def suppress_superseded(rows: list[dict]) -> list[dict]:
+    """M76: potisni redundantne retke istog (firma, klasa, FY, iznos):
+      - postoji li ne-prijedlog u grupi, prijedlozi se ne prikazuju
+        (QTLG: prijedlog #67538 + izglasana #67687 istih datuma);
+      - među samim prijedlozima ostaje samo najnovija objava — veći EHO
+        view id (CKML: ispravak poziva #67707 zamjenjuje #67692).
+    Rate iste dividende (HPB 2×8,77) su ne-prijedlozi i NE diraju se."""
+    groups: dict = {}
+    for r in rows:
+        groups.setdefault((r["company"], r["class_ticker"], r["fiscal_year"],
+                           r["amount_eur"]), []).append(r)
+    out = []
+    for grp in groups.values():
+        proposals = [r for r in grp if "rijedlog" in (r["div_type"] or "")]
+        others = [r for r in grp if r not in proposals]
+        out.extend(others)
+        if proposals and not others:
+            newest = max(_src_id(r["source_url"]) for r in proposals)
+            out.extend(r for r in proposals if _src_id(r["source_url"]) == newest)
+    # stabilan poredak kao prije grupiranja (ex_date pa klasa)
+    out.sort(key=lambda r: (r["ex_date"] or r["payment_date"] or "9999",
+                            r["class_ticker"] or ""))
+    return out
 
 
 def main() -> int:
@@ -116,6 +147,7 @@ def main() -> int:
                 "coverage_from": min(years),
                 "avg_amount_5y": round(sum(byfy[y] for y in last5) / len(last5), 4),
             }
+    rows = suppress_superseded(rows)
     out = {
         "as_of": str(today),
         "rows": rows,
