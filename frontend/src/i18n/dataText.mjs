@@ -635,6 +635,13 @@ const PATTERNS = [
     'DIVIDEND FLOOR: V_div of $1 € included in the median of the qualified methods, lower edge raised to the floor ($2 → $3) — a sustainable dividend supports the value, it does not void the zone'],
   [/DIVIDENDNI POD: V_div ([\d.,]+) € uključen u medijan kvalificiranih metoda/g,
     'DIVIDEND FLOOR: V_div of $1 € included in the median of the qualified methods'],
+  // M73/M77: narativ preimenovan ("pretpostavljena isplata" umjesto
+  // "održiva dividenda") — dijelovi rečenice prevode se i samostalno jer
+  // varijanta bez podizanja donjeg ruba nema srednji segment
+  [/donji rub podignut na pod \(([\d.,]+) → ([\d.,]+)\)/g,
+    'lower edge raised to the floor ($1 → $2)'],
+  [/— pretpostavljena isplata podržava vrijednost, ne gasi zonu/g,
+    '— the assumed payout supports the value, it does not void the zone'],
   [/ŠIROK RASPON — metode se razilaze \(raspis po metodi iza klika\); zona se objavljuje šira, ne suspendira/g,
     'WIDE RANGE — the methods diverge (per-method breakdown behind a click); the zone is published wider, not suspended'],
   [/isključena iz izračuna zone — /g, 'excluded from the zone calculation — '],
