@@ -1,17 +1,21 @@
-# NALOG M30: automatske runde AI rasprava — ISKLJUČENO dok Boris ne
-# postavi DISCUSSIONS_ENABLED=true (env dolje) i doda secret
-# ANTHROPIC_API_KEY_BURZOVNILIST (zaseban Console Workspace ključ).
-# Skript je no-op dok je flag false, pa je cron bezopasan.
+# NALOG M30 + M77: AI Forum automatika.
+# - forum job (M77, dnevno): event-komentari + odgovori na @spomene
+#   (src/forum_events.py). Dedupe po izvoru i statusu summona čini ga
+#   sigurnim uz daily-eod (koji isti korak radi radnim danom); ovaj termin
+#   pokriva vikende i skraćuje čekanje na odgovor. Bez secreta
+#   ANTHROPIC_API_KEY_BURZOVNILIST korak je no-op s razlogom.
+# - rounds job (M30 skelet): automatske TJEDNE runde — ISKLJUČENO dok
+#   Boris ne postavi DISCUSSIONS_ENABLED=true.
 name: discussions
 
 on:
   workflow_dispatch: {}
   schedule:
-    - cron: '0 6 * * 1'   # ponedjeljkom 06:00 UTC (tjedna runda — kad se uključi)
+    - cron: '0 6 * * 1'    # ponedjeljkom 06:00 UTC (tjedna runda — kad se uključi)
+    - cron: '30 15 * * *'  # svaki dan 15:30 UTC (M77: forum živi)
 
 env:
   DISCUSSIONS_ENABLED: 'false'   # <- jedini prekidač za automatske runde
-  SUMMONS_ENABLED: 'false'       # <- red @spomena (gradi se, isključen)
 
 concurrency:
   group: daily-eod     # ista baza kao daily — bez preklapanja
@@ -21,7 +25,37 @@ permissions:
   contents: read
 
 jobs:
-  run:
+  forum:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '30 15 * * *'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Event-komentari + odgovori na spomene
+        id: forum
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          ANTHROPIC_API_KEY_BURZOVNILIST: ${{ secrets.ANTHROPIC_API_KEY_BURZOVNILIST }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          set -o pipefail
+          python -m src.forum_events | tee forum.log
+          n=$(grep -oP 'FORUM_POSTS=\K\d+' forum.log || echo 0)
+          echo "posts=$n" >> "$GITHUB_OUTPUT"
+      # novi postovi žive u Supabase — na sajt dolaze tek Vercel buildom
+      - name: Deploy (samo ako ima novih postova)
+        if: steps.forum.outputs.posts != '0'
+        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}" -o /dev/null
+
+  rounds:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 6 * * 1'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

@@ -14,15 +14,18 @@ import { t as translate } from './i18n/strings.mjs'
    - pristanak je opoziv u svakom trenutku (footer "Postavke kolačića")
    - pristanak vrijedi max 12 mjeseci; bump CONSENT_VERSION -> banner ponovno */
 
-export const CONSENT_VERSION = 2 // mora odgovarati verziji na /politika-kolacica
-// v2 (15.07.2026.): uveden Google Tag Manager (analitička kategorija) —
-// promjena politike poništava stare pristanke i banner se prikazuje ponovno.
+export const CONSENT_VERSION = 3 // mora odgovarati verziji na /politika-kolacica
+// v2 (15.07.2026.): uveden Google Tag Manager (analitička kategorija).
+// v3 (25.08.2026., M77): uvedena marketinška kategorija (Meta i X pixel kroz
+// GTM, isključivo uz privolu) — promjena politike poništava stare pristanke
+// i banner se prikazuje ponovno. Verziju prati i inline check u index.html.
 const KEY = 'bl_consent'
 const MAX_AGE_MS = 365 * 24 * 3600 * 1000 // 12 mjeseci
 
-/* Marketinška kategorija je pripremljena ali SKRIVENA dok nema marketinških
-   skripti — uključiti tek kad se stvarno dodaju (i ažurirati politiku). */
-const MARKETING_ENABLED = false
+/* M77: marketinška kategorija je AKTIVNA — Meta i X pixel žive isključivo u
+   GTM-u s uvjetom ad_storage=granted (Consent Mode v2); u kodu stranice
+   nema hardkodiranih marketinških skripti. */
+const MARKETING_ENABLED = true
 
 export function readStoredConsent() {
   try {
@@ -74,11 +77,14 @@ export function pushEvent(event, params = {}) {
   window.dataLayer.push({ event, ...params })
 }
 
-/* Meta (Facebook) Pixel — base kod je u index.html; ovdje samo sigurno
-   okidamo evente ako je fbq učitan. custom=true -> trackCustom (za evente
-   koji nemaju standardni Meta ekvivalent, npr. PortfolioCreated). */
+/* Meta (Facebook) Pixel — M77: base kod učitava GTM tek uz marketinšku
+   privolu (bez privole window.fbq ne postoji). Guard na spremljenu privolu
+   pokriva i povlačenje privole NAKON što je fbq već učitan u sesiji.
+   custom=true -> trackCustom (za evente bez standardnog Meta ekvivalenta,
+   npr. PortfolioCreated). */
 export function fbqTrack(event, params, custom = false) {
   if (typeof window === 'undefined' || typeof window.fbq !== 'function') return
+  if (!readStoredConsent()?.marketing) return
   window.fbq(custom ? 'trackCustom' : 'track', event, params || undefined)
 }
 
@@ -226,7 +232,7 @@ export function ConsentProvider({ children }) {
       {children}
       {!consent && !panelOpen && (
         <Banner
-          onAcceptAll={() => decide(true, false)}
+          onAcceptAll={() => decide(true, MARKETING_ENABLED)}
           onNecessary={() => decide(false, false)}
           onSettings={() => setPanelOpen(true)} />
       )}

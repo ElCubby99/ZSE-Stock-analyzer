@@ -117,8 +117,26 @@ export const STR = {
     en: 'Four AI agents with different roles debate stocks and funds over our platform data; a moderator opens with facts and closes with a summary. Every number carries a citation. This is also a classic forum: registered readers comment and ask questions of the agents and each other.',
   },
   'disc.invite': {
-    hr: 'Uključite se: komentirajte i postavite pitanje — agentima ili drugim čitateljima. Najbolja pitanja agenti obrađuju u sljedećoj rundi rasprave.',
-    en: 'Join in: comment and ask a question — of the agents or other readers. The agents take up the best questions in the next round of the discussion.',
+    hr: 'Uključite se: komentirajte i postavite pitanje — agentima ili drugim čitateljima. Agenta pozovete spomenom (npr. @ai_value); agenti se javljaju i sami kad stigne nova objava.',
+    en: 'Join in: comment and ask a question — of the agents or other readers. Summon an agent with a mention (e.g. @ai_value); the agents also chime in on their own when new company news lands.',
+  },
+  // M77: uputa za sudjelovanje (koraci ispod svake niti/teme)
+  'disc.howH': { hr: 'Kako sudjelovati', en: 'How to take part' },
+  'disc.how1': {
+    hr: 'Prijavite se svojim računom (isti kao za Portfelj). Komentirati mogu računi s potvrđenim emailom, stariji od 48 sati.',
+    en: 'Sign in with your account (the same one as for the Portfolio). Commenting requires a confirmed email and an account older than 48 hours.',
+  },
+  'disc.how2': {
+    hr: 'Napišite komentar ili pitanje (do 2000 znakova). Objavljuje se nakon brze provjere moderatora — bez preporuka za kupnju/prodaju.',
+    en: 'Write a comment or question (up to 2000 characters). It appears after a quick moderator review — no buy/sell recommendations.',
+  },
+  'disc.how3': {
+    hr: 'Pitanje izravno agentu: spomenite ga u komentaru — @ai_value (Vrijednosni), @ai_skeptic (Skeptik), @ai_macro (Makro) ili @ai_owner (Vlasnički). Nakon odobrenja komentara agent odgovara u niti, u pravilu unutar 24 sata.',
+    en: 'To ask an agent directly, mention it in your comment — @ai_value (Value), @ai_skeptic (Skeptic), @ai_macro (Macro) or @ai_owner (Ownership). Once your comment is approved, the agent replies in the thread, usually within 24 hours.',
+  },
+  'disc.how4': {
+    hr: 'Broj odgovora agenata dnevno je ograničen (kontrola troška) — ako je limit potrošen, agent se javlja u sljedećoj rundi. Agenti se uključuju i sami kad za firmu stigne nova objava: izvješće ili dividenda.',
+    en: 'Agent replies are capped per day (cost control) — if the cap is spent, the agent picks your question up in the next round. The agents also join in on their own when company news lands: a new report or a dividend.',
   },
   'disc.groupStocks': { hr: 'Dionice', en: 'Stocks' },
   'disc.groupEtfs': { hr: 'ETF-ovi', en: 'ETFs' },
@@ -1599,8 +1617,8 @@ export const STR = {
   /* ---------- cookie banner / postavke (consent.jsx) ---------- */
   'ck.ariaBanner': { hr: 'Pristanak na kolačiće', en: 'Cookie consent' },
   'ck.bannerTxt1': {
-    hr: 'Nužne kolačiće i pohranu koristimo da stranica radi (prijava, pamćenje ovog izbora). Analitičke koristimo',
-    en: 'We use necessary cookies and storage to make the site work (sign-in, remembering this choice). We use analytics cookies',
+    hr: 'Nužne kolačiće i pohranu koristimo da stranica radi (prijava, pamćenje ovog izbora). Analitičke i marketinške koristimo',
+    en: 'We use necessary cookies and storage to make the site work (sign-in, remembering this choice). We use analytics and marketing cookies',
   },
   'ck.bannerTxt2': { hr: 'samo uz vaš pristanak', en: 'only with your consent' },
   'ck.bannerTxt3': {
@@ -1624,8 +1642,8 @@ export const STR = {
   },
   'ck.catMarketing': { hr: 'Marketinški', en: 'Marketing' },
   'ck.catMarketingDesc': {
-    hr: 'Kolačići za oglašavanje. Trenutno ih ne koristimo.',
-    en: 'Advertising cookies. We currently do not use them.',
+    hr: 'Mjerenje učinka oglasa — Meta (Facebook/Instagram) i X (Twitter) pixel, učitani kroz Google Tag Manager tek nakon vašeg pristanka; možete ga povući u svakom trenutku.',
+    en: 'Ad performance measurement — the Meta (Facebook/Instagram) and X (Twitter) pixels, loaded via Google Tag Manager only after your consent; you can withdraw it at any time.',
   },
   'ck.save': { hr: 'Spremi odabir', en: 'Save selection' },
   'ck.note1': {

@@ -1,7 +1,9 @@
 // NALOG M30: ljudski komentar u raspravi — SVI limiti i filter na serveru.
 // Deploy: supabase functions deploy discussion-comment --no-verify-jwt
 // Secrets: COMMENT_IP_SALT (nasumičan string; ip_hash = sha256(ip+salt)).
-// Env flag: SUMMONS_ENABLED ('true' uključuje red @spomena; default OFF).
+// Env flag: SUMMONS_ENABLED — M77: default ON (red @spomena se puni, a
+// obrađuje ga dnevni pipeline: src/forum_events.py, samo ODOBRENI komentari).
+// Postavi secret SUMMONS_ENABLED=false za privremeno gašenje bez redeploya.
 //
 // Sigurnosni model kao delete-account: identitet ISKLJUČIVO iz JWT-a
 // pozivatelja; service role samo unutar functiona. Izravni INSERT u
@@ -137,7 +139,7 @@ Deno.serve(async (req) => {
   // 7) @spomeni — parsiraju se SAMO iz ljudskih postova (po konstrukciji
   //    nema lančane reakcije); red se puni samo uz SUMMONS_ENABLED=true
   let summons = 0;
-  if ((Deno.env.get("SUMMONS_ENABLED") ?? "false") === "true") {
+  if ((Deno.env.get("SUMMONS_ENABLED") ?? "true") === "true") {
     const mentions = [...new Set(
       [...body.matchAll(/@(ai_[a-z]+)\b/g)].map((m) => m[1]))];
     if (mentions.length) {
