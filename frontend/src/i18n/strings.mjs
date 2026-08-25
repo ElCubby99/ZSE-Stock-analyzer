@@ -1756,7 +1756,10 @@ export const STR = {
     en: ' — the displayed price and values are indicative',
   },
   'mp.price': { hr: 'CIJENA', en: 'PRICE' },
-  'mp.noPrices': { hr: 'nema cijena u bazi', en: 'no prices in our database' },
+  'mp.noPrices': {
+    hr: 'Još nema cjenovnih podataka: dionica nema niti jedan službeni close u ZSE tečajnici (tipično nova uvrštenja prije prve trgovine u knjizi naloga). Graf se pojavljuje s prvim closeom.',
+    en: 'No price data yet: the stock has no official close in the ZSE price list (typically new listings before the first order-book trade). The chart appears with the first close.',
+  },
   'mp.priceAria': { hr: 'Kretanje cijene', en: 'Price history of' },
   'mp.r1m': { hr: '1M', en: '1M' },
   'mp.r6m': { hr: '6M', en: '6M' },

@@ -64,21 +64,25 @@ function StatusBadge({ s, t }) {
   return <span className="div-upcoming">{t('div.badge.upcoming')}</span>
 }
 
-function Row({ r, nav, hist, t, lang }) {
+function Row({ r, nav, hist, t, lang, compact = false }) {
   const h = hist?.[r.company]
   const target = lang === 'en'
     ? `/en/stock/${String(r.company).toLowerCase()}`
     : `/dionica/${String(r.company).toLowerCase()}`
   return (
-    <div className="mk-row div-row" onClick={() => nav(target)}>
+    <div className={`mk-row div-row${compact ? ' compact' : ''}`} onClick={() => nav(target)}>
       <span className="mk-name"><b>{r.class_ticker}</b><em>{r.name}</em></span>
       {/* M59: rata iste dividende nosi napomenu (npr. HPB 2×8,77 €) */}
       <span className="r mono" title={r.note ? tx(r.note, lang) : undefined}>{num(r.amount_eur, 2)}{r.note ? '*' : ''}</span>
       <span className="r mono">{r.yield_now === null || r.yield_now === undefined
         ? <i className="np">{t('common.na')}</i> : `${num(r.yield_now * 100, 2)} %`}</span>
-      <span className="r mono" title={h ? `${t('div.histTitle')}: FY${h.coverage_from} / ${num(h.avg_amount_5y, 2)} €` : undefined}>
-        {h ? `${h.paid_years_of_5}/5` : '—'}</span>
-      <span className="r mono"><PayoutCell r={r} t={t} /></span>
+      {/* M76: "Uskoro" tablica ima 6 stupaca — kontinuitet i payout se u
+          compact načinu NE renderiraju (inače '2/5' sjedne pod EX DATUM) */}
+      {!compact && (
+        <span className="r mono" title={h ? `${t('div.histTitle')}: FY${h.coverage_from} / ${num(h.avg_amount_5y, 2)} €` : undefined}>
+          {h ? `${h.paid_years_of_5}/5` : '—'}</span>
+      )}
+      {!compact && <span className="r mono"><PayoutCell r={r} t={t} /></span>}
       <span className="r mono">{fmtDate(r.ex_date)}</span>
       <span className="r mono dim">{fmtDate(r.payment_date)}</span>
       <span>
@@ -158,7 +162,7 @@ export default function Dividende() {
                 <span>{t('div.col.stock')}</span><span className="r">{t('div.col.amount')}</span><span className="r">{t('div.col.yield')}</span>
                 <span className="r">{t('div.col.ex')}</span><span className="r">{t('div.col.pay')}</span><span>{t('common.status')}</span>
               </div>
-              {soon.map((r, i) => <Row r={r} nav={nav} hist={data.history} t={t} lang={lang} key={i} />)}
+              {soon.map((r, i) => <Row r={r} nav={nav} hist={data.history} t={t} lang={lang} compact key={i} />)}
             </div></div>
             <div className="subnote">{t('div.soonNote')}</div>
           </section>
