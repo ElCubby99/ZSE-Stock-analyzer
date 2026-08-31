@@ -69,6 +69,11 @@ def _build_dir(src: str, out: str) -> int:
         if not m:
             print(f"[skip] {fn}: nema frontmattera"); continue
         meta = dict(re.findall(r"^(\w+):\s*(.+)$", m.group(1), re.M))
+        # M78.3: YAML-stil navodnici oko vrijednosti se skidaju (parser je
+        # naivan pa bi ih inače prenio doslovno u <title> — incident 31.08.)
+        meta = {k: (v[1:-1] if len(v) > 1 and v[0] == v[-1] and v[0] in "\"'"
+                    else v)
+                for k, v in ((k, v.strip()) for k, v in meta.items())}
         post = {"slug": slug, "title": meta.get("title", slug),
                 "category": meta.get("category", "Edukacija"),
                 "date": meta.get("date"), "summary": meta.get("summary", ""),
