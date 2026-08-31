@@ -1,8 +1,8 @@
 ---
-title: "P/E ratio of a stock: what it means, how it is calculated and when a low P/E is a trap"
+title: P/E ratio of a stock: what it means, how it is calculated and when a low P/E is a trap
 category: Edukacija
 date: 2026-07-12
-summary: "The P/E ratio explained on Zagreb Stock Exchange examples: how it is calculated, what low or high P/E means and why it does not compare across sectors."
+summary: The P/E ratio explained on Zagreb Stock Exchange examples: how it is calculated, what low or high P/E means and why it does not compare across sectors.
 ---
 
 ## What P/E is
