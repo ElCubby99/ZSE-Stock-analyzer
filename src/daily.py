@@ -456,7 +456,13 @@ def stage_prices(conn, run_id, log, fetch=None) -> tuple[int, bool]:
     try:
         n = fetch(tickers, [today.isoformat()])
     except Exception as e:  # noqa: BLE001
+        # ZSE za još neobjavljeni datum vraća HTTP 400 (exception, ne prazan
+        # odgovor — run #360, 31.08.2026.) pa nadoknada proteklih dana mora
+        # postojati i OVDJE, ne samo na putu s praznim odgovorom
         log("prices", None, "failed", f"dohvat pao: {type(e).__name__}: {e}")
+        healed = heal_recent_gaps(conn, tickers, today, fetch, log)
+        if healed:
+            return healed, False
         return 0, True
     if not n:
         # M78: zakašnjeli cron zna stići NAKON ponoći (GitHub scheduler je
