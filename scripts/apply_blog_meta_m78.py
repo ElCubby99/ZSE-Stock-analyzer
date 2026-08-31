@@ -37,15 +37,8 @@ POSTS = [
      "yields",
      "ZSE dividend payout calendar for 2026: 43 payouts from 41 issuers, "
      "median yield 3.13%, how the ex-date works and what the labels mean."),
-    ("kako-citati-pe-omjer",
-     "P/E omjer dionice: što znači, kako se računa i kada je nizak P/E zamka",
-     "P/E omjer objašnjen na primjerima s Zagrebačke burze: kako se računa, "
-     "što znači nizak ili visok P/E i zašto se ne uspoređuje preko sektora.",
-     "P/E ratio of a stock: what it means, how it is calculated and when a "
-     "low P/E is a trap",
-     "The P/E ratio explained on Zagreb Stock Exchange examples: how it is "
-     "calculated, what low or high P/E means and why it does not compare "
-     "across sectors."),
+    # kako-citati-pe-omjer NIJE u bazi — file-based post; naslov/meta žive
+    # u content/blog/kako-citati-pe-omjer.md (+ en/) frontmatteru (M78)
     ("ad-plastik-adpl-prihodi-ebitda-marza-fer-zona",
      "AD Plastik dionica (ADPL): prihodi, EBITDA marža, P/E i fer-zona",
      "AD Plastik (ADPL) dionica: prihodi 2023.–2025., EBITDA marža, P/E 7,5, "

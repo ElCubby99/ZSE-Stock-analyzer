@@ -1,8 +1,8 @@
 ---
-title: Kako čitati P/E omjer
+title: "P/E omjer dionice: što znači, kako se računa i kada je nizak P/E zamka"
 category: Edukacija
 date: 2026-07-12
-summary: Što P/E stvarno mjeri, kada je nizak P/E jeftin a kada zamka, i zašto se ne uspoređuje preko sektora.
+summary: "P/E omjer objašnjen na primjerima s Zagrebačke burze: kako se računa, što znači nizak ili visok P/E i zašto se ne uspoređuje preko sektora."
 ---
 
 ## Što je P/E
