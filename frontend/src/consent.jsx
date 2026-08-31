@@ -210,7 +210,16 @@ export function ConsentProvider({ children }) {
   const [panelOpen, setPanelOpen] = useState(false)
 
   // povratni posjet: consent default u index.html već je vratio granted/denied
-  // PRIJE GTM-a; ovdje nema što učitavati (GTM je statički, Consent Mode).
+  // PRIJE GTM-a (unutar wait_for_update prozora). M78 (nalog 30.08.2026.):
+  // uz inline default šalje se i EKSPLICITNI consent update odmah nakon
+  // mounta — remen i tregeri protiv razjahanja inline provjere i aplikacije
+  // (keširan stari index.html, buduća promjena formata bl_consent) te okidač
+  // consent_updated za GTM tagove. Bez valjanog spremljenog pristanka
+  // ostaje denied — default se NIKAD ne diže bez stvarne privole.
+  useEffect(() => {
+    const c = readStoredConsent()
+    if (c) applyConsentToGoogle(c.analytics, c.marketing)
+  }, [])
 
   const decide = useCallback((analytics, marketing) => {
     const prev = readStoredConsent()

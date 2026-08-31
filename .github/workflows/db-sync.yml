@@ -45,6 +45,10 @@ on:
         description: "M74: 'true' = popravi fiskalnu godinu dividendi sa siječanjskim ex-datumom (HPB 21,83 FY2025->FY2024) + reklasifikacija + dps"
         required: false
         default: ''
+      blog_meta:
+        description: "M78: 'true' = naslovi/meta opisi 6 blog tekstova prema GSC nalazu + brisanje test drafta (idempotentno)"
+        required: false
+        default: ''
 
 concurrency:
   group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
@@ -180,6 +184,14 @@ jobs:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           PYTHONUNBUFFERED: '1'
         run: python -m scripts.repair_div_fy
+
+      # M78: SEO naslovi/meta opisi blogova (GSC nalaz 30.08.) + test draft
+      - name: Blog meta M78 (opcionalno)
+        if: inputs.blog_meta == 'true'
+        env:
+          ZSE_DSN: ${{ secrets.ZSE_DSN }}
+          PYTHONUNBUFFERED: '1'
+        run: python -m scripts.apply_blog_meta_m78
 
       - name: Preračun valuacija (opcionalno)
         if: inputs.recompute != ''

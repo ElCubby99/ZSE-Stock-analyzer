@@ -406,6 +406,36 @@ def previous_trading_day(day: date) -> date:
     return d
 
 
+def heal_recent_gaps(conn, tickers, today, fetch, log, *, days: int = 5,
+                     done=None) -> int:
+    """M78: zakrpaj rupe u EOD seriji za zadnjih `days` trgovinskih dana —
+    dated endpoint tečajnice nudi protekle dane, pa se dan bez uspješnog
+    runa (zakašnjeli GitHub cronovi 27./28.08.2026.) ne gubi trajno.
+    Vraća ukupan broj upisanih zapisa; dan bez tečajnice na izvoru
+    (praznik) se preskače s razlogom."""
+    if done is None:
+        done = eod_already_done
+    healed = 0
+    d = today
+    for _ in range(days):
+        d = previous_trading_day(d)
+        if done(conn, d):
+            continue
+        try:
+            nd = fetch(tickers, [d.isoformat()])
+        except Exception as e:  # noqa: BLE001 — jedan dan ne ruši ostale
+            log("prices", None, "failed",
+                f"nadoknada {d} pala: {type(e).__name__}: {e}")
+            continue
+        if nd:
+            healed += nd
+            log("prices", None, "ok", f"nadoknada {d}: {nd} EOD zapisa")
+        else:
+            log("prices", None, "skipped",
+                f"nadoknada {d}: izvor nema tečajnicu za taj dan")
+    return healed
+
+
 def stage_prices(conn, run_id, log, fetch=None) -> tuple[int, bool]:
     """JEDAN kratki pokušaj dohvata današnje tečajnice (bez spavanja —
     čekanje na kasnu ZSE objavu rade satni cron termini, ne runner).
@@ -429,6 +459,14 @@ def stage_prices(conn, run_id, log, fetch=None) -> tuple[int, bool]:
         log("prices", None, "failed", f"dohvat pao: {type(e).__name__}: {e}")
         return 0, True
     if not n:
+        # M78: zakašnjeli cron zna stići NAKON ponoći (GitHub scheduler je
+        # 27./28.08.2026. SVE termine ispalio izvan prozora) — današnja
+        # tečajnica tada još ne postoji, ali su protekli dani dostupni.
+        # Zakrpane rupe pokreću PUNI prolaz (recompute + regen + deploy) da
+        # sajt ne ostane danima na starom datumu.
+        healed = heal_recent_gaps(conn, tickers, today, fetch, log)
+        if healed:
+            return healed, False
         log("prices", None, "skipped",
             f"tečajnica za {today} još nije objavljena — sljedeći pokušaj "
             "radi sljedeći satni cron")
@@ -458,18 +496,10 @@ def stage_prices(conn, run_id, log, fetch=None) -> tuple[int, bool]:
             cur.execute("ROLLBACK TO SAVEPOINT eod_seen")
             log("prices", None, "failed",
                 f"eod_first_seen: {type(e).__name__}: {e}")
-    # Backfill: jučerašnja rupa (npr. dan kad ZSE ništa nije objavio do
-    # 22:20) — ako izvor sad nudi i taj datum, serija ne ostaje šupljikava.
-    prev = previous_trading_day(today)
-    if not eod_already_done(conn, prev):
-        try:
-            n_prev = fetch(tickers, [prev.isoformat()])
-            log("prices", None, "ok" if n_prev else "skipped",
-                f"backfill {prev}: {n_prev} EOD zapisa"
-                if n_prev else f"backfill {prev}: izvor nema tečajnicu za taj dan")
-        except Exception as e:  # noqa: BLE001
-            log("prices", None, "failed",
-                f"backfill {prev} pao: {type(e).__name__}: {e}")
+    # Backfill: rupe proteklih dana (npr. dan kad ZSE ništa nije objavio do
+    # 22:20, ili dan bez ijednog runa u prozoru) — ako izvor sad nudi te
+    # datume, serija ne ostaje šupljikava. M78: do 5 trgovinskih dana unatrag.
+    heal_recent_gaps(conn, tickers, today, fetch, log)
     return n, False
 
 
@@ -683,9 +713,25 @@ def main(argv=None) -> int:
     if not a.digest_only:
         nt = non_trading_reason(_zagreb_now().date())
         if nt:
-            print(f"burza zatvorena — {nt}; tečajnica se ne objavljuje, "
-                  "izlazim neutralno")
-            return 0
+            # M78: zakašnjeli petak-cron zna pasti u subotu (GitHub scheduler
+            # 27./28.08.2026. sve termine ispalio satima prekasno) — prije
+            # neutralnog izlaza provjeri ima li EOD serija rupu u zadnjih 5
+            # trgovinskih dana. Ako ima, prolaz se NASTAVLJA: stage_prices
+            # rupe krpa dated endpointom (nadoknadni prolaz).
+            with get_conn() as c2:
+                gap = None
+                d = _zagreb_now().date()
+                for _ in range(5):
+                    d = previous_trading_day(d)
+                    if not eod_already_done(c2, d):
+                        gap = d
+                        break
+            if gap is None:
+                print(f"burza zatvorena — {nt}; tečajnica se ne objavljuje, "
+                      "izlazim neutralno")
+                return 0
+            print(f"burza zatvorena — {nt}; ali EOD serija ima rupu ({gap}) "
+                  "— nadoknadni prolaz")
 
     with get_conn() as conn:
         if a.digest_only:
@@ -733,7 +779,9 @@ def main(argv=None) -> int:
             n_prices, not_ready = stage_prices(conn, run_id, log)
         if not_ready:
             n_att, m_att = _attempt_no()
-            if _is_final_attempt():
+            # M78: neradni dan nikad ne alarmira (nadoknadni prolaz koji nije
+            # našao ništa za zakrpati završava neutralno — kao prije M61)
+            if _is_final_attempt() and not non_trading_reason(_zagreb_now().date()):
                 # 3. alarm SAMO na zadnjem dnevnom pokušaju (exit 3 ->
                 #    workflow failure + issue + mail; raniji pokušaji šute)
                 log("prices", None, "failed",

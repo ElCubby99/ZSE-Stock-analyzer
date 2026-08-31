@@ -40,27 +40,31 @@ jobs:
     runs-on: ubuntu-latest
     # no-op ~10-30 s; PUNI prolaz radi regen protiv udaljene Supabase baze
     # (mrežna latencija po SQL upitu) — run 21:12 16.07. ubijen na 30 min
-    # bez ijednog retka loga (stdout je bio bufferiran). 60 min dok se ne
-    # izmjeri stvarno trajanje; PYTHONUNBUFFERED streama log u živo.
-    timeout-minutes: 60
+    # bez ijednog retka loga (stdout je bio bufferiran). M78: 60 -> 120 min
+    # nakon 26.08.2026.: četiri runa zaredom istekla na 60 min usred H1
+    # ekstrakcija (timeout se prikazuje kao "cancelled") i potrošila sate
+    # prije nego što je peti uspio; PYTHONUNBUFFERED streama log u živo.
+    timeout-minutes: 120
     steps:
       # DST guard: dva cron raspona postoje jer se UTC offset mijenja
       # (CET/CEST) — dio termina je uvijek "krivi" za sat. Izvrši se samo
       # run koji padne u lokalni prozor 16:00-24:00 (širok namjerno:
       # GitHub cronovi kasne i do ~1,5 h — 16.07.2026. je zbog uskog
-      # prozora 16-17h preskočen SVAKI zakazani run). Poslije ponoći se ne
-      # nastavlja ("danas" bi postao krivi datum) — rupu zakrpa backfill
-      # prvog sutrašnjeg uspješnog runa. Dispatch preskače guard.
-      - name: DST guard (prozor 16-24h Europe/Zagreb)
+      # prozora 16-17h preskočen SVAKI zakazani run) ILI u nadoknadni
+      # prozor 00:00-06:00 (M78: 27./28.08.2026. scheduler je SVE termine
+      # ispalio 2-9 h prekasno, iza ponoći — takav run više ne može
+      # dohvatiti "danas", ali stage_prices tada zakrpa protekle dane
+      # dated endpointom i pokrene puni prolaz). Dispatch preskače guard.
+      - name: DST guard (prozor 16-24h + nadoknada 0-6h Europe/Zagreb)
         id: guard
         run: |
           H=$(TZ=Europe/Zagreb date +%H)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$H" -ge 16 ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$H" -ge 16 ] || [ "$H" -lt 6 ]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
             echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') — pokrećem"
           else
             echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') izvan prozora 16-24h — čisti izlaz bez posla"
+            echo "lokalno vrijeme $(TZ=Europe/Zagreb date '+%H:%M') izvan prozora 16-24h/0-6h — čisti izlaz bez posla"
           fi
 
       - name: Checkout

@@ -45,7 +45,12 @@ def test_bez_podataka_neutralan_izlaz(conn):
         return 0
     n, not_ready = daily.stage_prices(conn, "test-run", _quiet_log, fetch=empty_feed)
     assert (n, not_ready) == (0, True)
-    assert len(calls) == 1, "jedan kratki pokušaj — čekanje rade cronovi, ne runner"
+    # M78: nakon neuspjelog "danas" slijedi nadoknadna provjera zadnjih 5
+    # trgovinskih dana (zakašnjeli cronovi) — i dalje bez spavanja, svaki
+    # poziv je jedan kratki HTTP dohvat; kad ni nadoknada ništa ne nađe,
+    # izlaz ostaje neutralan
+    assert 1 <= len(calls) <= 6, "kratki pokušaji bez petlji čekanja"
+    assert calls[0] == [daily.date.today().isoformat()], "prvi pokušaj je danas"
 
 
 def test_greska_feeda_ne_rusi_stage(conn):
@@ -226,3 +231,33 @@ def test_workflow_raspored_i_guard():
         "concurrency bez paralelnih runova"
     assert "did_work" in wf, "no-op runovi moraju preskočiti commit/deploy korake"
     assert "not yet published" in wf, "SUCCESS s 'not yet' logom je normalan ishod"
+
+
+# ---------- 7. M78: nadoknada proteklih dana (zakašnjeli GitHub cronovi) ----------
+
+def test_heal_recent_gaps_krpa_samo_rupe():
+    """Nedjelja 30.08.: trgovinski dani unatrag su 28, 27, 26, 25, 24.
+    'done' su 26. i 25. -> fetch se zove SAMO za rupe (28, 27, 24); dan
+    bez tečajnice na izvoru (24.) ne ruši zbroj."""
+    from datetime import date
+
+    from src.daily import heal_recent_gaps
+    calls = []
+
+    def fetch(tickers, dates):
+        calls.append(dates[0])
+        return 0 if dates[0] == "2026-08-24" else 5
+
+    def done(conn, d):
+        return d.isoformat() in ("2026-08-26", "2026-08-25")
+
+    n = heal_recent_gaps(None, ["X"], date(2026, 8, 30), fetch,
+                         lambda *a: None, done=done)
+    assert calls == ["2026-08-28", "2026-08-27", "2026-08-24"]
+    assert n == 10
+
+
+def test_guard_nadoknadni_prozor():
+    """M78: guard propušta i 0-6h lokalno (zakašnjeli cronovi iza ponoći)."""
+    wf = (ROOT / ".github" / "workflows" / "daily-eod.yml").read_text(encoding="utf-8")
+    assert '-lt 6' in wf, "nadoknadni prozor 0-6h lokalno"
