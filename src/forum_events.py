@@ -132,6 +132,10 @@ def collect_events(cur, lookback_days: int = LOOKBACK_DAYS) -> list[dict]:
            WHERE f.doc_type = 'financial_report'
              AND f.ingested_at >= now() - make_interval(days => %s)
              AND f.fiscal_year >= EXTRACT(YEAR FROM CURRENT_DATE)::int - 1
+             -- M66/M78: događaj je NOVA objava na izvoru — backfill/restore
+             -- starih izvješća ima svjež ingested_at ali star published_at
+             AND f.published_at IS NOT NULL
+             AND f.published_at >= CURRENT_DATE - 7
            ORDER BY dd.id, f.ingested_at DESC""", (lookback_days,))
     for disc_id, ticker, name, fy, period, src, pub in cur.fetchall():
         if not src:
