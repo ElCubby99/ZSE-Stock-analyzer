@@ -131,12 +131,27 @@ def annual_report_block(ticker: str) -> dict:
                                "curr": r["curr"], "delta": r["delta"]}
                               for r in f["biggest_moves"][:6]],
         })
-    block: dict = {"status": "procitano" if years else "nije_strojno_citljivo",
-                   "years": years}
+    # 'procitano' smije stajati samo ako je pročitana NAJNOVIJA godina: runda
+    # se vodi o zadnjem izvješću, pa pročitana pretprošla godina uz nepročitanu
+    # zadnju nije provjereno stanje nego upravo ona lažna sigurnost koju je
+    # incident 16.09.2026. i proizveo.
+    najnovija = max(fy for fy, _ in srcs)
+    procitana_najnovija = any(y["fiscal_year"] == najnovija for y in years)
+    if procitana_najnovija:
+        status = "procitano"
+    elif years:
+        status = "djelomicno"
+    else:
+        status = "nije_strojno_citljivo"
+    block: dict = {"status": status, "years": years}
     if unread:
         block["unread"] = unread
-        block["upozorenje"] = ("Dio godišnjih izvješća nije strojno pročitan — "
-                               "tvrdnje iz njih treba provjeriti u izvorniku.")
+        block["upozorenje"] = (
+            (f"NAJNOVIJE izvješće ({najnovija}.) NIJE strojno pročitano — "
+             "tvrdnje o toj godini treba provjeriti u izvorniku."
+             if not procitana_najnovija else
+             "Dio godišnjih izvješća nije strojno pročitan — "
+             "tvrdnje iz njih treba provjeriti u izvorniku."))
     if len(years) >= 2 and consolidation_changed(years[1], years[0]):
         block["opseg_promijenjen"] = (
             f"{years[1]['fiscal_year']} "
