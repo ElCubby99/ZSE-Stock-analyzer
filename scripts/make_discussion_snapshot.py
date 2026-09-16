@@ -2,9 +2,19 @@
 """NALOG M30 faza 1: kompaktan data_snapshot za rundu rasprave iz commitanih
 exporta (frontend/public/data/<T>.json — produkcijski podaci). Snapshot je
 ULAZ agenata i sprema se u discussions.data_snapshot (transparentnost:
-čitatelj vidi točno što su agenti dobili)."""
+čitatelj vidi točno što su agenti dobili).
+
+M81: snapshot uz naše agregate nosi i blok `annual_report` — činjenice iz
+STVARNOG godišnjeg izvješća (konsolidiranost, ovisni subjekti, najveće
+promjene stavki u RDG-u). Bez toga je 16.09.2026. cijela SNBA runda
+raspravljala o "nerazloženih 23,5 mil. €" koje u izvješću imaju ime i
+uzrok. Kad izvješće nije strojno čitljivo (PDF), blok to IZRIČITO kaže —
+nepročitano se nikad ne prikazuje kao provjereno.
+"""
 import json
 import sys
+
+sys.path.insert(0, ".")   # rad i kao `python scripts/...` i kao `python -m scripts...`
 
 
 def snapshot(ticker: str) -> dict:
@@ -64,6 +74,7 @@ def snapshot(ticker: str) -> dict:
             "ebitda_margin": series("ebitda_margin"),
         },
         "fin_years": years,
+        "annual_report": annual_report_block(ticker),
         "sources": {
             "stock": f"https://www.burzovnilist.com/dionica/{ticker.lower()}",
             "financials": f"https://www.burzovnilist.com/dionica/{ticker.lower()}/financije",
@@ -71,6 +82,66 @@ def snapshot(ticker: str) -> dict:
             "methodology": "https://www.burzovnilist.com/metodologija",
         },
     }
+
+
+def annual_report_block(ticker: str) -> dict:
+    """M81: činjenice iz zadnja dva godišnja izvješća s EHO-a.
+
+    Vraća uvijek — i kad ne uspije: status 'nije_strojno_citljivo' s
+    naznakama iz teksta jasno kaže agentu da izvješće MORA pročitati čovjek
+    prije nego se iz njega išta tvrdi. Nikad ne izmišlja i nikad ne šuti."""
+    try:
+        from src.db import get_conn
+        from src.report_facts import (annual_sources, consolidation_changed,
+                                      facts, fetch, pdf_scan)
+    except Exception as e:  # noqa: BLE001
+        return {"status": "nedostupno", "reason": f"{type(e).__name__}: {e}"}
+    try:
+        with get_conn() as conn, conn.cursor() as cur:
+            srcs = annual_sources(cur, ticker)
+    except Exception as e:  # noqa: BLE001
+        return {"status": "nedostupno", "reason": f"{type(e).__name__}: {e}"}
+    if not srcs:
+        return {"status": "nema_izvjesca", "note": "u bazi nema godišnjeg izvješća s URL-om"}
+
+    years, unread = [], []
+    for fy, url in srcs:
+        blob = fetch(url)
+        if not blob:
+            unread.append({"fiscal_year": fy, "source_url": url, "reason": "dohvat nije uspio"})
+            continue
+        try:
+            f = facts(blob, source_url=url, fiscal_year=fy)
+        except Exception:  # noqa: BLE001
+            hints = pdf_scan(blob) if blob[:4] == b"%PDF" else []
+            unread.append({"fiscal_year": fy, "source_url": url,
+                           "reason": "PDF — nije strojno čitljiv obrazac",
+                           "tekst_spominje": hints})
+            continue
+        years.append({
+            "fiscal_year": fy, "source_url": url,
+            "consolidated": f["consolidated"], "audited": f["audited"],
+            "auditor": f["auditor"], "employees": f["employees"],
+            "subsidiaries": f["subsidiaries"],
+            "total_assets": f["total_assets"],
+            "biggest_moves": [{"label": r["label"][:70], "prev": r["prev"],
+                               "curr": r["curr"], "delta": r["delta"]}
+                              for r in f["biggest_moves"][:6]],
+        })
+    block: dict = {"status": "procitano" if years else "nije_strojno_citljivo",
+                   "years": years}
+    if unread:
+        block["unread"] = unread
+        block["upozorenje"] = ("Dio godišnjih izvješća nije strojno pročitan — "
+                               "tvrdnje iz njih treba provjeriti u izvorniku.")
+    if len(years) >= 2 and consolidation_changed(years[1], years[0]):
+        block["opseg_promijenjen"] = (
+            f"{years[1]['fiscal_year']} "
+            f"{'konsolidirano' if years[1]['consolidated'] else 'nekonsolidirano'} -> "
+            f"{years[0]['fiscal_year']} "
+            f"{'konsolidirano' if years[0]['consolidated'] else 'nekonsolidirano'}: "
+            "postotne usporedbe tih godina mjere RAZLIČITE opsege")
+    return block
 
 
 if __name__ == "__main__":

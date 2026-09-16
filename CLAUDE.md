@@ -35,6 +35,18 @@ pushaj** — Vercel deploya automatski s `main`. Redoslijed:
   za oba jezika; formatiranje brojeva/valute/datuma ISKLJUČIVO kroz
   `frontend/src/format.js` (locale iz rute). PR koji doda hardkodirani
   string ili rutu bez para ne prolazi (tests/test_i18n.py).
+- **Analiza se radi nad IZVJEŠĆEM, ne samo nad našim agregatima (M81)** —
+  za svaku dionicu i svaku raspravu prije tvrdnji o dobiti, prihodu ili
+  povratu treba pročitati stvarno godišnje izvješće: oznaku konsolidacije,
+  ovisne subjekte, revizora i stavke s najvećom promjenom
+  (`src/report_facts.py`; snapshot nosi blok `annual_report`). Ako se opseg
+  izvještavanja promijenio (nekonsolidirano ↔ konsolidirano), postotne
+  usporedbe tih godina **mjere različite opsege** i ne iznose se bez
+  upozorenja. Veliki skok dobiti mora dobiti ime iz izvješća (jednokratna
+  stavka, stjecanje ispod knjigovodstvene vrijednosti, prodaja imovine);
+  „nerazloženo“ je dopušteno tek nakon što je stavka tražena i nije nađena.
+  Kad izvješće nije strojno čitljivo, to se **izričito kaže** — nepročitano
+  se nikad ne prikazuje kao provjereno (`scripts/audit_report_facts.py`).
 - **Svaka nova javna stranica/ruta ide isključivo kroz
   `frontend/src/routes/registry.mjs`** — nikad hardkodirana zasebno u
   routeru (main.jsx) i zasebno u sitemap generatoru (prerender.mjs); oba
