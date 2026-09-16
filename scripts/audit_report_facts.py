@@ -30,7 +30,8 @@ sys.path.insert(0, ".")
 
 from src.db import get_conn  # noqa: E402
 from src.report_facts import (  # noqa: E402
-    annual_sources, consolidation_changed, facts, fetch, kind, text_hints)
+    annual_sources, consolidation_changed, facts, fetch, kind,
+    text_excerpts, text_hints)
 
 BIG_MOVE_SHARE = 0.25   # stavka koja pomakne >25 % dobiti prethodne godine
 
@@ -66,6 +67,9 @@ def audit_one(cur, ticker: str) -> dict:
             msg = (f"NEPROVJERENO {fy}: izvješće nije GFI obrazac ({fmt})"
                    + (f"; tekst spominje: {', '.join(hints)}" if hints else ""))
             out["flags"].append(msg)
+            # izvodi nisu zasebna upozorenja — oni su GRAĐA uz upozorenje
+            out.setdefault("izvodi", []).extend(
+                {"fiscal_year": fy, **ex} for ex in text_excerpts(blob))
             continue
         parsed.append(f)
         out["years"].append({
@@ -113,6 +117,9 @@ def main(argv=None) -> int:
             for f in r["flags"]:
                 print(f"    ⚑ {f}")
                 flagged += 1
+            for ex in r.get("izvodi", []):
+                print(f"      · {ex['fiscal_year']}, str. {ex['stranica']}: "
+                      f"{ex['izvod'][:180]}")
             if not r["flags"]:
                 yrs = ", ".join(str(y["fiscal_year"]) for y in r["years"])
                 print(f"    uredno — pročitana izvješća: {yrs} "

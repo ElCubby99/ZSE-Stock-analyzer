@@ -93,7 +93,8 @@ def annual_report_block(ticker: str) -> dict:
     try:
         from src.db import get_conn
         from src.report_facts import (annual_sources, consolidation_changed,
-                                      facts, fetch, kind, text_hints)
+                                      facts, fetch, kind,
+                                      text_excerpts, text_hints)
     except Exception as e:  # noqa: BLE001
         return {"status": "nedostupno", "reason": f"{type(e).__name__}: {e}"}
     try:
@@ -117,7 +118,8 @@ def annual_report_block(ticker: str) -> dict:
                    "zip": "zip bez GFI obrasca"}.get(kind(blob), "neprepoznat format")
             unread.append({"fiscal_year": fy, "source_url": url,
                            "reason": f"{fmt} — nije GFI obrazac",
-                           "tekst_spominje": text_hints(blob)})
+                           "tekst_spominje": text_hints(blob),
+                           "izvodi": text_excerpts(blob)})
             continue
         years.append({
             "fiscal_year": fy, "source_url": url,

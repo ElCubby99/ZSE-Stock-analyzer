@@ -186,6 +186,20 @@ def test_esef_paket_se_barem_pretrazi_na_naznake():
     assert rf.text_hints(b"nije ni pdf ni zip") == []
 
 
+def test_izvodi_se_ne_vade_iz_necega_sto_nije_pdf():
+    """Izvodi su PDF-specifični; za obrazac i ESEF vraća prazno, ne izmišlja."""
+    assert rf.text_excerpts(_workbook(**SNBA_2025)) == []
+    assert rf.text_excerpts(_zip({"r/a.xhtml": b"povoljne kupnje"})) == []
+
+
+def test_uzi_popis_naznaka_izostavlja_sum():
+    """'konsolidir' stoji na svakoj drugoj stranici grupnog izvješća i ne
+    znači jednokratni učinak — zato nije u užem popisu."""
+    assert "konsolidir" in rf.PDF_HINTS
+    assert "konsolidir" not in rf.ONE_OFF_HINTS
+    assert set(rf.ONE_OFF_HINTS) <= set(rf.PDF_HINTS) | {"prvi put konsolidir"}
+
+
 def test_obrazac_bez_listova_ne_puca():
     import io
     wb = openpyxl.Workbook()

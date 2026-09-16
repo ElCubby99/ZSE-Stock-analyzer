@@ -30,6 +30,12 @@ PDF_HINTS = ("stjecanj", "pripajanj", "preuzimanj", "poslovno spajanje",
              "povoljne kupnje", "povoljna kupnja", "negativni goodwill",
              "badwill", "konsolidir", "ovisno društvo", "ovisnog društva")
 
+# uži izbor: naznake koje same po sebi znače jednokratni učinak na dobit —
+# za njih se vadi i izvod s brojem stranice, jer "konsolidir" u grupnom
+# izvješću stoji na svakoj drugoj stranici i ne govori ništa
+ONE_OFF_HINTS = ("povoljne kupnje", "povoljna kupnja", "negativni goodwill",
+                 "badwill", "poslovno spajanje", "prvi put konsolidir")
+
 # stavke čiji skok najčešće znači jednokratni događaj (stjecanje, prodaja,
 # otpis) — uvijek se izvlače eksplicitno, i kad nisu među najvećim promjenama
 WATCH = (
@@ -305,6 +311,53 @@ def _esef_scan(blob: bytes, depth: int = 2) -> list[str]:
             except Exception:  # noqa: BLE001
                 continue
     return sorted(found)
+
+
+def text_excerpts(blob: bytes, limit: int = 4) -> list[dict]:
+    """Kratki izvodi oko naznaka jednokratnih događaja, s brojem stranice.
+
+    Popis ključnih riječi kaže DA nešto postoji; izvod kaže ŠTO piše i gdje
+    — tek s njim agent (ili čovjek) može procijeniti je li stavka značajna.
+    KOEI 2025.: 'Priznata dobit od povoljne kupnje iznosi 1.246 tisuća eura'
+    naspram 213 mil. € operativne dobiti — naznaka postoji, učinak ne."""
+    if kind(blob) != "pdf":
+        return []
+    doc = _pdf_open(blob)
+    if doc is None:
+        return []
+    out: list[dict] = []
+    with doc:
+        for i, page in enumerate(doc):
+            if len(out) >= limit:
+                break
+            try:
+                txt = page.get_text()
+            except Exception:  # noqa: BLE001
+                continue
+            low = txt.lower()
+            for hint in ONE_OFF_HINTS:
+                pos = low.find(hint)
+                if pos < 0:
+                    continue
+                out.append({"stranica": i + 1,
+                            "izvod": re.sub(r"\s+", " ",
+                                            txt[max(0, pos - 120):pos + 260]).strip()})
+                break
+    return out
+
+
+def _pdf_open(blob: bytes):
+    try:
+        import pymupdf
+    except Exception:  # noqa: BLE001
+        try:
+            import fitz as pymupdf  # starije izdanje paketa
+        except Exception:  # noqa: BLE001
+            return None
+    try:
+        return pymupdf.open(stream=blob, filetype="pdf")
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def pdf_scan(blob: bytes) -> list[str]:
