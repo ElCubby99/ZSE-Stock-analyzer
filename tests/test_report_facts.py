@@ -143,6 +143,49 @@ def test_nepoznata_oznaka_ne_postaje_false():
     assert rf.consolidation_changed(f, f) is False
 
 
+def _zip(members: dict[str, bytes]) -> bytes:
+    import io
+    import zipfile
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        for name, data in members.items():
+            zf.writestr(name, data)
+    return buf.getvalue()
+
+
+def test_prepoznaje_format_preuzetog_dokumenta():
+    xlsx = _workbook(**SNBA_2025)
+    assert rf.kind(xlsx) == "xlsx"
+    assert rf.kind(b"%PDF-1.7 ...") == "pdf"
+    assert rf.kind(b"nista od ovoga") == "nepoznato"
+    esef = _zip({"r/izvjesce.xhtml": "<html>tekst</html>".encode()})
+    assert rf.kind(esef) == "esef"
+
+
+def test_gfi_obrazac_u_zip_omotu_se_procita():
+    """HT 2025.: EHO pod istim tipom nudi zip, ne obrazac — ako je obrazac
+    unutra, čita se; ako nije, čitanje pada s jasnim razlogom, ne KeyErrorom."""
+    wrapped = _zip({"paket/GFI.xlsx": _workbook(**SNBA_2025)})
+    f = rf.facts(wrapped)
+    assert f["consolidated_mark"] == "KD"
+
+    nested = _zip({"vanjski/unutarnji.zip": wrapped})
+    assert rf.facts(nested)["employees"] == 299
+
+    esef = _zip({"r/izvjesce.xhtml": b"<html></html>"})
+    with pytest.raises(ValueError, match="nije GFI obrazac"):
+        rf.facts(esef)
+
+
+def test_esef_paket_se_barem_pretrazi_na_naznake():
+    """Nepročitano se ne prešućuje — iz teksta se izvuku naznake za čovjeka."""
+    inner = _zip({"r/izvjesce.xhtml":
+                  "Društvo je u 2025. provelo PRIPAJANJE ovisnog društva.".encode()})
+    assert rf.text_hints(inner) == ["ovisnog društva", "pripajanj"]
+    assert rf.text_hints(_zip({"v/u.zip": inner})) == ["ovisnog društva", "pripajanj"]
+    assert rf.text_hints(b"nije ni pdf ni zip") == []
+
+
 def test_obrazac_bez_listova_ne_puca():
     import io
     wb = openpyxl.Workbook()

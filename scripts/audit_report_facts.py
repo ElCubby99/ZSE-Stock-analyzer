@@ -30,7 +30,7 @@ sys.path.insert(0, ".")
 
 from src.db import get_conn  # noqa: E402
 from src.report_facts import (  # noqa: E402
-    annual_sources, consolidation_changed, facts, fetch, pdf_scan)
+    annual_sources, consolidation_changed, facts, fetch, kind, text_hints)
 
 BIG_MOVE_SHARE = 0.25   # stavka koja pomakne >25 % dobiti prethodne godine
 
@@ -60,9 +60,10 @@ def audit_one(cur, ticker: str) -> dict:
         except Exception as e:  # noqa: BLE001
             # NIKAD ne prelaziti u 'uredno' na neuspjelom čitanju — to je
             # lažna sigurnost. PDF se barem pretraži na ključne naznake.
-            hints = pdf_scan(blob) if blob[:4] == b"%PDF" else []
-            kind = "PDF" if blob[:4] == b"%PDF" else type(e).__name__
-            msg = (f"NEPROVJERENO {fy}: izvješće nije strojno čitljivo ({kind})"
+            hints = text_hints(blob)
+            fmt = {"pdf": "PDF", "esef": "ESEF/iXBRL paket",
+                   "zip": "zip bez GFI obrasca"}.get(kind(blob), type(e).__name__)
+            msg = (f"NEPROVJERENO {fy}: izvješće nije GFI obrazac ({fmt})"
                    + (f"; tekst spominje: {', '.join(hints)}" if hints else ""))
             out["flags"].append(msg)
             continue

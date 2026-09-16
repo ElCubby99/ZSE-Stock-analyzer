@@ -93,7 +93,7 @@ def annual_report_block(ticker: str) -> dict:
     try:
         from src.db import get_conn
         from src.report_facts import (annual_sources, consolidation_changed,
-                                      facts, fetch, pdf_scan)
+                                      facts, fetch, kind, text_hints)
     except Exception as e:  # noqa: BLE001
         return {"status": "nedostupno", "reason": f"{type(e).__name__}: {e}"}
     try:
@@ -113,10 +113,11 @@ def annual_report_block(ticker: str) -> dict:
         try:
             f = facts(blob, source_url=url, fiscal_year=fy)
         except Exception:  # noqa: BLE001
-            hints = pdf_scan(blob) if blob[:4] == b"%PDF" else []
+            fmt = {"pdf": "PDF", "esef": "ESEF/iXBRL paket",
+                   "zip": "zip bez GFI obrasca"}.get(kind(blob), "neprepoznat format")
             unread.append({"fiscal_year": fy, "source_url": url,
-                           "reason": "PDF — nije strojno čitljiv obrazac",
-                           "tekst_spominje": hints})
+                           "reason": f"{fmt} — nije GFI obrazac",
+                           "tekst_spominje": text_hints(blob)})
             continue
         years.append({
             "fiscal_year": fy, "source_url": url,

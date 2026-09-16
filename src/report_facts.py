@@ -58,11 +58,69 @@ def _text(v: Any) -> str:
     return re.sub(r"\s+", " ", str(v or "")).strip()
 
 
+def kind(blob: bytes) -> str:
+    """Što je zapravo preuzeto: 'xlsx', 'pdf', 'esef' (iXBRL paket) ili 'zip'.
+
+    EHO pod istim tipom dokumenta nudi GFI obrazac (XLSX), skenirani PDF i —
+    od 2025. sve češće — ESEF paket (zip u zipu, xhtml + XBRL). Bez ovoga je
+    ESEF paket rušio čitanje golim KeyErrorom umjesto da se prizna."""
+    import zipfile
+    if blob[:4] == b"%PDF":
+        return "pdf"
+    if blob[:2] != b"PK":
+        return "nepoznato"
+    try:
+        names = zipfile.ZipFile(io.BytesIO(blob)).namelist()
+    except Exception:  # noqa: BLE001
+        return "nepoznato"
+    if "[Content_Types].xml" in names:
+        return "xlsx"
+    return "esef" if _esef_members(blob) else "zip"
+
+
+def _esef_members(blob: bytes, depth: int = 2) -> bool:
+    import zipfile
+    try:
+        zf = zipfile.ZipFile(io.BytesIO(blob))
+        names = zf.namelist()
+    except Exception:  # noqa: BLE001
+        return False
+    if any(n.lower().endswith((".xhtml", ".xbrl")) for n in names):
+        return True
+    if depth <= 0:
+        return False
+    return any(_esef_members(zf.read(n), depth - 1)
+               for n in names if n.lower().endswith(".zip"))
+
+
+def unwrap(blob: bytes, depth: int = 2) -> bytes | None:
+    """Nađi GFI obrazac (XLSX) unutar zip omota; None ako ga nema."""
+    import zipfile
+    k = kind(blob)
+    if k == "xlsx":
+        return blob
+    if k not in ("zip", "esef") or depth <= 0:
+        return None
+    zf = zipfile.ZipFile(io.BytesIO(blob))
+    for n in zf.namelist():
+        if n.lower().endswith(".xlsx"):
+            return zf.read(n)
+    for n in zf.namelist():
+        if n.lower().endswith(".zip"):
+            inner = unwrap(zf.read(n), depth - 1)
+            if inner:
+                return inner
+    return None
+
+
 def load_workbook(source: str | bytes):
     """Otvori XLSX s puta ili iz bajtova (bez mrežnog poziva unutar modula)."""
     import openpyxl
     if isinstance(source, bytes):
-        return openpyxl.load_workbook(io.BytesIO(source), data_only=True)
+        blob = unwrap(source)
+        if blob is None:
+            raise ValueError(f"nije GFI obrazac (XLSX), nego: {kind(source)}")
+        return openpyxl.load_workbook(io.BytesIO(blob), data_only=True)
     return openpyxl.load_workbook(source, data_only=True)
 
 
@@ -210,6 +268,43 @@ def fetch(url: str) -> bytes | None:
         return data
     except Exception:  # noqa: BLE001 — pozivatelj bilježi 'nije dohvaćeno'
         return None
+
+
+def text_hints(blob: bytes) -> list[str]:
+    """Izvješće koje nije GFI obrazac (PDF ili ESEF paket) — izvlači se tekst
+    i traže naznake jednokratnih/statusnih događaja koje analitičar MORA
+    pročitati. Prazan popis znači 'nije nađeno', ne 'nema ga'."""
+    k = kind(blob)
+    if k == "pdf":
+        return pdf_scan(blob)
+    if k in ("esef", "zip"):
+        return _esef_scan(blob)
+    return []
+
+
+def _esef_scan(blob: bytes, depth: int = 2) -> list[str]:
+    """ESEF/iXBRL paket: xhtml je tekst, pa se naznake traže izravno u njemu."""
+    import zipfile
+    try:
+        zf = zipfile.ZipFile(io.BytesIO(blob))
+        names = zf.namelist()
+    except Exception:  # noqa: BLE001
+        return []
+    found: set[str] = set()
+    for n in names:
+        low = n.lower()
+        if low.endswith((".xhtml", ".html", ".htm")):
+            try:
+                txt = zf.read(n)[:40_000_000].decode("utf-8", "ignore").lower()
+            except Exception:  # noqa: BLE001
+                continue
+            found |= {h for h in PDF_HINTS if h in txt}
+        elif low.endswith(".zip") and depth > 0:
+            try:
+                found |= set(_esef_scan(zf.read(n), depth - 1))
+            except Exception:  # noqa: BLE001
+                continue
+    return sorted(found)
 
 
 def pdf_scan(blob: bytes) -> list[str]:
