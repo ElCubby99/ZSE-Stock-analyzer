@@ -10,10 +10,12 @@
 //  - unsubscribe {token}   klik iz bilo kojeg maila -> status 'unsubscribed'
 //  - send_issue  {subject, html, text, lang, test_to}  M80: slanje izdanja
 //      Autentikacija: header x-api-key = BLOG_API_KEY (isti obrazac kao
-//      blog-publish). Prima SAMO potvrđene pretplatnike (status='confirmed')
-//      odabranog jezika. test_to ograničava slanje na TU JEDNU adresu (mora
-//      već biti potvrđeni pretplatnik) — test izdanja prije masovnog slanja.
-//      Svaki mail nosi vlastiti unsubscribe token primatelja (RFC 8058).
+//      blog-publish). MASOVNO slanje ide isključivo potvrđenim
+//      pretplatnicima (status='confirmed') odabranog jezika. test_to
+//      ograničava slanje na TU JEDNU adresu — test izdanja prije masovnog
+//      slanja; ako ta adresa nije pretplatnik, test se svejedno šalje (to
+//      traži vlasnik s admin ključem) uz opći link za odjavu.
+//      Svaki pretplatnik dobiva vlastiti unsubscribe token (RFC 8058).
 //
 // Privatnost: subscribe UVIJEK vraća istu generičku poruku — endpoint ne
 // otkriva postoji li email u listi. Nepotvrđene prijave čisti noćni job
@@ -232,14 +234,20 @@ Deno.serve(async (req) => {
     let q = T().select("email, unsubscribe_token, lang")
       .eq("status", "confirmed").eq("lang", lang);
     if (testTo) q = q.eq("email", testTo);
-    const { data: rows, error: qErr } = await q;
+    const { data: found, error: qErr } = await q;
     if (qErr) { console.error(qErr.message); return json(500, { error: "upit" }); }
-    if (!rows || !rows.length) {
-      return json(404, {
-        error: testTo
-          ? `${testTo} nije potvrđeni pretplatnik za jezik '${lang}' — test se ne šalje`
-          : `nema potvrđenih pretplatnika za jezik '${lang}'`,
-      });
+    let rows = found ?? [];
+    // TEST na adresu koja još nije pretplatnik: dopušteno samo uz test_to
+    // (jednokratna provjera izgleda izdanja prije masovnog slanja, poziva
+    // je vlasnik s admin ključem). Odjava tada vodi na opću stranicu jer
+    // token ne postoji. Masovno slanje ovu granu NEMA.
+    let unregisteredTest = false;
+    if (!rows.length && testTo) {
+      rows = [{ email: testTo, unsubscribe_token: null, lang }];
+      unregisteredTest = true;
+    }
+    if (!rows.length) {
+      return json(404, { error: `nema potvrđenih pretplatnika za jezik '${lang}'` });
     }
     if (!Deno.env.get("RESEND_API_KEY")) {
       return json(503, { error: "mail servis nije konfiguriran" });
@@ -248,9 +256,12 @@ Deno.serve(async (req) => {
     let sent = 0;
     const failed: string[] = [];
     for (const r of rows) {
-      const unsubUrl = lang === "en"
-        ? `${SITE}/en/newsletter/unsubscribe?token=${r.unsubscribe_token}`
-        : `${SITE}/newsletter/odjava?token=${r.unsubscribe_token}`;
+      const base = lang === "en"
+        ? `${SITE}/en/newsletter/unsubscribe`
+        : `${SITE}/newsletter/odjava`;
+      const unsubUrl = r.unsubscribe_token
+        ? `${base}?token=${r.unsubscribe_token}`
+        : base;   // test na neregistriranu adresu — opća stranica odjave
       // svaki primatelj dobiva SVOJ token u tijelu i u zaglavlju
       const okMail = await sendMail(
         r.email, subject,
@@ -264,6 +275,9 @@ Deno.serve(async (req) => {
     return json(200, {
       ok: true, recipients: rows.length, sent,
       failed: failed.length, test: Boolean(testTo),
+      note: unregisteredTest
+        ? `${testTo} nije potvrđeni pretplatnik — poslan test s općim linkom za odjavu`
+        : undefined,
     });
   }
 
