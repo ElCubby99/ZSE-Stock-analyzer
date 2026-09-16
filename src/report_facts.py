@@ -32,9 +32,15 @@ PDF_HINTS = ("stjecanj", "pripajanj", "preuzimanj", "poslovno spajanje",
 
 # uži izbor: naznake koje same po sebi znače jednokratni učinak na dobit —
 # za njih se vadi i izvod s brojem stranice, jer "konsolidir" u grupnom
-# izvješću stoji na svakoj drugoj stranici i ne govori ništa
-ONE_OFF_HINTS = ("povoljne kupnje", "povoljna kupnja", "negativni goodwill",
-                 "badwill", "poslovno spajanje", "prvi put konsolidir")
+# izvješću stoji na svakoj drugoj stranici i ne govori ništa.
+# Dvije razine: jaka naznaka imenuje sam događaj, slaba se pojavljuje i u
+# računovodstvenim politikama ("ako je poslovno spajanje ostvareno u
+# etapama…"), pa se vadi tek kad jake nema — inače bi šablona s 42. stranice
+# istisnula stvarni nalaz s 274.
+STRONG_HINTS = ("povoljne kupnje", "povoljna kupnja", "negativni goodwill",
+                "badwill", "prvi put konsolidir")
+WEAK_HINTS = ("poslovno spajanje",)
+ONE_OFF_HINTS = STRONG_HINTS + WEAK_HINTS
 
 # stavke čiji skok najčešće znači jednokratni događaj (stjecanje, prodaja,
 # otpis) — uvijek se izvlače eksplicitno, i kad nisu među najvećim promjenama
@@ -246,15 +252,23 @@ def facts(source: str | bytes, *, source_url: str | None = None,
 
 def annual_sources(cur, ticker: str, limit: int = 2) -> list[tuple[int, str]]:
     """Zadnje `limit` fiskalnih godina s URL-om godišnjeg izvješća; unutar
-    godine XLSX ima prednost pred PDF-om (strojno čitljiv obrazac)."""
+    godine XLSX ima prednost pred PDF-om (strojno čitljiv obrazac).
+
+    Ticker smije biti i oznaka KLASE (ADRS2, CROS2, KODT2, PLAG2) — izvješće
+    podnosi firma, ne klasa, pa se klasa razrješava preko share_classes.
+    Bez toga je revizija za ADRS2 javljala 'nema izvješća', a izvješće
+    postoji — lažna praznina je jednako opasna kao lažna brojka."""
     cur.execute(
         """SELECT f.fiscal_year, f.source_url
            FROM filings f JOIN companies c ON c.id = f.company_id
-           WHERE c.ticker = %s AND f.doc_type = 'financial_report'
+           WHERE c.id = (SELECT company_id FROM share_classes WHERE ticker = %s
+                         UNION ALL SELECT id FROM companies WHERE ticker = %s
+                         LIMIT 1)
+             AND f.doc_type = 'financial_report'
              AND f.period_type = 'annual' AND f.source_url LIKE 'http%%'
            ORDER BY f.fiscal_year DESC,
                     (f.source_url ILIKE '%%.xlsx') DESC, f.published_at DESC""",
-        (ticker,))
+        (ticker, ticker))
     best: dict[int, str] = {}
     for fy, url in cur.fetchall():
         best.setdefault(fy, url)
@@ -325,25 +339,26 @@ def text_excerpts(blob: bytes, limit: int = 4) -> list[dict]:
     doc = _pdf_open(blob)
     if doc is None:
         return []
-    out: list[dict] = []
+    strong: list[dict] = []
+    weak: list[dict] = []
     with doc:
         for i, page in enumerate(doc):
-            if len(out) >= limit:
+            if len(strong) >= limit:
                 break
             try:
                 txt = page.get_text()
             except Exception:  # noqa: BLE001
                 continue
             low = txt.lower()
-            for hint in ONE_OFF_HINTS:
-                pos = low.find(hint)
-                if pos < 0:
+            for hints, bucket in ((STRONG_HINTS, strong), (WEAK_HINTS, weak)):
+                pos = next((p for p in (low.find(h) for h in hints) if p >= 0), None)
+                if pos is None:
                     continue
-                out.append({"stranica": i + 1,
-                            "izvod": re.sub(r"\s+", " ",
-                                            txt[max(0, pos - 120):pos + 260]).strip()})
+                bucket.append({"stranica": i + 1,
+                               "izvod": re.sub(r"\s+", " ",
+                                               txt[max(0, pos - 120):pos + 260]).strip()})
                 break
-    return out
+    return (strong or weak)[:limit]
 
 
 def _pdf_open(blob: bytes):

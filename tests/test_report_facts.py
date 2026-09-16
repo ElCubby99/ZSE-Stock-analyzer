@@ -198,6 +198,48 @@ def test_uzi_popis_naznaka_izostavlja_sum():
     assert "konsolidir" in rf.PDF_HINTS
     assert "konsolidir" not in rf.ONE_OFF_HINTS
     assert set(rf.ONE_OFF_HINTS) <= set(rf.PDF_HINTS) | {"prvi put konsolidir"}
+    # slaba naznaka se pojavljuje i u računovodstvenim politikama
+    assert "poslovno spajanje" in rf.WEAK_HINTS
+    assert "povoljne kupnje" in rf.STRONG_HINTS
+    assert not set(rf.STRONG_HINTS) & set(rf.WEAK_HINTS)
+
+
+def test_jaka_naznaka_istiskuje_sablonu_iz_politika(monkeypatch):
+    """ADRS2: šablona 'ako je poslovno spajanje ostvareno u etapama…' sa
+    42. stranice ne smije istisnuti stvarni nalaz s 274."""
+    stranice = ["nebitno"] * 300
+    stranice[41] = "Ako je poslovno spajanje ostvareno u etapama, knjigovodstvena vrijednost…"
+    stranice[273] = "…priznavanju dobiti od povoljne kupnje u iznosu od 57.531 tisuću eura."
+    _patch_pdf(monkeypatch, stranice)
+
+    ex = rf.text_excerpts(b"%PDF-fake")
+    assert [e["stranica"] for e in ex] == [274]
+    assert "57.531" in ex[0]["izvod"]
+
+
+def test_slaba_naznaka_se_vrati_kad_jake_nema(monkeypatch):
+    """Šutnja nije opcija: ako jake naznake nema, vraća se slaba."""
+    stranice = ["nebitno"] * 60
+    stranice[41] = "Ako je poslovno spajanje ostvareno u etapama…"
+    _patch_pdf(monkeypatch, stranice)
+
+    ex = rf.text_excerpts(b"%PDF-fake")
+    assert [e["stranica"] for e in ex] == [42]
+
+
+def _patch_pdf(monkeypatch, stranice):
+    class _Page:
+        def __init__(self, t): self._t = t
+        def get_text(self): return self._t
+
+    class _Doc:
+        def __init__(self, ps): self._ps = [_Page(t) for t in ps]
+        def __iter__(self): return iter(self._ps)
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+
+    monkeypatch.setattr(rf, "kind", lambda b: "pdf")
+    monkeypatch.setattr(rf, "_pdf_open", lambda b: _Doc(stranice))
 
 
 def test_obrazac_bez_listova_ne_puca():
@@ -209,3 +251,43 @@ def test_obrazac_bez_listova_ne_puca():
     f = rf.facts(buf.getvalue())
     assert f["consolidated"] is None and f["total_assets"] is None
     assert f["watch"] == [] and f["biggest_moves"] == []
+
+
+class _FakeCur:
+    """Minimalni kursor: bilježi SQL i parametre, vraća zadani rezultat."""
+
+    def __init__(self, rows):
+        self.rows, self.sql, self.params = rows, None, None
+
+    def execute(self, sql, params=None):
+        self.sql, self.params = sql, params
+
+    def fetchall(self):
+        return self.rows
+
+
+def test_klasa_dionice_se_razrjesava_na_firmu():
+    """ADRS2/CROS2/KODT2/PLAG2 su oznake KLASE; izvješće podnosi firma.
+    Prije popravka je revizija za ADRS2 javljala 'nema izvješća' iako
+    izvješće postoji — lažna praznina je jednako opasna kao lažna brojka."""
+    cur = _FakeCur([(2025, "http://x/2025.pdf"), (2024, "http://x/2024.xlsx")])
+    out = rf.annual_sources(cur, "ADRS2")
+
+    assert out == [(2025, "http://x/2025.pdf"), (2024, "http://x/2024.xlsx")]
+    assert "share_classes" in cur.sql, "klasa se mora razriješiti preko share_classes"
+    assert cur.params == ("ADRS2", "ADRS2")
+
+
+def test_unutar_godine_xlsx_ima_prednost_pred_pdf():
+    """Obrazac je strojno čitljiv, PDF nije — redoslijed odlučuje SQL, a
+    ovdje se brani da se za istu godinu uzme PRVI (dakle bolji) zapis."""
+    cur = _FakeCur([(2025, "http://x/a.xlsx"), (2025, "http://x/a.pdf"),
+                    (2024, "http://x/b.xlsx")])
+    assert rf.annual_sources(cur, "TEST") == [(2025, "http://x/a.xlsx"),
+                                              (2024, "http://x/b.xlsx")]
+
+
+def test_limit_vraca_zadnje_dvije_godine():
+    cur = _FakeCur([(2025, "a"), (2024, "b"), (2023, "c")])
+    assert [fy for fy, _ in rf.annual_sources(cur, "TEST")] == [2025, 2024]
+    assert [fy for fy, _ in rf.annual_sources(cur, "TEST", limit=3)] == [2025, 2024, 2023]
