@@ -49,6 +49,14 @@ on:
         description: "M78: 'true' = naslovi/meta opisi 6 blog tekstova prema GSC nalazu + brisanje test drafta (idempotentno)"
         required: false
         default: ''
+      newsletter_slug:
+        description: "M80: slug izdanja iz data/newsletter/ (npr. 2026-09-ai-forum-zaba); bez newsletter_to šalje SVIM potvrđenima"
+        required: false
+        default: ''
+      newsletter_to:
+        description: "M80: test adresa — šalje SAMO njoj (mora biti potvrđeni pretplatnik). Prazno = masovno slanje."
+        required: false
+        default: ''
 
 concurrency:
   group: daily-eod     # ne smije se preklapati s daily runom (ista baza)
@@ -192,6 +200,25 @@ jobs:
           ZSE_DSN: ${{ secrets.ZSE_DSN }}
           PYTHONUNBUFFERED: '1'
         run: python -m scripts.apply_blog_meta_m78
+
+      # M80: slanje izdanja newslettera kroz Edge Function `newsletter`.
+      # Test (newsletter_to) ide samo na tu adresu; masovno slanje traži
+      # eksplicitan --confirm-all, koji se dodaje SAMO kad test adresa nije
+      # zadana — brana od slučajnog slanja cijeloj listi.
+      - name: Newsletter — slanje izdanja (M80, opcionalno)
+        if: inputs.newsletter_slug != ''
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          BLOG_API_KEY: ${{ secrets.BLOG_API_KEY }}
+          PYTHONUNBUFFERED: '1'
+        run: |
+          if [ -n "${{ inputs.newsletter_to }}" ]; then
+            python -m scripts.send_newsletter "${{ inputs.newsletter_slug }}" \
+              --test-to "${{ inputs.newsletter_to }}"
+          else
+            python -m scripts.send_newsletter "${{ inputs.newsletter_slug }}" \
+              --confirm-all
+          fi
 
       - name: Preračun valuacija (opcionalno)
         if: inputs.recompute != ''

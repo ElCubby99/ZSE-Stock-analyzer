@@ -8,6 +8,12 @@
 //  - subscribe   {email, lang, source, website}  website = honeypot (bot filter)
 //  - confirm     {token}   klik iz potvrdnog maila -> status 'confirmed'
 //  - unsubscribe {token}   klik iz bilo kojeg maila -> status 'unsubscribed'
+//  - send_issue  {subject, html, text, lang, test_to}  M80: slanje izdanja
+//      Autentikacija: header x-api-key = BLOG_API_KEY (isti obrazac kao
+//      blog-publish). Prima SAMO potvrđene pretplatnike (status='confirmed')
+//      odabranog jezika. test_to ograničava slanje na TU JEDNU adresu (mora
+//      već biti potvrđeni pretplatnik) — test izdanja prije masovnog slanja.
+//      Svaki mail nosi vlastiti unsubscribe token primatelja (RFC 8058).
 //
 // Privatnost: subscribe UVIJEK vraća istu generičku poruku — endpoint ne
 // otkriva postoji li email u listi. Nepotvrđene prijave čisti noćni job
@@ -72,7 +78,7 @@ ${SITE} · info@burzovnilist.com`,
 }
 
 async function sendMail(to: string, subject: string, text: string,
-  unsubscribeUrl: string): Promise<boolean> {
+  unsubscribeUrl: string, html?: string): Promise<boolean> {
   const key = Deno.env.get("RESEND_API_KEY");
   if (!key) {
     console.error("RESEND_API_KEY nije postavljen — mail nije poslan");
@@ -80,17 +86,19 @@ async function sendMail(to: string, subject: string, text: string,
   }
   const from = Deno.env.get("NEWSLETTER_FROM")
     ?? "Burzovni list <newsletter@burzovnilist.com>";
+  const body: Record<string, unknown> = {
+    from, to: [to], subject, text,
+    // RFC 8058 jednoklik odjava — mail klijenti prikazuju vlastiti gumb
+    headers: {
+      "List-Unsubscribe": `<${unsubscribeUrl}>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    },
+  };
+  if (html) body.html = html;   // M80: izdanja idu HTML + text (multipart)
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from, to: [to], subject, text,
-      // RFC 8058 jednoklik odjava — mail klijenti prikazuju vlastiti gumb
-      headers: {
-        "List-Unsubscribe": `<${unsubscribeUrl}>`,
-        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-      },
-    }),
+    body: JSON.stringify(body),
   });
   if (!r.ok) console.error("resend", r.status, (await r.text()).slice(0, 300));
   return r.ok;
@@ -201,6 +209,62 @@ Deno.serve(async (req) => {
       .eq("id", row.id);
     if (error) { console.error(error.message); return json(500, { ok: false }); }
     return json(200, { ok: true });
+  }
+
+  // M80: slanje izdanja newslettera (admin akcija, x-api-key)
+  if (action === "send_issue") {
+    const key = req.headers.get("x-api-key");
+    if (!key || key !== Deno.env.get("BLOG_API_KEY")) {
+      return json(401, { error: "neautoriziran" });
+    }
+    const subject = String(p.subject ?? "").trim();
+    const html = String(p.html ?? "");
+    const text = String(p.text ?? "");
+    const lang = p.lang === "en" ? "en" : "hr";
+    const testTo = p.test_to == null ? null : String(p.test_to).trim().toLowerCase();
+    if (!subject || subject.length > 200) {
+      return json(400, { error: "subject: obavezan, <=200 znakova" });
+    }
+    if (!text.trim()) return json(400, { error: "text: obavezan (plain-text verzija)" });
+    if (testTo && !EMAIL_RX.test(testTo)) return json(400, { error: "test_to: nevaljan email" });
+
+    // primatelji: SAMO potvrđeni pretplatnici; test_to sužava na jednu adresu
+    let q = T().select("email, unsubscribe_token, lang")
+      .eq("status", "confirmed").eq("lang", lang);
+    if (testTo) q = q.eq("email", testTo);
+    const { data: rows, error: qErr } = await q;
+    if (qErr) { console.error(qErr.message); return json(500, { error: "upit" }); }
+    if (!rows || !rows.length) {
+      return json(404, {
+        error: testTo
+          ? `${testTo} nije potvrđeni pretplatnik za jezik '${lang}' — test se ne šalje`
+          : `nema potvrđenih pretplatnika za jezik '${lang}'`,
+      });
+    }
+    if (!Deno.env.get("RESEND_API_KEY")) {
+      return json(503, { error: "mail servis nije konfiguriran" });
+    }
+
+    let sent = 0;
+    const failed: string[] = [];
+    for (const r of rows) {
+      const unsubUrl = lang === "en"
+        ? `${SITE}/en/newsletter/unsubscribe?token=${r.unsubscribe_token}`
+        : `${SITE}/newsletter/odjava?token=${r.unsubscribe_token}`;
+      // svaki primatelj dobiva SVOJ token u tijelu i u zaglavlju
+      const okMail = await sendMail(
+        r.email, subject,
+        text.replaceAll("{{UNSUBSCRIBE_URL}}", unsubUrl),
+        unsubUrl,
+        html ? html.replaceAll("{{UNSUBSCRIBE_URL}}", unsubUrl) : undefined);
+      if (okMail) sent += 1; else failed.push(r.email);
+      // Resend dopušta 2 zahtjeva/s — razmak čuva rate limit na većim listama
+      if (rows.length > 1) await new Promise((res) => setTimeout(res, 600));
+    }
+    return json(200, {
+      ok: true, recipients: rows.length, sent,
+      failed: failed.length, test: Boolean(testTo),
+    });
   }
 
   return json(400, { error: "nepoznata akcija" });
